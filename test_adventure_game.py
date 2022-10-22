@@ -5,6 +5,7 @@ import operator
 import os
 import tempfile
 import unittest
+import tokenize
 
 import iniconfig
 
@@ -26,18 +27,51 @@ class test_isfloat(unittest.TestCase):
         self.assertFalse(isfloat('-'))
 
 
-class test_dice_expr_to_randint_closure(unittest.TestCase):
+class test_chest(unittest.TestCase):
+    
+    chest_ini_config_text = """
+[Wooden_Chest_1]
+contents=[20xGold_Piece,1xWarhammer,1xMana_Potion]
+description=This small, serviceable chest is made of wooden slat bounds within an iron framing, and features a sturdy-looking lock.
+is_locked=true
+title=wooden chest
+"""
 
-    def test_dice_expr_to_randint_closure(self):
-        closure_obj = dice_expr_to_randint_closure('1d20+6')
-        self.assertEqual(closure_obj.dice, '1d20')
-        self.assertEqual(closure_obj.modifier, '+6')
-        closure_obj = dice_expr_to_randint_closure('1d20+3', 3)
-        self.assertEqual(closure_obj.dice, '1d20')
-        self.assertEqual(closure_obj.modifier, '+6')
-        closure_obj = dice_expr_to_randint_closure('1d20', 6)
-        self.assertEqual(closure_obj.dice, '1d20')
-        self.assertEqual(closure_obj.modifier, '+6')
+    def __init__(self, *argl, **argd):
+        super().__init__(*argl, **argd)
+        _, temp_ini_config_file = tempfile.mkstemp(suffix='.ini')
+        temp_ini_config_fh = open(temp_ini_config_file, 'w')
+        temp_ini_config_fh.write(self.chest_ini_config_text)
+        temp_ini_config_fh.close()
+        self.chest_ini_config_obj = iniconfig.IniConfig(temp_ini_config_file)
+        os.remove(temp_ini_config_file)
+        _, temp_ini_config_file = tempfile.mkstemp(suffix='.ini')
+        temp_ini_config_fh = open(temp_ini_config_file, 'w')
+        temp_ini_config_fh.write(test_equipment.equipment_ini_config_text)
+        temp_ini_config_fh.close()
+        self.equipment_ini_config_obj = iniconfig.IniConfig(temp_ini_config_file)
+        os.remove(temp_ini_config_file)
+
+    def setUp(self):
+        self.items_state_obj = items_state(**self.equipment_ini_config_obj.sections)
+
+    def test_chest(self):
+        (internal_name, ini_keys_vals), = self.chest_ini_config_obj.sections.items()
+        chest_obj = chest(self.items_state_obj, internal_name, **ini_keys_vals)
+        self.assertEqual(chest_obj.internal_name, "Wooden_Chest_1")
+        self.assertEqual(chest_obj.title, "wooden chest")
+        self.assertEqual(chest_obj.description, "This small, serviceable chest is made of wooden slat bounds within an iron framing, and features a sturdy-looking lock.")
+        self.assertEqual(chest_obj.is_locked, True)
+        self.assertTrue(chest_obj.contains("Gold_Piece"))
+        self.assertTrue(chest_obj.contains("Warhammer"))
+        self.assertTrue(chest_obj.contains("Mana_Potion"))
+        potion_qty, mana_potion_obj = chest_obj.get("Mana_Potion")
+        self.assertIsInstance(mana_potion_obj, consumable)
+        self.assertEqual(potion_qty, 1)
+        chest_obj.delete("Mana_Potion")
+        self.assertFalse(chest_obj.contains("Mana_Potion"))
+        chest_obj.set("Mana_Potion", potion_qty, mana_potion_obj)
+        self.assertTrue(chest_obj.contains("Mana_Potion"))
 
 
 class test_character(unittest.TestCase):
@@ -53,13 +87,15 @@ class test_character(unittest.TestCase):
         os.remove(temp_ini_config_file)
 
     def setUp(self):
-        self.items_index_obj = items_index(self.equipment_ini_config_obj)
+        self.items_state_obj = items_state(**self.equipment_ini_config_obj.sections)
 
     def test_attack_and_damage_rolls_1(self):
-        character_obj = character('Warrior')
-        longsword_obj = self.items_index_obj.get('Longsword')
-        scale_mail_obj = self.items_index_obj.get('Scale_Mail')
-        shield_obj = self.items_index_obj.get('Shield')
+        character_obj = character('Regdar', 'Warrior')
+        self.assertEqual(character_obj.character_name, 'Regdar')
+        self.assertEqual(character_obj.character_class, 'Warrior')
+        longsword_obj = self.items_state_obj.get('Longsword')
+        scale_mail_obj = self.items_state_obj.get('Scale_Mail')
+        shield_obj = self.items_state_obj.get('Shield')
         with self.assertRaises(internal_exception):
             character_obj.equip_weapon(longsword_obj)
         character_obj.pick_up_item(longsword_obj)
@@ -72,45 +108,40 @@ class test_character(unittest.TestCase):
         self.assertTrue(character_obj.shield_equipped)
         self.assertTrue(character_obj.weapon_equipped)
         self.assertFalse(character_obj.wand_equipped)
-        self.assertEqual(character_obj.attack_roll.dice, '1d20')
-        self.assertEqual(int(character_obj.attack_roll.modifier), character_obj.strength_mod)
-        self.assertEqual(character_obj.damage_roll.dice, '1d8')
-        self.assertEqual(int(character_obj.damage_roll.modifier), character_obj.strength_mod)
-        self.assertEqual(int(character_obj.attack_bonus), character_obj.strength_mod)
+        strength_mod = character_obj.strength_mod
+        strength_mod_str = "+" + str(strength_mod) if strength_mod > 0 else str(strength_mod) if strength_mod < 0 else ""
+        self.assertEqual(character_obj.attack_roll, '1d20' + strength_mod_str)
+        self.assertEqual(character_obj.damage_roll, '1d8' + strength_mod_str)
+        self.assertEqual(character_obj.attack_bonus, character_obj.strength_mod)
         self.assertEqual(character_obj.armor_class, 10 + scale_mail_obj.armor_bonus + shield_obj.armor_bonus
                                                     + character_obj.dexterity_mod)
-        self.assertEqual(character_obj.damage_bonus, character_obj.strength_mod)
         self.assertEqual(character_obj.weapon, longsword_obj)
         self.assertEqual(character_obj.armor, scale_mail_obj)
         self.assertEqual(character_obj.shield, shield_obj)
 
     def test_attack_and_damage_rolls_2(self):
-        character_obj = character('Mage')
-        wand_obj = self.items_index_obj.get('Magic_Wand')
+        character_obj = character('Mialee', 'Mage')
+        wand_obj = self.items_state_obj.get('Magic_Wand')
         character_obj.pick_up_item(wand_obj)
         character_obj.equip_wand(wand_obj)
         self.assertFalse(character_obj.armor_equipped)
         self.assertFalse(character_obj.shield_equipped)
         self.assertFalse(character_obj.weapon_equipped)
         self.assertTrue(character_obj.wand_equipped)
-        self.assertEqual(character_obj.attack_roll.dice, '1d20')
-        self.assertEqual(int(character_obj.attack_roll.modifier), wand_obj.attack_bonus
-                                                                  + character_obj.intelligence_mod)
-        self.assertEqual(character_obj.damage_roll.dice, '2d12')
-        self.assertEqual(int(character_obj.damage_roll.modifier), int(wand_obj.damage.modifier)
-                                                                  + character_obj.intelligence_mod)
+        total_bonus = wand_obj.attack_bonus + character_obj.intelligence_mod
+        total_bonus_str = "+" + str(total_bonus) if total_bonus > 0 else str(total_bonus) if total_bonus < 0 else ""
+        self.assertEqual(character_obj.attack_roll, '1d20' + total_bonus_str)
+        self.assertEqual(character_obj.damage_roll, '2d12' + total_bonus_str)
         self.assertEqual(character_obj.attack_bonus, int(wand_obj.attack_bonus)
-                                                     + character_obj.intelligence_mod)
-        self.assertEqual(character_obj.damage_bonus, int(wand_obj.damage.modifier)
                                                      + character_obj.intelligence_mod)
         self.assertEqual(character_obj.armor_class, 10 + character_obj.dexterity_mod)
         self.assertEqual(character_obj.wand, wand_obj)
 
     def test_pickup_vs_drop_vs_list(self):
-        character_obj = character('Warrior')
-        longsword_obj = self.items_index_obj.get('Longsword')
-        scale_mail_obj = self.items_index_obj.get('Scale_Mail')
-        shield_obj = self.items_index_obj.get('Shield')
+        character_obj = character('Regdar', 'Warrior')
+        longsword_obj = self.items_state_obj.get('Longsword')
+        scale_mail_obj = self.items_state_obj.get('Scale_Mail')
+        shield_obj = self.items_state_obj.get('Shield')
         character_obj.pick_up_item(longsword_obj)
         character_obj.pick_up_item(scale_mail_obj)
         character_obj.pick_up_item(shield_obj)
@@ -124,10 +155,10 @@ class test_character(unittest.TestCase):
             self.assertEqual(character_obj.burden, inventory.Medium)
         else:
             self.assertEqual(character_obj.burden, inventory.Light)
-        testing_items_list = tuple(sorted((longsword_obj, scale_mail_obj, shield_obj),
+        testing_items_list = list(sorted((longsword_obj, scale_mail_obj, shield_obj),
                                           key=operator.attrgetter('title')))
-        given_items_list = tuple(sorted(map(operator.itemgetter(1), character_obj.list_items()),
-                                        key=operator.attrgetter('title')))
+        given_items_list = list(sorted(map(operator.itemgetter(1), character_obj.list_items()),
+                                       key=operator.attrgetter('title')))
         self.assertEqual(testing_items_list, given_items_list)
         character_obj.drop_item(longsword_obj)
         character_obj.drop_item(scale_mail_obj)
@@ -135,7 +166,7 @@ class test_character(unittest.TestCase):
         self.assertEqual(character_obj.total_weight, 0)
 
     def test_character_ability_scores(self):
-        character_obj = character('Warrior')
+        character_obj = character('Regdar', 'Warrior')
         self.assertEqual(math.floor((character_obj.strength - 10) / 2), character_obj.strength_mod)
         self.assertEqual(math.floor((character_obj.dexterity - 10) / 2), character_obj.dexterity_mod)
         self.assertEqual(math.floor((character_obj.constitution - 10) / 2), character_obj.constitution_mod)
@@ -144,13 +175,13 @@ class test_character(unittest.TestCase):
         self.assertEqual(math.floor((character_obj.charisma - 10) / 2), character_obj.charisma_mod)
 
     def test_character_hitpoints_and_taking_damage_and_healing(self):
-        character_obj = character('Warrior')
+        character_obj = character('Regdar', 'Warrior')
         self.assertEqual(character_obj.hit_points, 40 + 3 * character_obj.constitution_mod)
-        character_obj = character('Priest')
+        character_obj = character('Tordek', 'Priest')
         self.assertEqual(character_obj.hit_points, 30 + 3 * character_obj.constitution_mod)
-        character_obj = character('Thief')
+        character_obj = character('Lidda', 'Thief')
         self.assertEqual(character_obj.hit_points, 30 + 3 * character_obj.constitution_mod)
-        character_obj = character('Mage')
+        character_obj = character('Mialee', 'Mage')
         self.assertEqual(character_obj.hit_points, 20 + 3 * character_obj.constitution_mod)
         self.assertTrue(character_obj.is_alive)
         self.assertFalse(character_obj.is_dead)
@@ -159,13 +190,182 @@ class test_character(unittest.TestCase):
         self.assertFalse(character_obj.is_alive)
         self.assertTrue(character_obj.is_dead)
         character_obj.heal_damage(20 + 3 * character_obj.constitution_mod)
+        self.assertEqual(character_obj.hit_points, 20 + 3 * character_obj.constitution_mod)
         self.assertTrue(character_obj.is_alive)
         self.assertFalse(character_obj.is_dead)
-        self.assertEqual(character_obj.hit_points, 20 + 3 * character_obj.constitution_mod)
-        character_obj.hit_points -= 10
-        self.assertEqual(character_obj.hit_points, 10 + 3 * character_obj.constitution_mod)
-        character_obj.hit_points += 10
-        self.assertEqual(character_obj.hit_points, 20 + 3 * character_obj.constitution_mod)
+
+    def test_character_init_ability_score_and_hp_overrides(self):
+        character_obj = character('Regdar', 'Warrior', base_hit_points=50, strength=15, constitution=14, dexterity=13, intelligence=12, wisdom=8, charisma=10)
+        self.assertEqual(character_obj.strength, 15)
+        self.assertEqual(character_obj.constitution, 14)
+        self.assertEqual(character_obj.dexterity, 13)
+        self.assertEqual(character_obj.intelligence, 12)
+        self.assertEqual(character_obj.wisdom, 8)
+        self.assertEqual(character_obj.charisma, 10)
+        self.assertEqual(character_obj.hit_points, 56)  # base_hit_points := 50 + 3 * floor((constitution - 10) / 2)
+
+    def test_mana_points(self):
+        character_obj = character('Hennet', 'Mage', base_hit_points=30, strength=12, constitution=13, dexterity=14, intelligence=15, wisdom=10, charisma=8)
+        self.assertEqual(character_obj.mana_points, 23)
+        result = character_obj.attempt_to_spend_mana(10)
+        self.assertTrue(result)
+        self.assertEqual(character_obj.mana_points, 13)
+        result = character_obj.attempt_to_spend_mana(15)
+        self.assertFalse(result)
+        self.assertEqual(character_obj.mana_points, 13)
+
+
+class test_creature(unittest.TestCase):
+    creature_ini_config_text = """
+[Kobold_Trysk]
+# This creature was adapted from the Dungeons & Dragons 3rd edition _Monster Manual_, p.123.
+armor_equipped=Small_Leather_Armor
+base_hit_points=20
+character_class=Thief
+character_name=Trysk
+charisma=8
+constitution=10
+description=This diminuitive draconic humanoid is dressed in leather armor and has a short sword at its hip. It eyes you warily.
+dexterity=13
+intelligence=10
+inventory_items=[1xShort_Sword,1xSmall_Leather_Armor,30xGold_Piece,1xHealth_Potion]
+species=Kobold
+strength=9
+weapon_equipped=Short_Sword
+wisdom=9
+
+[Sorcerer_Ardren]
+# This creature was adapted from the Dungeons & Dragons 3rd edition _Enemies & Allies_, p.55
+base_hit_points=30
+base_mana_points=20
+character_class=Thief
+character_name=Ardren
+charisma=18
+constitution=15
+description=Stripped to the waist and inscribed with dragon chest tattoos, this half-elf is clearly a sorcerer.
+dexterity=16
+intelligence=10
+inventory_items=[2xMana_Potion,1xDagger,10xGold_Piece]
+magic_key_stat=charisma
+species=human
+strength=8
+weapon_equipped=Dagger
+wisdom=12
+"""
+
+    equipment_ini_config_text = """
+[Short_Sword]
+attack_bonus=0
+damage=1d8
+description=A smaller sword with a short blade and a narrower grip.
+item_type=weapon
+thief_can_use=true
+title=short sword
+value=10
+warrior_can_use=true
+weight=2
+
+[Small_Leather_Armor]
+armor_bonus=2
+description=A suit of leather armor designed for a humanoid of 4 feet in height.
+item_type=armor
+title=small leather armor
+value=10
+weight=7.5
+
+[Gold_Piece]
+attack_bonus=0
+damage=1d6
+description=A small shiny gold coin imprinted with an indistinct bust on one side and a worn state seal on the other.
+item_type=coin
+title=gold piece
+value=5
+weight=4
+
+[Mana_Potion]
+description=A small, stoppered bottle that contains a pungeant but drinkable blue liquid with a discernable magic aura.
+item_type=consumable
+mage_can_use=true
+priest_can_use=true
+title=health potion
+value=25
+weight=.1
+
+[Dagger]
+attack_bonus=0
+damage=1d4
+description=A simple bladed weapon with a plain iron hilt and a notched edge.
+item_type=weapon
+mage_can_use=true
+priest_can_use=true
+thief_can_use=true
+title=dagger
+value=2
+warrior_can_user=true
+weight=1
+
+[Health_Potion]
+description=A small, stoppered bottle that contains a pungeant but drinkable red liquid with a discernable magic aura.
+item_type=consumable
+mage_can_use=true
+priest_can_use=true
+thief_can_use=true
+title=health potion
+value=25
+warrior_can_use=true
+weight=.1
+"""
+
+    def __init__(self, *argl, **argd):
+        super().__init__(*argl, **argd)
+        _, temp_ini_config_file = tempfile.mkstemp(suffix='.ini')
+        temp_ini_config_fh = open(temp_ini_config_file, 'w')
+        temp_ini_config_fh.write(self.equipment_ini_config_text)
+        temp_ini_config_fh.close()
+        self.equipment_ini_config_obj = iniconfig.IniConfig(temp_ini_config_file)
+        os.remove(temp_ini_config_file)
+        _, temp_ini_config_file = tempfile.mkstemp(suffix='.ini')
+        temp_ini_config_fh = open(temp_ini_config_file, 'w')
+        temp_ini_config_fh.write(test_creature.creature_ini_config_text)
+        temp_ini_config_fh.close()
+        self.creature_ini_config_obj = iniconfig.IniConfig(temp_ini_config_file)
+        os.remove(temp_ini_config_file)
+
+    def setUp(self):
+        self.items_state_obj = items_state(**self.equipment_ini_config_obj.sections)
+        self.creatures_index_obj = creatures_index(self.items_state_obj, **self.creature_ini_config_obj.sections)
+    
+    def test_creature_const(self):
+        kobold_obj = self.creatures_index_obj.get("Kobold_Trysk")
+        self.assertEqual(kobold_obj.character_class, "Thief")
+        self.assertEqual(kobold_obj.character_name, "Trysk")
+        self.assertEqual(kobold_obj.species, "Kobold")
+        self.assertEqual(kobold_obj.description, "This diminuitive draconic humanoid is dressed in leather armor and has a short sword at its hip. It eyes you warily.")
+        self.assertEqual(kobold_obj.character_class, "Thief")
+        self.assertEqual(kobold_obj.strength, 9)
+        self.assertEqual(kobold_obj.dexterity, 13)
+        self.assertEqual(kobold_obj.constitution, 10)
+        self.assertEqual(kobold_obj.intelligence, 10)
+        self.assertEqual(kobold_obj.wisdom, 9)
+        self.assertEqual(kobold_obj.charisma, 8)
+        self.assertEqual(kobold_obj.hit_points, 20)
+        short_sword_obj = self.items_state_obj.get("Short_Sword")
+        small_leather_armor_obj = self.items_state_obj.get("Small_Leather_Armor")
+        gold_piece_obj = self.items_state_obj.get("Gold_Piece")
+        health_potion_obj = self.items_state_obj.get("Health_Potion")
+        testing_items_list = list(sorted((short_sword_obj, small_leather_armor_obj, gold_piece_obj, health_potion_obj),
+                                         key=operator.attrgetter('title')))
+        given_items_list = list(sorted(map(operator.itemgetter(1), kobold_obj.list_items()),
+                                       key=operator.attrgetter('title')))
+        self.assertEqual(kobold_obj.weapon_equipped, short_sword_obj)
+        self.assertEqual(kobold_obj.armor_equipped, small_leather_armor_obj)
+
+    def test_creature_const(self):
+        sorcerer_obj = self.creatures_index_obj.get("Sorcerer_Ardren")
+        self.assertEqual(sorcerer_obj.magic_key_stat, "charisma")
+        self.assertEqual(sorcerer_obj.mana_points, 36)
+
+
 
 
 class test_equipment(unittest.TestCase):
@@ -173,75 +373,114 @@ class test_equipment(unittest.TestCase):
 
     equipment_ini_config_text = """
 [Longsword]
-title=longsword
+attack_bonus=0
+damage=1d8
 description=A hefty sword with a long blade, a broad hilt and a leathern grip.
 item_type=weapon
-weight=3
+title=longsword
 value=15
-damage=1d8
-attack_bonus=0
 warrior_can_use=true
+weight=3
 
 [Staff]
-title=staff
+attack_bonus=0
+damage=1d6
 description=A balanced pole 6 feet in length with metal-shod ends.
 item_type=weapon
-weight=4
-value=0.2
-damage=1d6
-attack_bonus=0
 mage_can_use=true
+title=staff
+value=0.2
 warrior_can_use=true
+weight=4
+
+[Dagger]
+attack_bonus=0
+damage=1d4
+description=A simple bladed weapon with a plain iron hilt and a notched edge.
+mage_can_use=true
+priest_can_use=true
+thief_can_use=true
+title=dagger
+item_type=weapon
+value=2
+warrior_can_use=true
+weight=1
+
+[Warhammer]
+attack_bonus=0
+damage=1d8
+description=A heavy hammer with a heavy iron head with a tapered striking point and a long leather-wrapped hast.
+item_type=weapon
+priest_can_use==true
+title=warhammer
+warrior_can_use=true
+weight=5
 
 [Studded_Leather]
-title=studded leather armor
+armor_bonus=2
 description=A suit of fire-hardened leather plates and padding that provides some protection from attack.
 item_type=armor
-weight=15
-value=45
-armor_bonus=2
 thief_can_use=true
+title=studded leather armor
+value=45
 warrior_can_use=true
+weight=15
 
 [Shield]
-title=shield
+armor_bonus=2
 description=A broad panel of leather-bound wood with a metal rim that is useful for sheltering behind.
 item_type=shield
-weight=6
-value=10
-armor_bonus=2
-warrior_can_use=true
 priest_can_use=true
+title=shield
+value=10
+warrior_can_use=true
+weight=6
 
 [Scale_Mail]
-title=scale mail armor
+armor_bonus=4
 description=A suit of small steel scales linked together in a flexible plating that provides strong protection from attack.
 item_type=armor
-weight=45
-value=50
-armor_bonus=4
 priest_can_use=true
+title=scale mail armor
+value=50
 warrior_can_use=true
+weight=45
 
 [Magic_Sword]
-title=magic sword
+attack_bonus=3
+damage=1d12+3
 description=A magic sword with a palpable magic aura and an unnaturally sharp blade.
 item_type=weapon
-weight=3
+title=magic sword
 value=15
-damage=1d12+3
-attack_bonus=3
 warrior_can_use=true
+weight=3
 
 [Magic_Wand]
-title=magic wand
+attack_bonus=3
+damage=2d12+3
 description=A palpably magical tapered length of polished ash wood tipped with a glowing red carnelian gem.
 item_type=wand
-weight=0.5
-value=100
-damage=2d12+3
-attack_bonus=3
 mage_can_use=true
+title=magic wand
+value=100
+weight=0.5
+
+[Mana_Potion]
+description=A small, stoppered bottle that contains a pungeant but drinkable blue liquid with a discernable magic aura.
+item_type=consumable
+mage_can_use=true
+priest_can_use=true
+title=health potion
+value=25
+weight=.1
+
+[Gold_Piece]
+description=A small shiny gold coin imprinted with an indistinct bust on one side and a worn state seal on the other.
+item_type=coin
+title=gold piece
+value=1
+weight=0.02
 """
 
     def __init__(self, *argl, **argd):
@@ -254,7 +493,7 @@ mage_can_use=true
         os.remove(temp_ini_config_file)
 
     def setUp(self):
-        self.items_index_obj = items_index(self.equipment_ini_config_obj)
+        self.items_state_obj = items_state(**self.equipment_ini_config_obj.sections)
 
     def test_equipment(self):
         equipment_obj = equipment('Warrior')
@@ -262,20 +501,17 @@ mage_can_use=true
         self.assertFalse(equipment_obj.armor_equipped)
         self.assertFalse(equipment_obj.shield_equipped)
         self.assertFalse(equipment_obj.wand_equipped)
-        equipment_obj.equip_weapon(self.items_index_obj.get('Magic_Sword'))
+        equipment_obj.equip_weapon(self.items_state_obj.get('Magic_Sword'))
         self.assertTrue(equipment_obj.weapon_equipped)
-        equipment_obj.equip_armor(self.items_index_obj.get('Scale_Mail'))
+        equipment_obj.equip_armor(self.items_state_obj.get('Scale_Mail'))
         self.assertTrue(equipment_obj.armor_equipped)
-        equipment_obj.equip_shield(self.items_index_obj.get('Shield'))
+        equipment_obj.equip_shield(self.items_state_obj.get('Shield'))
         self.assertTrue(equipment_obj.shield_equipped)
         with self.assertRaises(internal_exception):
-            equipment_obj.equip_armor(self.items_index_obj.get('Shield'))
-        with self.assertRaises(bad_command_exception):
-            equipment_obj.equip_wand(self.items_index_obj.get('Magic_Wand'))
+            equipment_obj.equip_armor(self.items_state_obj.get('Shield'))
         self.assertEqual(equipment_obj.armor_class, 16)
         self.assertEqual(equipment_obj.attack_bonus, 3)
-        self.assertEqual(equipment_obj.damage.dice, '1d12')
-        self.assertEqual(equipment_obj.damage.modifier, '+3')
+        self.assertEqual(equipment_obj.damage, '1d12+3')
 
 
 class test_ability_scores(unittest.TestCase):
@@ -332,13 +568,13 @@ class test_inventory(unittest.TestCase):
         super().__init__(*argl, **argd)
         _, temp_ini_config_file = tempfile.mkstemp(suffix='.ini')
         temp_ini_config_fh = open(temp_ini_config_file, 'w')
-        temp_ini_config_fh.write(test_item_and_items_index.items_ini_config_text)
+        temp_ini_config_fh.write(test_item_and_items_state.items_ini_config_text)
         temp_ini_config_fh.close()
         self.items_ini_config_obj = iniconfig.IniConfig(temp_ini_config_file)
         os.remove(temp_ini_config_file)
 
     def setUp(self):
-        self.inventory_obj = inventory(self.items_ini_config_obj)
+        self.inventory_obj = inventory(**self.items_ini_config_obj.sections)
 
     def test_inventory_collection_methods(self):
         sword_qty, longsword_obj = self.inventory_obj.get('Longsword')
@@ -383,52 +619,52 @@ class test_inventory(unittest.TestCase):
         self.assertEqual(self.inventory_obj.burden_for_strength_score(3), inventory.Immobilizing)
 
 
-class test_item_and_items_index(unittest.TestCase):
-    __slots__ = 'items_index_obj', 'items_ini_config_obj'
+class test_item_and_items_state(unittest.TestCase):
+    __slots__ = 'items_state_obj', 'items_ini_config_obj'
 
     items_ini_config_text = """
 [Longsword]
-title=longsword
+attack_bonus=0
+damage=1d8
 description=A hefty sword with a long blade, a broad hilt and a leathern grip.
 item_type=weapon
-weight=3
+title=longsword
 value=15
-damage=1d8
-attack_bonus=0
 warrior_can_use=true
+weight=3
 
 [Rapier]
-title=rapier
+attack_bonus=0
+damage=1d8
 description=A slender, sharply pointed blade with a basket hilt.
 item_type=weapon
-weight=2
-value=25
-damage=1d8
-attack_bonus=0
 thief_can_use=true
+title=rapier
+value=25
 warrior_can_use=true
+weight=2
 
 [Mace]
-title=mace
+attack_bonus=0
+damage=1d6
 description=A hefty, blunt instrument with a dully-spiked weighted metal head.
 item_type=weapon
-weight=4
-value=5
-damage=1d6
-attack_bonus=0
 priest_can_use=true
+title=mace
+value=5
 warrior_can_use=true
+weight=4
 
 [Staff]
-title=staff
+attack_bonus=0
+damage=1d6
 description=A balanced pole 6 feet in length with metal-shod ends.
 item_type=weapon
-weight=4
-value=0.2
-damage=1d6
-attack_bonus=0
 mage_can_use=true
+title=staff
+value=0.2
 warrior_can_use=true
+weight=4
 """
 
     def __init__(self, *argl, **argd):
@@ -441,60 +677,59 @@ warrior_can_use=true
         os.remove(temp_ini_config_file)
 
     def setUp(self):
-        self.items_index_obj = items_index(self.items_ini_config_obj)
+        self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
 
     def test_items_values(self):
-        self.assertEqual(self.items_index_obj.get('Longsword').title, 'longsword')
-        self.assertIsInstance(self.items_index_obj.get('Longsword'), weapon)
-        self.assertEqual(self.items_index_obj.get('Longsword').description,
+        self.assertEqual(self.items_state_obj.get('Longsword').title, 'longsword')
+        self.assertIsInstance(self.items_state_obj.get('Longsword'), weapon)
+        self.assertEqual(self.items_state_obj.get('Longsword').description,
                          'A hefty sword with a long blade, a broad hilt and a leathern grip.')
-        self.assertEqual(self.items_index_obj.get('Longsword').weight, 3)
-        self.assertEqual(self.items_index_obj.get('Longsword').value, 15)
-        self.assertEqual(self.items_index_obj.get('Longsword').damage.dice, '1d8')
-        self.assertEqual(self.items_index_obj.get('Longsword').damage.modifier, '+0')
-        self.assertEqual(self.items_index_obj.get('Longsword').attack_bonus, 0)
-        self.assertEqual(self.items_index_obj.get('Longsword').warrior_can_use, True)
+        self.assertEqual(self.items_state_obj.get('Longsword').weight, 3)
+        self.assertEqual(self.items_state_obj.get('Longsword').value, 15)
+        self.assertEqual(self.items_state_obj.get('Longsword').damage, '1d8')
+        self.assertEqual(self.items_state_obj.get('Longsword').attack_bonus, 0)
+        self.assertEqual(self.items_state_obj.get('Longsword').warrior_can_use, True)
 
     def test_usable_by(self):
-        self.assertTrue(self.items_index_obj.get('Longsword').usable_by('Warrior'))
-        self.assertFalse(self.items_index_obj.get('Longsword').usable_by('Thief'))
-        self.assertFalse(self.items_index_obj.get('Longsword').usable_by('Priest'))
-        self.assertFalse(self.items_index_obj.get('Longsword').usable_by('Mage'))
-        self.assertTrue(self.items_index_obj.get('Rapier').usable_by('Warrior'))
-        self.assertTrue(self.items_index_obj.get('Rapier').usable_by('Thief'))
-        self.assertFalse(self.items_index_obj.get('Rapier').usable_by('Priest'))
-        self.assertFalse(self.items_index_obj.get('Rapier').usable_by('Mage'))
-        self.assertTrue(self.items_index_obj.get('Mace').usable_by('Warrior'))
-        self.assertFalse(self.items_index_obj.get('Mace').usable_by('Thief'))
-        self.assertTrue(self.items_index_obj.get('Mace').usable_by('Priest'))
-        self.assertFalse(self.items_index_obj.get('Mace').usable_by('Mage'))
-        self.assertTrue(self.items_index_obj.get('Staff').usable_by('Warrior'))
-        self.assertFalse(self.items_index_obj.get('Staff').usable_by('Thief'))
-        self.assertFalse(self.items_index_obj.get('Staff').usable_by('Priest'))
-        self.assertTrue(self.items_index_obj.get('Staff').usable_by('Mage'))
+        self.assertTrue(self.items_state_obj.get('Longsword').usable_by('Warrior'))
+        self.assertFalse(self.items_state_obj.get('Longsword').usable_by('Thief'))
+        self.assertFalse(self.items_state_obj.get('Longsword').usable_by('Priest'))
+        self.assertFalse(self.items_state_obj.get('Longsword').usable_by('Mage'))
+        self.assertTrue(self.items_state_obj.get('Rapier').usable_by('Warrior'))
+        self.assertTrue(self.items_state_obj.get('Rapier').usable_by('Thief'))
+        self.assertFalse(self.items_state_obj.get('Rapier').usable_by('Priest'))
+        self.assertFalse(self.items_state_obj.get('Rapier').usable_by('Mage'))
+        self.assertTrue(self.items_state_obj.get('Mace').usable_by('Warrior'))
+        self.assertFalse(self.items_state_obj.get('Mace').usable_by('Thief'))
+        self.assertTrue(self.items_state_obj.get('Mace').usable_by('Priest'))
+        self.assertFalse(self.items_state_obj.get('Mace').usable_by('Mage'))
+        self.assertTrue(self.items_state_obj.get('Staff').usable_by('Warrior'))
+        self.assertFalse(self.items_state_obj.get('Staff').usable_by('Thief'))
+        self.assertFalse(self.items_state_obj.get('Staff').usable_by('Priest'))
+        self.assertTrue(self.items_state_obj.get('Staff').usable_by('Mage'))
 
     def test_index_collection_interface(self):
-        self.items_index_obj = items_index(self.items_ini_config_obj)
-        longsword_obj = self.items_index_obj.get('Longsword')
-        self.assertTrue(self.items_index_obj.contains(longsword_obj.internal_name))
-        self.items_index_obj.delete('Longsword')
+        self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
+        longsword_obj = self.items_state_obj.get('Longsword')
+        self.assertTrue(self.items_state_obj.contains(longsword_obj.internal_name))
+        self.items_state_obj.delete('Longsword')
         with self.assertRaises(KeyError):
-            self.items_index_obj.get('Longsword')
+            self.items_state_obj.get('Longsword')
         with self.assertRaises(KeyError):
-            self.items_index_obj.delete('Longsword')
-        self.items_index_obj.set('Longsword', longsword_obj)
-        self.assertTrue(self.items_index_obj.contains(longsword_obj.internal_name))
-        self.assertEqual(set(self.items_index_obj.keys()), {'Longsword', 'Rapier', 'Mace', 'Staff'})
-        rapier_obj = self.items_index_obj.get('Rapier')
-        mace_obj = self.items_index_obj.get('Mace')
-        staff_obj = self.items_index_obj.get('Staff')
-        index_values = tuple(self.items_index_obj.values())
+            self.items_state_obj.delete('Longsword')
+        self.items_state_obj.set('Longsword', longsword_obj)
+        self.assertTrue(self.items_state_obj.contains(longsword_obj.internal_name))
+        self.assertEqual(set(self.items_state_obj.keys()), {'Longsword', 'Rapier', 'Mace', 'Staff'})
+        rapier_obj = self.items_state_obj.get('Rapier')
+        mace_obj = self.items_state_obj.get('Mace')
+        staff_obj = self.items_state_obj.get('Staff')
+        index_values = tuple(self.items_state_obj.values())
         self.assertTrue(all(item_obj in index_values for item_obj in (longsword_obj, rapier_obj, mace_obj, staff_obj)))
-        index_items = tuple(sorted(self.items_index_obj.items(), key=operator.itemgetter(0)))
+        index_items = tuple(sorted(self.items_state_obj.items(), key=operator.itemgetter(0)))
         items_compare_with = (('Longsword', longsword_obj), ('Mace', mace_obj),
                               ('Rapier', rapier_obj), ('Staff', staff_obj))
         self.assertEqual(index_items, items_compare_with)
-        self.assertEqual(self.items_index_obj.size(), 4)
+        self.assertEqual(self.items_state_obj.size(), 4)
 
 
 class test_room_navigator(unittest.TestCase):
@@ -502,30 +737,30 @@ class test_room_navigator(unittest.TestCase):
 
     rooms_ini_config_text = """
 [Room_1,1]
-title=Southwest dungeon room
 description=Entrance room
-north_exit=Room_2,1
 east_exit=Room_1,2
 is_entrance=true
+north_exit=Room_2,1
+title=Southwest dungeon room
 
 [Room_1,2]
-title=Southeast dungeon room
 description=Nondescript room
 north_exit=Room_2,2
+title=Southeast dungeon room
 west_exit=Room_1,1
 
 [Room_2,1]
-title=Northwest dungeon room
 description=Nondescript room
-south_exit=Room_1,1
 east_exit=Room_2,2
+south_exit=Room_1,1
+title=Northwest dungeon room
 
 [Room_2,2]
-title=Northeast dungeon room
 description=Exit room
-west_exit=Room_2,1
-south_exit=Room_1,2
 is_exit=true
+south_exit=Room_1,2
+title=Northeast dungeon room
+west_exit=Room_2,1
 """
 
     def __init__(self, *argl, **argd):
@@ -538,10 +773,10 @@ is_exit=true
         os.remove(temp_ini_config_file)
 
     def setUp(self):
-        self.room_navigator_obj = room_navigator(self.rooms_ini_config_obj)
+        self.room_navigator_obj = dungeon_state(**self.rooms_ini_config_obj.sections)
 
     def test_room_navigator_init(self):
-        self.room_navigator_obj = room_navigator(self.rooms_ini_config_obj)
+        self.room_navigator_obj = dungeon_state(**self.rooms_ini_config_obj.sections)
         self.assertEqual(self.room_navigator_obj.cursor.internal_name, 'Room_1,1')
         self.assertTrue(self.room_navigator_obj.cursor.is_entrance)
         self.assertFalse(self.room_navigator_obj.cursor.is_exit)
@@ -591,13 +826,9 @@ is_exit=true
         self.assertTrue(self.room_navigator_obj.cursor.has_west_exit)
 
     def test_room_navigator_invalid_move(self):
-        room_navigator_obj = room_navigator(self.rooms_ini_config_obj)
+        room_navigator_obj = dungeon_state(**self.rooms_ini_config_obj.sections)
         with self.assertRaises(bad_command_exception):
             room_navigator_obj.move(south=True)
-
-    def test_room_navigator_args_exception(self):
-        with self.assertRaises(internal_exception):
-            dungeon_room(foo='bar')
 
 
 if __name__ == '__main__':

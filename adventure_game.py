@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import abc
 import math
 import random
 import re
@@ -8,8 +9,8 @@ import iniconfig
 
 
 __export__ = ('ability_scores', 'armor', 'bad_command_exception', 'character', 'consumable',
-              'dice_expr_to_randint_closure', 'dungeon_room', 'equipment', 'ini_file_entry', 'internal_exception',
-              'inventory', 'isfloat', 'item', 'items_index', 'room_navigator', 'shield', 'wand', 'weapon')
+              'dice_expr_to_randint_closure', 'room', 'equipment', 'ini_entry', 'internal_exception',
+              'inventory', 'isfloat', 'item', 'items_state', 'dungeon_state', 'shield', 'wand', 'weapon')
 
 
 # Python3's str class doesn't offer a method to test if the string constitutes
@@ -32,26 +33,7 @@ isfloat = lambda strval: bool(_float_re.match(strval))
 # function parses those expressions and returns a closure that executes
 # random.randint appropriately to simulate dice rolls of the dice indicated by
 # the expression.
-dice_expression_re = re.compile(r'([1-9]+)d([1-9][0-9]*)([-+][1-9][0-9]*)?')
-
-
-def dice_expr_to_randint_closure(dice_expression, additional_mod=0):
-    dice_match = dice_expression_re.match(dice_expression)
-    if not dice_match:
-        raise internal_exception(f"unable to parse dice expresson '{dice_expression}' using regular expressions")
-    match_groups = dice_match.groups()
-    number_of_dice = int(match_groups[0])
-    die_number_of_sides = int(match_groups[1])
-    modifier_to_roll = (int(match_groups[2]) if match_groups[2] is not None else 0) + additional_mod
-    returnFunc = lambda: sum(random.randint(1, die_number_of_sides) for _ in range(0, number_of_dice)) + modifier_to_roll
-
-    # Conveniently, a function object allows arbitrary attributes to be set.
-    # It's impossible to read the code inside a closure so I set identifying
-    # attributes on the function object that allow the results to be tested in
-    # test_adventure_game.py
-    setattr(returnFunc, 'dice', f'{number_of_dice}d{die_number_of_sides}')
-    setattr(returnFunc, 'modifier', ('+' if modifier_to_roll >= 0 else '') + str(modifier_to_roll))
-    return returnFunc
+# dice_expression_re = re.compile(r'([1-9]+)d([1-9][0-9]*)([-+][1-9][0-9]*)?')
 
 
 class internal_exception(Exception):
@@ -66,77 +48,171 @@ class bad_command_exception(Exception):
         self.message = message_str
 
 
+class game_state_manager(object):
+    __slots__ = 'character_name', 'character_class', 'character_obj', 'dungeon_state_obj', 'game_has_begun', 'game_has_ended'
+
+    def __init__(self, dungeon_state_initd, items_state_initd, ):
+        self.dungeon_state_obj = dungeon_state()
+        self.game_has_begun = False
+        self.game_has_ended = False
+
+    def set_name(self, name_str):
+        self.character_name = name_str
+        self.incept_character_obj_if_possible()
+
+    def set_class(self, class_str):
+        self.character_class = class_str
+        self.incept_character_obj_if_possible()
+
+    def incept_character_obj_if_possible(self):
+        if getattr(self, 'character_name', None) and getattr(self, 'character_class', None):
+            self.character_obj = character(self.character_name, self.character_class)
+
 
 class command_processor(object):
-    pass
+    __slots__ = 'game_state_obj', 'dispatch_table'
+
+    def __init__(self):
+        self.dispatch_table = {method_name.rsplit('_', maxsplit=1)[0]: getattr(self, method_name) for method_name in
+                                  filter(lambda name: name.endswith('_command', dir(command_processor)))
+                              }
+
+    def process_command(self, natural_language_str):
+        tokens = natural_language_str.lower().strip().split()
+        command = tokens.pop()
+        if command not in self.dispatch_table:
+            return command_error(command, "That is not a recognized command.")
+        dispatch_method(*tokens)
+
+    def attack_command(self):
+        pass
+
+    def begin_command(self):
+        pass
+
+    def buy_command(self):
+        pass
+
+    def close_command(self):
+        pass
+
+    def drop_command(self):
+        pass
+
+    def equip_command(self):
+        pass
+
+    def inspect_command(self):
+        pass
+
+    def move_command(self):
+        pass
+
+    def open_command(self):
+        pass
+
+    def pick_up_command(self):
+        pass
+
+    def reroll_command(self):
+        pass
+
+    def sell_command(self):
+        pass
+
+    def set_name_command(self):
+        pass
+
+    def steal_command(self):
+        pass
+
+    def talk_command(self):
+        pass
+
+    def unlock_command(self):
+        pass
 
 
-class command(object):
-    pass
+class command_error(object):
+    __slots__ = "bad_command", "error_message"
 
-
-class move_command(command):
-    pass
-
-
-class pick_up_command(command):
-    pass
-
-
-class drop_command(command):
-    pass
-
-
-class inspect_command(command):
-    pass
-
-
-class unlock_command(command):
-    pass
-
-
-class open_command(command):
-    pass
-
-
-class close_command(command):
-    pass
-
-
-class attack_command(command):
-    pass
-
-
-class steal_command(command):
-    pass
-
-
-class sell_command(command):
-    pass
-
-
-class talk_command(command):
-    pass
-
-
-class buy_command(command):
-    pass
+    def __init__(self, bad_command_str, error_message_str):
+        self.bad_command = bad_command_str
+        self.error_message = error_message_str
 
 
 class character(object):  # has been tested
-    __slots__ = 'character_class', '_hit_point_maximum', '_current_hit_points', '_ability_scores_obj', '_inventory_obj', '_equipment_obj'
+    __slots__ = ('character_name', 'character_class', 'magic_key_stat', '_hit_point_maximum', '_current_hit_points',
+                 '_mana_point_maximum', '_current_mana_points', '_ability_scores_obj', '_inventory_obj',
+                 '_equipment_obj')
+
+    _base_mana_points = {'Priest': 16, 'Mage': 19}
+
+    _bonus_mana_points = {1: 1, 2: 4, 3: 9, 4: 16}
 
     _hitpoint_base = {'Warrior': 40, 'Priest': 30, 'Thief': 30, 'Mage': 20}
 
-    def __init__(self, character_class_str):
+    def __init__(self, character_name_str, character_class_str, base_hit_points=0, base_mana_points=0,
+                 magic_key_stat=None, strength=0, dexterity=0, constitution=0, intelligence=0, wisdom=0, charisma=0):
         if character_class_str not in {'Warrior', 'Thief', 'Priest', 'Mage'}:
-            raise internal_exception('character class argument {character_class_str} not one of Warrior, Thief, Priest or Mage')
+            raise internal_exception('character class argument {character_class_str} not one of '
+                                     'Warrior, Thief, Priest or Mage')
+        self.character_name = character_name_str
         self.character_class = character_class_str
         self._ability_scores_obj = ability_scores(character_class_str)
+        self._set_up_ability_scores(strength, dexterity, constitution, intelligence, wisdom, charisma)
         self._inventory_obj = inventory()
-        self._ability_scores_obj.roll_stats()
         self._equipment_obj = equipment(character_class_str)
-        self._hit_point_maximum = self._current_hit_points = self._hitpoint_base[character_class_str] + self._ability_scores_obj.constitution_mod * 3
+        self._set_up_hit_points_and_mana_points(base_hit_points, base_mana_points, magic_key_stat)
+
+    def _set_up_ability_scores(self, strength=0, dexterity=0, constitution=0, intelligence=0, wisdom=0, charisma=0):
+        if all((strength, dexterity, constitution, intelligence, wisdom, charisma)):
+            self._ability_scores_obj.strength = strength
+            self._ability_scores_obj.dexterity = dexterity
+            self._ability_scores_obj.constitution = constitution
+            self._ability_scores_obj.intelligence = intelligence
+            self._ability_scores_obj.wisdom = wisdom
+            self._ability_scores_obj.charisma = charisma
+        elif any((strength, dexterity, constitution, intelligence, wisdom, charisma)):
+            raise internal_exception('The constructor for `character` must be supplied with either all of the arguments'
+                                     ' `strength`, `dexterity`, `constitution`, `intelligence`, `wisdom`, and '
+                                     '`charisma` or none of them.')
+        else:
+            self._ability_scores_obj.roll_stats()
+
+    def _set_up_hit_points_and_mana_points(self, base_hit_points, base_mana_points, magic_key_stat):
+        if base_hit_points:
+            self._hit_point_maximum = self._current_hit_points = base_hit_points + self._ability_scores_obj.constitution_mod * 3
+        else:
+            self._hit_point_maximum = self._current_hit_points = self._hitpoint_base[self.character_class] + self._ability_scores_obj.constitution_mod * 3
+        if magic_key_stat:
+            if magic_key_stat not in ('intelligence', 'wisdom', 'charisma'):
+                raise internal_exception("`magic_key_stat` argument '" + magic_key_stat + "' not recognized")
+            self.magic_key_stat = magic_key_stat
+        else:
+            if self.character_class == 'Priest':
+                self.magic_key_stat = 'wisdom'
+            elif self.character_class == 'Mage':
+                self.magic_key_stat = 'intelligence'
+            else:
+                self.magic_key_stat = None
+                self._mana_point_maximum = self._current_mana_points = 0
+                return
+        magic_key_stat_mod = getattr(self, self.magic_key_stat + '_mod')
+        if base_mana_points:
+            mana_points_init_val = base_mana_points
+        elif self.character_class in self._base_mana_points:
+            mana_points_init_val = self._base_mana_points[self.character_class]
+        else:
+            mana_points_init_val = 0
+        if mana_points_init_val:
+            if magic_key_stat_mod > 0:
+                self._mana_point_maximum = self._current_mana_points = (mana_points_init_val
+                                                                        + self._bonus_mana_points[magic_key_stat_mod])
+            else:
+                self._mana_point_maximum = self._current_mana_points = mana_points_init_val
+        else:
+            self._mana_point_maximum = self._current_mana_points = 0
 
     def _attack_or_damage_stat_dependency(self):
         if self.character_class in ('Warrior', 'Priest') or (self.character_class == 'Mage' and self._equipment_obj.weapon_equipped):
@@ -148,7 +224,9 @@ class character(object):  # has been tested
 
     _item_attacking_with = property(lambda self: self._equipment_obj.weapon if not self._equipment_obj.wand_equipped else self._equipment_obj.wand)
 
-    hit_points = property(lambda self: self._current_hit_points, lambda self, value: setattr(self, '_current_hit_points', value))
+    hit_points = property(lambda self: self._current_hit_points)
+
+    mana_points = property(lambda self: self._current_mana_points)
 
     def take_damage(self, damage_value):
         if self._current_hit_points - damage_value < 0:
@@ -161,6 +239,19 @@ class character(object):  # has been tested
             self._current_hit_points = self._hit_point_maximum
         else:
             self._current_hit_points += healing_value
+
+    def attempt_to_spend_mana(self, spent_amount):
+        if self._current_mana_points < spent_amount:
+            return False
+        else:
+            self._current_mana_points -= spent_amount
+            return True
+
+    def regain_mana(self, regained_amount):
+        if self._current_mana_points + regained_amount > self._mana_point_maximum:
+            self._current_mana_points = self._mana_point_maximum
+        else:
+            self._current_mana_points += regained_amount
 
     is_alive = property(lambda self: self._current_hit_points > 0)
 
@@ -186,13 +277,20 @@ class character(object):  # has been tested
         stat_dependency = self._attack_or_damage_stat_dependency()
         item_attacking_with = self._item_attacking_with
         stat_mod = getattr(self._ability_scores_obj, stat_dependency+'_mod')
-        return dice_expr_to_randint_closure('1d20', item_attacking_with.attack_bonus + stat_mod)
+        total_mod = item_attacking_with.attack_bonus + stat_mod
+        mod_str = '+' + str(total_mod) if total_mod > 0 else str(total_mod) if total_mod < 0 else ''
+        return '1d20' + mod_str
 
     @property
     def damage_roll(self):
         stat_dependency = self._attack_or_damage_stat_dependency()
         item_attacking_with = self._item_attacking_with
-        return dice_expr_to_randint_closure(item_attacking_with.damage.dice, int(item_attacking_with.damage.modifier) + getattr(self._ability_scores_obj, stat_dependency+'_mod'))
+        item_damage = item_attacking_with.damage
+        damage_base_dice, damage_mod = item_damage.split('+') if '+' in item_damage else item_damage.split('-') if '-' in item_damage else (item_damage, '0')
+        damage_mod = int(damage_mod)
+        total_damage_mod = damage_mod + getattr(self._ability_scores_obj, stat_dependency+'_mod')
+        damage_str = damage_base_dice + ('+' + str(total_damage_mod) if total_damage_mod > 0 else str(total_damage_mod) if total_damage_mod < 0 else '')
+        return damage_str
 
     # This class keeps its `ability_scores`, `equipment` and `inventory` objects
     # in private attributes, just as a matter of good OOP design. In the cases
@@ -306,33 +404,17 @@ class character(object):  # has been tested
         base_attack_bonus = self._equipment_obj.weapon.attack_bonus if self._equipment_obj.weapon_equipped else self._equipment_obj.wand.attack_bonus
         return base_attack_bonus + getattr(self._ability_scores_obj, stat_dependency + '_mod')
 
-    @property
-    def damage_bonus(self):
-        if not (self._equipment_obj.weapon_equipped or self.character_class == 'Mage' and self._equipment_obj.wand_equipped):
-            raise internal_exception('The character does not have a weapon equipped; no valid value for `damage` can be computed.')
-        stat_dependency = self._attack_or_damage_stat_dependency()
-
-        # I don't use this closure; this is just a quick way of accessing
-        # its parsing logic to combine any terminating '+[1-9][0-9]*'
-        # value that may be on the damage string with the modifier we have
-        # in hand, without having to use the regex here and duplicate
-        # `dice_expr_to_randint_closure()`'s code.
-        if self._equipment_obj.weapon_equipped:
-            return int(self._equipment_obj.weapon.damage.modifier) + getattr(self._ability_scores_obj, stat_dependency + '_mod')
-        else:  # relying on the shield statement at the top of this method, by exclusion, self._equipment_obj.weapon_equipped is True
-            return int(self._equipment_obj.wand.damage.modifier) + getattr(self._ability_scores_obj, stat_dependency + '_mod')
-
 
 class equipment(object):  # has been tested
     __slots__ = 'character_class', 'armor', 'shield', 'weapon', 'wand'
 
-    armor_equipped = property(lambda self: bool(getattr(self, 'armor', None)))
+    armor_equipped = property(lambda self: getattr(self, 'armor', None))
 
-    shield_equipped = property(lambda self: bool(getattr(self, 'shield', None)))
+    shield_equipped = property(lambda self: getattr(self, 'shield', None))
 
-    weapon_equipped = property(lambda self: bool(getattr(self, 'weapon', None)))
+    weapon_equipped = property(lambda self: getattr(self, 'weapon', None))
 
-    wand_equipped = property(lambda self: bool(getattr(self, 'wand', None)))
+    wand_equipped = property(lambda self: getattr(self, 'wand', None))
 
     def __init__(self, character_class, armor_item=None, shield_item=None, weapon_item=None):
         self.character_class = character_class
@@ -343,29 +425,21 @@ class equipment(object):  # has been tested
     def equip_armor(self, item_obj):
         if not isinstance(item_obj, armor):
             raise internal_exception('the method `equip_armor()` only accepts `armor` objects for its argument')
-        if not item_obj.usable_by(self.character_class):
-            raise bad_command_exception('EQUIP', "A {self.character_class} can't wear {item_obj.title} armor.")
         self._equip('armor', item_obj)
 
     def equip_shield(self, item_obj):
         if not isinstance(item_obj, shield):
             raise internal_exception('the method `equip_shield()` only accepts `shield` objects for its argument')
-        if not item_obj.usable_by(self.character_class):
-            raise bad_command_exception('EQUIP', "A {self.character_class} can't use shields.")
         self._equip('shield', item_obj)
 
     def equip_weapon(self, item_obj):
         if not isinstance(item_obj, weapon):
             raise internal_exception('the method `equip_weapon()` only accepts `weapon` objects for its argument')
-        if not item_obj.usable_by(self.character_class):
-            raise bad_command_exception('EQUIP', "A {self.character_class} can't wield a {item_obj.title}.")
         self._equip('weapon', item_obj)
 
     def equip_wand(self, item_obj):
         if not isinstance(item_obj, wand):
             raise internal_exception('the method `equip_wand()` only accepts `wand` objects for its argument')
-        if not item_obj.usable_by(self.character_class):
-            raise bad_command_exception('EQUIP', "A {self.character_class} can't use a wand.")
         self._equip('wand', item_obj)
 
     def _equip(self, equipment_slot, item_obj):
@@ -458,11 +532,12 @@ class ability_scores(object):  # has been tested
             setattr(self, self.weightings[self.character_class][index], results_list[index])
 
 
-class ini_file_entry(object):
+class ini_entry(object):
+
+    inventory_list_value_re = re.compile(r'^\[(([1-9][0-9]*x[A-Z][A-Za-z_]+)(,[1-9][0-9]*x[A-Z][A-Za-z_]+)*)\]$')
 
     def __init__(self, **argd):
-        for key in self.__slots__:
-            value = argd.pop(key, None)
+        for key, value in argd.items():
             if isinstance(value, str):
                 if value.lower() == 'false':
                     value = False
@@ -472,50 +547,191 @@ class ini_file_entry(object):
                     value = int(value)
                 elif isfloat(value):
                     value = float(value)
-                elif dice_expression_re.match(value):
-                    value = dice_expr_to_randint_closure(value)
             setattr(self, key, value)
-        if len(argd.keys()):
-            raise internal_exception('unexpected argument keys received: ' + ', '.join(argd.keys()))
+
+    def _post_init_slots_set_none(self, slots):
+        for key in slots:
+            if not hasattr(self, key):
+                setattr(self, key, None)
+
+    def _process_list_value(self, inventory_value):
+        value_match = self.inventory_list_value_re.match(inventory_value)
+        inner_capture = value_match.groups(1)[0]
+        capture_split = inner_capture.split(',')
+        qty_strval_pairs = tuple((int(item_qty), item_name) for item_qty, item_name in (
+                                    name_x_qty_str.split('x', maxsplit=1) for name_x_qty_str in capture_split)
+                                )
+        return qty_strval_pairs
 
 
-class items_index(object):  # has been tested
-    __slots__ = '_items_objs',
+class creature(ini_entry, character):
+    __slots__ = ('internal_name', 'character_name', 'description', 'character_class', 'species', '_strength',
+                 '_dexterity', '_constitution', '_intelligence', '_wisdom', '_charisma', '_inventory_items',
+                 '_base_hit_points', '_weapon_equipped', '_armor_equipped', '_shield_equipped')
 
-    def __init__(self, ini_config_obj):
-        self._items_objs = dict()
-        for item_internal_name, item_dict in ini_config_obj.sections.items():
-            item_obj = item.subclassing_factory(internal_name=item_internal_name, **item_dict)
-            self._items_objs[item_internal_name] = item_obj
+    def __init__(self, items_state_obj, internal_name, **argd):
+        character_init_argd, ini_entry_init_argd, equipment_argd, inventory_qty_name_pairs = \
+            self._separate_argd_into_different_arg_sets(items_state_obj, internal_name, **argd)
+        ini_entry.__init__(self, internal_name=internal_name, **ini_entry_init_argd)
+        self._post_init_slots_set_none(self.__slots__)
+        character.__init__(self, **character_init_argd)
+        self._init_inventory_and_equipment(items_state_obj, inventory_qty_name_pairs, equipment_argd)
+
+    # Divides the argd passed to __init__ into arguments for
+    # character.__init__, arguments for ini_entry.__init__, arguments to
+    # character.equip_*, and arguments to character.pick_up_item.
+    #
+    # argd is accepted as a ** argument so it's passed by copy rather than by reference.
+    def _separate_argd_into_different_arg_sets(self, items_state_obj, internal_name, **argd):
+        character_init_argd = dict(strength=int(argd.pop('strength')),
+                                   dexterity=int(argd.pop('dexterity')),
+                                   constitution=int(argd.pop('constitution')),
+                                   intelligence=int(argd.pop('intelligence')),
+                                   wisdom=int(argd.pop('wisdom')),
+                                   charisma=int(argd.pop('charisma')),
+                                   base_hit_points=int(argd.pop('base_hit_points')),
+                                   character_name_str=argd.pop('character_name'),
+                                   character_class_str=argd.pop('character_class'),
+                                   base_mana_points=int(argd.pop('base_mana_points', 0)),
+                                   magic_key_stat=argd.pop('magic_key_stat', None))
+        equipment_argd = dict()
+        for ini_key in ('weapon_equipped', 'armor_equipped', 'shield_equipped', 'wand_equipped'):
+            if ini_key not in argd:
+                continue
+            equipment_argd[ini_key] = argd.pop(ini_key)
+        inventory_qty_name_pairs = self._process_list_value(argd.pop('inventory_items'))
+        if any(not items_state_obj.contains(inventory_internal_name)
+               for _, inventory_internal_name in inventory_qty_name_pairs):
+            missing_names = tuple(item_internal_name for _, item_internal_name in inventory_qty_name_pairs
+                                  if not items_state_obj.contains(item_internal_name))
+            pluralizer = 's' if len(missing_names) > 1 else ''
+            raise internal_exception('bad creatures.ini specification for creature ' + internal_name + ': creature '
+                                     'ini config dict `inventory_items` value indicated item' + pluralizer
+                                     + ' not present in `items_state` argument: ' + (', '.join(missing_names)))
+        ini_entry_init_argd = argd
+        return character_init_argd, ini_entry_init_argd, equipment_argd, inventory_qty_name_pairs
+
+    def _init_inventory_and_equipment(self, items_state_obj, inventory_qty_name_pairs, equipment_argd):
+        for item_qty, item_internal_name in inventory_qty_name_pairs:
+            item_obj = items_state_obj.get(item_internal_name)
+            for index in range(0, item_qty):
+                self.pick_up_item(item_obj)
+        for equipment_key, item_internal_name in equipment_argd.items():
+            if not items_state_obj.contains(item_internal_name):
+                raise internal_exception('bad creatures.ini specification for creature ' + self.internal_name + ': items '
+                                         'index object does not contain an item named ' + item_internal_name)
+            item_obj = items_state_obj.get(item_internal_name)
+            if equipment_key == 'weapon_equipped':
+                self.equip_weapon(item_obj)
+            elif equipment_key == 'armor_equipped':
+                self.equip_armor(item_obj)
+            elif equipment_key == 'shield_equipped':
+                self.equip_shield(item_obj)
+            else:  # by exclusion, the value must be 'wand_equipped'
+                self.equip_wand(item_obj)
+
+
+class index(abc.ABC):
+    __slots__ = '_contents',
+
+    __abstractmethods__ = frozenset(('__init__',))
 
     def contains(self, item_internal_name):  # check
-        return any(item_internal_name == contained_item_obj.internal_name for contained_item_obj in self._items_objs.values())
+        return any(item_internal_name == contained_item_obj.internal_name for contained_item_obj in self._contents.values())
 
     def get(self, item_internal_name):  # check
-        return self._items_objs[item_internal_name]
+        return self._contents[item_internal_name]
 
     def set(self, item_internal_name, item_obj):  # check
-        self._items_objs[item_internal_name] = item_obj
+        self._contents[item_internal_name] = item_obj
 
     def delete(self, item_internal_name):  # check
-        del self._items_objs[item_internal_name]
+        del self._contents[item_internal_name]
 
     def keys(self):  # check
-        return self._items_objs.keys()
+        return self._contents.keys()
 
     def values(self):  # check
-        return self._items_objs.values()
+        return self._contents.values()
 
     def items(self):  # check
-        return self._items_objs.items()
+        return self._contents.items()
 
     def size(self):  # check
-        return len(self._items_objs)
+        return len(self._contents)
 
 
-class item(ini_file_entry):  # has been tested
+class items_state(index):  # has been tested
+
+    def __init__(self, **dict_of_dicts):
+        self._contents = dict()
+        for item_internal_name, item_dict in dict_of_dicts.items():
+            item_obj = item.subclassing_factory(internal_name=item_internal_name, **item_dict)
+            self._contents[item_internal_name] = item_obj
+
+
+class items_multi_index(items_state):
+
+    def __init__(self, **argd):
+        super().__init__(**argd)
+
+        # I preload the dict's items() sequence outside of the loop because
+        # the loop alters the dict and I don't want a concurrent update error.
+        contents_items = tuple(self._contents.items())
+        for item_internal_name, item_obj in contents_items:
+            self._contents[item_internal_name] = (1, item_obj)
+
+    def contains(self, item_internal_name):
+        return(any(contained_item_obj.internal_name == item_internal_name for _, contained_item_obj in self._contents.values()))
+
+    def set(self, item_internal_name, item_qty, item_obj):
+        self._contents[item_internal_name] = item_qty, item_obj
+
+    def add_one(self, item_internal_name, item_obj):
+        if self.contains(item_internal_name):
+            self._contents[item_internal_name] = self._contents[item_internal_name][0] + 1, self._contents[item_internal_name][1]
+        else:
+            self._contents[item_internal_name] = 1, item_obj
+
+    def remove_one(self, item_internal_name):
+        if item_internal_name not in self._contents:
+            raise KeyError(item_internal_name)
+        elif self._contents[item_internal_name][0] == 1:
+            del self._contents[item_internal_name]
+        else:
+            self._contents[item_internal_name] = self._contents[item_internal_name][0] - 1, self._contents[item_internal_name][1]
+
+
+class chest(ini_entry, items_multi_index):
+    __slots__ = 'internal_name', 'title', 'description', 'is_locked'
+
+    def __init__(self, item_index_obj, internal_name, *item_objs, **ini_constr_argd):
+        contents_str = ini_constr_argd.pop('contents')
+        ini_entry.__init__(self, internal_name=internal_name, **ini_constr_argd)
+        contents_qtys_names = self._process_list_value(contents_str)
+        contents_qtys_item_objs = tuple((item_qty, item_index_obj.get(item_internal_name)) for item_qty, item_internal_name in contents_qtys_names)
+        items_multi_index.__init__(self)
+        for item_qty, item_obj in contents_qtys_item_objs:
+            self.set(item_obj.internal_name, item_qty, item_obj)
+        self._post_init_slots_set_none(self.__slots__)
+
+
+class creatures_state(index):
+
+    def __init__(self, items_state_obj, **dict_of_dicts):
+        self._contents = dict()
+        for creature_internal_name, creature_dict in dict_of_dicts.items():
+            creature_obj = creature(items_state_obj, internal_name=creature_internal_name, **creature_dict)
+            self.set(creature_obj.internal_name, creature_obj)
+
+
+class item(ini_entry):  # has been tested
     __slots__ = ('internal_name', 'title', 'description', 'weight', 'value', 'damage', 'attack_bonus', 'armor_bonus', 'item_type', 'warrior_can_use',
                  'thief_can_use', 'priest_can_use', 'mage_can_use')
+
+    def __init__(self, **argd):
+        super().__init__(**argd)
+        self._post_init_slots_set_none(self.__slots__)
 
     @classmethod
     def subclassing_factory(self, **item_dict):
@@ -529,6 +745,8 @@ class item(ini_file_entry):  # has been tested
             item_obj = consumable(**item_dict)
         elif item_dict['item_type'] == 'wand':
             item_obj = wand(**item_dict)
+        elif item_dict['item_type'] == 'coin':
+            item_obj = coin(**item_dict)
         return item_obj
 
     def __eq__(self, other):
@@ -547,6 +765,10 @@ class item(ini_file_entry):  # has been tested
 # typing each item allows classes that handle items of specific types, like
 # equipment(), to use isinstance to determine if a valid item has been
 # supplied as an argument.
+class coin(item):
+    pass
+
+
 class weapon(item):
     pass
 
@@ -567,8 +789,7 @@ class wand(item):
     pass
 
 
-class inventory(object):  # has been tested
-    __slots__ = '_items_counted_objs',
+class inventory(items_multi_index):  # has been tested
 
     Light = 0
     Medium = 1
@@ -594,60 +815,13 @@ class inventory(object):  # has been tested
         18: {Light: (0, 100),   Medium: (101, 200), Heavy: (201, 300)}
     }
 
-    def __init__(self, *argl):
-        self._items_counted_objs = dict()
-        if len(argl) == 1 and isinstance(argl[0], iniconfig.IniConfig):
-            for section_name, item_dict in argl[0].sections.items():
-                item_obj = item.subclassing_factory(internal_name=section_name, **item_dict)
-                self.add_one(section_name, item_obj)
-        elif all(isinstance(argval, item) for argval in argl):
-            for argval in argl:
-                self.add_one(argval.internal_name, argval)
-        else:
-            raise internal_exception('inventory constructor got unexpected arguments ' + repr(argl))
-
-    def contains(self, item_internal_name):
-        return(any(contained_item_obj.internal_name == item_internal_name for _, contained_item_obj in self._items_counted_objs.values()))
-
-    def get(self, item_internal_name):
-        return self._items_counted_objs[item_internal_name]
-
-    def set(self, item_internal_name, item_qty, item_obj):
-        self._items_counted_objs[item_internal_name] = item_qty, item_obj
-
-    def add_one(self, item_internal_name, item_obj):
-        if self.contains(item_internal_name):
-            self._items_counted_objs[item_internal_name] = self._items_counted_objs[item_internal_name][0] + 1, self._items_counted_objs[item_internal_name][1]
-        else:
-            self._items_counted_objs[item_internal_name] = 1, item_obj
-
-    def remove_one(self, item_internal_name):
-        if item_internal_name not in self._items_counted_objs:
-            raise KeyError(item_internal_name)
-        elif self._items_counted_objs[item_internal_name][0] == 1:
-            del self._items_counted_objs[item_internal_name]
-        else:
-            self._items_counted_objs[item_internal_name] = self._items_counted_objs[item_internal_name][0] - 1, self._items_counted_objs[item_internal_name][1]
-
-    def delete(self, item_internal_name):
-        del self._items_counted_objs[item_internal_name]
-
-    def keys(self):
-        return self._items_counted_objs.keys()
-
-    def values(self):
-        return self._items_counted_objs.values()
-
-    def items(self):
-        return self._items_counted_objs.items()
-
-    def size(self):
-        return len(self._items_counted_objs)
+    def __init__(self, **dict_of_dicts):
+        super().__init__(**dict_of_dicts)
 
     @property
     def total_weight(self):
         total_weight_val = 0
-        for item_name, (item_count, item_obj) in self._items_counted_objs.items():
+        for item_name, (item_count, item_obj) in self._contents.items():
             if item_obj.weight <= 0:
                 raise internal_exception('item ' + item_obj.internal_name + ' has invalid weight ' + str(item_obj.weight) + ': is <= 0')
             elif item_count <= 0:
@@ -675,7 +849,7 @@ class inventory(object):  # has been tested
             return self.Immobilizing
 
 
-class dungeon_room(ini_file_entry):  # has been tested
+class room(ini_entry):  # has been tested
     __slots__ = 'internal_name', 'title', 'description', 'north_exit', 'west_exit', 'south_exit', 'east_exit', 'occupant', 'item', 'is_entrance', 'is_exit'
 
     @property
@@ -694,18 +868,22 @@ class dungeon_room(ini_file_entry):  # has been tested
     def has_east_exit(self):
         return bool(getattr(self, 'east_exit', False))
 
+    def __init__(self, **argd):
+        super().__init__(**argd)
+        self._post_init_slots_set_none(self.__slots__)
 
-class room_navigator(object):  # has been tested
+
+class dungeon_state(object):  # has been tested
     __slots__ = '_rooms_objs', '_room_cursor'
 
     @property
     def cursor(self):
         return self._rooms_objs[self._room_cursor]
 
-    def __init__(self, ini_config_obj):
+    def __init__(self, **dict_of_dicts):
         self._rooms_objs = dict()
-        for room_internal_name, room_dict in ini_config_obj.sections.items():
-            dungeon_room_obj = dungeon_room(internal_name=room_internal_name, **room_dict)
+        for room_internal_name, room_dict in dict_of_dicts.items():
+            dungeon_room_obj = room(internal_name=room_internal_name, **room_dict)
             if dungeon_room_obj.is_entrance:
                 self._room_cursor = dungeon_room_obj.internal_name
             self._store_room(dungeon_room_obj.internal_name, dungeon_room_obj)
