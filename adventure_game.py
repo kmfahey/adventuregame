@@ -4,13 +4,17 @@ import abc
 import math
 import random
 import re
+import operator
+import functools
 
 import iniconfig
 
 
-__export__ = ('ability_scores', 'armor', 'bad_command_exception', 'character', 'consumable',
-              'dice_expr_to_randint_closure', 'room', 'equipment', 'ini_entry', 'internal_exception',
-              'inventory', 'isfloat', 'item', 'items_state', 'dungeon_state', 'shield', 'wand', 'weapon')
+__export__ = ('ability_scores', 'armor', 'bad_command_exception', 'character', 'chest', 'coin',
+              'command_not_recognized', 'command_processor', 'command_too_many_words', 'consumable', 'creature',
+              'creatures_state', 'rooms_state', 'equipment', 'game_state_manager', 'game_state_message', 'index',
+              'ini_entry', 'internal_exception', 'inventory', 'isfloat', 'item', 'items_multi_index', 'items_state',
+              'room', 'shield', 'wand', 'weapon')
 
 
 # Python3's str class doesn't offer a method to test if the string constitutes
@@ -19,21 +23,6 @@ _float_re = re.compile(r'^[+-]?([0-9]+\.|\.[0-9]+|[0-9]+\.[0-9]+|[0-9]+)$')
 
 isfloat = lambda strval: bool(_float_re.match(strval))
 
-
-# In D&D, the standard notation for dice rolling is of the form
-# [1-9][0-9]*d[1-9]+[0-9]*([+-][1-9][0-9]*)?, where the first number indicates
-# how many dice to roll, the second number is the number of sides of the die
-# to roll, and the optional third number is a positive or negative value to
-# add to the result of the roll to reach the final outcome. As an example,
-# 1d20+3 indicates a roll of one 20-sided die to which 3 should be added.
-#
-# I have used this notation in the items.ini file since it's the simplest
-# way to compactly express weapon damage, and in the attack roll methods
-# to call for a d20 roll (the standard D&D conflict resolution roll). This
-# function parses those expressions and returns a closure that executes
-# random.randint appropriately to simulate dice rolls of the dice indicated by
-# the expression.
-# dice_expression_re = re.compile(r'([1-9]+)d([1-9][0-9]*)([-+][1-9][0-9]*)?')
 
 
 class internal_exception(Exception):
@@ -49,10 +38,15 @@ class bad_command_exception(Exception):
 
 
 class game_state_manager(object):
-    __slots__ = 'character_name', 'character_class', 'character_obj', 'dungeon_state_obj', 'game_has_begun', 'game_has_ended'
+    __slots__ = ('character_name', 'character_class', '_character_obj', '_rooms_state_obj', '_chests_state_obj',
+                 '_items_state_obj', '_creatures_state_obj', '_game_has_begun', '_game_has_ended')
 
-    def __init__(self, dungeon_state_initd, items_state_initd, ):
-        self.dungeon_state_obj = dungeon_state()
+    def __init__(self, rooms_state_argd, creatures_state_argd, chests_state_argd, items_state_argd):
+        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.items_state_obj, **items_state_argd)
+        self.creatures_state_obj = creatures_state(self.items_state_obj, **items_state_argd)
+        self.chests_state_obj = chests_state(self.items_state_obj, **items_state_argd)
+        self.items_state_obj = items_state(**items_state_argd)
+        self.rooms_state_obj = rooms_state()
         self.game_has_begun = False
         self.game_has_ended = False
 
@@ -72,20 +66,47 @@ class game_state_manager(object):
 class command_processor(object):
     __slots__ = 'game_state_obj', 'dispatch_table'
 
+    # In D&D, the standard notation for dice rolling is of the form
+    # [1-9][0-9]*d[1-9]+[0-9]*([+-][1-9][0-9]*)?, where the first number indicates
+    # how many dice to roll, the second number is the number of sides of the die
+    # to roll, and the optional third number is a positive or negative value to
+    # add to the result of the roll to reach the final outcome. As an example,
+    # 1d20+3 indicates a roll of one 20-sided die to which 3 should be added.
+    #
+    # I have used this notation in the items.ini file since it's the simplest
+    # way to compactly express weapon damage, and in the attack roll methods
+    # to call for a d20 roll (the standard D&D conflict resolution roll). This
+    # function parses those expressions and returns a closure that executes
+    # random.randint appropriately to simulate dice rolls of the dice indicated by
+    # the expression.
+    # 
+    # See also the `roll_dice()` method below.
+
+    dice_expression_re = re.compile(r'([1-9]+)d([1-9][0-9]*)([-+][1-9][0-9]*)?')
+
     def __init__(self):
         self.dispatch_table = {method_name.rsplit('_', maxsplit=1)[0]: getattr(self, method_name) for method_name in
                                   filter(lambda name: name.endswith('_command', dir(command_processor)))
                               }
 
-    def process_command(self, natural_language_str):
+    def process(self, natural_language_str):
         tokens = natural_language_str.lower().strip().split()
         command = tokens.pop()
         if command not in self.dispatch_table:
-            return command_error(command, "That is not a recognized command.")
+            return command_not_recognized(command)
         dispatch_method(*tokens)
 
-    def attack_command(self):
-        pass
+    def roll_dice(self, dice_expr):
+        match_obj = self.dice_expression_re.match(dice_expr)
+        if not match_obj:
+            raise internal_exception("invalid dice expression: " + dice_expr)
+        number_of_dice, sidedness_of_dice, modifier_to_roll = match_obj.groups()
+        return (random.randint(1, sidedness_of_dice) for _ in range(0, number_of_dice)) 
+
+    def attack_command(self, *tokens):
+        if len(tokens) > 1:
+            return command_too_many_words(1)
+
 
     def begin_command(self):
         pass
@@ -133,12 +154,42 @@ class command_processor(object):
         pass
 
 
-class command_error(object):
-    __slots__ = "bad_command", "error_message"
+class game_state_message(abc.ABC):
+    __slots__ = "command", "message"
 
-    def __init__(self, bad_command_str, error_message_str):
-        self.bad_command = bad_command_str
-        self.error_message = error_message_str
+    response_message = property(abc.abstractmethod(lambda self: None))
+
+    def __init__(self, command_str, message_str):
+        self.command = command_str
+        self.message = message_str
+
+
+class command_not_recognized(game_state_message):
+    __slots__ = "command",
+
+    response_message = property(lambda self: "Command not recognized")
+
+    def __init__(self, command_str):
+        self.command = command_str
+
+
+class command_too_many_words(game_state_message):
+    __slots__ = "number_expected",
+
+    response_message = property(lambda self: "Command followed by too many words, needed only " + self.number_expected)
+
+    def __init__(self, number_expected_int):
+        self.number_expected = number_expected_int
+
+
+class attack_command_opponent_not_found(game_state_message):
+    __slots__ = "name_given", "opponents_present"
+
+    response_message = property(lambda self: "Command followed by too many words, needed only " + self.number_expected)
+
+    def __init__(self, name_given_str, opponents_present_tuple):
+        self.name_given = name_given_str
+        self.opponents_present = opponents_present_tuple
 
 
 class character(object):  # has been tested
@@ -631,7 +682,7 @@ class creature(ini_entry, character):
                 self.equip_wand(item_obj)
 
 
-class index(abc.ABC):
+class state(abc.ABC):
     __slots__ = '_contents',
 
     __abstractmethods__ = frozenset(('__init__',))
@@ -661,7 +712,7 @@ class index(abc.ABC):
         return len(self._contents)
 
 
-class items_state(index):  # has been tested
+class items_state(state):  # has been tested
 
     def __init__(self, **dict_of_dicts):
         self._contents = dict()
@@ -670,7 +721,17 @@ class items_state(index):  # has been tested
             self._contents[item_internal_name] = item_obj
 
 
-class items_multi_index(items_state):
+class chests_state(items_state):
+    __slots__ = "_contents",
+
+    def __init__(self, items_state_obj, **dict_of_dicts):
+        self._contents = dict()
+        for chest_internal_name, chest_dict in dict_of_dicts.items():
+            chest_obj = chest(items_state_obj, chest_internal_name, **chest_dict)
+            self._contents[chest_internal_name] = chest_obj
+
+
+class items_multi_state(items_state):
 
     def __init__(self, **argd):
         super().__init__(**argd)
@@ -702,21 +763,21 @@ class items_multi_index(items_state):
             self._contents[item_internal_name] = self._contents[item_internal_name][0] - 1, self._contents[item_internal_name][1]
 
 
-class chest(ini_entry, items_multi_index):
+class chest(ini_entry, items_multi_state):
     __slots__ = 'internal_name', 'title', 'description', 'is_locked'
 
-    def __init__(self, item_index_obj, internal_name, *item_objs, **ini_constr_argd):
+    def __init__(self, item_state_obj, internal_name, *item_objs, **ini_constr_argd):
         contents_str = ini_constr_argd.pop('contents')
         ini_entry.__init__(self, internal_name=internal_name, **ini_constr_argd)
         contents_qtys_names = self._process_list_value(contents_str)
-        contents_qtys_item_objs = tuple((item_qty, item_index_obj.get(item_internal_name)) for item_qty, item_internal_name in contents_qtys_names)
-        items_multi_index.__init__(self)
+        contents_qtys_item_objs = tuple((item_qty, item_state_obj.get(item_internal_name)) for item_qty, item_internal_name in contents_qtys_names)
+        items_multi_state.__init__(self)
         for item_qty, item_obj in contents_qtys_item_objs:
             self.set(item_obj.internal_name, item_qty, item_obj)
         self._post_init_slots_set_none(self.__slots__)
 
 
-class creatures_state(index):
+class creatures_state(state):
 
     def __init__(self, items_state_obj, **dict_of_dicts):
         self._contents = dict()
@@ -789,7 +850,7 @@ class wand(item):
     pass
 
 
-class inventory(items_multi_index):  # has been tested
+class inventory(items_multi_state):  # has been tested
 
     Light = 0
     Medium = 1
@@ -873,14 +934,14 @@ class room(ini_entry):  # has been tested
         self._post_init_slots_set_none(self.__slots__)
 
 
-class dungeon_state(object):  # has been tested
-    __slots__ = '_rooms_objs', '_room_cursor'
+class rooms_state(object):  # has been tested
+    __slots__ = '_creatures_state_obj', '_items_state_obj', '_rooms_objs', '_room_cursor'
 
     @property
     def cursor(self):
         return self._rooms_objs[self._room_cursor]
 
-    def __init__(self, **dict_of_dicts):
+    def __init__(self, creatures_state_obj, items_state_obj, **dict_of_dicts):
         self._rooms_objs = dict()
         for room_internal_name, room_dict in dict_of_dicts.items():
             dungeon_room_obj = room(internal_name=room_internal_name, **room_dict)
