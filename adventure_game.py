@@ -38,15 +38,24 @@ class bad_command_exception(Exception):
 
 
 class game_state_manager(object):
-    __slots__ = ('character_name', 'character_class', '_character_obj', '_rooms_state_obj', '_chests_state_obj',
-                 '_items_state_obj', '_creatures_state_obj', '_game_has_begun', '_game_has_ended')
+    __slots__ = ('_character_name', '_character_class', 'character_obj', 'rooms_state_obj', 'chests_state_obj',
+                 'items_state_obj', 'creatures_state_obj', 'game_has_begun', 'game_has_ended')
 
-    def __init__(self, rooms_state_argd, creatures_state_argd, chests_state_argd, items_state_argd):
-        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.items_state_obj, **items_state_argd)
-        self.creatures_state_obj = creatures_state(self.items_state_obj, **items_state_argd)
-        self.chests_state_obj = chests_state(self.items_state_obj, **items_state_argd)
-        self.items_state_obj = items_state(**items_state_argd)
-        self.rooms_state_obj = rooms_state()
+    character_name = property(fget=(lambda self: self._character_name),
+                              fset=(lambda self, val: setattr(self, '_character_name', val)
+                                        or self.incept_character_obj_if_possible()))
+
+    character_class = property(fget=(lambda self: self._character_class),
+                               fset=(lambda self, val: setattr(self, '_character_class', val)
+                                         or self.incept_character_obj_if_possible()))
+
+    def __init__(self, rooms_state_obj, creatures_state_obj, chests_state_obj, items_state_obj):
+        self.items_state_obj = items_state_obj
+        self.chests_state_obj = chests_state_obj
+        self.creatures_state_obj = creatures_state_obj
+        self.rooms_state_obj = rooms_state_obj
+        self._character_name = ''
+        self._character_class = ''
         self.game_has_begun = False
         self.game_has_ended = False
 
@@ -58,7 +67,7 @@ class game_state_manager(object):
         self.character_class = class_str
         self.incept_character_obj_if_possible()
 
-    def incept_character_obj_if_possible(self):
+    def _incept_character_obj_if_possible(self):
         if getattr(self, 'character_name', None) and getattr(self, 'character_class', None):
             self.character_obj = character(self.character_name, self.character_class)
 
@@ -167,7 +176,7 @@ class game_state_message(abc.ABC):
 class command_not_recognized(game_state_message):
     __slots__ = "command",
 
-    response_message = property(lambda self: "Command not recognized")
+    response_message = property(fget=(lambda self: "Command not recognized"))
 
     def __init__(self, command_str):
         self.command = command_str
@@ -176,7 +185,8 @@ class command_not_recognized(game_state_message):
 class command_too_many_words(game_state_message):
     __slots__ = "number_expected",
 
-    response_message = property(lambda self: "Command followed by too many words, needed only " + self.number_expected)
+    response_message = property(fget=(lambda self: "Command followed by too many words, needed only "
+                                                       + self.number_expected))
 
     def __init__(self, number_expected_int):
         self.number_expected = number_expected_int
@@ -185,7 +195,8 @@ class command_too_many_words(game_state_message):
 class attack_command_opponent_not_found(game_state_message):
     __slots__ = "name_given", "opponents_present"
 
-    response_message = property(lambda self: "Command followed by too many words, needed only " + self.number_expected)
+    response_message = property(fget=(lambda self: "Command followed by too many words, needed only "
+                                                   + self.number_expected))
 
     def __init__(self, name_given_str, opponents_present_tuple):
         self.name_given = name_given_str
@@ -273,11 +284,13 @@ class character(object):  # has been tested
         else:  # By exclusion, (`character_class` == 'Mage' and self._equipment_obj.wand_equipped)
             return 'intelligence'
 
-    _item_attacking_with = property(lambda self: self._equipment_obj.weapon if not self._equipment_obj.wand_equipped else self._equipment_obj.wand)
+    _item_attacking_with = property(fget=(lambda self: self._equipment_obj.weapon
+                                                       if not self._equipment_obj.wand_equipped
+                                                       else self._equipment_obj.wand))
 
-    hit_points = property(lambda self: self._current_hit_points)
+    hit_points = property(fget=(lambda self: self._current_hit_points))
 
-    mana_points = property(lambda self: self._current_mana_points)
+    mana_points = property(fget=(lambda self: self._current_mana_points))
 
     def take_damage(self, damage_value):
         if self._current_hit_points - damage_value < 0:
@@ -304,9 +317,9 @@ class character(object):  # has been tested
         else:
             self._current_mana_points += regained_amount
 
-    is_alive = property(lambda self: self._current_hit_points > 0)
+    is_alive = property(fget=(lambda self: self._current_hit_points > 0))
 
-    is_dead = property(lambda self: self._current_hit_points == 0)
+    is_dead = property(fget=(lambda self: self._current_hit_points == 0))
 
     # These two properties are sneaky. When called, they return closures.
     # The result is that the code `character_obj.attack_roll(12)` or
@@ -353,9 +366,11 @@ class character(object):  # has been tested
     # character action management code doesn't need to access, so only a few
     # methods are offered.
 
-    total_weight = property(lambda self: self._inventory_obj.total_weight)
+    total_weight = property(fget=(lambda self: self._inventory_obj.total_weight))
 
-    burden = property(lambda self: self._inventory_obj.burden_for_strength_score(self._ability_scores_obj.strength))
+    burden = property(fget=(lambda self: self._inventory_obj.burden_for_strength_score(
+                                             self._ability_scores_obj.strength
+                                         )))
 
     def pick_up_item(self, item_obj):
         self._inventory_obj.add_one(item_obj.internal_name, item_obj)
@@ -369,47 +384,47 @@ class character(object):  # has been tested
         return list(sorted(self._inventory_obj.values(), key=lambda *argl: argl[0][1].title))
 
     # BEGIN passthrough methods for private _ability_scores_obj
-    strength = property(lambda self: getattr(self._ability_scores_obj, 'strength'))
+    strength = property(fget=(lambda self: getattr(self._ability_scores_obj, 'strength')))
 
-    dexterity = property(lambda self: getattr(self._ability_scores_obj, 'dexterity'))
+    dexterity = property(fget=(lambda self: getattr(self._ability_scores_obj, 'dexterity')))
 
-    constitution = property(lambda self: getattr(self._ability_scores_obj, 'constitution'))
+    constitution = property(fget=(lambda self: getattr(self._ability_scores_obj, 'constitution')))
 
-    intelligence = property(lambda self: getattr(self._ability_scores_obj, 'intelligence'))
+    intelligence = property(fget=(lambda self: getattr(self._ability_scores_obj, 'intelligence')))
 
-    wisdom = property(lambda self: getattr(self._ability_scores_obj, 'wisdom'))
+    wisdom = property(fget=(lambda self: getattr(self._ability_scores_obj, 'wisdom')))
 
-    charisma = property(lambda self: getattr(self._ability_scores_obj, 'charisma'))
+    charisma = property(fget=(lambda self: getattr(self._ability_scores_obj, 'charisma')))
 
-    strength_mod = property(lambda self: self._ability_scores_obj._stat_mod('strength'))
+    strength_mod = property(fget=(lambda self: self._ability_scores_obj._stat_mod('strength')))
 
-    dexterity_mod = property(lambda self: self._ability_scores_obj._stat_mod('dexterity'))
+    dexterity_mod = property(fget=(lambda self: self._ability_scores_obj._stat_mod('dexterity')))
 
-    constitution_mod = property(lambda self: self._ability_scores_obj._stat_mod('constitution'))
+    constitution_mod = property(fget=(lambda self: self._ability_scores_obj._stat_mod('constitution')))
 
-    intelligence_mod = property(lambda self: self._ability_scores_obj._stat_mod('intelligence'))
+    intelligence_mod = property(fget=(lambda self: self._ability_scores_obj._stat_mod('intelligence')))
 
-    wisdom_mod = property(lambda self: self._ability_scores_obj._stat_mod('wisdom'))
+    wisdom_mod = property(fget=(lambda self: self._ability_scores_obj._stat_mod('wisdom')))
 
-    charisma_mod = property(lambda self: self._ability_scores_obj._stat_mod('charisma'))
+    charisma_mod = property(fget=(lambda self: self._ability_scores_obj._stat_mod('charisma')))
     # END passthrough methods for private _ability_scores_obj
 
     # BEGIN passthrough methods for private _equipment_obj
-    armor_equipped = property(lambda self: self._equipment_obj.armor_equipped)
+    armor_equipped = property(fget=(lambda self: self._equipment_obj.armor_equipped))
 
-    shield_equipped = property(lambda self: self._equipment_obj.shield_equipped)
+    shield_equipped = property(fget=(lambda self: self._equipment_obj.shield_equipped))
 
-    weapon_equipped = property(lambda self: self._equipment_obj.weapon_equipped)
+    weapon_equipped = property(fget=(lambda self: self._equipment_obj.weapon_equipped))
 
-    wand_equipped = property(lambda self: self._equipment_obj.wand_equipped)
+    wand_equipped = property(fget=(lambda self: self._equipment_obj.wand_equipped))
 
-    armor = property(lambda self: self._equipment_obj.armor)
+    armor = property(fget=(lambda self: self._equipment_obj.armor))
 
-    shield = property(lambda self: self._equipment_obj.shield)
+    shield = property(fget=(lambda self: self._equipment_obj.shield))
 
-    weapon = property(lambda self: self._equipment_obj.weapon)
+    weapon = property(fget=(lambda self: self._equipment_obj.weapon))
 
-    wand = property(lambda self: self._equipment_obj.wand)
+    wand = property(fget=(lambda self: self._equipment_obj.wand))
 
     def equip_armor(self, item_obj):
         if not self._inventory_obj.contains(item_obj.internal_name):
@@ -459,13 +474,13 @@ class character(object):  # has been tested
 class equipment(object):  # has been tested
     __slots__ = 'character_class', 'armor', 'shield', 'weapon', 'wand'
 
-    armor_equipped = property(lambda self: getattr(self, 'armor', None))
+    armor_equipped = property(fget=(lambda self: getattr(self, 'armor', None)))
 
-    shield_equipped = property(lambda self: getattr(self, 'shield', None))
+    shield_equipped = property(fget=(lambda self: getattr(self, 'shield', None)))
 
-    weapon_equipped = property(lambda self: getattr(self, 'weapon', None))
+    weapon_equipped = property(fget=(lambda self: getattr(self, 'weapon', None)))
 
-    wand_equipped = property(lambda self: getattr(self, 'wand', None))
+    wand_equipped = property(fget=(lambda self: getattr(self, 'wand', None)))
 
     def __init__(self, character_class, armor_item=None, shield_item=None, weapon_item=None):
         self.character_class = character_class
@@ -541,17 +556,17 @@ class ability_scores(object):  # has been tested
         'Mage': ('intelligence', 'dexterity', 'constitution', 'strength', 'wisdom', 'charisma')
     }
 
-    strength_mod = property(lambda self: self._stat_mod('strength'))
+    strength_mod = property(fget=(lambda self: self._stat_mod('strength')))
 
-    dexterity_mod = property(lambda self: self._stat_mod('dexterity'))
+    dexterity_mod = property(fget=(lambda self: self._stat_mod('dexterity')))
 
-    constitution_mod = property(lambda self: self._stat_mod('constitution'))
+    constitution_mod = property(fget=(lambda self: self._stat_mod('constitution')))
 
-    intelligence_mod = property(lambda self: self._stat_mod('intelligence'))
+    intelligence_mod = property(fget=(lambda self: self._stat_mod('intelligence')))
 
-    wisdom_mod = property(lambda self: self._stat_mod('wisdom'))
+    wisdom_mod = property(fget=(lambda self: self._stat_mod('wisdom')))
 
-    charisma_mod = property(lambda self: self._stat_mod('charisma'))
+    charisma_mod = property(fget=(lambda self: self._stat_mod('charisma')))
 
     # In modern D&D, the derived value from an ability score that is relevant
     # to determining outcomes is the 'stat mod' (or 'stat modifier'), which
@@ -564,7 +579,8 @@ class ability_scores(object):  # has been tested
 
     def __init__(self, character_class_str):
         if character_class_str not in self.weightings:
-            raise internal_exception(f"character class {character_class_str} not recognized, should be one of 'Warrior', 'Thief', 'Priest' or 'Mage'")
+            raise internal_exception(f"character class {character_class_str} not recognized, should be one of "
+                                      "'Warrior', 'Thief', 'Priest' or 'Mage'")
         self.character_class = character_class_str
 
     def roll_stats(self):
@@ -911,7 +927,9 @@ class inventory(items_multi_state):  # has been tested
 
 
 class room(ini_entry):  # has been tested
-    __slots__ = 'internal_name', 'title', 'description', 'north_exit', 'west_exit', 'south_exit', 'east_exit', 'occupant', 'item', 'is_entrance', 'is_exit'
+    __slots__ = ('internal_name', 'title', 'description', 'north_exit', 'west_exit', 'south_exit', 'east_exit',
+                 'occupant', 'item', 'is_entrance', 'is_exit', '_chests_state_obj', '_creatures_state_obj',
+                 '_items_state_obj')
 
     @property
     def has_north_exit(self):
@@ -929,25 +947,32 @@ class room(ini_entry):  # has been tested
     def has_east_exit(self):
         return bool(getattr(self, 'east_exit', False))
 
-    def __init__(self, **argd):
+    def __init__(self, creatures_state_obj, chests_state_obj, items_state_obj, **argd):
         super().__init__(**argd)
+        self._chests_state_obj = chests_state_obj
+        self._creatures_state_obj = creatures_state_obj
+        self._items_state_obj = items_state_obj
         self._post_init_slots_set_none(self.__slots__)
 
 
 class rooms_state(object):  # has been tested
-    __slots__ = '_creatures_state_obj', '_items_state_obj', '_rooms_objs', '_room_cursor'
+    __slots__ = '_creatures_state_obj', '_chests_state_obj', '_items_state_obj', '_rooms_objs', '_room_cursor'
 
     @property
     def cursor(self):
         return self._rooms_objs[self._room_cursor]
 
-    def __init__(self, creatures_state_obj, items_state_obj, **dict_of_dicts):
+    def __init__(self, creatures_state_obj, chests_state_obj, items_state_obj, **dict_of_dicts):
         self._rooms_objs = dict()
+        self._creatures_state_obj = creatures_state_obj
+        self._chests_state_obj = chests_state_obj
+        self._items_state_obj = items_state_obj
         for room_internal_name, room_dict in dict_of_dicts.items():
-            dungeon_room_obj = room(internal_name=room_internal_name, **room_dict)
-            if dungeon_room_obj.is_entrance:
-                self._room_cursor = dungeon_room_obj.internal_name
-            self._store_room(dungeon_room_obj.internal_name, dungeon_room_obj)
+            room_obj = room(creatures_state_obj, chests_state_obj, items_state_obj,
+                                    internal_name=room_internal_name, **room_dict)
+            if room_obj.is_entrance:
+                self._room_cursor = room_obj.internal_name
+            self._store_room(room_obj.internal_name, room_obj)
 
     def _store_room(self, room_internal_name, room_obj):
         self._rooms_objs[room_internal_name] = room_obj

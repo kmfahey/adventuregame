@@ -256,6 +256,16 @@ wisdom=12
 """
 
 
+def create_temp_ini_file_and_instance_IniConfig(ini_config_text):
+    _, temp_ini_config_file = tempfile.mkstemp(suffix='.ini')
+    temp_ini_config_fh = open(temp_ini_config_file, 'w')
+    temp_ini_config_fh.write(ini_config_text)
+    temp_ini_config_fh.close()
+    ini_config_obj = iniconfig.IniConfig(temp_ini_config_file)
+    os.remove(temp_ini_config_file)
+    return ini_config_obj
+
+
 class test_isfloat(unittest.TestCase):
 
     def test_isfloat(self):
@@ -271,25 +281,40 @@ class test_isfloat(unittest.TestCase):
 
 
 class test_game_state_manager(unittest.TestCase):
-    pass
+
+    def __init__(self, *argl, **argd):
+        super().__init__(*argl, **argd)
+        self.chests_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
+        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
+        self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
+        self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
+
+    def setUp(self):
+        self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
+        self.chests_state_obj = chests_state(self.items_state_obj, **self.chests_ini_config_obj.sections)
+        self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
+        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.chests_state_obj, self.items_state_obj, **self.rooms_ini_config_obj.sections)
+        self.games_state_manager_obj = game_state_manager(self.rooms_state_obj, self.creatures_state_obj, self.chests_state_obj, self.items_state_obj)
+
+    def test_game_state_manager(self):
+        self.assertFalse(self.games_state_manager_obj.game_has_begun)
+        self.assertFalse(self.games_state_manager_obj.game_has_ended)
+        self.assertEqual(self.games_state_manager_obj.character_name, '')
+        self.assertEqual(self.games_state_manager_obj.character_class, '')
+        self.assertIs(getattr(self.games_state_manager_obj, 'character_obj', None), None)
+        self.games_state_manager_obj.character_name = 'Kaeva'
+        self.games_state_manager_obj.character_class = 'Priest'
+        self.assertEqual(self.games_state_manager_obj.character_name, 'Kaeva')
+        self.assertEqual(self.games_state_manager_obj.character_class, 'Priest')
+        self.assertIsNot(getattr(self.games_state_manager_obj, 'character_obj', None), None)
 
 
 class test_chest(unittest.TestCase):
 
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
-        _, temp_ini_config_file = tempfile.mkstemp(suffix='.ini')
-        temp_ini_config_fh = open(temp_ini_config_file, 'w')
-        temp_ini_config_fh.write(Chests_Ini_Config_Text)
-        temp_ini_config_fh.close()
-        self.chests_ini_config_obj = iniconfig.IniConfig(temp_ini_config_file)
-        os.remove(temp_ini_config_file)
-        _, temp_ini_config_file = tempfile.mkstemp(suffix='.ini')
-        temp_ini_config_fh = open(temp_ini_config_file, 'w')
-        temp_ini_config_fh.write(Items_Ini_Config_Text)
-        temp_ini_config_fh.close()
-        self.items_ini_config_obj = iniconfig.IniConfig(temp_ini_config_file)
-        os.remove(temp_ini_config_file)
+        self.chests_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
+        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
@@ -317,12 +342,7 @@ class test_character(unittest.TestCase):
 
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
-        _, temp_ini_config_file = tempfile.mkstemp(suffix='.ini')
-        temp_ini_config_fh = open(temp_ini_config_file, 'w')
-        temp_ini_config_fh.write(Items_Ini_Config_Text)
-        temp_ini_config_fh.close()
-        self.items_ini_config_obj = iniconfig.IniConfig(temp_ini_config_file)
-        os.remove(temp_ini_config_file)
+        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
@@ -457,18 +477,8 @@ class test_creature(unittest.TestCase):
 
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
-        _, temp_ini_config_file = tempfile.mkstemp(suffix='.ini')
-        temp_ini_config_fh = open(temp_ini_config_file, 'w')
-        temp_ini_config_fh.write(Items_Ini_Config_Text)
-        temp_ini_config_fh.close()
-        self.items_ini_config_obj = iniconfig.IniConfig(temp_ini_config_file)
-        os.remove(temp_ini_config_file)
-        _, temp_ini_config_file = tempfile.mkstemp(suffix='.ini')
-        temp_ini_config_fh = open(temp_ini_config_file, 'w')
-        temp_ini_config_fh.write(Creatures_Ini_Config_Text)
-        temp_ini_config_fh.close()
-        self.creatures_ini_config_obj = iniconfig.IniConfig(temp_ini_config_file)
-        os.remove(temp_ini_config_file)
+        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
+        self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
@@ -511,12 +521,7 @@ class test_equipment(unittest.TestCase):
 
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
-        _, temp_ini_config_file = tempfile.mkstemp(suffix='.ini')
-        temp_ini_config_fh = open(temp_ini_config_file, 'w')
-        temp_ini_config_fh.write(Items_Ini_Config_Text)
-        temp_ini_config_fh.close()
-        self.items_ini_config_obj = iniconfig.IniConfig(temp_ini_config_file)
-        os.remove(temp_ini_config_file)
+        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
@@ -591,12 +596,7 @@ class test_inventory(unittest.TestCase):
 
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
-        _, temp_ini_config_file = tempfile.mkstemp(suffix='.ini')
-        temp_ini_config_fh = open(temp_ini_config_file, 'w')
-        temp_ini_config_fh.write(Items_Ini_Config_Text)
-        temp_ini_config_fh.close()
-        self.items_ini_config_obj = iniconfig.IniConfig(temp_ini_config_file)
-        os.remove(temp_ini_config_file)
+        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
 
     def setUp(self):
         self.inventory_obj = inventory(**self.items_ini_config_obj.sections)
@@ -673,12 +673,7 @@ class test_item_and_items_state(unittest.TestCase):
 
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
-        _, temp_ini_config_file = tempfile.mkstemp(suffix='.ini')
-        temp_ini_config_fh = open(temp_ini_config_file, 'w')
-        temp_ini_config_fh.write(Items_Ini_Config_Text)
-        temp_ini_config_fh.close()
-        self.items_ini_config_obj = iniconfig.IniConfig(temp_ini_config_file)
-        os.remove(temp_ini_config_file)
+        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
@@ -759,30 +754,17 @@ class test_item_and_items_state(unittest.TestCase):
 
 class test_rooms_state_obj(unittest.TestCase):
     def __init__(self, *argl, **argd):
-        _, temp_ini_config_file = tempfile.mkstemp(suffix='.ini')
-        temp_ini_config_fh = open(temp_ini_config_file, 'w')
-        temp_ini_config_fh.write(Creatures_Ini_Config_Text)
-        temp_ini_config_fh.close()
-        self.creatures_ini_config_obj = iniconfig.IniConfig(temp_ini_config_file)
-        os.remove(temp_ini_config_file)
-        _, temp_ini_config_file = tempfile.mkstemp(suffix='.ini')
-        temp_ini_config_fh = open(temp_ini_config_file, 'w')
-        temp_ini_config_fh.write(Rooms_Ini_Config_Text)
-        temp_ini_config_fh.close()
-        self.rooms_ini_config_obj = iniconfig.IniConfig(temp_ini_config_file)
-        os.remove(temp_ini_config_file)
-        _, temp_ini_config_file = tempfile.mkstemp(suffix='.ini')
-        temp_ini_config_fh = open(temp_ini_config_file, 'w')
-        temp_ini_config_fh.write(Items_Ini_Config_Text)
-        temp_ini_config_fh.close()
-        self.items_ini_config_obj = iniconfig.IniConfig(temp_ini_config_file)
-        os.remove(temp_ini_config_file)
         super().__init__(*argl, **argd)
+        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
+        self.chests_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
+        self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
+        self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
+        self.chests_state_obj = chests_state(self.items_state_obj, **self.chests_ini_config_obj.sections)
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
-        self.rooms_state_obj = rooms_state(self.items_state_obj, self.creatures_state_obj, **self.rooms_ini_config_obj.sections)
+        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.chests_state_obj, self.items_state_obj, **self.rooms_ini_config_obj.sections)
 
     def test_rooms_state_obj_init(self):
         self.assertEqual(self.rooms_state_obj.cursor.internal_name, 'Room_1,1')
