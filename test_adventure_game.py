@@ -6,6 +6,7 @@ import os
 import tempfile
 import unittest
 import tokenize
+import pprint
 
 import iniconfig
 
@@ -188,6 +189,9 @@ east_exit=Room_1,2
 is_entrance=true
 north_exit=Room_2,1
 title=Southwest dungeon room
+occupant_here=Kobold_Trysk
+container_here=Wooden_Chest_1
+items_here=[1xMana_Potion,2xHealth_Potion]
 
 [Room_1,2]
 description=Nondescript room
@@ -207,7 +211,6 @@ is_exit=true
 south_exit=Room_1,2
 title=Northeast dungeon room
 west_exit=Room_2,1
-occupant=Kobold_Trysk
 """
 
 Chests_Ini_Config_Text = """
@@ -227,12 +230,14 @@ character_class=Thief
 character_name=Trysk
 charisma=8
 constitution=10
+description_dead=This diminuitive draconic humanoid is recently slain.
 description=This diminuitive draconic humanoid is dressed in leather armor and has a short sword at its hip. It eyes you warily.
 dexterity=13
 intelligence=10
 inventory_items=[1xShort_Sword,1xSmall_Leather_Armor,30xGold_Piece,1xHealth_Potion]
 species=Kobold
 strength=9
+title=kobold
 weapon_equipped=Short_Sword
 wisdom=9
 
@@ -244,6 +249,7 @@ character_class=Thief
 character_name=Ardren
 charisma=18
 constitution=15
+description_dead=This dead half-elf is dressed in breeches but shirtless. He is recently slain and has the pallor of death.
 description=Stripped to the waist and inscribed with dragon chest tattoos, this half-elf is clearly a sorcerer.
 dexterity=16
 intelligence=10
@@ -251,6 +257,7 @@ inventory_items=[2xMana_Potion,1xDagger,10xGold_Piece]
 magic_key_stat=charisma
 species=human
 strength=8
+title=sorcerer
 weapon_equipped=Dagger
 wisdom=12
 """
@@ -280,62 +287,150 @@ class test_isfloat(unittest.TestCase):
         self.assertFalse(isfloat('-'))
 
 
-class test_game_state_manager(unittest.TestCase):
+class test_game_state(unittest.TestCase):
 
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
-        self.chests_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
+        self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
         self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
         self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
         self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
-        self.chests_state_obj = chests_state(self.items_state_obj, **self.chests_ini_config_obj.sections)
+        self.containers_state_obj = containers_state(self.items_state_obj, **self.containers_ini_config_obj.sections)
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
-        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.chests_state_obj, self.items_state_obj, **self.rooms_ini_config_obj.sections)
-        self.games_state_manager_obj = game_state_manager(self.rooms_state_obj, self.creatures_state_obj, self.chests_state_obj, self.items_state_obj)
+        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.items_state_obj, **self.rooms_ini_config_obj.sections)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj, self.items_state_obj)
 
-    def test_game_state_manager(self):
-        self.assertFalse(self.games_state_manager_obj.game_has_begun)
-        self.assertFalse(self.games_state_manager_obj.game_has_ended)
-        self.assertEqual(self.games_state_manager_obj.character_name, '')
-        self.assertEqual(self.games_state_manager_obj.character_class, '')
-        self.assertIs(getattr(self.games_state_manager_obj, 'character_obj', None), None)
-        self.games_state_manager_obj.character_name = 'Kaeva'
-        self.games_state_manager_obj.character_class = 'Priest'
-        self.assertEqual(self.games_state_manager_obj.character_name, 'Kaeva')
-        self.assertEqual(self.games_state_manager_obj.character_class, 'Priest')
-        self.assertIsNot(getattr(self.games_state_manager_obj, 'character_obj', None), None)
+    def test_game_state(self):
+        self.assertFalse(self.game_state_obj.game_has_begun)
+        self.assertFalse(self.game_state_obj.game_has_ended)
+        self.assertEqual(self.game_state_obj.character_name, '')
+        self.assertEqual(self.game_state_obj.character_class, '')
+        self.assertIs(getattr(self.game_state_obj, 'character_obj', None), None)
+        self.game_state_obj.character_name = 'Kaeva'
+        self.game_state_obj.character_class = 'Priest'
+        self.assertEqual(self.game_state_obj.character_name, 'Kaeva')
+        self.assertEqual(self.game_state_obj.character_class, 'Priest')
+        self.assertIsNot(getattr(self.game_state_obj, 'character', None), None)
 
 
-class test_chest(unittest.TestCase):
+class test_command_processor_attack_vs_be_attacked_by(unittest.TestCase):
 
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
-        self.chests_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
+        self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
+        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
+        self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
+        self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
+
+    def setUp(self):
+        self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
+        self.containers_state_obj = containers_state(self.items_state_obj, **self.containers_ini_config_obj.sections)
+        self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
+        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.items_state_obj,
+                                           **self.rooms_ini_config_obj.sections)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
+                                                          self.containers_state_obj, self.items_state_obj)
+        self.command_processor_obj = command_processor(self.game_state_obj)
+        self.game_state_obj.character_name = "Niath"
+        self.game_state_obj.character_class = "Warrior"
+        self.game_state_obj.character.pick_up_item(self.items_state_obj.get("Longsword"))
+        self.game_state_obj.character.pick_up_item(self.items_state_obj.get("Studded_Leather"))
+        self.game_state_obj.character.pick_up_item(self.items_state_obj.get("Shield"))
+        self.game_state_obj.character.equip_weapon(self.items_state_obj.get("Longsword"))
+        self.game_state_obj.character.equip_armor(self.items_state_obj.get("Studded_Leather"))
+        self.game_state_obj.character.equip_shield(self.items_state_obj.get("Shield"))
+
+    def test_attack_bad_usages(self):
+        result = self.command_processor_obj.process("attack kobold thief")
+        self.assertIsInstance(result[0], command_too_many_words)
+        self.assertEqual(result[0].number_expected, 1)
+        self.assertEqual(result[0].message, 'Command followed by too many words, needed only 1.')
+        result = self.command_processor_obj.process("attack sorcerer")
+        self.assertIsInstance(result[0], attack_command_opponent_not_found)
+        self.assertEqual(result[0].creature_title_given, 'sorcerer')
+        self.assertEqual(result[0].opponent_present, 'kobold')
+        self.assertEqual(result[0].message, "This room doesn't have a sorcerer; but there is a kobold.")
+        self.game_state_obj.rooms_state.cursor.occupant_here = None
+        result = self.command_processor_obj.process("attack sorcerer")
+        self.assertIsInstance(result[0], attack_command_opponent_not_found)
+        self.assertEqual(result[0].creature_title_given, 'sorcerer')
+        self.assertIs(result[0].opponent_present, '')
+        self.assertEqual(result[0].message, "This room doesn't have a sorcerer; nobody is here.")
+
+    def test_attack_vs_be_attacked_by_and_character_death(self):
+        results = tuple()
+        while not len(results) or not isinstance(results[-1], attack_command_foe_death):
+            self.setUp()
+            results = self.command_processor_obj.process("attack kobold")
+            while not (isinstance(results[-1], be_attacked_by_command_character_death) or isinstance(results[-1], attack_command_foe_death)):
+                results += self.command_processor_obj.process("attack kobold")
+            for index in range(0, len(results)):
+                command_results_obj = results[index]
+                if isinstance(command_results_obj, attack_command_attack_hit):
+                    self.assertEqual(results[index].creature_title, 'kobold')
+                    self.assertTrue(isinstance(results[index].damage_done, int))
+                    self.assertRegex(results[index].message, 'Your attack on the kobold hit! You did [1-9][0-9]* damage.( The kobold turns to attack!)?')
+                elif isinstance(command_results_obj, attack_command_attack_missed):
+                    self.assertEqual(results[index].creature_title, 'kobold')
+                    self.assertEqual(results[index].message, 'Your attack on the kobold missed. It turns to attack!')
+                elif isinstance(command_results_obj, be_attacked_by_command_attacked_and_not_hit):
+                    self.assertEqual(results[index].creature_title, 'kobold')
+                    self.assertEqual(results[index].message, 'The kobold attacks! Their attack misses.')
+                elif isinstance(command_results_obj, be_attacked_by_command_attacked_and_hit):
+                    self.assertEqual(results[index].creature_title, 'kobold')
+                    self.assertTrue(isinstance(results[index].damage_done, int))
+                    self.assertTrue(isinstance(results[index].hit_points_left, int))
+                    self.assertRegex(results[index].message, 'The kobold attacks! Their attack hits. They did [1-9][0-9]* damage! You have [1-9][0-9]* hit points left.')
+                elif isinstance(command_results_obj, attack_command_foe_death):
+                    self.assertEqual(results[index].creature_title, 'kobold')
+                    self.assertRegex(results[index].message, 'The kobold is slain.')
+                elif isinstance(command_results_obj, be_attacked_command_character_death):
+                    self.assertRegex(results[index].message, 'You have died!')
+            results_str_join = ' '.join(command_results_obj.__class__.__name__ for command_results_obj in results)
+            self.assertRegex(results_str_join, '(attack_command_attack_(hit|missed) be_attacked_by_command_attacked_and_(n'
+                                               'ot_)?hit)+ (attack_command_attack_hit attack_command_foe_death|be_attacked'
+                                               '_command_character_death)')
+        self.assertIsInstance(self.game_state_obj.rooms_state.cursor.container_here, corpse)
+        corpse_belonging_list = sorted(self.game_state_obj.rooms_state.cursor.container_here.items(), key=operator.itemgetter(0))
+        gold_piece_obj = self.game_state_obj.items_state.get("Gold_Piece")
+        health_potion_obj = self.game_state_obj.items_state.get("Health_Potion")
+        short_sword_obj = self.game_state_obj.items_state.get("Short_Sword")
+        small_leather_armor_obj = self.game_state_obj.items_state.get("Small_Leather_Armor")
+        expected_list = [('Gold_Piece', (30, gold_piece_obj)), ('Health_Potion', (1, health_potion_obj)),
+                         ('Short_Sword', (1, short_sword_obj)), ('Small_Leather_Armor', (1, small_leather_armor_obj))]
+        self.assertEqual(corpse_belonging_list, expected_list)
+
+
+class test_container(unittest.TestCase):
+
+    def __init__(self, *argl, **argd):
+        super().__init__(*argl, **argd)
+        self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
         self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
-        self.chests_state_obj = chests_state(self.items_state_obj, **self.chests_ini_config_obj.sections)
+        self.containers_state_obj = containers_state(self.items_state_obj, **self.containers_ini_config_obj.sections)
 
-    def test_chest(self):
-        chest_obj = self.chests_state_obj.get("Wooden_Chest_1")
-        self.assertEqual(chest_obj.internal_name, "Wooden_Chest_1")
-        self.assertEqual(chest_obj.title, "wooden chest")
-        self.assertEqual(chest_obj.description, "This small, serviceable chest is made of wooden slat bounds within an iron framing, and features a sturdy-looking lock.")
-        self.assertEqual(chest_obj.is_locked, True)
-        self.assertTrue(chest_obj.contains("Gold_Piece"))
-        self.assertTrue(chest_obj.contains("Warhammer"))
-        self.assertTrue(chest_obj.contains("Mana_Potion"))
-        potion_qty, mana_potion_obj = chest_obj.get("Mana_Potion")
+    def test_container(self):
+        container_obj = self.containers_state_obj.get("Wooden_Chest_1")
+        self.assertEqual(container_obj.internal_name, "Wooden_Chest_1")
+        self.assertEqual(container_obj.title, "wooden chest")
+        self.assertEqual(container_obj.description, "This small, serviceable chest is made of wooden slat bounds within an iron framing, and features a sturdy-looking lock.")
+        self.assertEqual(container_obj.is_locked, True)
+        self.assertTrue(container_obj.contains("Gold_Piece"))
+        self.assertTrue(container_obj.contains("Warhammer"))
+        self.assertTrue(container_obj.contains("Mana_Potion"))
+        potion_qty, mana_potion_obj = container_obj.get("Mana_Potion")
         self.assertIsInstance(mana_potion_obj, consumable)
         self.assertEqual(potion_qty, 1)
-        chest_obj.delete("Mana_Potion")
-        self.assertFalse(chest_obj.contains("Mana_Potion"))
-        chest_obj.set("Mana_Potion", potion_qty, mana_potion_obj)
-        self.assertTrue(chest_obj.contains("Mana_Potion"))
+        container_obj.delete("Mana_Potion")
+        self.assertFalse(container_obj.contains("Mana_Potion"))
+        container_obj.set("Mana_Potion", potion_qty, mana_potion_obj)
+        self.assertTrue(container_obj.contains("Mana_Potion"))
 
 
 class test_character(unittest.TestCase):
@@ -514,7 +609,14 @@ class test_creature(unittest.TestCase):
         self.assertEqual(sorcerer_obj.magic_key_stat, "charisma")
         self.assertEqual(sorcerer_obj.mana_points, 36)
 
-
+    def test_convert_to_corpse(self):
+        kobold_obj = self.creatures_state_obj.get("Kobold_Trysk")
+        kobold_corpse_obj = kobold_obj.convert_to_corpse()
+        self.assertEqual(kobold_corpse_obj.description, kobold_obj.description_dead)
+        self.assertEqual(kobold_corpse_obj.title, f"{kobold_obj.title}_corpse")
+        self.assertEqual(kobold_corpse_obj.internal_name, kobold_obj.internal_name)
+        for item_internal_name, (item_qty, item_obj) in kobold_obj.inventory.items():
+            self.assertEqual(kobold_corpse_obj.get(item_internal_name), (item_qty, item_obj))
 
 
 class test_equipment(unittest.TestCase):
@@ -756,17 +858,17 @@ class test_rooms_state_obj(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
-        self.chests_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
+        self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
         self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
         self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
-        self.chests_state_obj = chests_state(self.items_state_obj, **self.chests_ini_config_obj.sections)
+        self.containers_state_obj = containers_state(self.items_state_obj, **self.containers_ini_config_obj.sections)
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
-        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.chests_state_obj, self.items_state_obj, **self.rooms_ini_config_obj.sections)
+        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.items_state_obj, **self.rooms_ini_config_obj.sections)
 
-    def test_rooms_state_obj_init(self):
+    def test_rooms_state_init(self):
         self.assertEqual(self.rooms_state_obj.cursor.internal_name, 'Room_1,1')
         self.assertTrue(self.rooms_state_obj.cursor.is_entrance)
         self.assertFalse(self.rooms_state_obj.cursor.is_exit)
@@ -778,7 +880,7 @@ class test_rooms_state_obj(unittest.TestCase):
         self.assertFalse(self.rooms_state_obj.cursor.has_west_exit)
         self.rooms_state_obj.move(north=True)
 
-    def test_rooms_state_obj_move_east(self):
+    def test_rooms_state_move_east(self):
         self.rooms_state_obj.move(east=True)
         self.assertEqual(self.rooms_state_obj.cursor.internal_name, 'Room_1,2')
         self.assertFalse(self.rooms_state_obj.cursor.is_entrance)
@@ -790,7 +892,7 @@ class test_rooms_state_obj(unittest.TestCase):
         self.assertFalse(self.rooms_state_obj.cursor.has_south_exit)
         self.assertTrue(self.rooms_state_obj.cursor.has_west_exit)
 
-    def test_rooms_state_obj_move_north(self):
+    def test_rooms_state_move_north(self):
         self.rooms_state_obj.move(north=True)
         self.assertEqual(self.rooms_state_obj.cursor.internal_name, 'Room_2,1')
         self.assertFalse(self.rooms_state_obj.cursor.is_entrance)
@@ -802,7 +904,7 @@ class test_rooms_state_obj(unittest.TestCase):
         self.assertTrue(self.rooms_state_obj.cursor.has_south_exit)
         self.assertFalse(self.rooms_state_obj.cursor.has_west_exit)
 
-    def test_rooms_state_obj_move_north_and_east(self):
+    def test_rooms_state_move_north_and_east(self):
         self.rooms_state_obj.move(north=True)
         self.rooms_state_obj.move(east=True)
         self.assertEqual(self.rooms_state_obj.cursor.internal_name, 'Room_2,2')
@@ -815,9 +917,20 @@ class test_rooms_state_obj(unittest.TestCase):
         self.assertTrue(self.rooms_state_obj.cursor.has_south_exit)
         self.assertTrue(self.rooms_state_obj.cursor.has_west_exit)
 
-    def test_rooms_state_obj_invalid_move(self):
+    def test_rooms_state_invalid_move(self):
         with self.assertRaises(bad_command_exception):
             self.rooms_state_obj.move(south=True)
+
+    def test_rooms_state_room_items_container_occupant_here(self):
+        kobold_obj = self.creatures_state_obj.get("Kobold_Trysk")
+        wooden_chest_obj = self.containers_state_obj.get("Wooden_Chest_1")
+        mana_potion_obj = self.items_state_obj.get("Mana_Potion")
+        health_potion_obj = self.items_state_obj.get("Health_Potion")
+        room_obj = self.rooms_state_obj.cursor
+        self.assertEqual(room_obj.occupant_here, kobold_obj)
+        self.assertEqual(room_obj.container_here, wooden_chest_obj)
+        self.assertEqual(room_obj.items_here.get("Mana_Potion"), (1, mana_potion_obj))
+        self.assertEqual(room_obj.items_here.get("Health_Potion"), (2, health_potion_obj))
 
 
 if __name__ == '__main__':
