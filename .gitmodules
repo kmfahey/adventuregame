@@ -1,0 +1,3 @@
+[submodule "adventuregame"]
+	path = adventuregame
+	url = https://github.com/kmfahey/adventuregame
