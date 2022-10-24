@@ -1,0 +1,381 @@
+#!/usr/bin/python
+
+import abc
+import math
+import random
+import re
+import operator
+import functools
+import operator
+
+import iniconfig
+
+from .commandreturns import *
+from .gameelements import *
+from .collections import *
+from .utility import *
+
+__name__ = 'adventuregame.commandprocessor'
+
+
+class command_processor(object):
+    __slots__ = 'game_state', 'dispatch_table'
+
+    # In D&D, the standard notation for dice rolling is of the form
+    # [1-9][0-9]*d[1-9]+[0-9]*([+-][1-9][0-9]*)?, where the first number indicates
+    # how many dice to roll, the second number is the number of sides of the die
+    # to roll, and the optional third number is a positive or negative value to
+    # add to the result of the roll to reach the final outcome. As an example,
+    # 1d20+3 indicates a roll of one 20-sided die to which 3 should be added.
+    #
+    # I have used this notation in the items.ini file since it's the simplest
+    # way to compactly express weapon damage, and in the attack roll methods
+    # to call for a d20 roll (the standard D&D conflict resolution roll). This
+    # function parses those expressions and returns a closure that executes
+    # random.randint appropriately to simulate dice rolls of the dice indicated by
+    # the expression.
+    # 
+    # See also the `_roll_dice()` method below.
+
+    dice_expression_re = re.compile(r'([1-9]+)d([1-9][0-9]*)([-+][1-9][0-9]*)?')
+
+    # All return values from *_command methods in this class are
+    # tuples. Every *_command method returns one or more *_command_*
+    # objects, reflecting a sequence of changes in game state. (For
+    # example, an ATTACK action that doesn't kill the foe will prompt
+    # the foe to attack. The foe's attack might lead to the character's
+    # death. So the return value might be a `attack_command_attack_hit`
+    # object, a `be_attacked_by_command_attacked_and_hit` object, and a
+    # `be_attacked_by_command_character_death` object, each bearing a message in its
+    # `message` property. The code which handles the result of the
+    # ATTACK action knows it's receiving a tuple and will iterate through the
+    # result objects and display each one's message to the player in turn.
+
+    def __init__(self, game_state_obj):
+        self.dispatch_table = {method_name.rsplit('_', maxsplit=1)[0]: getattr(self, method_name) for method_name in
+                                  filter(lambda name: name.endswith('_command'), dir(command_processor))
+                              }
+        self.game_state = game_state_obj
+
+    def process(self, natural_language_str):
+        tokens = natural_language_str.lower().strip().split()
+        command = tokens.pop(0)
+        if command == 'look' and len(tokens):
+            command += f'_{tokens.pop(0)}'
+        if command not in self.dispatch_table:
+            return command_not_recognized(command),
+        return self.dispatch_table[command](*tokens)
+
+    def _roll_dice(self, dice_expr):
+        match_obj = self.dice_expression_re.match(dice_expr)
+        if not match_obj:
+            raise internal_exception('invalid dice expression: ' + dice_expr)
+        number_of_dice, sidedness_of_dice, modifier_to_roll = map(int, match_obj.groups())
+        return sum(random.randint(1, sidedness_of_dice) for _ in range(0, number_of_dice)) + modifier_to_roll
+
+    def attack_command(self, *tokens):
+        creature_title_token = ' '.join(tokens)
+        if not self.game_state.rooms_state.cursor.creature_here:
+            return attack_command_opponent_not_found(creature_title_token),
+        elif self.game_state.rooms_state.cursor.creature_here.title.lower() != creature_title_token:
+            return attack_command_opponent_not_found(creature_title_token, self.game_state.rooms_state.cursor.creature_here.title),
+        creature_obj = self.game_state.rooms_state.cursor.creature_here
+        attack_roll_dice_expr = self.game_state.character.attack_roll
+        damage_roll_dice_expr = self.game_state.character.damage_roll
+        attack_result = self._roll_dice(attack_roll_dice_expr)
+        if attack_result < creature_obj.armor_class:
+            attack_missed_result = attack_command_attack_missed(creature_obj.title)
+            be_attacked_by_result = self._be_attacked_by_command(creature_obj)
+            return (attack_missed_result,) + be_attacked_by_result
+        else:
+            damage_result = self._roll_dice(damage_roll_dice_expr)
+            creature_obj.take_damage(damage_result)
+            if creature_obj.hit_points == 0:
+                corpse_obj = creature_obj.convert_to_corpse()
+                self.game_state.rooms_state.cursor.container_here = corpse_obj
+                self.game_state.rooms_state.cursor.creature_here = None
+                return attack_command_attack_hit(creature_obj.title, damage_result, True), attack_command_foe_death(creature_obj.title),
+            else:
+                attack_hit_result = attack_command_attack_hit(creature_obj.title, damage_result, False)
+                be_attacked_by_result = self._be_attacked_by_command(creature_obj)
+                return (attack_hit_result,) + be_attacked_by_result
+
+    def _be_attacked_by_command(self, creature_obj):
+        attack_roll_dice_expr = creature_obj.attack_roll
+        damage_roll_dice_expr = creature_obj.damage_roll
+        attack_result = self._roll_dice(attack_roll_dice_expr)
+        if attack_result < self.game_state.character.armor_class:
+            return be_attacked_by_command_attacked_and_not_hit(creature_obj.title),
+        else:
+            damage_done = self._roll_dice(damage_roll_dice_expr)
+            self.game_state.character.take_damage(damage_done)
+            if self.game_state.character.is_dead:
+                return be_attacked_by_command_attacked_and_hit(creature_obj.title, damage_done, 0), be_attacked_by_command_character_death(),
+            else:
+                return be_attacked_by_command_attacked_and_hit(creature_obj.title, damage_done, self.game_state.character.hit_points),
+
+    def close_command(self):
+        pass
+
+    def drop_command(self):
+        pass
+
+    def equip_command(self):
+        pass
+
+    def look_at_command(self, *tokens):
+        return self.inspect_command(*tokens)
+
+    def inspect_command(self, *tokens):
+        entity_title_token = ' '.join(tokens)
+        creature_here_obj = self.game_state.rooms_state.cursor.creature_here
+        container_here_obj = self.game_state.rooms_state.cursor.container_here
+        if creature_here_obj is not None and creature_here_obj.title == entity_title_token.lower():
+            return inspect_command_found_creature_here(creature_here_obj.description),
+        elif container_here_obj is not None and container_here_obj.title == entity_title_token.lower():
+            return inspect_command_found_container_here(container_here_obj),
+        else:
+            for item_name, (item_qty, item_obj) in self.game_state.rooms_state.cursor.items_here.items():
+                if item_obj.title == entity_title_token:
+                    return inspect_command_found_item_or_items_here(item_obj.description, item_qty),
+            return inspect_command_found_nothing(entity_title_token),
+
+    def move_command(self):
+        pass
+
+    def open_command(self):
+        pass
+
+    def pick_up_command(self):
+        pass
+
+    def reroll_command(self):
+        pass
+
+    def sell_command(self):
+        pass
+
+    def set_name_command(self):
+        pass
+
+    # Both PUT and TAKE have the same preprocessing challenges, so I refactored
+    # their logic into a shared private preprocessing method.
+    def _parse_item_joinword_container_natlang(self, command, joinword, *tokens):
+        container_obj = self.game_state.rooms_state.cursor.container_here
+
+        if command.lower() == 'put':
+            if container_obj.container_type == 'chest':
+                joinword = 'IN'
+            else:
+                joinword = 'ON'
+
+        command, joinword = command.lower(), joinword.lower()
+        tokens = list(tokens)
+
+        # Whatever the user wrote, it doesn't contain the joinword, which is a required token.
+        if joinword not in tokens or tokens.index(joinword) == 0 or tokens.index(joinword) == len(tokens) - 1:
+            return command_bad_syntax(command.upper(), f'<item name> {joinword.upper()} <container name>',
+                                                       f'<number> <item name> {joinword.upper()} <container name>'),
+
+        # The first token is a digital number, great.
+        if digit_re.match(tokens[0]):
+            amount = int(tokens.pop(0))
+
+        # The first token is a lexical number, so I convert it.
+        elif lexical_number_in_1_99_re.match(tokens[0]):
+            amount = lexical_number_to_digits(tokens.pop(0))
+
+        # The first token is an indirect article, which would mean '1'.
+        elif tokens[0] == 'a':
+            joinword_index = tokens.index(joinword)
+
+            # The term before the joinword, which is the item title, is
+            # plural. The sentence is ungrammatical, so I return an error.
+            if tokens[joinword_index - 1].endswith('s'):
+                return (take_command_quantity_unclear(),) if command == 'take' else (put_command_quantity_unclear(),)
+            amount = 1
+            del tokens[0]
+
+        # No other indication was given, so the amount will have to be
+        # determined later; either the total amount found in the container
+        # (for TAKE) or the total amount in the inventory (for PUT)
+        else:
+            amount = math.nan
+
+        # I form up the item_title and container_title, but I'm not done testing them.
+        joinword_index = tokens.index(joinword)
+        item_title = ' '.join(tokens[0:joinword_index])
+        container_title = ' '.join(tokens[joinword_index+1:])
+
+        # The item_title begins with a direct article.
+        if item_title.startswith('the ') or item_title.startswith('the') and len(item_title) == 3:
+
+            # The title is of the form, 'the gold coins', which means the
+            # amount intended is the total amount available-- either the total
+            # amount in the container (for TAKE) or the total amount in the
+            # character's inventory (for PUT). That will be dertermined later,
+            # so NaN is used as a signal value to be replaced when possible.
+            if item_title.endswith('s'):
+                amount = math.nan
+                item_title = item_title[:-1]
+            item_title = item_title[4:]
+
+            # `item_title` is *just* 'the'. The sentence is ungrammatical, so
+            # I return a syntax error.
+            if not item_title:
+                return command_bad_syntax(command.upper(), f'<item name> {joinword.upper()} <container name>',
+                                                           f'<number> <item name> {joinword.upper()} <container name>'),
+
+        if item_title.endswith('s'):
+            if amount == 1:
+
+                # The `item_title` ends in a plural, but an amount > 1 was
+                # specified. That's an ungrammatical sentence, so I return a
+                # syntax error.
+                return command_bad_syntax(command.upper(), f'<item name> {joinword.upper()} <container name>',
+                                                           f'<number> <item name> {joinword.upper()} <container name>'),
+
+            # The title is plural and `amount` is > 1. I strip the
+            # pluralizing 's' off to get the correct item title.
+            item_title = item_title[:-1]
+
+        if container_title.startswith('the ') or container_title.startswith('the') and len(container_title) == 3:
+
+            # The container term begins with a direct article and ends with a
+            # pluralizing 's'. That's invalid, no container in the dungeon is
+            # found in grouping of more than one, so I return a syntax error.
+            if container_title.endswith('s'):
+                return command_bad_syntax(command.upper(), f'<item name> {joinword.upper()} <container name>',
+                                                           f'<number> <item name> {joinword.upper()} <container name>'),
+
+            container_title = container_title[4:]
+            if not container_title:
+
+                # Improbably, the item title is *just* 'the'. That's an
+                # ungrammatical sentence, so I return a syntax error.
+                return command_bad_syntax(command.upper(), f'<item name> {joinword.upper()} <container name>',
+                                                           f'<number> <item name> {joinword.upper()} <container name>'),
+
+        if container_obj is None:
+
+            # There is no container in this room, so no TAKE command can be
+            # correct. I return an error.
+            return various_commands_container_not_found(container_title),  # tested
+        elif not container_title == container_obj.title:
+
+            # The container name specified doesn't match the name of the
+            # container in this room, so I return an error.
+            return various_commands_container_not_found(container_title, container_obj.title),  # tested
+
+        return amount, item_title, container_title, container_obj
+
+
+    # This is a very hairy method on account of how much natural language
+    # processing it has to do to account for all the permutations on how
+    # a user writes TAKE item FROM container.
+    def take_command(self, *tokens):
+        results = self._parse_item_joinword_container_natlang('TAKE', 'FROM', *tokens)
+
+        if len(results) == 1 and isinstance(results[0], game_state_message):
+            return results
+        else:
+            # len(results) == 4 and isinstance(results[0], int) and isinstance(results[1], str)
+            #     and isinstance(results[2], str) and isinstance(results[3], container)
+            take_amount, item_title, container_title, container_obj = results
+
+        # The following loop iterates over all the items in the container. I
+        # use a while loop so it's possible for the search to fall off the end
+        # of the loop. If that code is reached, the specified item isn't in
+        # this container.
+        container_here_contents = list(container_obj.items())
+        index = 0
+        while index < len(container_here_contents):
+            item_internal_name, (item_qty, item_obj) = container_here_contents[index]
+            
+            # This isn't the item specified.
+            if item_obj.title != item_title:
+                index += 1
+                continue
+
+            if take_amount is math.nan:
+                # This *is* the item, but the command didn't specify the
+                # quantity, so I set `take_amount` to the quantity in the
+                # container.
+                take_amount = item_qty
+
+            if take_amount > item_qty:
+
+                # The amount specified is more than how much is in the
+                # container, so I return an error.
+                return take_command_trying_to_take_more_than_is_present(container_title, container_obj.container_type, item_title, take_amount, item_qty),  # tested
+            elif take_amount == 1:
+
+                # We have a match. One item is remove from the container and
+                # added to the character's inventory; and a success return
+                # object is returned.
+                container_obj.remove_one(item_internal_name)
+                self.game_state.character.pick_up_item(item_obj)
+                return take_command_item_or_items_taken(container_title, item_title, take_amount),
+            else:
+
+                # We have a match.
+                if take_amount == item_qty:
+
+                    # The amount specified is how much is here, so I delete
+                    # the item from the container.
+                    container_obj.delete(item_internal_name)
+                else:
+
+                    # There's more in the container than was specified, so I
+                    # set the amount in the container to the amount that was
+                    # there minus the amount being taken.
+                    container_obj.set(item_internal_name, item_qty - take_amount, item_obj)
+
+                # The character's inventory is updated with the items taken,
+                # and a success object is returned.
+                self.game_state.character.pick_up_item(item_obj, qty=take_amount)
+                return take_command_item_or_items_taken(container_title, item_title, take_amount),
+
+            # The loop didn't find the item on this path, so I increment the
+            # index and try again.
+            index += 1
+
+        # The loop completed without finding the item, so it isn't present in
+        # the container. I return an error.
+        return take_command_item_not_found_in_container(container_title, take_amount, container_obj.container_type, item_title),  # tested
+
+    def put_command(self, *tokens):
+        results = self._parse_item_joinword_container_natlang('PUT', 'IN|ON', *tokens)
+
+        if len(results) == 1 and isinstance(results[0], game_state_message):
+            return results
+        else:
+            # len(results) == 4 and isinstance(results[0], int) and isinstance(results[1], str)
+            #     and isinstance(results[2], str) and isinstance(results[3], container)
+            put_amount, item_title, container_title, container_obj = results
+            
+        inventory_list = tuple(filter(lambda pair: pair[1].title == item_title, self.game_state.character.list_items()))
+        if len(inventory_list) == 1:
+            amount_possessed, item_obj = inventory_list[0]
+        else:
+            return put_command_item_not_in_inventory(item_title, put_amount),
+        if container_obj.contains(item_obj.internal_name):
+            amount_in_container, _ = container_obj.get(item_obj.internal_name)
+        else:
+            amount_in_container = 0
+        if put_amount > amount_possessed:
+            return put_command_trying_to_put_more_than_you_have(item_title, amount_possessed),
+        elif put_amount is math.nan:
+            put_amount = amount_possessed
+        else:
+            amount_possessed -= put_amount
+        self.game_state.character.drop_item(item_obj, qty=put_amount)
+        container_obj.set(item_obj.internal_name, amount_in_container + put_amount, item_obj)
+        return put_command_amount_put(item_title, container_title, container_obj.container_type, put_amount, amount_possessed),
+
+
+    def unlock_command(self):
+        pass
+
+
+
