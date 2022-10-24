@@ -3,7 +3,6 @@
 import math
 import re
 
-from .collections import *
 from .commandreturns import *
 from .gameelements import *
 from .utility import *
@@ -39,13 +38,15 @@ class command_processor(object):
 
     def process(self, natural_language_str):
         tokens = natural_language_str.strip().split()
-        command = tokens.pop(0)
-        if command.lower() == 'look' and len(tokens) and tokens[0].lower() == 'at':
-            command = command.lower() + '_' + tokens.pop(0).lower()
-        elif command.lower() == 'set' and len(tokens) and (tokens[0].lower() == 'name' or tokens[0].lower() == 'class'):
-            command = command.lower() + '_' + tokens.pop(0).lower()
+        command = tokens.pop(0).lower()
+        if command == 'look' and len(tokens) and tokens[0].lower() == 'at':
+            command = command + '_' + tokens.pop(0).lower()
+        elif command == 'set' and len(tokens) and (tokens[0].lower() == 'name' or tokens[0].lower() == 'class'):
+            command = command + '_' + tokens.pop(0).lower()
             if len(tokens) and tokens[0] == 'to':
                 tokens.pop(0)
+        elif command == "i'm" and len(tokens) and tokens[0].lower() == 'satisfied':
+            command = tokens.pop(0).lower()
         if command not in ('set_name', 'set_class'):
             tokens = tuple(map(str.lower, tokens))
         if command not in self.dispatch_table:
@@ -125,14 +126,27 @@ class command_processor(object):
     def open_command(self):
         pass
 
-    def pick_up_command(self):
+    def pick_up_command(self, *tokens):
         pass
 
-    def i_m_satisfied_command(self):
-        pass
+    def satisfied_command(self, *tokens):
+        if len(tokens):
+            return command_bad_syntax('SATISFIED', f''),
+        self.game_state.game_has_begun = True
+        return satisfied_command_game_begins(),
 
-    def reroll_command(self):
-        pass
+    def reroll_command(self, *tokens):
+        if len(tokens):
+            return command_bad_syntax('REROLL', f''),
+        self.game_state.character.ability_scores.roll_stats()
+        return set_name_or_class_command_display_rolled_stats(
+                   strength_int=self.game_state.character.strength,
+                   dexterity_int=self.game_state.character.dexterity,
+                   constitution_int=self.game_state.character.constitution,
+                   intelligence_int=self.game_state.character.intelligence,
+                   wisdom_int=self.game_state.character.wisdom,
+                   charisma_int=self.game_state.character.charisma),
+        
 
     # Concerning both set_name_command() and set_class_command() below it:
     #
@@ -146,8 +160,6 @@ class command_processor(object):
     # reroll, so the return tuple includes a prompt to do so.
 
     def set_name_command(self, *tokens):
-        if tokens[0].lower() == 'to':
-            tokens = tokens[1:]
         name_parts_tests = list(map(bool, map(self.valid_name_re.match, tokens)))
         name_was_none = self.game_state.character_name is None
         if False in name_parts_tests:
@@ -174,8 +186,6 @@ class command_processor(object):
                 return set_name_command_name_set(self.game_state.character_name),
 
     def set_class_command(self, *tokens):
-        if tokens[0].lower() == 'to':
-            tokens = tokens[1:]
         if len(tokens) > 1:
             return command_too_many_words(1),
         elif not self.valid_class_re.match(tokens[0]):
@@ -213,8 +223,14 @@ class command_processor(object):
 
         # Whatever the user wrote, it doesn't contain the joinword, which is a required token.
         if joinword not in tokens or tokens.index(joinword) == 0 or tokens.index(joinword) == len(tokens) - 1:
-            return command_bad_syntax(command.upper(), f'<item name> {joinword.upper()} <container name>',
-                                                       f'<number> <item name> {joinword.upper()} <container name>'),
+            if command == 'take':
+                return command_bad_syntax(command.upper(), f'<item name> {joinword.upper()} <container name>',
+                                                           f'<number> <item name> {joinword.upper()} <container name>'),
+            else:
+                return command_bad_syntax(command.upper(), f'<item name> IN <chest name>',
+                                                           f'<number> <item name> IN <chest name>',
+                                                           f'<item name> ON <corpse name>',
+                                                           f'<number> <item name> ON <corpse name>'),
 
         # The first token is a digital number, great.
         if digit_re.match(tokens[0]):

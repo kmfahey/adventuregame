@@ -3,7 +3,6 @@
 import abc
 import math
 
-from .collections import *
 from .gameelements import *
 from .utility import *
 
@@ -32,54 +31,16 @@ class command_not_recognized(game_state_message):
 
 
 class command_bad_syntax(game_state_message):
-    __slots__ = 'command', 'proper_syntax'
+    __slots__ = 'command', 'proper_syntax_options'
 
     @property
     def message(self):
-        proper_syntax_options_str = ''
-        for option_str in self.proper_syntax_options:
-            if proper_syntax_options_str:
-                proper_syntax_options_str += ' or '
-            proper_syntax_options_str += f"'{option_str}'"
-        return f'{self.command.upper()} command: bad syntax. Should be {proper_syntax_options_str}.'
+        proper_syntax_options_str = "'%s'" % ("' or '".join(self.command.upper() + (' ' + option_str if option_str else '') for option_str in self.proper_syntax_options))
+        return f"{self.command.upper()} command: bad syntax. Should be {proper_syntax_options_str}."
 
     def __init__(self, command_str, *proper_syntax_strs):
         self.command = command_str
         self.proper_syntax_options = proper_syntax_strs
-
-
-class command_too_many_words(game_state_message):
-    __slots__ = 'number_expected',
-
-    message = property(fget=(lambda self: f'Command followed by too many words, needed only {self.number_expected}.'))
-
-    def __init__(self, number_expected_int):
-        self.number_expected = number_expected_int
-
-
-class attack_command_opponent_not_found(game_state_message):
-    __slots__ = 'creature_title_given', 'opponent_present'
-
-    @property
-    def message(self):
-        if self.opponent_present:
-            return f"This room doesn't have a {self.creature_title_given}; but there is a {self.opponent_present}."
-        else:
-            return f"This room doesn't have a {self.creature_title_given}; nobody is here."
-
-    def __init__(self, creature_title_given_str, opponent_present_str=''):
-        self.creature_title_given = creature_title_given_str
-        self.opponent_present = opponent_present_str
-
-
-class attack_command_attack_missed(game_state_message):
-    __slots__ = 'creature_title',
-
-    message = property(fget=(lambda self: f'Your attack on the {self.creature_title} missed. '
-                                                   'It turns to attack!'))
-
-    def __init__(self, creature_title_str):
-        self.creature_title = creature_title_str
 
 
 class attack_command_attack_hit(game_state_message):
@@ -99,6 +60,16 @@ class attack_command_attack_hit(game_state_message):
         self.creature_slain = creature_slain_bool
 
 
+class attack_command_attack_missed(game_state_message):
+    __slots__ = 'creature_title',
+
+    message = property(fget=(lambda self: f'Your attack on the {self.creature_title} missed. '
+                                                   'It turns to attack!'))
+
+    def __init__(self, creature_title_str):
+        self.creature_title = creature_title_str
+
+
 class attack_command_foe_death(game_state_message):
     __slots__ = 'creature_title',
 
@@ -110,13 +81,19 @@ class attack_command_foe_death(game_state_message):
         self.creature_title = creature_title_str
 
 
-class be_attacked_by_command_attacked_and_not_hit(game_state_message):
-    __slots__ = 'creature_title',
+class attack_command_opponent_not_found(game_state_message):
+    __slots__ = 'creature_title_given', 'opponent_present'
 
-    message = property(fget=(lambda self: (f'The {self.creature_title} attacks! Their attack misses.')))
+    @property
+    def message(self):
+        if self.opponent_present:
+            return f"This room doesn't have a {self.creature_title_given}; but there is a {self.opponent_present}."
+        else:
+            return f"This room doesn't have a {self.creature_title_given}; nobody is here."
 
-    def __init__(self, creature_title_str):
-        self.creature_title = creature_title_str
+    def __init__(self, creature_title_given_str, opponent_present_str=''):
+        self.creature_title_given = creature_title_given_str
+        self.opponent_present = opponent_present_str
 
 
 class be_attacked_by_command_attacked_and_hit(game_state_message):
@@ -132,92 +109,21 @@ class be_attacked_by_command_attacked_and_hit(game_state_message):
         self.hit_points_left = hit_points_left_int
 
 
+class be_attacked_by_command_attacked_and_not_hit(game_state_message):
+    __slots__ = 'creature_title',
+
+    message = property(fget=(lambda self: (f'The {self.creature_title} attacks! Their attack misses.')))
+
+    def __init__(self, creature_title_str):
+        self.creature_title = creature_title_str
+
+
 class be_attacked_by_command_character_death(game_state_message):
 
     message = property(fget=lambda self: 'You have died!')
 
     def __init__(self):
         pass
-
-
-class set_name_or_class_command_display_rolled_stats(game_state_message):
-    __slots__ = 'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'
-
-    @property
-    def message(self):
-        return (f'Your ability scores are Strength {self.strength}, Dexterity {self.dexterity}, Constitution '
-                f'{self.constitution}, Intelligence {self.intelligence}, Wisdom {self.wisdom}, Charisma {self.charisma}'
-                '.\nAre you satisfied with these scores or would you like to reroll?')
-
-    def __init__(self, strength_int, dexterity_int, constitution_int, intelligence_int, wisdom_int, charisma_int):
-        self.strength = strength_int
-        self.dexterity = dexterity_int
-        self.constitution = constitution_int
-        self.intelligence = intelligence_int
-        self.wisdom = wisdom_int
-        self.charisma = charisma_int
-
-
-class set_name_command_name_set(game_state_message):
-    __slots__ = 'name',
-
-    message = property(fget=lambda self: f"Your name, '{self.name}', has been set.")
-
-    def __init__(self, name_str):
-        self.name = name_str
-
-
-class set_name_command_invalid_part(game_state_message):
-    __slots__ = 'name_part',
-
-    message = property(fget=lambda self: f'The name {self.name_part} is invalid; must be a capital letter followed by'
-                                          ' lowercase letters.')
-
-    def __init__(self, name_part_str):
-        self.name_part = name_part_str
-
-
-class set_class_command_class_set(game_state_message):
-    __slots__ = 'class_str',
-
-    message = property(fget=lambda self: f'Your class, {self.class_str}, has been set.')
-
-    def __init__(self, class_str):
-        self.class_str = class_str
-
-
-class set_class_command_invalid_class(game_state_message):
-    __slots__ = 'bad_class',
-
-    message = property(fget=lambda self: f"'{self.bad_class}' is not a valid class choice. Please choose Warrior, "
-                                          'Thief, Mage, or Priest.')
-
-    def __init__(self, bad_class_str):
-        self.bad_class = bad_class_str
-
-
-class inspect_command_found_nothing(game_state_message):
-    __slots__ = 'entity_title',
-
-    message = property(fget=lambda self: f'You see no {entity_title} here.')
-
-    def __init__(self, entity_title_str):
-        self.entity_title = entity_title_str
-
-
-class inspect_command_found_item_or_items_here(game_state_message):
-    __slots__ = 'item_description', 'item_qty'
-
-    @property
-    def message(self):
-        if self.item_qty > 1:
-            return f'{self.item_description}. You see {self.item_qty} here.'
-        else:
-            return self.item_description
-
-    def __init__(self, item_description_str, item_qty_int):
-        self.item_description = item_description_str
-        self.item_qty = item_qty_int
 
 
 class inspect_command_found_container_here(game_state_message):
@@ -292,25 +198,28 @@ class inspect_command_found_creature_here(game_state_message):
         self.creature_description = creature_description_str
 
 
-class take_command_quantity_unclear(game_state_message):
+class inspect_command_found_item_or_items_here(game_state_message):
+    __slots__ = 'item_description', 'item_qty'
 
-    message = property(fget=lambda self: 'Amount to take unclear. How many do you want?')
+    @property
+    def message(self):
+        if self.item_qty > 1:
+            return f'{self.item_description}. You see {self.item_qty} here.'
+        else:
+            return self.item_description
 
-    def __init__(self):
-        pass
+    def __init__(self, item_description_str, item_qty_int):
+        self.item_description = item_description_str
+        self.item_qty = item_qty_int
 
 
-class take_command_trying_to_take_more_than_is_present(game_state_message):
-    __slots__ = 'container_title', 'container_type', 'item_title', 'amount_attempted', 'amount_present'
+class inspect_command_found_nothing(game_state_message):
+    __slots__ = 'entity_title',
 
-    message = property(fget=lambda self: f"You can't take {self.amount_attempted} {self.item_title}s from the {self.container_title}. Only {self.amount_present} is there.")
+    message = property(fget=lambda self: f'You see no {entity_title} here.')
 
-    def __init__(self, container_title_str, container_type_str, item_title_str, amount_attempted_int, amount_present_int):
-        self.container_title = container_title_str
-        self.container_type = container_type_str
-        self.item_title = item_title_str
-        self.amount_attempted = amount_attempted_int
-        self.amount_present = amount_present_int
+    def __init__(self, entity_title_str):
+        self.entity_title = entity_title_str
 
 
 class put_command_amount_put(game_state_message):
@@ -341,27 +250,6 @@ class put_command_amount_put(game_state_message):
         self.amount_left = amount_left_int
 
 
-class put_command_trying_to_put_more_than_you_have(game_state_message):
-    __slots__ = 'item_title', 'amount_present'
-
-    @property
-    def message(self):
-        pluralizer = 's' if self.amount_present > 1 else ''
-        return f'You only have {self.amount_present} {self.item_title}{pluralizer} in your inventory.'
-
-    def __init__(self, item_title_str, amount_present_int):
-        self.item_title = item_title_str
-        self.amount_present = amount_present_int
-
-
-class put_command_quantity_unclear(game_state_message):
-
-    message = property(fget=lambda self: 'Amount to put unclear. How many do you mean?')
-
-    def __init__(self):
-        pass
-
-
 class put_command_item_not_in_inventory(game_state_message):
     __slots__ = 'amount_attempted', 'item_title'
 
@@ -375,6 +263,91 @@ class put_command_item_not_in_inventory(game_state_message):
     def __init__(self, item_title_str, amount_attempted_int):
         self.amount_attempted = amount_attempted_int
         self.item_title = item_title_str
+
+
+class put_command_quantity_unclear(game_state_message):
+
+    message = property(fget=lambda self: 'Amount to put unclear. How many do you mean?')
+
+    def __init__(self):
+        pass
+
+
+class put_command_trying_to_put_more_than_you_have(game_state_message):
+    __slots__ = 'item_title', 'amount_present'
+
+    @property
+    def message(self):
+        pluralizer = 's' if self.amount_present > 1 else ''
+        return f'You only have {self.amount_present} {self.item_title}{pluralizer} in your inventory.'
+
+    def __init__(self, item_title_str, amount_present_int):
+        self.item_title = item_title_str
+        self.amount_present = amount_present_int
+
+
+class satisfied_command_game_begins(game_state_message):
+
+    message = property(fget=lambda self: "The game has begun!")
+
+    def __init__(self):
+        pass
+
+
+class set_class_command_class_set(game_state_message):
+    __slots__ = 'class_str',
+
+    message = property(fget=lambda self: f'Your class, {self.class_str}, has been set.')
+
+    def __init__(self, class_str):
+        self.class_str = class_str
+
+
+class set_class_command_invalid_class(game_state_message):
+    __slots__ = 'bad_class',
+
+    message = property(fget=lambda self: f"'{self.bad_class}' is not a valid class choice. Please choose Warrior, "
+                                          'Thief, Mage, or Priest.')
+
+    def __init__(self, bad_class_str):
+        self.bad_class = bad_class_str
+
+
+class set_name_command_invalid_part(game_state_message):
+    __slots__ = 'name_part',
+
+    message = property(fget=lambda self: f'The name {self.name_part} is invalid; must be a capital letter followed by'
+                                          ' lowercase letters.')
+
+    def __init__(self, name_part_str):
+        self.name_part = name_part_str
+
+
+class set_name_command_name_set(game_state_message):
+    __slots__ = 'name',
+
+    message = property(fget=lambda self: f"Your name, '{self.name}', has been set.")
+
+    def __init__(self, name_str):
+        self.name = name_str
+
+
+class set_name_or_class_command_display_rolled_stats(game_state_message):
+    __slots__ = 'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'
+
+    @property
+    def message(self):
+        return (f'Your ability scores are Strength {self.strength}, Dexterity {self.dexterity}, Constitution '
+                f'{self.constitution}, Intelligence {self.intelligence}, Wisdom {self.wisdom}, Charisma {self.charisma}'
+                '.\nAre you satisfied with these scores or would you like to reroll?')
+
+    def __init__(self, strength_int, dexterity_int, constitution_int, intelligence_int, wisdom_int, charisma_int):
+        self.strength = strength_int
+        self.dexterity = dexterity_int
+        self.constitution = constitution_int
+        self.intelligence = intelligence_int
+        self.wisdom = wisdom_int
+        self.charisma = charisma_int
 
 
 class take_command_item_not_found_in_container(game_state_message):
@@ -398,21 +371,6 @@ class take_command_item_not_found_in_container(game_state_message):
         self.item_title = item_title_str
 
 
-class various_commands_container_not_found(game_state_message):
-    __slots__ = 'container_not_found_title', 'container_present_title'
-
-    @property
-    def message(self):
-        if self.container_present_title is not None:
-            return f'There is no {self.container_not_found_title} here. However, there *is* a {self.container_present_title} here.'
-        else:
-            return f'There is no {self.container_not_found_title} here.'
-
-    def __init__(self, container_not_found_title_str, container_present_title_str=None):
-        self.container_not_found_title = container_not_found_title_str
-        self.container_present_title = container_present_title_str
-
-
 class take_command_item_or_items_taken(game_state_message):
     __slots__ = 'container_title', 'item_title', 'amount_taken'
 
@@ -427,3 +385,39 @@ class take_command_item_or_items_taken(game_state_message):
         self.container_title = container_title_str
         self.item_title = item_title_str
         self.amount_taken = amount_taken_int
+
+
+class take_command_quantity_unclear(game_state_message):
+
+    message = property(fget=lambda self: 'Amount to take unclear. How many do you want?')
+
+    def __init__(self):
+        pass
+
+
+class take_command_trying_to_take_more_than_is_present(game_state_message):
+    __slots__ = 'container_title', 'container_type', 'item_title', 'amount_attempted', 'amount_present'
+
+    message = property(fget=lambda self: f"You can't take {self.amount_attempted} {self.item_title}s from the {self.container_title}. Only {self.amount_present} is there.")
+
+    def __init__(self, container_title_str, container_type_str, item_title_str, amount_attempted_int, amount_present_int):
+        self.container_title = container_title_str
+        self.container_type = container_type_str
+        self.item_title = item_title_str
+        self.amount_attempted = amount_attempted_int
+        self.amount_present = amount_present_int
+
+
+class various_commands_container_not_found(game_state_message):
+    __slots__ = 'container_not_found_title', 'container_present_title'
+
+    @property
+    def message(self):
+        if self.container_present_title is not None:
+            return f'There is no {self.container_not_found_title} here. However, there *is* a {self.container_present_title} here.'
+        else:
+            return f'There is no {self.container_not_found_title} here.'
+
+    def __init__(self, container_not_found_title_str, container_present_title_str=None):
+        self.container_not_found_title = container_not_found_title_str
+        self.container_present_title = container_present_title_str

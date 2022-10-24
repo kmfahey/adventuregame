@@ -33,6 +33,8 @@ class test_command_processor_set_name_vs_set_class_vs_reroll_vs_satisfied(unitte
 
     def test_set_name_and_class_1(self):
 
+        self.assertFalse(self.command_processor_obj.game_state.game_has_begun)
+
         result = self.command_processor_obj.process('set class to Warrior')
         self.assertIsInstance(result[0], set_class_command_class_set)
         self.assertEqual(result[0].class_str, 'Warrior')
@@ -55,6 +57,44 @@ class test_command_processor_set_name_vs_set_class_vs_reroll_vs_satisfied(unitte
         self.assertTrue(3 <= result[1].wisdom <= 18)
         self.assertIsInstance(result[1].charisma, int)
         self.assertTrue(3 <= result[1].charisma <= 18)
+        self.assertEqual(result[1].message, f'Your ability scores are Strength {result[1].strength}, Dexterity '
+                                            f'{result[1].dexterity}, Constitution {result[1].constitution}, '
+                                            f'Intelligence {result[1].intelligence}, Wisdom {result[1].wisdom}, '
+                                            f'Charisma {result[1].charisma}.\nAre you satisfied with these scores or '
+                                            'would you like to reroll?')
+
+        first_roll = {'strength': result[1].strength, 'dexterity': result[1].dexterity, 
+                      'constitution': result[1].constitution, 'intelligence': result[1].intelligence,
+                      'wisdom': result[1].wisdom, 'charisma': result[1].charisma}
+        result = self.command_processor_obj.process('reroll')
+        second_roll = {'strength': result[0].strength, 'dexterity': result[0].dexterity, 
+                      'constitution': result[0].constitution, 'intelligence': result[0].intelligence,
+                      'wisdom': result[0].wisdom, 'charisma': result[0].charisma}
+        self.assertIsInstance(result[0], set_name_or_class_command_display_rolled_stats)
+        self.assertNotEqual(first_roll, second_roll)
+
+        result = self.command_processor_obj.process("satisfied")
+        self.assertIsInstance(result[0], satisfied_command_game_begins)
+        self.assertEqual(result[0].message, "The game has begun!")
+        self.assertTrue(self.command_processor_obj.game_state.game_has_begun)
+
+    def test_set_name_and_class_2(self):
+        self.command_processor_obj.process('set class to Warrior')
+        self.command_processor_obj.process('set name to Kerne')
+        result = self.command_processor_obj.process("I'm satisfied")
+        self.assertIsInstance(result[0], satisfied_command_game_begins)
+        self.assertEqual(result[0].message, "The game has begun!")
+        self.assertTrue(self.command_processor_obj.game_state.game_has_begun)
+
+    def test_set_name_and_class_3(self):
+        self.assertFalse(self.command_processor_obj.game_state.game_has_begun)
+        self.command_processor_obj.process('set class to Warrior')
+        self.command_processor_obj.process('set name to Kerne')
+        result = self.command_processor_obj.process("I'm satisfied to play")
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, "SATISFIED")
+        self.assertEqual(result[0].message, "SATISFIED command: bad syntax. Should be 'SATISFIED'.")
+        self.assertFalse(self.command_processor_obj.game_state.game_has_begun)
 
     def test_set_name_and_class_2(self):
         result = self.command_processor_obj.process('set name to Kerne0')
@@ -97,6 +137,26 @@ class test_command_processor_set_name_vs_set_class_vs_reroll_vs_satisfied(unitte
         self.assertTrue(3 <= result[1].wisdom <= 18)
         self.assertIsInstance(result[1].charisma, int)
         self.assertTrue(3 <= result[1].charisma <= 18)
+
+    def test_set_name_and_class_3(self):
+        self.assertFalse(self.command_processor_obj.game_state.game_has_begun)
+        self.command_processor_obj.process('set class to Warrior')
+        self.command_processor_obj.process('set name to Kerne')
+        result = self.command_processor_obj.process("I'm satisfied to play")
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, "SATISFIED")
+        self.assertEqual(result[0].message, "SATISFIED command: bad syntax. Should be 'SATISFIED'.")
+        self.assertFalse(self.command_processor_obj.game_state.game_has_begun)
+
+    def test_set_name_and_class_4(self):
+        self.assertFalse(self.command_processor_obj.game_state.game_has_begun)
+        self.command_processor_obj.process('set class to Warrior')
+        self.command_processor_obj.process('set name to Kerne')
+        result = self.command_processor_obj.process("reroll please")
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, "REROLL")
+        self.assertEqual(result[0].message, "REROLL command: bad syntax. Should be 'REROLL'.")
+        self.assertFalse(self.command_processor_obj.game_state.game_has_begun)
 
 
 class test_command_processor_attack_vs_be_attacked_by(unittest.TestCase):
@@ -221,27 +281,27 @@ class test_command_processor_attack_vs_be_attacked_by(unittest.TestCase):
         result, = self.command_processor_obj.process('take one small leather armors from the kobold corpse')  # check
         self.assertIsInstance(result, command_bad_syntax)
         self.assertEqual(result.command, 'TAKE')
-        self.assertEqual(result.message, "TAKE command: bad syntax. Should be '<item name> FROM <container name>' or '<number> <item name> FROM <container name>'."),
+        self.assertEqual(result.message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container name>' or 'TAKE <number> <item name> FROM <container name>'."),
 
         result, = self.command_processor_obj.process('take one small leather armor from the kobold corpses')  # check
         self.assertIsInstance(result, command_bad_syntax)
         self.assertEqual(result.command, 'TAKE')
-        self.assertEqual(result.message, "TAKE command: bad syntax. Should be '<item name> FROM <container name>' or '<number> <item name> FROM <container name>'."),
+        self.assertEqual(result.message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container name>' or 'TAKE <number> <item name> FROM <container name>'."),
 
         result, = self.command_processor_obj.process('take one small leather armor')  # check
         self.assertIsInstance(result, command_bad_syntax)
         self.assertEqual(result.command, 'TAKE')
-        self.assertEqual(result.message, "TAKE command: bad syntax. Should be '<item name> FROM <container name>' or '<number> <item name> FROM <container name>'."),
+        self.assertEqual(result.message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container name>' or 'TAKE <number> <item name> FROM <container name>'."),
 
         result, = self.command_processor_obj.process('take the from the kobold corpse')  # check
         self.assertIsInstance(result, command_bad_syntax)
         self.assertEqual(result.command, 'TAKE')
-        self.assertEqual(result.message, "TAKE command: bad syntax. Should be '<item name> FROM <container name>' or '<number> <item name> FROM <container name>'."),
+        self.assertEqual(result.message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container name>' or 'TAKE <number> <item name> FROM <container name>'."),
 
         result, = self.command_processor_obj.process('take the short sword from the')  # check
         self.assertIsInstance(result, command_bad_syntax)
         self.assertEqual(result.command, 'TAKE')
-        self.assertEqual(result.message, "TAKE command: bad syntax. Should be '<item name> FROM <container name>' or '<number> <item name> FROM <container name>'."),
+        self.assertEqual(result.message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container name>' or 'TAKE <number> <item name> FROM <container name>'."),
 
         result, = self.command_processor_obj.process('take the short sword from the sorcerer corpse')  # check
         self.assertIsInstance(result, various_commands_container_not_found)
@@ -379,6 +439,35 @@ class test_command_processor_attack_vs_be_attacked_by(unittest.TestCase):
         self.assertIsInstance(result, put_command_quantity_unclear)
         self.assertEqual(result.message, 'Amount to put unclear. How many do you mean?')
 
+        result, = self.command_processor_obj.process('put on the kobold corpse')
+        self.assertIsInstance(result, command_bad_syntax)
+        self.assertEqual(result.command, 'PUT')
+        self.assertEqual(result.message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
+                                         "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
+                                         "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
+
+        result, = self.command_processor_obj.process('put one small leather armor on')  # check
+        self.assertIsInstance(result, command_bad_syntax)
+        self.assertEqual(result.command, 'PUT')
+        self.assertEqual(result.message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
+                                         "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
+                                         "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
+
+        result, = self.command_processor_obj.process('put on')  # check
+        self.assertIsInstance(result, command_bad_syntax)
+        self.assertEqual(result.command, 'PUT')
+        self.assertEqual(result.message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
+                                         "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
+                                         "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
+
+        result, = self.command_processor_obj.process('put 1 gold coin in the kobold corpse')  # check
+        self.assertIsInstance(result, command_bad_syntax)
+        self.assertEqual(result.command, 'PUT')
+        self.assertEqual(result.message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
+                                         "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
+                                         "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
+
+
     def test_inspect_also_two_take_cases(self):
         result, = self.command_processor_obj.process('inspect kobold')
         self.assertIsInstance(result, inspect_command_found_creature_here)
@@ -490,6 +579,34 @@ class test_command_processor_attack_vs_be_attacked_by(unittest.TestCase):
         self.assertEqual(result.container_type, 'chest')
         self.assertEqual(result.item_title, 'short sword')
         self.assertEqual(result.message, "The wooden chest doesn't have a short sword in it.")
+
+        result, = self.command_processor_obj.process('put in the wooden chest')
+        self.assertIsInstance(result, command_bad_syntax)
+        self.assertEqual(result.command, 'PUT')
+        self.assertEqual(result.message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
+                                         "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
+                                         "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
+
+        result, = self.command_processor_obj.process('put 1 gold coin in')  # check
+        self.assertIsInstance(result, command_bad_syntax)
+        self.assertEqual(result.command, 'PUT')
+        self.assertEqual(result.message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
+                                         "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
+                                         "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
+
+        result, = self.command_processor_obj.process('put in')  # check
+        self.assertIsInstance(result, command_bad_syntax)
+        self.assertEqual(result.command, 'PUT')
+        self.assertEqual(result.message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
+                                         "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
+                                         "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
+
+        result, = self.command_processor_obj.process('put 1 gold coin on the wooden chest')  # check
+        self.assertIsInstance(result, command_bad_syntax)
+        self.assertEqual(result.command, 'PUT')
+        self.assertEqual(result.message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
+                                         "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
+                                         "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
 
         self.game_state_obj.rooms_state.cursor.container_here.is_locked = True
         self.game_state_obj.rooms_state.cursor.container_here.is_closed = None

@@ -10,10 +10,77 @@ import operator
 
 import iniconfig
 
-from .collections import *
 from .utility import *
 
 __name__ = 'adventuregame.gameelements'
+
+
+class ini_entry(object):
+
+    inventory_list_value_re = re.compile(r'^\[(([1-9][0-9]*x[A-Z][A-Za-z_]+)(,[1-9][0-9]*x[A-Z][A-Za-z_]+)*)\]$')
+
+    def __init__(self, **argd):
+        for key, value in argd.items():
+            if isinstance(value, str):
+                if value.lower() == 'false':
+                    value = False
+                elif value.lower() == 'true':
+                    value = True
+                elif value.isdigit():
+                    value = int(value)
+                elif isfloat(value):
+                    value = float(value)
+            setattr(self, key, value)
+
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return False
+        else:
+            return all(getattr(self, attr, None) == getattr(other, attr, None) for attr in self.__slots__)
+
+    def _post_init_slots_set_none(self, slots):
+        for key in slots:
+            if not hasattr(self, key):
+                setattr(self, key, None)
+
+    def _process_list_value(self, inventory_value):
+        value_match = self.inventory_list_value_re.match(inventory_value)
+        inner_capture = value_match.groups(1)[0]
+        capture_split = inner_capture.split(',')
+        qty_strval_pairs = tuple((int(item_qty), item_name) for item_qty, item_name in (
+                                    name_x_qty_str.split('x', maxsplit=1) for name_x_qty_str in capture_split)
+                                )
+        return qty_strval_pairs
+
+
+class state(abc.ABC):
+    __slots__ = '_contents',
+
+    __abstractmethods__ = frozenset(('__init__',))
+
+    def contains(self, item_internal_name):  # check
+        return any(item_internal_name == contained_item_obj.internal_name for contained_item_obj in self._contents.values())
+
+    def get(self, item_internal_name):  # check
+        return self._contents[item_internal_name]
+
+    def set(self, item_internal_name, item_obj):  # check
+        self._contents[item_internal_name] = item_obj
+
+    def delete(self, item_internal_name):  # check
+        del self._contents[item_internal_name]
+
+    def keys(self):  # check
+        return self._contents.keys()
+
+    def values(self):  # check
+        return self._contents.values()
+
+    def items(self):  # check
+        return self._contents.items()
+
+    def size(self):  # check
+        return len(self._contents)
 
 
 class items_state(state):  # has been tested
@@ -119,7 +186,7 @@ class inventory(items_multi_state):  # has been tested
 
 class character(object):  # has been tested
     __slots__ = ('character_name', 'character_class', 'magic_key_stat', '_hit_point_maximum', '_current_hit_points',
-                 '_mana_point_maximum', '_current_mana_points', '_ability_scores_obj', 'inventory',
+                 '_mana_point_maximum', '_current_mana_points', 'ability_scores', 'inventory',
                  '_equipment_obj')
 
     _base_mana_points = {'Priest': 16, 'Mage': 19}
@@ -135,7 +202,7 @@ class character(object):  # has been tested
                                      'Warrior, Thief, Priest or Mage')
         self.character_name = character_name_str
         self.character_class = character_class_str
-        self._ability_scores_obj = ability_scores(character_class_str)
+        self.ability_scores = ability_scores(character_class_str)
         self._set_up_ability_scores(strength, dexterity, constitution, intelligence, wisdom, charisma)
         self.inventory = inventory()
         self._equipment_obj = equipment(character_class_str)
@@ -143,24 +210,24 @@ class character(object):  # has been tested
 
     def _set_up_ability_scores(self, strength=0, dexterity=0, constitution=0, intelligence=0, wisdom=0, charisma=0):
         if all((strength, dexterity, constitution, intelligence, wisdom, charisma)):
-            self._ability_scores_obj.strength = strength
-            self._ability_scores_obj.dexterity = dexterity
-            self._ability_scores_obj.constitution = constitution
-            self._ability_scores_obj.intelligence = intelligence
-            self._ability_scores_obj.wisdom = wisdom
-            self._ability_scores_obj.charisma = charisma
+            self.ability_scores.strength = strength
+            self.ability_scores.dexterity = dexterity
+            self.ability_scores.constitution = constitution
+            self.ability_scores.intelligence = intelligence
+            self.ability_scores.wisdom = wisdom
+            self.ability_scores.charisma = charisma
         elif any((strength, dexterity, constitution, intelligence, wisdom, charisma)):
             raise internal_exception('The constructor for `character` must be supplied with either all of the arguments'
                                      ' `strength`, `dexterity`, `constitution`, `intelligence`, `wisdom`, and '
                                      '`charisma` or none of them.')
         else:
-            self._ability_scores_obj.roll_stats()
+            self.ability_scores.roll_stats()
 
     def _set_up_hit_points_and_mana_points(self, base_hit_points, base_mana_points, magic_key_stat):
         if base_hit_points:
-            self._hit_point_maximum = self._current_hit_points = base_hit_points + self._ability_scores_obj.constitution_mod * 3
+            self._hit_point_maximum = self._current_hit_points = base_hit_points + self.ability_scores.constitution_mod * 3
         else:
-            self._hit_point_maximum = self._current_hit_points = self._hitpoint_base[self.character_class] + self._ability_scores_obj.constitution_mod * 3
+            self._hit_point_maximum = self._current_hit_points = self._hitpoint_base[self.character_class] + self.ability_scores.constitution_mod * 3
         if magic_key_stat:
             if magic_key_stat not in ('intelligence', 'wisdom', 'charisma'):
                 raise internal_exception("`magic_key_stat` argument '" + magic_key_stat + "' not recognized")
@@ -245,6 +312,7 @@ class character(object):  # has been tested
     # The upside of doing it this way is, if the call is omitted, the return
     # value can be introspected by the testing code to confirm the calculation
     # being done is correct.
+
     @property
     def attack_roll(self):
         if not (self._equipment_obj.weapon_equipped or self._equipment_obj.wand_equipped):
@@ -254,7 +322,7 @@ class character(object):  # has been tested
                 raise bad_command_exception('ATTACK', 'You have no weapon or wand equipped.')
         stat_dependency = self._attack_or_damage_stat_dependency()
         item_attacking_with = self._item_attacking_with
-        stat_mod = getattr(self._ability_scores_obj, stat_dependency+'_mod')
+        stat_mod = getattr(self.ability_scores, stat_dependency+'_mod')
         total_mod = item_attacking_with.attack_bonus + stat_mod
         mod_str = '+' + str(total_mod) if total_mod > 0 else str(total_mod) if total_mod < 0 else ''
         return '1d20' + mod_str
@@ -266,7 +334,7 @@ class character(object):  # has been tested
         item_damage = item_attacking_with.damage
         damage_base_dice, damage_mod = item_damage.split('+') if '+' in item_damage else item_damage.split('-') if '-' in item_damage else (item_damage, '0')
         damage_mod = int(damage_mod)
-        total_damage_mod = damage_mod + getattr(self._ability_scores_obj, stat_dependency+'_mod')
+        total_damage_mod = damage_mod + getattr(self.ability_scores, stat_dependency+'_mod')
         damage_str = damage_base_dice + ('+' + str(total_damage_mod) if total_damage_mod > 0 else str(total_damage_mod) if total_damage_mod < 0 else '')
         return damage_str
 
@@ -283,7 +351,7 @@ class character(object):  # has been tested
     total_weight = property(fget=(lambda self: self.inventory.total_weight))
 
     burden = property(fget=(lambda self: self.inventory.burden_for_strength_score(
-                                             self._ability_scores_obj.strength
+                                             self.ability_scores.strength
                                          )))
 
     def pick_up_item(self, item_obj, qty=1):
@@ -315,31 +383,31 @@ class character(object):  # has been tested
     def list_items(self):
         return list(sorted(self.inventory.values(), key=lambda *argl: argl[0][1].title))
 
-    # BEGIN passthrough methods for private _ability_scores_obj
-    strength = property(fget=(lambda self: getattr(self._ability_scores_obj, 'strength')))
+    # BEGIN passthrough methods for private ability_scores
+    strength = property(fget=(lambda self: getattr(self.ability_scores, 'strength')))
 
-    dexterity = property(fget=(lambda self: getattr(self._ability_scores_obj, 'dexterity')))
+    dexterity = property(fget=(lambda self: getattr(self.ability_scores, 'dexterity')))
 
-    constitution = property(fget=(lambda self: getattr(self._ability_scores_obj, 'constitution')))
+    constitution = property(fget=(lambda self: getattr(self.ability_scores, 'constitution')))
 
-    intelligence = property(fget=(lambda self: getattr(self._ability_scores_obj, 'intelligence')))
+    intelligence = property(fget=(lambda self: getattr(self.ability_scores, 'intelligence')))
 
-    wisdom = property(fget=(lambda self: getattr(self._ability_scores_obj, 'wisdom')))
+    wisdom = property(fget=(lambda self: getattr(self.ability_scores, 'wisdom')))
 
-    charisma = property(fget=(lambda self: getattr(self._ability_scores_obj, 'charisma')))
+    charisma = property(fget=(lambda self: getattr(self.ability_scores, 'charisma')))
 
-    strength_mod = property(fget=(lambda self: self._ability_scores_obj._stat_mod('strength')))
+    strength_mod = property(fget=(lambda self: self.ability_scores._stat_mod('strength')))
 
-    dexterity_mod = property(fget=(lambda self: self._ability_scores_obj._stat_mod('dexterity')))
+    dexterity_mod = property(fget=(lambda self: self.ability_scores._stat_mod('dexterity')))
 
-    constitution_mod = property(fget=(lambda self: self._ability_scores_obj._stat_mod('constitution')))
+    constitution_mod = property(fget=(lambda self: self.ability_scores._stat_mod('constitution')))
 
-    intelligence_mod = property(fget=(lambda self: self._ability_scores_obj._stat_mod('intelligence')))
+    intelligence_mod = property(fget=(lambda self: self.ability_scores._stat_mod('intelligence')))
 
-    wisdom_mod = property(fget=(lambda self: self._ability_scores_obj._stat_mod('wisdom')))
+    wisdom_mod = property(fget=(lambda self: self.ability_scores._stat_mod('wisdom')))
 
-    charisma_mod = property(fget=(lambda self: self._ability_scores_obj._stat_mod('charisma')))
-    # END passthrough methods for private _ability_scores_obj
+    charisma_mod = property(fget=(lambda self: self.ability_scores._stat_mod('charisma')))
+    # END passthrough methods for private ability_scores
 
     # BEGIN passthrough methods for private _equipment_obj
     armor_equipped = property(fget=(lambda self: self._equipment_obj.armor_equipped))
@@ -383,7 +451,7 @@ class character(object):  # has been tested
     # values for these character parameters that are informed only by the
     # equipment it stores. At the level of the `character` object, these
     # values should also be informed by the character's ability scores stores
-    # in the `_ability_scores_obj`. A character's armor class is modified by
+    # in the `ability_scores`. A character's armor class is modified by
     # their dexterity modifier; and their attack & damage values are modified
     # by either their strength score (for Warriors, Priests, and Mages using a
     # weapon), or Dexterity (for Thieves), or Intelligence (for Mages using a
@@ -391,7 +459,7 @@ class character(object):  # has been tested
     @property
     def armor_class(self):
         armor_class = self._equipment_obj.armor_class
-        dexterity_mod = self._ability_scores_obj.dexterity_mod
+        dexterity_mod = self.ability_scores.dexterity_mod
         return armor_class + dexterity_mod
 
     @property
@@ -400,7 +468,7 @@ class character(object):  # has been tested
             raise internal_exception('The character does not have a weapon equipped; no valid value for `attack_bonus` can be computed.')
         stat_dependency = self._attack_or_damage_stat_dependency()
         base_attack_bonus = self._equipment_obj.weapon.attack_bonus if self._equipment_obj.weapon_equipped else self._equipment_obj.wand.attack_bonus
-        return base_attack_bonus + getattr(self._ability_scores_obj, stat_dependency + '_mod')
+        return base_attack_bonus + getattr(self.ability_scores, stat_dependency + '_mod')
 
 
 class equipment(object):  # has been tested
@@ -798,6 +866,7 @@ class game_state(object):
         self._character_class = None
         self.game_has_begun = False
         self.game_has_ended = False
+        self.character = None
 
     # The character object can't be instantiated until the `character_name`
     # and `character_class` attributes are set, but that happens after
@@ -805,76 +874,8 @@ class game_state(object):
     # call this method prospectively each time either is called to check if both
     # have been set and `character` object instantiation can proceed.
     def _incept_character_obj_if_possible(self):
-        if getattr(self, 'character_name', None) and getattr(self, 'character_class', None):
+        if self.character is None and getattr(self, 'character_name', None) and getattr(self, 'character_class', None):
             self.character = character(self.character_name, self.character_class)
-
-
-class ini_entry(object):
-
-    inventory_list_value_re = re.compile(r'^\[(([1-9][0-9]*x[A-Z][A-Za-z_]+)(,[1-9][0-9]*x[A-Z][A-Za-z_]+)*)\]$')
-
-    def __init__(self, **argd):
-        for key, value in argd.items():
-            if isinstance(value, str):
-                if value.lower() == 'false':
-                    value = False
-                elif value.lower() == 'true':
-                    value = True
-                elif value.isdigit():
-                    value = int(value)
-                elif isfloat(value):
-                    value = float(value)
-            setattr(self, key, value)
-
-    def __eq__(self, other):
-        if not isinstance(other, type(self)):
-            return False
-        else:
-            return all(getattr(self, attr, None) == getattr(other, attr, None) for attr in self.__slots__)
-
-    def _post_init_slots_set_none(self, slots):
-        for key in slots:
-            if not hasattr(self, key):
-                setattr(self, key, None)
-
-    def _process_list_value(self, inventory_value):
-        value_match = self.inventory_list_value_re.match(inventory_value)
-        inner_capture = value_match.groups(1)[0]
-        capture_split = inner_capture.split(',')
-        qty_strval_pairs = tuple((int(item_qty), item_name) for item_qty, item_name in (
-                                    name_x_qty_str.split('x', maxsplit=1) for name_x_qty_str in capture_split)
-                                )
-        return qty_strval_pairs
-
-
-class state(abc.ABC):
-    __slots__ = '_contents',
-
-    __abstractmethods__ = frozenset(('__init__',))
-
-    def contains(self, item_internal_name):  # check
-        return any(item_internal_name == contained_item_obj.internal_name for contained_item_obj in self._contents.values())
-
-    def get(self, item_internal_name):  # check
-        return self._contents[item_internal_name]
-
-    def set(self, item_internal_name, item_obj):  # check
-        self._contents[item_internal_name] = item_obj
-
-    def delete(self, item_internal_name):  # check
-        del self._contents[item_internal_name]
-
-    def keys(self):  # check
-        return self._contents.keys()
-
-    def values(self):  # check
-        return self._contents.values()
-
-    def items(self):  # check
-        return self._contents.items()
-
-    def size(self):  # check
-        return len(self._contents)
 
 
 class containers_state(items_state):
