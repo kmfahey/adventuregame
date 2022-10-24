@@ -771,21 +771,31 @@ class game_state(object):
     __slots__ = ('_character_name', '_character_class', 'character', 'rooms_state', 'containers_state',
                  'items_state', 'creatures_state', 'game_has_begun', 'game_has_ended')
 
-    character_name = property(fget=(lambda self: self._character_name),
-                              fset=(lambda self, val: setattr(self, '_character_name', val)
-                                        or self._incept_character_obj_if_possible()))
+    @property
+    def character_name(self):
+        return self._character_name
 
-    character_class = property(fget=(lambda self: self._character_class),
-                               fset=(lambda self, val: setattr(self, '_character_class', val)
-                                         or self._incept_character_obj_if_possible()))
+    @character_name.setter
+    def character_name(self, name_str):
+        setattr(self, '_character_name', name_str)
+        self._incept_character_obj_if_possible()
+
+    @property
+    def character_class(self):
+        return self._character_class
+
+    @character_class.setter
+    def character_class(self, class_str):
+        setattr(self, '_character_class', class_str)
+        self._incept_character_obj_if_possible()
 
     def __init__(self, rooms_state_obj, creatures_state_obj, containers_state_obj, items_state_obj):
         self.items_state = items_state_obj
         self.containers_state = containers_state_obj
         self.creatures_state = creatures_state_obj
         self.rooms_state = rooms_state_obj
-        self._character_name = ''
-        self._character_class = ''
+        self._character_name = None
+        self._character_class = None
         self.game_has_begun = False
         self.game_has_ended = False
 

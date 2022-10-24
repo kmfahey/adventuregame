@@ -1,12 +1,7 @@
 #!/usr/bin/python3
 
-import math
-import operator
 import os
 import tempfile
-import unittest
-import tokenize
-import pprint
 
 import iniconfig
 

@@ -7,5 +7,3 @@ from .gameelements import *
 from .utility import *
 
 __name__ = 'adventuregame.__init__'
-
-

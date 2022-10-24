@@ -1,16 +1,10 @@
 #!/usr/bin/python3
 
 import math
-import operator
-import os
-import tempfile
 import unittest
-import tokenize
-import pprint
-
-import iniconfig
 
 from adventuregame import *
+
 from .utility import *
 
 __name__ = 'adventuregame.test_utility'
@@ -39,7 +33,7 @@ class test_lexical_number_to_digits(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-    
+
     def test_lexical_number_to_digits(self):
         self.assertEqual(lexical_number_to_digits('five'), 5)
         self.assertEqual(lexical_number_to_digits('eighty-one'), 81)

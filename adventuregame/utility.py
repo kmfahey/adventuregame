@@ -1,14 +1,8 @@
 #!/usr/bin/python
 
-import abc
 import math
 import random
 import re
-import operator
-import functools
-import operator
-
-import iniconfig
 
 __name__ = 'adventuregame.utility'
 
@@ -62,3 +56,26 @@ class bad_command_exception(Exception):
         self.message = message_str
 
 
+# In D&D, the standard notation for dice rolling is of the form
+# [1-9][0-9]*d[1-9]+[0-9]*([+-][1-9][0-9]*)?, where the first number indicates
+# how many dice to roll, the second number is the number of sides of the die
+# to roll, and the optional third number is a positive or negative value to
+# add to the result of the roll to reach the final outcome. As an example,
+# 1d20+3 indicates a roll of one 20-sided die to which 3 should be added.
+#
+# I have used this notation in the items.ini file since it's the simplest
+# way to compactly express weapon damage, and in the attack roll methods
+# to call for a d20 roll (the standard D&D conflict resolution roll). This
+# function parses those expressions and returns a closure that executes
+# random.randint appropriately to simulate dice rolls of the dice indicated by
+# the expression.
+
+dice_expression_re = re.compile(r'([1-9]+)d([1-9][0-9]*)([-+][1-9][0-9]*)?')
+
+
+def roll_dice(dice_expr):
+    match_obj = dice_expression_re.match(dice_expr)
+    if not match_obj:
+        raise internal_exception('invalid dice expression: ' + dice_expr)
+    number_of_dice, sidedness_of_dice, modifier_to_roll = map(int, match_obj.groups())
+    return sum(random.randint(1, sidedness_of_dice) for _ in range(0, number_of_dice)) + modifier_to_roll

@@ -1,18 +1,11 @@
 #!/usr/bin/python
 
-import abc
 import math
-import random
 import re
-import operator
-import functools
-import operator
 
-import iniconfig
-
+from .collections import *
 from .commandreturns import *
 from .gameelements import *
-from .collections import *
 from .utility import *
 
 __name__ = 'adventuregame.commandprocessor'
@@ -20,24 +13,6 @@ __name__ = 'adventuregame.commandprocessor'
 
 class command_processor(object):
     __slots__ = 'game_state', 'dispatch_table'
-
-    # In D&D, the standard notation for dice rolling is of the form
-    # [1-9][0-9]*d[1-9]+[0-9]*([+-][1-9][0-9]*)?, where the first number indicates
-    # how many dice to roll, the second number is the number of sides of the die
-    # to roll, and the optional third number is a positive or negative value to
-    # add to the result of the roll to reach the final outcome. As an example,
-    # 1d20+3 indicates a roll of one 20-sided die to which 3 should be added.
-    #
-    # I have used this notation in the items.ini file since it's the simplest
-    # way to compactly express weapon damage, and in the attack roll methods
-    # to call for a d20 roll (the standard D&D conflict resolution roll). This
-    # function parses those expressions and returns a closure that executes
-    # random.randint appropriately to simulate dice rolls of the dice indicated by
-    # the expression.
-    # 
-    # See also the `_roll_dice()` method below.
-
-    dice_expression_re = re.compile(r'([1-9]+)d([1-9][0-9]*)([-+][1-9][0-9]*)?')
 
     # All return values from *_command methods in this class are
     # tuples. Every *_command method returns one or more *_command_*
@@ -51,27 +26,31 @@ class command_processor(object):
     # ATTACK action knows it's receiving a tuple and will iterate through the
     # result objects and display each one's message to the player in turn.
 
+    valid_name_re = re.compile('^[A-Z][a-z]+$')
+
+    valid_class_re = re.compile('^(Warrior|Thief|Mage|Priest)$')
+
     def __init__(self, game_state_obj):
-        self.dispatch_table = {method_name.rsplit('_', maxsplit=1)[0]: getattr(self, method_name) for method_name in
+        self.dispatch_table = {
+                                  method_name.rsplit('_', maxsplit=1)[0]: getattr(self, method_name) for method_name in
                                   filter(lambda name: name.endswith('_command'), dir(command_processor))
                               }
         self.game_state = game_state_obj
 
     def process(self, natural_language_str):
-        tokens = natural_language_str.lower().strip().split()
+        tokens = natural_language_str.strip().split()
         command = tokens.pop(0)
-        if command == 'look' and len(tokens):
-            command += f'_{tokens.pop(0)}'
+        if command.lower() == 'look' and len(tokens) and tokens[0].lower() == 'at':
+            command = command.lower() + '_' + tokens.pop(0).lower()
+        elif command.lower() == 'set' and len(tokens) and (tokens[0].lower() == 'name' or tokens[0].lower() == 'class'):
+            command = command.lower() + '_' + tokens.pop(0).lower()
+            if len(tokens) and tokens[0] == 'to':
+                tokens.pop(0)
+        if command not in ('set_name', 'set_class'):
+            tokens = tuple(map(str.lower, tokens))
         if command not in self.dispatch_table:
             return command_not_recognized(command),
         return self.dispatch_table[command](*tokens)
-
-    def _roll_dice(self, dice_expr):
-        match_obj = self.dice_expression_re.match(dice_expr)
-        if not match_obj:
-            raise internal_exception('invalid dice expression: ' + dice_expr)
-        number_of_dice, sidedness_of_dice, modifier_to_roll = map(int, match_obj.groups())
-        return sum(random.randint(1, sidedness_of_dice) for _ in range(0, number_of_dice)) + modifier_to_roll
 
     def attack_command(self, *tokens):
         creature_title_token = ' '.join(tokens)
@@ -82,13 +61,13 @@ class command_processor(object):
         creature_obj = self.game_state.rooms_state.cursor.creature_here
         attack_roll_dice_expr = self.game_state.character.attack_roll
         damage_roll_dice_expr = self.game_state.character.damage_roll
-        attack_result = self._roll_dice(attack_roll_dice_expr)
+        attack_result = roll_dice(attack_roll_dice_expr)
         if attack_result < creature_obj.armor_class:
             attack_missed_result = attack_command_attack_missed(creature_obj.title)
             be_attacked_by_result = self._be_attacked_by_command(creature_obj)
             return (attack_missed_result,) + be_attacked_by_result
         else:
-            damage_result = self._roll_dice(damage_roll_dice_expr)
+            damage_result = roll_dice(damage_roll_dice_expr)
             creature_obj.take_damage(damage_result)
             if creature_obj.hit_points == 0:
                 corpse_obj = creature_obj.convert_to_corpse()
@@ -103,11 +82,11 @@ class command_processor(object):
     def _be_attacked_by_command(self, creature_obj):
         attack_roll_dice_expr = creature_obj.attack_roll
         damage_roll_dice_expr = creature_obj.damage_roll
-        attack_result = self._roll_dice(attack_roll_dice_expr)
+        attack_result = roll_dice(attack_roll_dice_expr)
         if attack_result < self.game_state.character.armor_class:
             return be_attacked_by_command_attacked_and_not_hit(creature_obj.title),
         else:
-            damage_done = self._roll_dice(damage_roll_dice_expr)
+            damage_done = roll_dice(damage_roll_dice_expr)
             self.game_state.character.take_damage(damage_done)
             if self.game_state.character.is_dead:
                 return be_attacked_by_command_attacked_and_hit(creature_obj.title, damage_done, 0), be_attacked_by_command_character_death(),
@@ -149,17 +128,77 @@ class command_processor(object):
     def pick_up_command(self):
         pass
 
+    def i_m_satisfied_command(self):
+        pass
+
     def reroll_command(self):
         pass
 
-    def sell_command(self):
-        pass
+    # Concerning both set_name_command() and set_class_command() below it:
+    #
+    # The character object isn't instanced in game_state.__init__ because it
+    # depends on name and class choice. Its character_name and character_class
+    # setters have a side effect where if both have been set the character
+    # object is instanced automatically. So after valid input is determined, I
+    # check for the state of <both character_name and character_class are now
+    # non-None>; if so, the character object was just instanced. That means
+    # the ability scores were rolled and assigned. The player may choose to
+    # reroll, so the return tuple includes a prompt to do so.
 
-    def set_name_command(self):
-        pass
+    def set_name_command(self, *tokens):
+        if tokens[0].lower() == 'to':
+            tokens = tokens[1:]
+        name_parts_tests = list(map(bool, map(self.valid_name_re.match, tokens)))
+        name_was_none = self.game_state.character_name is None
+        if False in name_parts_tests:
+            failing_parts = list()
+            offset = 0
+            for _ in range(0, name_parts_tests.count(False)):
+                failing_part_index = name_parts_tests.index(False, offset)
+                failing_parts.append(tokens[failing_part_index])
+                offset = failing_part_index + 1
+            return tuple(map(set_name_command_invalid_part, failing_parts))
+        else:
+            name_str = ' '.join(tokens)
+            self.game_state.character_name = ' '.join(tokens)
+            if self.game_state.character_class is not None and name_was_none:
+                return (set_name_command_name_set(name_str), set_name_or_class_command_display_rolled_stats(
+                            strength_int=self.game_state.character.strength,
+                            dexterity_int=self.game_state.character.dexterity,
+                            constitution_int=self.game_state.character.constitution,
+                            intelligence_int=self.game_state.character.intelligence,
+                            wisdom_int=self.game_state.character.wisdom,
+                            charisma_int=self.game_state.character.charisma
+                ))
+            else:
+                return set_name_command_name_set(self.game_state.character_name),
+
+    def set_class_command(self, *tokens):
+        if tokens[0].lower() == 'to':
+            tokens = tokens[1:]
+        if len(tokens) > 1:
+            return command_too_many_words(1),
+        elif not self.valid_class_re.match(tokens[0]):
+            return set_class_command_invalid_class(tokens[0]),
+        class_str = tokens[0]
+        class_was_none = self.game_state.character_class is None
+        self.game_state.character_class = class_str
+        if self.game_state.character_name is not None and class_was_none:
+            return (set_class_command_class_set(class_str),
+                    set_name_or_class_command_display_rolled_stats(
+                        strength_int=self.game_state.character.strength,
+                        dexterity_int=self.game_state.character.dexterity,
+                        constitution_int=self.game_state.character.constitution,
+                        intelligence_int=self.game_state.character.intelligence,
+                        wisdom_int=self.game_state.character.wisdom,
+                        charisma_int=self.game_state.character.charisma
+            ))
+        else:
+            return set_class_command_class_set(class_str),
 
     # Both PUT and TAKE have the same preprocessing challenges, so I refactored
     # their logic into a shared private preprocessing method.
+
     def _parse_item_joinword_container_natlang(self, command, joinword, *tokens):
         container_obj = self.game_state.rooms_state.cursor.container_here
 
@@ -269,13 +308,18 @@ class command_processor(object):
 
         return amount, item_title, container_title, container_obj
 
-
     # This is a very hairy method on account of how much natural language
     # processing it has to do to account for all the permutations on how
     # a user writes TAKE item FROM container.
+
     def take_command(self, *tokens):
         results = self._parse_item_joinword_container_natlang('TAKE', 'FROM', *tokens)
 
+        # The workhorse private method returns either a game_state_message
+        # subclass object (see adventuregame.commandreturns) or a tuple of
+        # amount to take, parsed title of item, parsed title of container, and
+        # the container object (as a matter of convenience, it's needed by the
+        # private method & why fetch it twice).
         if len(results) == 1 and isinstance(results[0], game_state_message):
             return results
         else:
@@ -291,7 +335,7 @@ class command_processor(object):
         index = 0
         while index < len(container_here_contents):
             item_internal_name, (item_qty, item_obj) = container_here_contents[index]
-            
+
             # This isn't the item specified.
             if item_obj.title != item_title:
                 index += 1
@@ -347,15 +391,26 @@ class command_processor(object):
     def put_command(self, *tokens):
         results = self._parse_item_joinword_container_natlang('PUT', 'IN|ON', *tokens)
 
+        # The workhorse private method returns either a game_state_message
+        # subclass object (see adventuregame.commandreturns) or a tuple of
+        # amount to put, parsed title of item, parsed title of container, and
+        # the container object (as a matter of convenience, it's needed by the
+        # private method & why fetch it twice).
         if len(results) == 1 and isinstance(results[0], game_state_message):
             return results
         else:
             # len(results) == 4 and isinstance(results[0], int) and isinstance(results[1], str)
             #     and isinstance(results[2], str) and isinstance(results[3], container)
             put_amount, item_title, container_title, container_obj = results
-            
+
+        # I read off the player's inventory and filter it for a (qty,obj) pair
+        # whose title matches the supplied item name.
         inventory_list = tuple(filter(lambda pair: pair[1].title == item_title, self.game_state.character.list_items()))
+
         if len(inventory_list) == 1:
+
+            # The player has the item in their inventory, so I save the qty
+            # they possess and the item object.
             amount_possessed, item_obj = inventory_list[0]
         else:
             return put_command_item_not_in_inventory(item_title, put_amount),
@@ -373,9 +428,5 @@ class command_processor(object):
         container_obj.set(item_obj.internal_name, amount_in_container + put_amount, item_obj)
         return put_command_amount_put(item_title, container_title, container_obj.container_type, put_amount, amount_possessed),
 
-
     def unlock_command(self):
         pass
-
-
-

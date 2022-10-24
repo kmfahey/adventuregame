@@ -1,14 +1,8 @@
 #!/usr/bin/python3
 
 import abc
-import math
-import random
 import re
-import operator
-import functools
-import operator
 
-import iniconfig
 
 from .utility import *
 
@@ -90,4 +84,3 @@ class items_state(state):  # has been tested
         for item_internal_name, item_dict in dict_of_dicts.items():
             item_obj = item.subclassing_factory(internal_name=item_internal_name, **item_dict)
             self._contents[item_internal_name] = item_obj
-

@@ -2,15 +2,10 @@
 
 import math
 import operator
-import os
-import tempfile
 import unittest
-import tokenize
-import pprint
-
-import iniconfig
 
 from adventuregame import *
+
 from .utility import *
 
 __name__ = 'adventuregame.test_gameelements'
@@ -29,21 +24,21 @@ class test_container(unittest.TestCase):
         self.containers_state_obj = containers_state(self.items_state_obj, **self.containers_ini_config_obj.sections)
 
     def test_container(self):
-        container_obj = self.containers_state_obj.get("Wooden_Chest_1")
-        self.assertEqual(container_obj.internal_name, "Wooden_Chest_1")
-        self.assertEqual(container_obj.title, "wooden chest")
-        self.assertEqual(container_obj.description, "This small, serviceable chest is made of wooden slat bounds within an iron framing, and features a sturdy-looking lock.")
+        container_obj = self.containers_state_obj.get('Wooden_Chest_1')
+        self.assertEqual(container_obj.internal_name, 'Wooden_Chest_1')
+        self.assertEqual(container_obj.title, 'wooden chest')
+        self.assertEqual(container_obj.description, 'This small, serviceable chest is made of wooden slat bounds within an iron framing, and features a sturdy-looking lock.')
         self.assertEqual(container_obj.is_locked, True)
-        self.assertTrue(container_obj.contains("Gold_Coin"))
-        self.assertTrue(container_obj.contains("Warhammer"))
-        self.assertTrue(container_obj.contains("Mana_Potion"))
-        potion_qty, mana_potion_obj = container_obj.get("Mana_Potion")
+        self.assertTrue(container_obj.contains('Gold_Coin'))
+        self.assertTrue(container_obj.contains('Warhammer'))
+        self.assertTrue(container_obj.contains('Mana_Potion'))
+        potion_qty, mana_potion_obj = container_obj.get('Mana_Potion')
         self.assertIsInstance(mana_potion_obj, consumable)
         self.assertEqual(potion_qty, 1)
-        container_obj.delete("Mana_Potion")
-        self.assertFalse(container_obj.contains("Mana_Potion"))
-        container_obj.set("Mana_Potion", potion_qty, mana_potion_obj)
-        self.assertTrue(container_obj.contains("Mana_Potion"))
+        container_obj.delete('Mana_Potion')
+        self.assertFalse(container_obj.contains('Mana_Potion'))
+        container_obj.set('Mana_Potion', potion_qty, mana_potion_obj)
+        self.assertTrue(container_obj.contains('Mana_Potion'))
 
 
 class test_character(unittest.TestCase):
@@ -76,7 +71,7 @@ class test_character(unittest.TestCase):
         self.assertTrue(character_obj.weapon_equipped)
         self.assertFalse(character_obj.wand_equipped)
         strength_mod = character_obj.strength_mod
-        strength_mod_str = "+" + str(strength_mod) if strength_mod > 0 else str(strength_mod) if strength_mod < 0 else ""
+        strength_mod_str = '+' + str(strength_mod) if strength_mod > 0 else str(strength_mod) if strength_mod < 0 else ''
         self.assertEqual(character_obj.attack_roll, '1d20' + strength_mod_str)
         self.assertEqual(character_obj.damage_roll, '1d8' + strength_mod_str)
         self.assertEqual(character_obj.attack_bonus, character_obj.strength_mod)
@@ -96,7 +91,7 @@ class test_character(unittest.TestCase):
         self.assertFalse(character_obj.weapon_equipped)
         self.assertTrue(character_obj.wand_equipped)
         total_bonus = wand_obj.attack_bonus + character_obj.intelligence_mod
-        total_bonus_str = "+" + str(total_bonus) if total_bonus > 0 else str(total_bonus) if total_bonus < 0 else ""
+        total_bonus_str = '+' + str(total_bonus) if total_bonus > 0 else str(total_bonus) if total_bonus < 0 else ''
         self.assertEqual(character_obj.attack_roll, '1d20' + total_bonus_str)
         self.assertEqual(character_obj.damage_roll, '2d12' + total_bonus_str)
         self.assertEqual(character_obj.attack_bonus, int(wand_obj.attack_bonus)
@@ -202,14 +197,14 @@ class test_creature(unittest.TestCase):
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
-    
-    def test_creature_const(self):
-        kobold_obj = self.creatures_state_obj.get("Kobold_Trysk")
-        self.assertEqual(kobold_obj.character_class, "Thief")
-        self.assertEqual(kobold_obj.character_name, "Trysk")
-        self.assertEqual(kobold_obj.species, "Kobold")
-        self.assertEqual(kobold_obj.description, "This diminuitive draconic humanoid is dressed in leather armor and has a short sword at its hip. It eyes you warily.")
-        self.assertEqual(kobold_obj.character_class, "Thief")
+
+    def test_creature_const_1(self):
+        kobold_obj = self.creatures_state_obj.get('Kobold_Trysk')
+        self.assertEqual(kobold_obj.character_class, 'Thief')
+        self.assertEqual(kobold_obj.character_name, 'Trysk')
+        self.assertEqual(kobold_obj.species, 'Kobold')
+        self.assertEqual(kobold_obj.description, 'This diminuitive draconic humanoid is dressed in leather armor and has a short sword at its hip. It eyes you warily.')
+        self.assertEqual(kobold_obj.character_class, 'Thief')
         self.assertEqual(kobold_obj.strength, 9)
         self.assertEqual(kobold_obj.dexterity, 13)
         self.assertEqual(kobold_obj.constitution, 10)
@@ -217,27 +212,23 @@ class test_creature(unittest.TestCase):
         self.assertEqual(kobold_obj.wisdom, 9)
         self.assertEqual(kobold_obj.charisma, 8)
         self.assertEqual(kobold_obj.hit_points, 20)
-        short_sword_obj = self.items_state_obj.get("Short_Sword")
-        small_leather_armor_obj = self.items_state_obj.get("Small_Leather_Armor")
-        gold_coin_obj = self.items_state_obj.get("Gold_Coin")
-        health_potion_obj = self.items_state_obj.get("Health_Potion")
-        testing_items_list = list(sorted((short_sword_obj, small_leather_armor_obj, gold_coin_obj, health_potion_obj),
-                                         key=operator.attrgetter('title')))
-        given_items_list = list(sorted(map(operator.itemgetter(1), kobold_obj.list_items()),
-                                       key=operator.attrgetter('title')))
+        short_sword_obj = self.items_state_obj.get('Short_Sword')
+        small_leather_armor_obj = self.items_state_obj.get('Small_Leather_Armor')
+        gold_coin_obj = self.items_state_obj.get('Gold_Coin')
+        health_potion_obj = self.items_state_obj.get('Health_Potion')
         self.assertEqual(kobold_obj.weapon_equipped, short_sword_obj)
         self.assertEqual(kobold_obj.armor_equipped, small_leather_armor_obj)
 
-    def test_creature_const(self):
-        sorcerer_obj = self.creatures_state_obj.get("Sorcerer_Ardren")
-        self.assertEqual(sorcerer_obj.magic_key_stat, "charisma")
+    def test_creature_const_2(self):
+        sorcerer_obj = self.creatures_state_obj.get('Sorcerer_Ardren')
+        self.assertEqual(sorcerer_obj.magic_key_stat, 'charisma')
         self.assertEqual(sorcerer_obj.mana_points, 36)
 
     def test_convert_to_corpse(self):
-        kobold_obj = self.creatures_state_obj.get("Kobold_Trysk")
+        kobold_obj = self.creatures_state_obj.get('Kobold_Trysk')
         kobold_corpse_obj = kobold_obj.convert_to_corpse()
         self.assertEqual(kobold_corpse_obj.description, kobold_obj.description_dead)
-        self.assertEqual(kobold_corpse_obj.title, f"{kobold_obj.title} corpse")
+        self.assertEqual(kobold_corpse_obj.title, f'{kobold_obj.title} corpse')
         self.assertEqual(kobold_corpse_obj.internal_name, kobold_obj.internal_name)
         for item_internal_name, (item_qty, item_obj) in kobold_obj.inventory.items():
             self.assertEqual(kobold_corpse_obj.get(item_internal_name), (item_qty, item_obj))
@@ -555,15 +546,15 @@ class test_rooms_state_obj(unittest.TestCase):
             self.rooms_state_obj.move(south=True)
 
     def test_rooms_state_room_items_container_creature_here(self):
-        kobold_obj = self.creatures_state_obj.get("Kobold_Trysk")
-        wooden_chest_obj = self.containers_state_obj.get("Wooden_Chest_1")
-        mana_potion_obj = self.items_state_obj.get("Mana_Potion")
-        health_potion_obj = self.items_state_obj.get("Health_Potion")
+        kobold_obj = self.creatures_state_obj.get('Kobold_Trysk')
+        wooden_chest_obj = self.containers_state_obj.get('Wooden_Chest_1')
+        mana_potion_obj = self.items_state_obj.get('Mana_Potion')
+        health_potion_obj = self.items_state_obj.get('Health_Potion')
         room_obj = self.rooms_state_obj.cursor
         self.assertEqual(room_obj.creature_here, kobold_obj)
         self.assertEqual(room_obj.container_here, wooden_chest_obj)
-        self.assertEqual(room_obj.items_here.get("Mana_Potion"), (1, mana_potion_obj))
-        self.assertEqual(room_obj.items_here.get("Health_Potion"), (2, health_potion_obj))
+        self.assertEqual(room_obj.items_here.get('Mana_Potion'), (1, mana_potion_obj))
+        self.assertEqual(room_obj.items_here.get('Health_Potion'), (2, health_potion_obj))
 
 
 class test_game_state(unittest.TestCase):
@@ -586,8 +577,8 @@ class test_game_state(unittest.TestCase):
     def test_game_state(self):
         self.assertFalse(self.game_state_obj.game_has_begun)
         self.assertFalse(self.game_state_obj.game_has_ended)
-        self.assertEqual(self.game_state_obj.character_name, '')
-        self.assertEqual(self.game_state_obj.character_class, '')
+        self.assertIs(self.game_state_obj.character_name, None)
+        self.assertIs(self.game_state_obj.character_class, None)
         self.assertIs(getattr(self.game_state_obj, 'character_obj', None), None)
         self.game_state_obj.character_name = 'Kaeva'
         self.game_state_obj.character_class = 'Priest'
