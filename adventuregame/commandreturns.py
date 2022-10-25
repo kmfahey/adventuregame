@@ -2,6 +2,7 @@
 
 import abc
 import math
+import operator
 
 from .gameelements import *
 from .utility import *
@@ -126,6 +127,69 @@ class be_attacked_by_command_character_death(game_state_message):
         pass
 
 
+class drop_command_quantity_unclear(game_state_message):
+
+    message = property(fget=lambda self: 'Amount to drop unclear. How many do you mean?')
+
+    def __init__(self):
+        pass
+
+
+class drop_command_trying_to_drop_item_you_dont_have(game_state_message):
+    __slots__ = 'item_title', 'amount_attempted'
+
+    @property
+    def message(self):
+        if self.amount_attempted > 1:
+            return f"You don't have any {self.item_title}s in your inventory."
+        else:
+            return f"You don't have a {self.item_title} in your inventory."
+
+    def __init__(self, item_title_str, amount_attempted_int):
+        self.item_title = item_title_str
+        self.amount_attempted = amount_attempted_int
+
+
+class drop_command_dropped_item(game_state_message):
+    __slots__ = 'item_title', 'amount_dropped', 'amount_on_floor', 'amount_left'
+
+    @property
+    def message(self):
+        # The amount dropped and the amount on the floor both must be nonzero, but the amount left may be zero.
+        drop_qty_str, drop_qty_pluralizer = (('a', '') if self.amount_dropped == 1 else (self.amount_dropped, 's'))
+        floor_qty_str, floor_qty_pluralizer = (('a', '') if self.amount_on_floor == 1 else (self.amount_on_floor, 's'))
+        left_qty_pluralizer = ('' if self.amount_left == 1 else 's' if self.amount_left > 1 else None)
+        if left_qty_pluralizer is not None:
+            return (f'You dropped {drop_qty_str} {self.item_title}{drop_qty_pluralizer}. You see {floor_qty_str} '
+                    f'{self.item_title}{floor_qty_pluralizer} here. You have {self.amount_left} {self.item_title}'
+                    f'{left_qty_pluralizer} left.')
+        else:
+            return (f'You dropped {drop_qty_str} {self.item_title}{drop_qty_pluralizer}. You see {floor_qty_str} '
+                    f'{self.item_title}{floor_qty_pluralizer} here. You have no {self.item_title}s left.')
+
+    def __init__(self, item_title_str, amount_dropped_int, amount_on_floor_int, amount_left_int):
+        self.item_title = item_title_str
+        self.amount_dropped = amount_dropped_int
+        self.amount_on_floor = amount_on_floor_int
+        self.amount_left = amount_left_int
+
+
+class drop_command_trying_to_drop_more_than_you_have(game_state_message):
+    __slots__ = 'item_title', 'amount_attempted', 'amount_had'
+
+    @property
+    def message(self):
+        if self.amount_attempted > 1 and self.amount_had == 1:
+            return f"You can't drop {self.amount_attempted} {self.item_title}s. You only have {self.amount_had} {self.item_title} in your inventory."
+        else:   # self.amount_attempted > 1 and self.amount_had > 1
+            return f"You can't drop {self.amount_attempted} {self.item_title}s. You only have {self.amount_had} {self.item_title}s in your inventory."
+
+    def __init__(self, item_title_str, amount_attempted_int, amount_had_int):
+        self.item_title = item_title_str
+        self.amount_attempted = amount_attempted_int
+        self.amount_had = amount_had_int
+
+
 class inspect_command_found_container_here(game_state_message):
     __slots__ = 'container_description', 'container_type', 'container', 'is_locked', 'is_closed'
 
@@ -220,6 +284,67 @@ class inspect_command_found_nothing(game_state_message):
 
     def __init__(self, entity_title_str):
         self.entity_title = entity_title_str
+
+
+class pick_up_command_item_not_found(game_state_message):
+    __slots__ = 'item_title', 'amount_attempted', 'items_here'
+
+    @property
+    def message(self):
+        item_pluralizer = 's' if self.amount_attempted > 1 else ''
+        if self.items_here:
+            items_here_str_tuple = tuple(f'a {item_title}' if item_count == 1 else f'{item_count} {item_title}s' for item_count, item_title in self.items_here)
+            if len(items_here_str_tuple) == 1:
+                items_here_str = items_here_str_tuple[0]
+            elif len(items_here_str_tuple) == 2:
+                items_here_str = ' and '.join(items_here_str_tuple)
+            else:
+                items_here_str = ', '.join(items_here_str_tuple[:-1]) + ', and ' + items_here_str_tuple[-1]
+            return f'You see no {self.item_title}{item_pluralizer} here. However, there is {items_here_str} here.'
+        else:
+            return f'You see no {self.item_title}{item_pluralizer} here.'
+
+    def __init__(self, item_title_str, amount_attempted_int, *items_here_tuple):
+        self.item_title = item_title_str
+        self.amount_attempted = amount_attempted_int
+        self.items_here = tuple(sorted(items_here_tuple, key=operator.itemgetter(1)))
+
+
+class pick_up_command_item_picked_up(game_state_message):
+    __slots__ = 'item_title', 'pick_up_amount', 'amount_had'
+
+    @property
+    def message(self):
+        if self.pick_up_amount == 1 and self.amount_had == 1:
+            return f'You picked up a {self.item_title}. You have 1 {self.item_title}.'
+        elif self.pick_up_amount == 1 and self.amount_had > 1:
+            return f'You picked up a {self.item_title}. You have {self.amount_had} {self.item_title}s.'
+        else:
+            return f'You picked up {self.pick_up_amount} {self.item_title}s. You have {self.amount_had} {self.item_title}s.'
+
+    def __init__(self, item_title_str, pick_up_amount_int, amount_had_int):
+        self.item_title = item_title_str
+        self.pick_up_amount = pick_up_amount_int
+        self.amount_had = amount_had_int
+
+
+class pick_up_command_quantity_unclear(game_state_message):
+
+    message = property(fget=lambda self: 'Amount to pick up unclear. How many do you mean?')
+
+    def __init__(self):
+        pass
+
+
+class pick_up_command_trying_to_pick_up_more_than_is_present(game_state_message):
+    __slots__ = 'item_title', 'amount_attempted', 'amount_present'
+
+    message = property(fget=lambda self: f"You can't pick up {self.amount_attempted} {self.item_title}s. Only {self.amount_present} is here.")
+
+    def __init__(self, item_title_str, amount_attempted_int, amount_present_int):
+        self.item_title = item_title_str
+        self.amount_attempted = amount_attempted_int
+        self.amount_present = amount_present_int
 
 
 class put_command_amount_put(game_state_message):

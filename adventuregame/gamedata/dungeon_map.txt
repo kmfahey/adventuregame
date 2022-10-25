@@ -1,0 +1,11 @@
+						Room_3,6
+							xx
+Room_1,5 ==	Room_2,5 ==	Room_3,5 ==	Room_4,5
+	xx			||						||
+Room_1,4 ==	Room_2,4 ==	Room_3,4	Room_4,4
+				||			||			||
+Room_1,3 ==	Room_2,3	Room_3,3 ==	Room_4,3
+	||						xx			||
+Room_1,2 == Room_2,2 ==	Room_3,2 ==	Room_4,2
+				|
+			Room_2,1

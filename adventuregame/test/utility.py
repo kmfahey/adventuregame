@@ -8,6 +8,46 @@ import iniconfig
 __name__ = 'adventuregame.utility'
 
 
+# dungeon map
+#
+# Room_2,1 xx Room_2,2
+#     ||          ||
+# Room_1,1 xx Room 2,1
+
+Doors_Ini_Config_Text = """
+[Room_1,1_x_Room_1,2]
+title=wooden door
+description=This door is made of wooden planks secured together with iron divots.
+door_type=wooden_door
+is_locked=false
+is_closed=true
+closable=true
+
+[Room_1,1_x_Room_2,1]
+title=iron door
+description=This door is bound in iron plates with a small barred window set up high.
+door_type=iron door
+is_locked=true
+is_closed=true
+closable=true
+
+[Room_1,2_x_Room_2,2]
+title=doorway
+description=This open doorway is outlined by a stone arch set into the wall.
+door_type=doorway
+is_locked=false
+is_closed=false
+closable=false
+
+[Room_2,1_x_Room_2,2]
+title=iron door
+description=This door is bound in iron plates with a small barred window set up high.
+door_type=iron door
+is_locked=true
+is_closed=true
+closable=true
+"""
+
 Items_Ini_Config_Text = """
 [Short_Sword]
 attack_bonus=0
@@ -149,7 +189,7 @@ description=A small, stoppered bottle that contains a pungeant but drinkable blu
 item_type=consumable
 mage_can_use=true
 priest_can_use=true
-title=health potion
+title=mana potion
 value=25
 weight=.1
 

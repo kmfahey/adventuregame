@@ -47,6 +47,8 @@ class command_processor(object):
                 tokens.pop(0)
         elif command == "i'm" and len(tokens) and tokens[0].lower() == 'satisfied':
             command = tokens.pop(0).lower()
+        elif command == 'pick' and len(tokens) and tokens[0].lower() == 'up':
+            command += '_' + tokens.pop(0).lower()
         if command not in ('set_name', 'set_class'):
             tokens = tuple(map(str.lower, tokens))
         if command not in self.dispatch_table:
@@ -97,8 +99,34 @@ class command_processor(object):
     def close_command(self):
         pass
 
-    def drop_command(self):
-        pass
+    def drop_command(self, *tokens):
+        result = self._parse_item_qty_item_title_natlang('DROP', *tokens)
+        if len(result) == 1 and isinstance(result[0], game_state_message):
+            return result
+        else:
+            drop_amount, item_title = result
+        if self.game_state.rooms_state.cursor.items_here is not None:
+            items_here = tuple(self.game_state.rooms_state.cursor.items_here.values())
+        else:
+            items_here = ()
+        items_had = tuple(self.game_state.character.list_items())
+        item_here_pair = tuple(filter(lambda pair: pair[1].title == item_title, items_here))
+        items_had_pair = tuple(filter(lambda pair: pair[1].title == item_title, items_had))
+        if not len(items_had_pair):
+            return drop_command_trying_to_drop_item_you_dont_have(item_title, drop_amount),
+        (item_had_qty, item_obj), = items_had_pair
+        if drop_amount is math.nan:
+            drop_amount = item_had_qty
+        amount_already_here = item_here_pair[0][0] if len(item_here_pair) else 0
+        if drop_amount > item_had_qty:
+            return drop_command_trying_to_drop_more_than_you_have(item_title, drop_amount, item_had_qty),
+        else:
+            self.game_state.character.drop_item(item_obj, qty=drop_amount)
+            if self.game_state.rooms_state.cursor.items_here is None:
+                self.game_state.rooms_state.cursor.items_here = items_multi_state()
+            self.game_state.rooms_state.cursor.items_here.set(item_obj.internal_name, amount_already_here + drop_amount, item_obj)
+            amount_had_now = item_had_qty - drop_amount
+            return drop_command_dropped_item(item_title, drop_amount, amount_already_here + drop_amount, amount_had_now),
 
     def equip_command(self):
         pass
@@ -126,8 +154,65 @@ class command_processor(object):
     def open_command(self):
         pass
 
+    def _parse_item_qty_item_title_natlang(self, command, *tokens):
+        if tokens[0] == 'a' or tokens[0] == 'the' or tokens[0].isdigit() or lexical_number_in_1_99_re.match(tokens[0]):
+            if len(tokens) == 1:
+                return command_bad_syntax(command.upper(), f'<item name>', f'<number> <item name>'),
+            item_title = ' '.join(tokens[1:])
+            if tokens[0] == 'a':
+                if tokens[-1].endswith('s'):
+                    return (drop_command_quantity_unclear(),) if command.lower() == 'drop' else (pick_up_command_quantity_unclear(),)
+                item_qty = 1
+            elif tokens[0].isdigit():
+                item_qty = int(tokens[0])
+            elif tokens[0] == 'the':
+                if tokens[-1].endswith('s'):
+                    item_qty = math.nan
+                else:
+                    item_qty = 1
+            else:  # lexical_number_in_1_99_re.match(tokens[0]) is True
+                item_qty = lexical_number_to_digits(tokens[0])
+            if item_qty == 1 and item_title.endswith('s'):
+                return pick_up_command_quantity_unclear(),
+        else:
+            item_title = ' '.join(tokens[1:])
+            if item_title.endswith('s'):
+                item_qty = math.nan
+            else:
+                item_qty = 1
+        item_title = item_title.rstrip('s')
+        return item_qty, item_title
+
     def pick_up_command(self, *tokens):
-        pass
+        result = self._parse_item_qty_item_title_natlang('PICK UP', *tokens)
+        if len(result) == 1 and isinstance(result[0], game_state_message):
+            return result
+        else:
+            pick_up_amount, item_title = result
+        if self.game_state.rooms_state.cursor.items_here is not None:
+            items_here = tuple(self.game_state.rooms_state.cursor.items_here.values())
+        else:
+            return pick_up_command_item_not_found(item_title, pick_up_amount),
+        items_had = tuple(self.game_state.character.list_items())
+        item_here_pair = tuple(filter(lambda pair: pair[1].title == item_title, items_here))
+        items_had_pair = tuple(filter(lambda pair: pair[1].title == item_title, items_had))
+        if not len(item_here_pair):
+            items_here_qtys_titles = tuple((item_qty, item_obj.title) for item_qty, item_obj in items_here)
+            return pick_up_command_item_not_found(item_title, pick_up_amount, *items_here_qtys_titles),
+        (item_qty, item_obj), = item_here_pair
+        if pick_up_amount is math.nan:
+            pick_up_amount = item_qty
+        amount_already_had = items_had_pair[0][0] if len(items_had_pair) else 0
+        if item_qty < pick_up_amount:
+            return pick_up_command_trying_to_pick_up_more_than_is_present(item_title, pick_up_amount, item_qty),
+        else:
+            self.game_state.character.pick_up_item(item_obj, qty=pick_up_amount)
+            if item_qty == pick_up_amount:
+                self.game_state.rooms_state.cursor.items_here.delete(item_obj.internal_name)
+            else:
+                self.game_state.rooms_state.cursor.items_here.set(item_obj.internal_name, item_qty - pick_up_amount, item_obj)
+            amount_had_now = amount_already_had + pick_up_amount
+            return pick_up_command_item_picked_up(item_title, pick_up_amount, amount_had_now),
 
     def satisfied_command(self, *tokens):
         if len(tokens):

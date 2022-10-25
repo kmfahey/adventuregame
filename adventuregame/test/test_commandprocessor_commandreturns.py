@@ -11,6 +11,155 @@ from .utility import *
 __name__ = 'adventuregame.test_commandprocessor_commandreturns'
 
 
+
+
+class test_command_processor_pick_up_vs_drop(unittest.TestCase):
+
+    def __init__(self, *argl, **argd):
+        super().__init__(*argl, **argd)
+        self.maxDiff = None
+        self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
+        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
+        self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
+        self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
+
+    def setUp(self):
+        self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
+        self.containers_state_obj = containers_state(self.items_state_obj, **self.containers_ini_config_obj.sections)
+        self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
+        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.items_state_obj,
+                                           **self.rooms_ini_config_obj.sections)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
+                                                          self.containers_state_obj, self.items_state_obj)
+        self.command_processor_obj = command_processor(self.game_state_obj)
+        self.command_processor_obj.game_state.character_name = 'Niath'
+        self.command_processor_obj.game_state.character_class = 'Warrior'
+
+    def test_pick_up(self):
+        result = self.command_processor_obj.process('pick up the')  # check
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'PICK UP')
+        self.assertEqual(result[0].message, "PICK UP command: bad syntax. Should be 'PICK UP <item name>' or 'PICK UP <number> <item name>'."),
+        
+        result = self.command_processor_obj.process('pick up a gold coins')  # check
+        self.assertIsInstance(result[0], pick_up_command_quantity_unclear)
+        self.assertEqual(result[0].message, 'Amount to pick up unclear. How many do you mean?')
+
+        result = self.command_processor_obj.process('pick up 15 gold coins')  # check
+        self.assertIsInstance(result[0], pick_up_command_item_not_found)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].amount_attempted, 15)
+        self.assertEqual(result[0].items_here, ((2, 'health potion'), (1, 'mana potion')))
+        self.assertEqual(result[0].message, 'You see no gold coins here. However, there is 2 health potions and a mana potion here.')
+
+        result = self.command_processor_obj.process('pick up a short sword')  # check
+        self.assertIsInstance(result[0], pick_up_command_item_not_found)
+        self.assertEqual(result[0].item_title, 'short sword')
+        self.assertEqual(result[0].amount_attempted, 1)
+        self.assertEqual(result[0].items_here, ((2, 'health potion'), (1, 'mana potion')))
+        self.assertEqual(result[0].message, 'You see no short sword here. However, there is 2 health potions and a mana potion here.')
+
+        self.command_processor_obj.game_state.rooms_state.move(north=True)
+        result = self.command_processor_obj.process('pick up a short sword')  # check
+        self.assertIsInstance(result[0], pick_up_command_item_not_found)
+        self.assertEqual(result[0].item_title, 'short sword')
+        self.assertEqual(result[0].amount_attempted, 1)
+        self.assertEqual(result[0].items_here, ())
+        self.assertEqual(result[0].message, 'You see no short sword here.')
+        self.command_processor_obj.game_state.rooms_state.move(south=True)
+
+        result = self.command_processor_obj.process('pick up 2 mana potions')  # check
+        self.assertIsInstance(result[0], pick_up_command_trying_to_pick_up_more_than_is_present)
+        self.assertEqual(result[0].item_title, 'mana potion')
+        self.assertEqual(result[0].amount_attempted, 2)
+        self.assertEqual(result[0].amount_present, 1)
+        self.assertEqual(result[0].message, "You can't pick up 2 mana potions. Only 1 is here.")
+
+        result = self.command_processor_obj.process('pick up a mana potion')  # check
+        self.assertIsInstance(result[0], pick_up_command_item_picked_up)
+        self.assertEqual(result[0].item_title, 'mana potion')
+        self.assertEqual(result[0].pick_up_amount, 1)
+        self.assertEqual(result[0].amount_had, 1)
+        self.assertEqual(result[0].message, 'You picked up a mana potion. You have 1 mana potion.')
+
+        result = self.command_processor_obj.process('pick up a health potion')  # check
+        result = self.command_processor_obj.process('pick up a health potion')  # check
+        self.assertIsInstance(result[0], pick_up_command_item_picked_up)
+        self.assertEqual(result[0].item_title, 'health potion')
+        self.assertEqual(result[0].pick_up_amount, 1)
+        self.assertEqual(result[0].amount_had, 2)
+        self.assertEqual(result[0].message, 'You picked up a health potion. You have 2 health potions.')
+        
+        gold_coin_obj = self.items_state_obj.get('Gold_Coin')
+        self.command_processor_obj.game_state.rooms_state.cursor.items_here.set('Gold_Coin', 30, gold_coin_obj)
+
+        result = self.command_processor_obj.process('pick up 15 gold coins')  # check
+        self.assertIsInstance(result[0], pick_up_command_item_picked_up)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].pick_up_amount, 15)
+        self.assertEqual(result[0].amount_had, 15)
+        self.assertEqual(result[0].message, 'You picked up 15 gold coins. You have 15 gold coins.')
+
+        result = self.command_processor_obj.process('pick up 15 gold coins')  # check
+        self.assertIsInstance(result[0], pick_up_command_item_picked_up)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].pick_up_amount, 15)
+        self.assertEqual(result[0].amount_had, 30)
+        self.assertEqual(result[0].message, 'You picked up 15 gold coins. You have 30 gold coins.')
+
+    def test_drop(self):
+        result = self.command_processor_obj.process('drop the')  # check
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'DROP')
+        self.assertEqual(result[0].message, "DROP command: bad syntax. Should be 'DROP <item name>' or 'DROP <number> <item name>'."),
+        
+        result = self.command_processor_obj.process('drop a gold coins')  # check
+        self.assertIsInstance(result[0], drop_command_quantity_unclear)
+        self.assertEqual(result[0].message, 'Amount to drop unclear. How many do you mean?')
+
+        gold_coin_obj = self.items_state_obj.get('Gold_Coin')
+        self.command_processor_obj.game_state.character.pick_up_item(gold_coin_obj, qty=30)
+
+        result = self.command_processor_obj.process('drop a mana potion')  # check
+        self.assertIsInstance(result[0], drop_command_trying_to_drop_item_you_dont_have)
+        self.assertEqual(result[0].item_title, 'mana potion')
+        self.assertEqual(result[0].amount_attempted, 1)
+        self.assertEqual(result[0].message, "You don't have a mana potion in your inventory.")
+
+        result = self.command_processor_obj.process('drop 45 gold coins')  # check
+        self.assertIsInstance(result[0], drop_command_trying_to_drop_more_than_you_have)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].amount_attempted, 45)
+        self.assertEqual(result[0].amount_had, 30)
+        self.assertEqual(result[0].message, "You can't drop 45 gold coins. You only have 30 gold coins in your inventory.")
+
+        result = self.command_processor_obj.process('drop 15 gold coins')  # check
+        self.assertIsInstance(result[0], drop_command_dropped_item)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].amount_dropped, 15)
+        self.assertEqual(result[0].amount_on_floor, 15)
+        self.assertEqual(result[0].amount_left, 15)
+        self.assertEqual(result[0].message, 'You dropped 15 gold coins. You see 15 gold coins here. You have 15 gold coins left.')
+
+        result = self.command_processor_obj.process('drop 14 gold coins')  # check
+        self.assertIsInstance(result[0], drop_command_dropped_item)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].amount_dropped, 14)
+        self.assertEqual(result[0].amount_on_floor, 29)
+        self.assertEqual(result[0].amount_left, 1)
+        self.assertEqual(result[0].message, 'You dropped 14 gold coins. You see 29 gold coins here. You have 1 gold coin left.')
+
+        self.command_processor_obj.process('pick up 29 gold coins')  # check
+        result = self.command_processor_obj.process('drop 1 gold coin')  # check
+        self.assertIsInstance(result[0], drop_command_dropped_item)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].amount_dropped, 1)
+        self.assertEqual(result[0].amount_on_floor, 1)
+        self.assertEqual(result[0].amount_left, 29)
+        self.assertEqual(result[0].message, 'You dropped a gold coin. You see a gold coin here. You have 29 gold coins left.')
+
+
+
 class test_command_processor_set_name_vs_set_class_vs_reroll_vs_satisfied(unittest.TestCase):
 
     def __init__(self, *argl, **argd):
@@ -500,7 +649,7 @@ class test_command_processor_attack_vs_be_attacked_by(unittest.TestCase):
         self.assertEqual(result.is_locked, self.game_state_obj.rooms_state.cursor.container_here.is_locked)
         self.assertEqual(result.is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
         self.assertEqual(result.message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is '
-                                          'unlocked and open. It contains 20 gold coins, a health potion, and a warhammer.')
+                                          'unlocked and open. It contains 20 gold coins, a mana potion, and a warhammer.')
 
         self.game_state_obj.rooms_state.cursor.container_here.is_locked = True
         self.game_state_obj.rooms_state.cursor.container_here.is_closed = False
@@ -524,7 +673,7 @@ class test_command_processor_attack_vs_be_attacked_by(unittest.TestCase):
         self.assertEqual(result.is_locked, self.game_state_obj.rooms_state.cursor.container_here.is_locked)
         self.assertEqual(result.is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
         self.assertEqual(result.message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is '
-                                          'open. It contains 20 gold coins, a health potion, and a warhammer.')
+                                          'open. It contains 20 gold coins, a mana potion, and a warhammer.')
 
         result, = self.command_processor_obj.process('take three short swords from the wooden chest')
         self.assertIsInstance(result, take_command_item_not_found_in_container)

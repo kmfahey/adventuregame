@@ -699,6 +699,36 @@ class corpse(container):
     pass
 
 
+class door(ini_entry):
+    __slots__ = ('internal_name', 'title', 'description', 'door_type', 'is_locked', 'is_closed', 'closable')
+
+    def __init__(self, **argd):
+        super().__init__(**argd)
+        self._post_init_slots_set_none(self.__slots__)
+
+    @classmethod
+    def subclassing_factory(self, **door_dict):
+        if door_dict['door_type'] == 'doorway':
+            door_obj = doorway(**door_dict)
+        elif door_dict['door_type'] == 'wooden_door':
+            door_obj = wooden_door(**door_dict)
+        elif door_dict['door_type'] == 'iron_door':
+            door_obj = iron_door(**door_dict)
+        return door_obj
+
+
+class doorway(door):
+    pass
+
+
+class wooden_door(door):
+    pass
+
+
+class iron_door(door):
+    pass
+
+
 class item(ini_entry):  # has been tested
     __slots__ = ('internal_name', 'title', 'description', 'weight', 'value', 'damage', 'attack_bonus', 'armor_bonus', 'item_type', 'warrior_can_use',
                  'thief_can_use', 'priest_can_use', 'mage_can_use', 'hit_points_recovered', 'mana_points_recovered')
