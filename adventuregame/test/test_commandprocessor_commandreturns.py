@@ -6,11 +6,292 @@ import unittest
 
 from adventuregame import *
 
-from .utility import *
+from adventuregame.test.utility import *
 
 __name__ = 'adventuregame.test_commandprocessor_commandreturns'
 
 
+
+
+class test_command_processor_lock_vs_unlock(unittest.TestCase):
+
+    def __init__(self, *argl, **argd):
+        super().__init__(*argl, **argd)
+        self.maxDiff = None
+        self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
+        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
+        self.doors_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Doors_Ini_Config_Text)
+        self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
+        self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
+
+    def setUp(self):
+        self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
+        self.doors_state_obj = doors_state(**self.doors_ini_config_obj.sections)
+        self.containers_state_obj = containers_state(self.items_state_obj, **self.containers_ini_config_obj.sections)
+        self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
+        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
+                                           self.items_state_obj, **self.rooms_ini_config_obj.sections)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
+                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.command_processor_obj = command_processor(self.game_state_obj)
+        self.command_processor_obj.game_state.character_name = 'Niath'
+        self.command_processor_obj.game_state.character_class = 'Warrior'
+
+    def test_unlock(self):
+        result = self.command_processor_obj.process('unlock')
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'UNLOCK')
+        self.assertEqual(result[0].message, "UNLOCK command: bad syntax. Should be 'UNLOCK <door name>' or "
+                                            "'UNLOCK <chest name>'."),
+
+        door_obj = self.command_processor_obj.game_state.rooms_state.cursor.north_exit
+        door_obj.is_locked = True
+        door_title = self.command_processor_obj.game_state.rooms_state.cursor.north_exit.title
+
+        result = self.command_processor_obj.process('unlock west door')
+        self.assertIsInstance(result[0], unlock_command_object_to_unlock_not_here)
+        self.assertEqual(result[0].target_title, 'west door')
+        self.assertEqual(result[0].message, 'You found no west door here to unlock.'),
+        self.command_processor_obj.game_state.rooms_state.cursor.north_exit.is_locked
+        door_title = self.command_processor_obj.game_state.rooms_state.cursor.north_exit.title
+
+        result = self.command_processor_obj.process(f'unlock {door_title}')
+        self.assertIsInstance(result[0], unlock_command_dont_possess_correct_key)
+        self.assertEqual(result[0].object_to_unlock_title, door_title)
+        self.assertEqual(result[0].key_needed, 'door key')
+        self.assertEqual(result[0].message, f'To unlock the {door_title} you need a door key.')
+        self.assertTrue(door_obj.is_locked)
+
+        door_obj.is_locked = False
+        key_obj = self.command_processor_obj.game_state.items_state.get('Door_Key')
+        self.command_processor_obj.game_state.character.pick_up_item(key_obj)
+        result = self.command_processor_obj.process(f'unlock {door_title}')
+        self.assertIsInstance(result[0], unlock_command_object_is_already_unlocked)
+        self.assertEqual(result[0].target_object, door_title)
+        self.assertEqual(result[0].message, f'The {door_title} is already unlocked.')
+        self.assertFalse(door_obj.is_locked)
+
+        door_obj.is_locked = True
+        result = self.command_processor_obj.process(f'unlock {door_title}')
+        self.assertIsInstance(result[0], unlock_command_object_has_been_unlocked)
+        self.assertEqual(result[0].target_object, door_title)
+        self.assertEqual(result[0].message, f'You have unlocked the {door_title}.')
+        self.assertFalse(door_obj.is_locked)
+
+        chest_obj = self.command_processor_obj.game_state.rooms_state.cursor.container_here
+        chest_obj.is_locked = True
+        chest_title = chest_obj.title
+
+        result = self.command_processor_obj.process(f'unlock {chest_title}')
+        self.assertIsInstance(result[0], unlock_command_dont_possess_correct_key)
+        self.assertEqual(result[0].object_to_unlock_title, chest_title)
+        self.assertEqual(result[0].key_needed, 'chest key')
+        self.assertEqual(result[0].message, f'To unlock the {chest_title} you need a chest key.')
+        self.assertTrue(chest_obj.is_locked)
+
+        chest_obj.is_locked = False
+
+        key_obj = self.command_processor_obj.game_state.items_state.get('Chest_Key')
+        self.command_processor_obj.game_state.character.pick_up_item(key_obj)
+        result = self.command_processor_obj.process(f'unlock {chest_title}')
+        self.assertIsInstance(result[0], unlock_command_object_is_already_unlocked)
+        self.assertEqual(result[0].target_object, chest_title)
+        self.assertEqual(result[0].message, f'The {chest_title} is already unlocked.')
+        self.assertFalse(chest_obj.is_locked)
+
+        chest_obj.is_locked = True
+
+        result = self.command_processor_obj.process(f'unlock {chest_title}')
+        self.assertIsInstance(result[0], unlock_command_object_has_been_unlocked)
+        self.assertEqual(result[0].target_object, chest_title)
+        self.assertEqual(result[0].message, f'You have unlocked the {chest_title}.')
+        self.assertFalse(chest_obj.is_locked)
+
+
+    def test_lock(self):
+        result = self.command_processor_obj.process('lock')
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'LOCK')
+        self.assertEqual(result[0].message, "LOCK command: bad syntax. Should be 'LOCK <door name>' or "
+                                            "'LOCK <chest name>'."),
+
+        door_obj = self.command_processor_obj.game_state.rooms_state.cursor.north_exit
+        door_obj.is_locked = True
+        door_title = self.command_processor_obj.game_state.rooms_state.cursor.north_exit.title
+
+        result = self.command_processor_obj.process('lock west door')
+        self.assertIsInstance(result[0], lock_command_object_to_lock_not_here)
+        self.assertEqual(result[0].target_title, 'west door')
+        self.assertEqual(result[0].message, 'You found no west door here to lock.'),
+        self.command_processor_obj.game_state.rooms_state.cursor.north_exit.is_locked
+        door_title = self.command_processor_obj.game_state.rooms_state.cursor.north_exit.title
+
+        door_obj.is_locked = False
+        result = self.command_processor_obj.process(f'lock {door_title}')
+        self.assertIsInstance(result[0], lock_command_dont_possess_correct_key)
+        self.assertEqual(result[0].object_to_lock_title, door_title)
+        self.assertEqual(result[0].key_needed, 'door key')
+        self.assertEqual(result[0].message, f'To lock the {door_title} you need a door key.')
+        self.assertFalse(door_obj.is_locked)
+
+        door_obj.is_locked = True
+        key_obj = self.command_processor_obj.game_state.items_state.get('Door_Key')
+        self.command_processor_obj.game_state.character.pick_up_item(key_obj)
+        result = self.command_processor_obj.process(f'lock {door_title}')
+        self.assertIsInstance(result[0], lock_command_object_is_already_locked)
+        self.assertEqual(result[0].target_object, door_title)
+        self.assertEqual(result[0].message, f'The {door_title} is already locked.')
+        self.assertTrue(door_obj.is_locked)
+
+        door_obj.is_locked = False
+        result = self.command_processor_obj.process(f'lock {door_title}')
+        self.assertIsInstance(result[0], lock_command_object_has_been_locked)
+        self.assertEqual(result[0].target_object, door_title)
+        self.assertEqual(result[0].message, f'You have locked the {door_title}.')
+        self.assertTrue(door_obj.is_locked)
+
+        chest_obj = self.command_processor_obj.game_state.rooms_state.cursor.container_here
+        chest_obj.is_locked = False
+        chest_title = chest_obj.title
+
+        result = self.command_processor_obj.process(f'lock {chest_title}')
+        self.assertIsInstance(result[0], lock_command_dont_possess_correct_key)
+        self.assertEqual(result[0].object_to_lock_title, chest_title)
+        self.assertEqual(result[0].key_needed, 'chest key')
+        self.assertEqual(result[0].message, f'To lock the {chest_title} you need a chest key.')
+
+        chest_obj.is_locked = True
+
+        key_obj = self.command_processor_obj.game_state.items_state.get('Chest_Key')
+        self.command_processor_obj.game_state.character.pick_up_item(key_obj)
+        result = self.command_processor_obj.process(f'lock {chest_title}')
+        self.assertIsInstance(result[0], lock_command_object_is_already_locked)
+        self.assertEqual(result[0].target_object, chest_title)
+        self.assertEqual(result[0].message, f'The {chest_title} is already locked.')
+
+        chest_obj.is_locked = False
+
+        result = self.command_processor_obj.process(f'lock {chest_title}')
+        self.assertIsInstance(result[0], lock_command_object_has_been_locked)
+        self.assertEqual(result[0].target_object, chest_title)
+        self.assertEqual(result[0].message, f'You have locked the {chest_title}.')
+        self.assertTrue(chest_obj.is_locked)
+
+    def test_open(self):
+        result = self.command_processor_obj.process('open')
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'OPEN')
+        self.assertEqual(result[0].message, "OPEN command: bad syntax. Should be 'OPEN <door name>' or "
+                                            "'OPEN <chest name>'."),
+
+        chest_obj = self.command_processor_obj.game_state.rooms_state.cursor.container_here
+        chest_obj.is_closed = True
+        chest_obj.is_locked = True
+        chest_title = chest_obj.title
+
+        result = self.command_processor_obj.process(f'open {chest_title}')
+        self.assertIsInstance(result[0], open_command_object_is_locked)
+        self.assertEqual(result[0].target_object, chest_title)
+        self.assertEqual(result[0].message, f'The {chest_title} is locked.')
+
+        chest_obj.is_locked = False
+        chest_obj.is_closed = False
+        chest_title = chest_obj.title
+
+        result = self.command_processor_obj.process(f'open {chest_title}')
+        self.assertIsInstance(result[0], open_command_object_is_already_open)
+        self.assertEqual(result[0].target_object, chest_title)
+        self.assertEqual(result[0].message, f'The {chest_title} is already open.')
+        self.assertFalse(chest_obj.is_closed)
+
+        chest_obj.is_closed = True
+
+        result = self.command_processor_obj.process(f'open {chest_title}')
+        self.assertIsInstance(result[0], open_command_object_has_been_opened)
+        self.assertEqual(result[0].target_object, chest_title)
+        self.assertEqual(result[0].message, f'You have opened the {chest_title}.')
+        self.assertFalse(chest_obj.is_closed)
+
+        door_obj = self.command_processor_obj.game_state.rooms_state.cursor.north_exit
+        door_obj.is_closed = False
+        door_title = door_obj.title
+
+        result = self.command_processor_obj.process('open west door')
+        self.assertIsInstance(result[0], open_command_object_to_open_not_here)
+        self.assertEqual(result[0].target_title, 'west door')
+        self.assertEqual(result[0].message, 'You found no west door here to open.'),
+
+        result = self.command_processor_obj.process(f'open {door_title}')
+        self.assertIsInstance(result[0], open_command_object_is_already_open)
+        self.assertEqual(result[0].target_object, door_title)
+        self.assertEqual(result[0].message, f'The {door_title} is already open.')
+        self.assertFalse(door_obj.is_closed)
+
+        door_obj.is_closed = True
+
+        result = self.command_processor_obj.process(f'open {door_title}')
+        self.assertIsInstance(result[0], open_command_object_has_been_opened)
+        self.assertEqual(result[0].target_object, door_title)
+        self.assertEqual(result[0].message, f'You have opened the {door_title}.')
+        self.assertFalse(door_obj.is_closed)
+
+        door_obj.is_closed = True
+        door_obj.is_locked = True
+
+        result = self.command_processor_obj.process(f'open {door_title}')
+        self.assertIsInstance(result[0], open_command_object_is_locked)
+        self.assertEqual(result[0].target_object, door_title)
+        self.assertEqual(result[0].message, f'The {door_title} is locked.')
+        self.assertTrue(door_obj.is_closed)
+
+    def test_close(self):
+        result = self.command_processor_obj.process('close')
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'CLOSE')
+        self.assertEqual(result[0].message, "CLOSE command: bad syntax. Should be 'CLOSE <door name>' or "
+                                            "'CLOSE <chest name>'."),
+
+        chest_obj = self.command_processor_obj.game_state.rooms_state.cursor.container_here
+        chest_obj.is_closed = True
+        chest_obj.is_locked = False
+        chest_title = chest_obj.title
+
+        result = self.command_processor_obj.process(f'close {chest_title}')
+        self.assertIsInstance(result[0], close_command_object_is_already_closed)
+        self.assertEqual(result[0].target_object, chest_title)
+        self.assertEqual(result[0].message, f'The {chest_title} is already closed.')
+        self.assertTrue(chest_obj.is_closed)
+
+        chest_obj.is_closed = False
+
+        result = self.command_processor_obj.process(f'close {chest_title}')
+        self.assertIsInstance(result[0], close_command_object_has_been_closed)
+        self.assertEqual(result[0].target_object, chest_title)
+        self.assertEqual(result[0].message, f'You have closed the {chest_title}.')
+        self.assertTrue(chest_obj.is_closed)
+
+        result = self.command_processor_obj.process('close west door')
+        self.assertIsInstance(result[0], close_command_object_to_close_not_here)
+        self.assertEqual(result[0].target_title, 'west door')
+        self.assertEqual(result[0].message, 'You found no west door here to close.'),
+
+        door_obj = self.command_processor_obj.game_state.rooms_state.cursor.north_exit
+        door_obj.is_closed = True
+        door_title = door_obj.title
+
+        result = self.command_processor_obj.process(f'close {door_title}')
+        self.assertIsInstance(result[0], close_command_object_is_already_closed)
+        self.assertEqual(result[0].target_object, door_title)
+        self.assertEqual(result[0].message, f'The {door_title} is already closed.')
+        self.assertTrue(door_obj.is_closed)
+
+        door_obj.is_closed = False
+
+        result = self.command_processor_obj.process(f'close {door_title}')
+        self.assertIsInstance(result[0], close_command_object_has_been_closed)
+        self.assertEqual(result[0].target_object, door_title)
+        self.assertEqual(result[0].message, f'You have closed the {door_title}.')
+        self.assertTrue(door_obj.is_closed)
 
 
 class test_command_processor_pick_up_vs_drop(unittest.TestCase):
@@ -20,17 +301,19 @@ class test_command_processor_pick_up_vs_drop(unittest.TestCase):
         self.maxDiff = None
         self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
         self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
+        self.doors_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Doors_Ini_Config_Text)
         self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
         self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
+        self.doors_state_obj = doors_state(**self.doors_ini_config_obj.sections)
         self.containers_state_obj = containers_state(self.items_state_obj, **self.containers_ini_config_obj.sections)
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
-        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.items_state_obj,
-                                           **self.rooms_ini_config_obj.sections)
+        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
+                                           self.items_state_obj, **self.rooms_ini_config_obj.sections)
         self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
-                                                          self.containers_state_obj, self.items_state_obj)
+                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
         self.command_processor_obj = command_processor(self.game_state_obj)
         self.command_processor_obj.game_state.character_name = 'Niath'
         self.command_processor_obj.game_state.character_class = 'Warrior'
@@ -83,7 +366,7 @@ class test_command_processor_pick_up_vs_drop(unittest.TestCase):
         self.assertEqual(result[0].message, 'You picked up a mana potion. You have 1 mana potion.')
 
         result = self.command_processor_obj.process('pick up a health potion')  # check
-        result = self.command_processor_obj.process('pick up a health potion')  # check
+        result = self.command_processor_obj.process('pick up health potion')  # check
         self.assertIsInstance(result[0], pick_up_command_item_picked_up)
         self.assertEqual(result[0].item_title, 'health potion')
         self.assertEqual(result[0].pick_up_amount, 1)
@@ -167,17 +450,19 @@ class test_command_processor_set_name_vs_set_class_vs_reroll_vs_satisfied(unitte
         self.maxDiff = None
         self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
         self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
+        self.doors_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Doors_Ini_Config_Text)
         self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
         self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
+        self.doors_state_obj = doors_state(**self.doors_ini_config_obj.sections)
         self.containers_state_obj = containers_state(self.items_state_obj, **self.containers_ini_config_obj.sections)
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
-        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.items_state_obj,
-                                           **self.rooms_ini_config_obj.sections)
+        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
+                                           self.items_state_obj, **self.rooms_ini_config_obj.sections)
         self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
-                                                          self.containers_state_obj, self.items_state_obj)
+                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
         self.command_processor_obj = command_processor(self.game_state_obj)
 
     def test_set_name_and_class_1(self):
@@ -222,9 +507,9 @@ class test_command_processor_set_name_vs_set_class_vs_reroll_vs_satisfied(unitte
         self.assertIsInstance(result[0], set_name_or_class_command_display_rolled_stats)
         self.assertNotEqual(first_roll, second_roll)
 
-        result = self.command_processor_obj.process("satisfied")
+        result = self.command_processor_obj.process('satisfied')
         self.assertIsInstance(result[0], satisfied_command_game_begins)
-        self.assertEqual(result[0].message, "The game has begun!")
+        self.assertEqual(result[0].message, 'The game has begun!')
         self.assertTrue(self.command_processor_obj.game_state.game_has_begun)
 
     def test_set_name_and_class_2(self):
@@ -232,7 +517,7 @@ class test_command_processor_set_name_vs_set_class_vs_reroll_vs_satisfied(unitte
         self.command_processor_obj.process('set name to Kerne')
         result = self.command_processor_obj.process("I'm satisfied")
         self.assertIsInstance(result[0], satisfied_command_game_begins)
-        self.assertEqual(result[0].message, "The game has begun!")
+        self.assertEqual(result[0].message, 'The game has begun!')
         self.assertTrue(self.command_processor_obj.game_state.game_has_begun)
 
     def test_set_name_and_class_3(self):
@@ -241,7 +526,7 @@ class test_command_processor_set_name_vs_set_class_vs_reroll_vs_satisfied(unitte
         self.command_processor_obj.process('set name to Kerne')
         result = self.command_processor_obj.process("I'm satisfied to play")
         self.assertIsInstance(result[0], command_bad_syntax)
-        self.assertEqual(result[0].command, "SATISFIED")
+        self.assertEqual(result[0].command, 'SATISFIED')
         self.assertEqual(result[0].message, "SATISFIED command: bad syntax. Should be 'SATISFIED'.")
         self.assertFalse(self.command_processor_obj.game_state.game_has_begun)
 
@@ -293,7 +578,7 @@ class test_command_processor_set_name_vs_set_class_vs_reroll_vs_satisfied(unitte
         self.command_processor_obj.process('set name to Kerne')
         result = self.command_processor_obj.process("I'm satisfied to play")
         self.assertIsInstance(result[0], command_bad_syntax)
-        self.assertEqual(result[0].command, "SATISFIED")
+        self.assertEqual(result[0].command, 'SATISFIED')
         self.assertEqual(result[0].message, "SATISFIED command: bad syntax. Should be 'SATISFIED'.")
         self.assertFalse(self.command_processor_obj.game_state.game_has_begun)
 
@@ -301,9 +586,9 @@ class test_command_processor_set_name_vs_set_class_vs_reroll_vs_satisfied(unitte
         self.assertFalse(self.command_processor_obj.game_state.game_has_begun)
         self.command_processor_obj.process('set class to Warrior')
         self.command_processor_obj.process('set name to Kerne')
-        result = self.command_processor_obj.process("reroll please")
+        result = self.command_processor_obj.process('reroll please')
         self.assertIsInstance(result[0], command_bad_syntax)
-        self.assertEqual(result[0].command, "REROLL")
+        self.assertEqual(result[0].command, 'REROLL')
         self.assertEqual(result[0].message, "REROLL command: bad syntax. Should be 'REROLL'.")
         self.assertFalse(self.command_processor_obj.game_state.game_has_begun)
 
@@ -315,17 +600,19 @@ class test_command_processor_attack_vs_be_attacked_by(unittest.TestCase):
         self.maxDiff = None
         self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
         self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
+        self.doors_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Doors_Ini_Config_Text)
         self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
         self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
+        self.doors_state_obj = doors_state(**self.doors_ini_config_obj.sections)
         self.containers_state_obj = containers_state(self.items_state_obj, **self.containers_ini_config_obj.sections)
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
-        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.items_state_obj,
-                                           **self.rooms_ini_config_obj.sections)
+        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
+                                           self.items_state_obj, **self.rooms_ini_config_obj.sections)
         self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
-                                                          self.containers_state_obj, self.items_state_obj)
+                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
         self.command_processor_obj = command_processor(self.game_state_obj)
         self.game_state_obj.character_name = 'Niath'
         self.game_state_obj.character_class = 'Warrior'
@@ -392,399 +679,412 @@ class test_command_processor_attack_vs_be_attacked_by(unittest.TestCase):
                          ('Short_Sword', (1, short_sword_obj)), ('Small_Leather_Armor', (1, small_leather_armor_obj))]
         self.assertEqual(corpse_belonging_list, expected_list)
 
-        result, = self.command_processor_obj.process('inspect kobold corpse')
-        self.assertIsInstance(result, inspect_command_found_container_here)
-        self.assertEqual(result.container_description, self.game_state_obj.rooms_state.cursor.container_here.description)
-        self.assertEqual(result.container_type, 'corpse')
-        self.assertEqual(result.message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} They '
+        result = self.command_processor_obj.process('inspect kobold corpse')
+        self.assertIsInstance(result[0], inspect_command_found_container_here)
+        self.assertEqual(result[0].container_description, self.game_state_obj.rooms_state.cursor.container_here.description)
+        self.assertEqual(result[0].container_type, 'corpse')
+        self.assertEqual(result[0].message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} They '
                                           'have 30 gold coins, a health potion, a short sword, and a small leather '
                                           'armor on them.')
 
         (potion_qty, health_potion_obj) = self.command_processor_obj.game_state.rooms_state.cursor.container_here.get('Health_Potion')
-        result, = self.command_processor_obj.process('take a health potion from the kobold corpse')
-        self.assertIsInstance(result, take_command_item_or_items_taken)
-        self.assertEqual(result.container_title, 'kobold corpse')
-        self.assertEqual(result.item_title, 'health potion')
-        self.assertEqual(result.amount_taken, 1)
-        self.assertEqual(result.message, 'You took a health potion from the kobold corpse.')
+        result = self.command_processor_obj.process('take a health potion from the kobold corpse')
+        self.assertIsInstance(result[0], take_command_item_or_items_taken)
+        self.assertEqual(result[0].container_title, 'kobold corpse')
+        self.assertEqual(result[0].item_title, 'health potion')
+        self.assertEqual(result[0].amount_taken, 1)
+        self.assertEqual(result[0].message, 'You took a health potion from the kobold corpse.')
         self.assertTrue(self.command_processor_obj.game_state.character.inventory.contains('Health_Potion'))
         self.assertFalse(self.command_processor_obj.game_state.rooms_state.cursor.container_here.contains('Health_Potion'))
         self.assertTrue(self.command_processor_obj.game_state.character.inventory.get('Health_Potion'), (1, health_potion_obj))
 
         (_, gold_coin_obj) = self.command_processor_obj.game_state.rooms_state.cursor.container_here.get('Gold_Coin')
-        result, = self.command_processor_obj.process('take 15 gold coins from the kobold corpse')
-        self.assertIsInstance(result, take_command_item_or_items_taken)
-        self.assertEqual(result.container_title, 'kobold corpse')
-        self.assertEqual(result.item_title, 'gold coin')
-        self.assertEqual(result.amount_taken, 15)
-        self.assertEqual(result.message, 'You took 15 gold coins from the kobold corpse.')
+        result = self.command_processor_obj.process('take 15 gold coins from the kobold corpse')
+        self.assertIsInstance(result[0], take_command_item_or_items_taken)
+        self.assertEqual(result[0].container_title, 'kobold corpse')
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].amount_taken, 15)
+        self.assertEqual(result[0].message, 'You took 15 gold coins from the kobold corpse.')
         self.assertTrue(self.command_processor_obj.game_state.character.have_item(gold_coin_obj))
         self.assertEqual(self.command_processor_obj.game_state.character.item_have_qty(gold_coin_obj), 15)
         self.assertTrue(self.command_processor_obj.game_state.rooms_state.cursor.container_here.contains('Gold_Coin'))
         self.assertTrue(self.command_processor_obj.game_state.rooms_state.cursor.container_here.get('Gold_Coin'), (15, gold_coin_obj))
 
         (_, short_sword_obj) = self.command_processor_obj.game_state.rooms_state.cursor.container_here.get('Short_Sword')
-        result, = self.command_processor_obj.process('take one short sword from the kobold corpse')
-        self.assertIsInstance(result, take_command_item_or_items_taken)
+        result = self.command_processor_obj.process('take one short sword from the kobold corpse')
+        self.assertIsInstance(result[0], take_command_item_or_items_taken)
 
-        result, = self.command_processor_obj.process('take one small leather armors from the kobold corpse')  # check
-        self.assertIsInstance(result, command_bad_syntax)
-        self.assertEqual(result.command, 'TAKE')
-        self.assertEqual(result.message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container name>' or 'TAKE <number> <item name> FROM <container name>'."),
+        result = self.command_processor_obj.process('take one small leather armors from the kobold corpse')  # check
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'TAKE')
+        self.assertEqual(result[0].message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container name>' or 'TAKE <number> <item name> FROM <container name>'."),
 
-        result, = self.command_processor_obj.process('take one small leather armor from the kobold corpses')  # check
-        self.assertIsInstance(result, command_bad_syntax)
-        self.assertEqual(result.command, 'TAKE')
-        self.assertEqual(result.message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container name>' or 'TAKE <number> <item name> FROM <container name>'."),
+        result = self.command_processor_obj.process('take one small leather armor from the kobold corpses')  # check
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'TAKE')
+        self.assertEqual(result[0].message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container name>' or 'TAKE <number> <item name> FROM <container name>'."),
 
-        result, = self.command_processor_obj.process('take one small leather armor')  # check
-        self.assertIsInstance(result, command_bad_syntax)
-        self.assertEqual(result.command, 'TAKE')
-        self.assertEqual(result.message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container name>' or 'TAKE <number> <item name> FROM <container name>'."),
+        result = self.command_processor_obj.process('take one small leather armor')  # check
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'TAKE')
+        self.assertEqual(result[0].message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container name>' or 'TAKE <number> <item name> FROM <container name>'."),
 
-        result, = self.command_processor_obj.process('take the from the kobold corpse')  # check
-        self.assertIsInstance(result, command_bad_syntax)
-        self.assertEqual(result.command, 'TAKE')
-        self.assertEqual(result.message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container name>' or 'TAKE <number> <item name> FROM <container name>'."),
+        result = self.command_processor_obj.process('take the from the kobold corpse')  # check
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'TAKE')
+        self.assertEqual(result[0].message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container name>' or 'TAKE <number> <item name> FROM <container name>'."),
 
-        result, = self.command_processor_obj.process('take the short sword from the')  # check
-        self.assertIsInstance(result, command_bad_syntax)
-        self.assertEqual(result.command, 'TAKE')
-        self.assertEqual(result.message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container name>' or 'TAKE <number> <item name> FROM <container name>'."),
+        result = self.command_processor_obj.process('take the short sword from the')  # check
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'TAKE')
+        self.assertEqual(result[0].message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container name>' or 'TAKE <number> <item name> FROM <container name>'."),
 
-        result, = self.command_processor_obj.process('take the short sword from the sorcerer corpse')  # check
-        self.assertIsInstance(result, various_commands_container_not_found)
-        self.assertEqual(result.container_not_found_title, 'sorcerer corpse')
-        self.assertEqual(result.container_present_title, 'kobold corpse')
-        self.assertEqual(result.message, 'There is no sorcerer corpse here. However, there *is* a kobold corpse here.')
+        result = self.command_processor_obj.process('take the short sword from the sorcerer corpse')  # check
+        self.assertIsInstance(result[0], various_commands_container_not_found)
+        self.assertEqual(result[0].container_not_found_title, 'sorcerer corpse')
+        self.assertEqual(result[0].container_present_title, 'kobold corpse')
+        self.assertEqual(result[0].message, 'There is no sorcerer corpse here. However, there *is* a kobold corpse here.')
 
         container_obj = self.command_processor_obj.game_state.rooms_state.cursor.container_here  # check
         self.command_processor_obj.game_state.rooms_state.cursor.container_here = None
-        result, = self.command_processor_obj.process('take the short sword from the sorcerer corpse')
-        self.assertIsInstance(result, various_commands_container_not_found)
-        self.assertEqual(result.container_not_found_title, 'sorcerer corpse')
-        self.assertIs(result.container_present_title, None)
-        self.assertEqual(result.message, 'There is no sorcerer corpse here.')
+        result = self.command_processor_obj.process('take the short sword from the sorcerer corpse')
+        self.assertIsInstance(result[0], various_commands_container_not_found)
+        self.assertEqual(result[0].container_not_found_title, 'sorcerer corpse')
+        self.assertIs(result[0].container_present_title, None)
+        self.assertEqual(result[0].message, 'There is no sorcerer corpse here.')
         self.command_processor_obj.game_state.rooms_state.cursor.container_here = container_obj
 
-        result, = self.command_processor_obj.process('take 3 small leather armors from the kobold corpse')
-        self.assertIsInstance(result, take_command_trying_to_take_more_than_is_present)
-        self.assertEqual(result.container_title, 'kobold corpse')
-        self.assertEqual(result.container_type, 'corpse')
-        self.assertEqual(result.item_title, 'small leather armor')
-        self.assertEqual(result.amount_attempted, 3)
-        self.assertEqual(result.amount_present, 1)
-        self.assertEqual(result.message, "You can't take 3 small leather armors from the kobold corpse. Only 1 is there.")
+        result = self.command_processor_obj.process('take 3 small leather armors from the kobold corpse')
+        self.assertIsInstance(result[0], take_command_trying_to_take_more_than_is_present)
+        self.assertEqual(result[0].container_title, 'kobold corpse')
+        self.assertEqual(result[0].container_type, 'corpse')
+        self.assertEqual(result[0].item_title, 'small leather armor')
+        self.assertEqual(result[0].amount_attempted, 3)
+        self.assertEqual(result[0].amount_present, 1)
+        self.assertEqual(result[0].message, "You can't take 3 small leather armors from the kobold corpse. Only 1 is there.")
 
-        result, = self.command_processor_obj.process('take the short sword from the kobold corpse')
-        self.assertIsInstance(result, take_command_item_not_found_in_container)
-        self.assertEqual(result.container_title, 'kobold corpse')
-        self.assertIs(result.amount_attempted, math.nan)
-        self.assertEqual(result.container_type, 'corpse')
-        self.assertEqual(result.item_title, 'short sword')
-        self.assertEqual(result.message, "The kobold corpse doesn't have a short sword on them.")
+        result = self.command_processor_obj.process('take the short sword from the kobold corpse')
+        self.assertIsInstance(result[0], take_command_item_not_found_in_container)
+        self.assertEqual(result[0].container_title, 'kobold corpse')
+        self.assertIs(result[0].amount_attempted, math.nan)
+        self.assertEqual(result[0].container_type, 'corpse')
+        self.assertEqual(result[0].item_title, 'short sword')
+        self.assertEqual(result[0].message, "The kobold corpse doesn't have a short sword on them.")
 
-        result, = self.command_processor_obj.process('take three short swords from the kobold corpse')
-        self.assertIsInstance(result, take_command_item_not_found_in_container)
-        self.assertEqual(result.container_title, 'kobold corpse')
-        self.assertEqual(result.amount_attempted, 3)
-        self.assertEqual(result.container_type, 'corpse')
-        self.assertEqual(result.item_title, 'short sword')
-        self.assertEqual(result.message, "The kobold corpse doesn't have any short swords on them.")
+        result = self.command_processor_obj.process('take three short swords from the kobold corpse')
+        self.assertIsInstance(result[0], take_command_item_not_found_in_container)
+        self.assertEqual(result[0].container_title, 'kobold corpse')
+        self.assertEqual(result[0].amount_attempted, 3)
+        self.assertEqual(result[0].container_type, 'corpse')
+        self.assertEqual(result[0].item_title, 'short sword')
+        self.assertEqual(result[0].message, "The kobold corpse doesn't have any short swords on them.")
 
-        result, = self.command_processor_obj.process('take fifteen gold coins from the kobold corpse')
-        self.assertIsInstance(result, take_command_item_or_items_taken)
-        self.assertEqual(result.container_title, 'kobold corpse')
-        self.assertEqual(result.amount_taken, 15)
-        self.assertEqual(result.item_title, 'gold coin')
-        self.assertEqual(result.message, 'You took 15 gold coins from the kobold corpse.')
-
-        self.command_processor_obj.game_state.rooms_state.cursor.container_here.set('Gold_Coin', 15, gold_coin_obj)
-        result, = self.command_processor_obj.process('take gold coins from the kobold corpse')
-        self.assertIsInstance(result, take_command_item_or_items_taken)
-        self.assertEqual(result.container_title, 'kobold corpse')
-        self.assertEqual(result.amount_taken, 15)
-        self.assertEqual(result.item_title, 'gold coin')
-        self.assertEqual(result.message, 'You took 15 gold coins from the kobold corpse.')
+        result = self.command_processor_obj.process('take fifteen gold coins from the kobold corpse')
+        self.assertIsInstance(result[0], take_command_item_or_items_taken)
+        self.assertEqual(result[0].container_title, 'kobold corpse')
+        self.assertEqual(result[0].amount_taken, 15)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].message, 'You took 15 gold coins from the kobold corpse.')
 
         self.command_processor_obj.game_state.rooms_state.cursor.container_here.set('Gold_Coin', 15, gold_coin_obj)
-        result, = self.command_processor_obj.process('take gold coin from the kobold corpse')
-        self.assertIsInstance(result, take_command_item_or_items_taken)
-        self.assertEqual(result.container_title, 'kobold corpse')
-        self.assertEqual(result.amount_taken, 15)
-        self.assertEqual(result.item_title, 'gold coin')
-        self.assertEqual(result.message, 'You took 15 gold coins from the kobold corpse.')
+        result = self.command_processor_obj.process('take gold coins from the kobold corpse')
+        self.assertIsInstance(result[0], take_command_item_or_items_taken)
+        self.assertEqual(result[0].container_title, 'kobold corpse')
+        self.assertEqual(result[0].amount_taken, 15)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].message, 'You took 15 gold coins from the kobold corpse.')
 
-        result, = self.command_processor_obj.process('take a small leather armor from the kobold corpse')
-        self.assertIsInstance(result, take_command_item_or_items_taken)
-        self.assertEqual(result.container_title, 'kobold corpse')
-        self.assertEqual(result.amount_taken, 1)
-        self.assertEqual(result.item_title, 'small leather armor')
-        self.assertEqual(result.message, 'You took a small leather armor from the kobold corpse.')
+        self.command_processor_obj.game_state.rooms_state.cursor.container_here.set('Gold_Coin', 15, gold_coin_obj)
+        result = self.command_processor_obj.process('take gold coin from the kobold corpse')
+        self.assertIsInstance(result[0], take_command_item_or_items_taken)
+        self.assertEqual(result[0].container_title, 'kobold corpse')
+        self.assertEqual(result[0].amount_taken, 15)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].message, 'You took 15 gold coins from the kobold corpse.')
 
-        result, = self.command_processor_obj.process('put 15 gold coins on the kobold corpse')
-        self.assertIsInstance(result, put_command_amount_put)
-        self.assertEqual(result.item_title, 'gold coin')
-        self.assertEqual(result.container_title, 'kobold corpse')
-        self.assertEqual(result.container_type, 'corpse')
-        self.assertEqual(result.amount_put, 15)
-        self.assertEqual(result.amount_left, 45)
-        self.assertEqual(result.message, "You put 15 gold coins on the kobold corpse's person. You have 45 gold coins left.")
+        result = self.command_processor_obj.process('take a small leather armor from the kobold corpse')
+        self.assertIsInstance(result[0], take_command_item_or_items_taken)
+        self.assertEqual(result[0].container_title, 'kobold corpse')
+        self.assertEqual(result[0].amount_taken, 1)
+        self.assertEqual(result[0].item_title, 'small leather armor')
+        self.assertEqual(result[0].message, 'You took a small leather armor from the kobold corpse.')
 
-        result, = self.command_processor_obj.process('put 1 gold coin on the kobold corpse')
-        self.assertIsInstance(result, put_command_amount_put)
-        self.assertEqual(result.item_title, 'gold coin')
-        self.assertEqual(result.container_title, 'kobold corpse')
-        self.assertEqual(result.container_type, 'corpse')
-        self.assertEqual(result.amount_put, 1)
-        self.assertEqual(result.amount_left, 44)
-        self.assertEqual(result.message, "You put 1 gold coin on the kobold corpse's person. You have 44 gold coins left.")
+        result = self.command_processor_obj.process('put 15 gold coins on the kobold corpse')
+        self.assertIsInstance(result[0], put_command_amount_put)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].container_title, 'kobold corpse')
+        self.assertEqual(result[0].container_type, 'corpse')
+        self.assertEqual(result[0].amount_put, 15)
+        self.assertEqual(result[0].amount_left, 45)
+        self.assertEqual(result[0].message, "You put 15 gold coins on the kobold corpse's person. You have 45 gold coins left.")
 
-        result, = self.command_processor_obj.process('put 43 gold coins on the kobold corpse')
-        self.assertIsInstance(result, put_command_amount_put)
-        self.assertEqual(result.item_title, 'gold coin')
-        self.assertEqual(result.container_title, 'kobold corpse')
-        self.assertEqual(result.container_type, 'corpse')
-        self.assertEqual(result.amount_put, 43)
-        self.assertEqual(result.amount_left, 1)
-        self.assertEqual(result.message, "You put 43 gold coins on the kobold corpse's person. You have 1 gold coin left.")
+        result = self.command_processor_obj.process('put 1 gold coin on the kobold corpse')
+        self.assertIsInstance(result[0], put_command_amount_put)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].container_title, 'kobold corpse')
+        self.assertEqual(result[0].container_type, 'corpse')
+        self.assertEqual(result[0].amount_put, 1)
+        self.assertEqual(result[0].amount_left, 44)
+        self.assertEqual(result[0].message, "You put 1 gold coin on the kobold corpse's person. You have 44 gold coins left.")
 
-        result, = self.command_processor_obj.process('put 1 gold coin on the kobold corpse')
-        self.assertIsInstance(result, put_command_amount_put)
-        self.assertEqual(result.item_title, 'gold coin')
-        self.assertEqual(result.container_title, 'kobold corpse')
-        self.assertEqual(result.container_type, 'corpse')
-        self.assertEqual(result.amount_put, 1)
-        self.assertEqual(result.amount_left, 0)
-        self.assertEqual(result.message, "You put 1 gold coin on the kobold corpse's person. You have no more gold coins.")
+        result = self.command_processor_obj.process('put 43 gold coins on the kobold corpse')
+        self.assertIsInstance(result[0], put_command_amount_put)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].container_title, 'kobold corpse')
+        self.assertEqual(result[0].container_type, 'corpse')
+        self.assertEqual(result[0].amount_put, 43)
+        self.assertEqual(result[0].amount_left, 1)
+        self.assertEqual(result[0].message, "You put 43 gold coins on the kobold corpse's person. You have 1 gold coin left.")
 
-        result, = self.command_processor_obj.process('put 2 gold coins on the kobold corpse')
-        self.assertIsInstance(result, put_command_item_not_in_inventory)
-        self.assertEqual(result.item_title, 'gold coin')
-        self.assertEqual(result.amount_attempted, 2)
-        self.assertEqual(result.message, "You don't have any gold coins in your inventory.")
+        result = self.command_processor_obj.process('put 1 gold coin on the kobold corpse')
+        self.assertIsInstance(result[0], put_command_amount_put)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].container_title, 'kobold corpse')
+        self.assertEqual(result[0].container_type, 'corpse')
+        self.assertEqual(result[0].amount_put, 1)
+        self.assertEqual(result[0].amount_left, 0)
+        self.assertEqual(result[0].message, "You put 1 gold coin on the kobold corpse's person. You have no more gold coins.")
 
-        result, = self.command_processor_obj.process('put 1 gold coin on the kobold corpse')
-        self.assertIsInstance(result, put_command_item_not_in_inventory)
-        self.assertEqual(result.item_title, 'gold coin')
-        self.assertEqual(result.amount_attempted, 1)
-        self.assertEqual(result.message, "You don't have a gold coin in your inventory.")
+        result = self.command_processor_obj.process('put 2 gold coins on the kobold corpse')
+        self.assertIsInstance(result[0], put_command_item_not_in_inventory)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].amount_attempted, 2)
+        self.assertEqual(result[0].message, "You don't have any gold coins in your inventory.")
 
-        result, = self.command_processor_obj.process('take 5 gold coins from the kobold corpse')
-        result, = self.command_processor_obj.process('put 10 gold coin on the kobold corpse')
-        self.assertIsInstance(result, put_command_trying_to_put_more_than_you_have)
-        self.assertEqual(result.item_title, 'gold coin')
-        self.assertEqual(result.amount_present, 5)
-        self.assertEqual(result.message, 'You only have 5 gold coins in your inventory.')
+        result = self.command_processor_obj.process('put 1 gold coin on the kobold corpse')
+        self.assertIsInstance(result[0], put_command_item_not_in_inventory)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].amount_attempted, 1)
+        self.assertEqual(result[0].message, "You don't have a gold coin in your inventory.")
 
-        result, = self.command_processor_obj.process('put 4 gold coins on the kobold corpse')
-        result, = self.command_processor_obj.process('put 4 gold coins on the kobold corpse')
-        self.assertIsInstance(result, put_command_trying_to_put_more_than_you_have)
-        self.assertEqual(result.item_title, 'gold coin')
-        self.assertEqual(result.amount_present, 1)
-        self.assertEqual(result.message, 'You only have 1 gold coin in your inventory.')
+        result = self.command_processor_obj.process('take 5 gold coins from the kobold corpse')
+        result = self.command_processor_obj.process('put 10 gold coin on the kobold corpse')
+        self.assertIsInstance(result[0], put_command_trying_to_put_more_than_you_have)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].amount_present, 5)
+        self.assertEqual(result[0].message, 'You only have 5 gold coins in your inventory.')
 
-        result, = self.command_processor_obj.process('put a gold coins on the kobold corpse')
-        self.assertIsInstance(result, put_command_quantity_unclear)
-        self.assertEqual(result.message, 'Amount to put unclear. How many do you mean?')
+        result = self.command_processor_obj.process('put 4 gold coins on the kobold corpse')
+        result = self.command_processor_obj.process('put 4 gold coins on the kobold corpse')
+        self.assertIsInstance(result[0], put_command_trying_to_put_more_than_you_have)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].amount_present, 1)
+        self.assertEqual(result[0].message, 'You only have 1 gold coin in your inventory.')
 
-        result, = self.command_processor_obj.process('put on the kobold corpse')
-        self.assertIsInstance(result, command_bad_syntax)
-        self.assertEqual(result.command, 'PUT')
-        self.assertEqual(result.message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
+        result = self.command_processor_obj.process('put a gold coins on the kobold corpse')
+        self.assertIsInstance(result[0], put_command_quantity_unclear)
+        self.assertEqual(result[0].message, 'Amount to put unclear. How many do you mean?')
+
+        result = self.command_processor_obj.process('put on the kobold corpse')
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'PUT')
+        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
                                          "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
                                          "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
 
-        result, = self.command_processor_obj.process('put one small leather armor on')  # check
-        self.assertIsInstance(result, command_bad_syntax)
-        self.assertEqual(result.command, 'PUT')
-        self.assertEqual(result.message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
+        result = self.command_processor_obj.process('put one small leather armor on')  # check
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'PUT')
+        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
                                          "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
                                          "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
 
-        result, = self.command_processor_obj.process('put on')  # check
-        self.assertIsInstance(result, command_bad_syntax)
-        self.assertEqual(result.command, 'PUT')
-        self.assertEqual(result.message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
+        result = self.command_processor_obj.process('put on')  # check
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'PUT')
+        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
                                          "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
                                          "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
 
-        result, = self.command_processor_obj.process('put 1 gold coin in the kobold corpse')  # check
-        self.assertIsInstance(result, command_bad_syntax)
-        self.assertEqual(result.command, 'PUT')
-        self.assertEqual(result.message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
+        result = self.command_processor_obj.process('put 1 gold coin in the kobold corpse')  # check
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'PUT')
+        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
                                          "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
                                          "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
 
 
     def test_inspect_also_two_take_cases(self):
-        result, = self.command_processor_obj.process('inspect kobold')
-        self.assertIsInstance(result, inspect_command_found_creature_here)
-        self.assertEqual(result.creature_description, self.game_state_obj.rooms_state.cursor.creature_here.description)
-        self.assertEqual(result.message, self.game_state_obj.rooms_state.cursor.creature_here.description)
+        result = self.command_processor_obj.process('inspect kobold')
+        self.assertIsInstance(result[0], inspect_command_found_creature_here)
+        self.assertEqual(result[0].creature_description, self.game_state_obj.rooms_state.cursor.creature_here.description)
+        self.assertEqual(result[0].message, self.game_state_obj.rooms_state.cursor.creature_here.description)
 
         self.game_state_obj.rooms_state.cursor.container_here.is_locked = True
         self.game_state_obj.rooms_state.cursor.container_here.is_closed = True
-        result, = self.command_processor_obj.process('inspect wooden chest')
-        self.assertIsInstance(result, inspect_command_found_container_here)
-        self.assertEqual(result.container_description, self.game_state_obj.rooms_state.cursor.container_here.description)
-        self.assertEqual(result.is_locked, self.game_state_obj.rooms_state.cursor.container_here.is_locked)
-        self.assertEqual(result.is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
-        self.assertEqual(result.message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is closed and locked.')
+        result = self.command_processor_obj.process('inspect wooden chest')
+        self.assertIsInstance(result[0], inspect_command_found_container_here)
+        self.assertEqual(result[0].container_description, self.game_state_obj.rooms_state.cursor.container_here.description)
+        self.assertEqual(result[0].is_locked, self.game_state_obj.rooms_state.cursor.container_here.is_locked)
+        self.assertEqual(result[0].is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
+        self.assertEqual(result[0].message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is closed and locked.')
 
         self.game_state_obj.rooms_state.cursor.container_here.is_locked = False
         self.game_state_obj.rooms_state.cursor.container_here.is_closed = True
-        result, = self.command_processor_obj.process('inspect wooden chest')
-        self.assertIsInstance(result, inspect_command_found_container_here)
-        self.assertEqual(result.container_description, self.game_state_obj.rooms_state.cursor.container_here.description)
-        self.assertEqual(result.is_locked, self.game_state_obj.rooms_state.cursor.container_here.is_locked)
-        self.assertEqual(result.is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
-        self.assertEqual(result.message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is closed but unlocked.')
+        result = self.command_processor_obj.process('inspect wooden chest')
+        self.assertIsInstance(result[0], inspect_command_found_container_here)
+        self.assertEqual(result[0].container_description, self.game_state_obj.rooms_state.cursor.container_here.description)
+        self.assertEqual(result[0].is_locked, self.game_state_obj.rooms_state.cursor.container_here.is_locked)
+        self.assertEqual(result[0].is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
+        self.assertEqual(result[0].message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is closed but unlocked.')
 
         self.game_state_obj.rooms_state.cursor.container_here.is_locked = False
         self.game_state_obj.rooms_state.cursor.container_here.is_closed = False
-        result, = self.command_processor_obj.process('inspect wooden chest')
-        self.assertIsInstance(result, inspect_command_found_container_here)
-        self.assertEqual(result.container_description, self.game_state_obj.rooms_state.cursor.container_here.description)
-        self.assertEqual(result.is_locked, self.game_state_obj.rooms_state.cursor.container_here.is_locked)
-        self.assertEqual(result.is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
-        self.assertEqual(result.message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is '
+        result = self.command_processor_obj.process('inspect wooden chest')
+        self.assertIsInstance(result[0], inspect_command_found_container_here)
+        self.assertEqual(result[0].container_description, self.game_state_obj.rooms_state.cursor.container_here.description)
+        self.assertEqual(result[0].is_locked, self.game_state_obj.rooms_state.cursor.container_here.is_locked)
+        self.assertEqual(result[0].is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
+        self.assertEqual(result[0].message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is '
                                           'unlocked and open. It contains 20 gold coins, a mana potion, and a warhammer.')
 
         self.game_state_obj.rooms_state.cursor.container_here.is_locked = True
         self.game_state_obj.rooms_state.cursor.container_here.is_closed = False
         with self.assertRaises(internal_exception):
-            result, = self.command_processor_obj.process('inspect wooden chest')
+            result = self.command_processor_obj.process('inspect wooden chest')
 
         self.game_state_obj.rooms_state.cursor.container_here.is_locked = None
         self.game_state_obj.rooms_state.cursor.container_here.is_closed = True
-        result, = self.command_processor_obj.process('inspect wooden chest')
-        self.assertIsInstance(result, inspect_command_found_container_here)
-        self.assertEqual(result.container_description, self.game_state_obj.rooms_state.cursor.container_here.description)
-        self.assertEqual(result.is_locked, self.game_state_obj.rooms_state.cursor.container_here.is_locked)
-        self.assertEqual(result.is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
-        self.assertEqual(result.message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is closed.')
+        result = self.command_processor_obj.process('inspect wooden chest')
+        self.assertIsInstance(result[0], inspect_command_found_container_here)
+        self.assertEqual(result[0].container_description, self.game_state_obj.rooms_state.cursor.container_here.description)
+        self.assertEqual(result[0].is_locked, self.game_state_obj.rooms_state.cursor.container_here.is_locked)
+        self.assertEqual(result[0].is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
+        self.assertEqual(result[0].message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is closed.')
 
         self.game_state_obj.rooms_state.cursor.container_here.is_locked = None
         self.game_state_obj.rooms_state.cursor.container_here.is_closed = False
-        result, = self.command_processor_obj.process('inspect wooden chest')
-        self.assertIsInstance(result, inspect_command_found_container_here)
-        self.assertEqual(result.container_description, self.game_state_obj.rooms_state.cursor.container_here.description)
-        self.assertEqual(result.is_locked, self.game_state_obj.rooms_state.cursor.container_here.is_locked)
-        self.assertEqual(result.is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
-        self.assertEqual(result.message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is '
-                                          'open. It contains 20 gold coins, a mana potion, and a warhammer.')
+        result = self.command_processor_obj.process('inspect wooden chest')
+        self.assertIsInstance(result[0], inspect_command_found_container_here)
+        self.assertEqual(result[0].container_description, self.game_state_obj.rooms_state.cursor.container_here.description)
+        self.assertEqual(result[0].is_locked, self.game_state_obj.rooms_state.cursor.container_here.is_locked)
+        self.assertEqual(result[0].is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
+        self.assertEqual(result[0].message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is '
+                                             'open. It contains 20 gold coins, a mana potion, and a warhammer.')
 
-        result, = self.command_processor_obj.process('take three short swords from the wooden chest')
-        self.assertIsInstance(result, take_command_item_not_found_in_container)
-        self.assertEqual(result.container_title, 'wooden chest')
-        self.assertEqual(result.amount_attempted, 3)
-        self.assertEqual(result.container_type, 'chest')
-        self.assertEqual(result.item_title, 'short sword')
-        self.assertEqual(result.message, "The wooden chest doesn't have any short swords in it.")
+        result = self.command_processor_obj.process('take three short swords from the wooden chest')
+        self.assertIsInstance(result[0], take_command_item_not_found_in_container)
+        self.assertEqual(result[0].container_title, 'wooden chest')
+        self.assertEqual(result[0].amount_attempted, 3)
+        self.assertEqual(result[0].container_type, 'chest')
+        self.assertEqual(result[0].item_title, 'short sword')
+        self.assertEqual(result[0].message, "The wooden chest doesn't have any short swords in it.")
 
-        result, = self.command_processor_obj.process('take 20 gold coins from the wooden chest')
-        result, = self.command_processor_obj.process('put 5 gold coins in the wooden chest')
-        self.assertIsInstance(result, put_command_amount_put)
-        self.assertEqual(result.item_title, 'gold coin')
-        self.assertEqual(result.container_title, 'wooden chest')
-        self.assertEqual(result.container_type, 'chest')
-        self.assertEqual(result.amount_put, 5)
-        self.assertEqual(result.amount_left, 15)
-        self.assertEqual(result.message, 'You put 5 gold coins in the wooden chest. You have 15 gold coins left.')
+        result = self.command_processor_obj.process('take 20 gold coins from the wooden chest')
+        result = self.command_processor_obj.process('put 5 gold coins in the wooden chest')
+        self.assertIsInstance(result[0], put_command_amount_put)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].container_title, 'wooden chest')
+        self.assertEqual(result[0].container_type, 'chest')
+        self.assertEqual(result[0].amount_put, 5)
+        self.assertEqual(result[0].amount_left, 15)
+        self.assertEqual(result[0].message, 'You put 5 gold coins in the wooden chest. You have 15 gold coins left.')
 
-        result, = self.command_processor_obj.process('put 1 gold coin in the wooden chest')
-        self.assertIsInstance(result, put_command_amount_put)
-        self.assertEqual(result.item_title, 'gold coin')
-        self.assertEqual(result.container_title, 'wooden chest')
-        self.assertEqual(result.container_type, 'chest')
-        self.assertEqual(result.amount_put, 1)
-        self.assertEqual(result.amount_left, 14)
-        self.assertEqual(result.message, 'You put 1 gold coin in the wooden chest. You have 14 gold coins left.')
+        result = self.command_processor_obj.process('put 1 gold coin in the wooden chest')
+        self.assertIsInstance(result[0], put_command_amount_put)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].container_title, 'wooden chest')
+        self.assertEqual(result[0].container_type, 'chest')
+        self.assertEqual(result[0].amount_put, 1)
+        self.assertEqual(result[0].amount_left, 14)
+        self.assertEqual(result[0].message, 'You put 1 gold coin in the wooden chest. You have 14 gold coins left.')
 
-        result, = self.command_processor_obj.process('put 12 gold coin in the wooden chest')
-        result, = self.command_processor_obj.process('put 1 gold coin in the wooden chest')
-        self.assertIsInstance(result, put_command_amount_put)
-        self.assertEqual(result.item_title, 'gold coin')
-        self.assertEqual(result.container_title, 'wooden chest')
-        self.assertEqual(result.container_type, 'chest')
-        self.assertEqual(result.amount_put, 1)
-        self.assertEqual(result.amount_left, 1)
-        self.assertEqual(result.message, 'You put 1 gold coin in the wooden chest. You have 1 gold coin left.')
+        result = self.command_processor_obj.process('put 12 gold coin in the wooden chest')
+        result = self.command_processor_obj.process('put 1 gold coin in the wooden chest')
+        self.assertIsInstance(result[0], put_command_amount_put)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].container_title, 'wooden chest')
+        self.assertEqual(result[0].container_type, 'chest')
+        self.assertEqual(result[0].amount_put, 1)
+        self.assertEqual(result[0].amount_left, 1)
+        self.assertEqual(result[0].message, 'You put 1 gold coin in the wooden chest. You have 1 gold coin left.')
 
-        result, = self.command_processor_obj.process('put 1 gold coin in the wooden chest')
-        self.assertIsInstance(result, put_command_amount_put)
-        self.assertEqual(result.item_title, 'gold coin')
-        self.assertEqual(result.container_title, 'wooden chest')
-        self.assertEqual(result.container_type, 'chest')
-        self.assertEqual(result.amount_put, 1)
-        self.assertEqual(result.amount_left, 0)
-        self.assertEqual(result.message, 'You put 1 gold coin in the wooden chest. You have no more gold coins.')
+        result = self.command_processor_obj.process('put 1 gold coin in the wooden chest')
+        self.assertIsInstance(result[0], put_command_amount_put)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].container_title, 'wooden chest')
+        self.assertEqual(result[0].container_type, 'chest')
+        self.assertEqual(result[0].amount_put, 1)
+        self.assertEqual(result[0].amount_left, 0)
+        self.assertEqual(result[0].message, 'You put 1 gold coin in the wooden chest. You have no more gold coins.')
 
-        result, = self.command_processor_obj.process('take one short sword from the wooden chest')
-        self.assertIsInstance(result, take_command_item_not_found_in_container)
-        self.assertEqual(result.container_title, 'wooden chest')
-        self.assertEqual(result.amount_attempted, 1)
-        self.assertEqual(result.container_type, 'chest')
-        self.assertEqual(result.item_title, 'short sword')
-        self.assertEqual(result.message, "The wooden chest doesn't have a short sword in it.")
+        result = self.command_processor_obj.process('take one short sword from the wooden chest')
+        self.assertIsInstance(result[0], take_command_item_not_found_in_container)
+        self.assertEqual(result[0].container_title, 'wooden chest')
+        self.assertEqual(result[0].amount_attempted, 1)
+        self.assertEqual(result[0].container_type, 'chest')
+        self.assertEqual(result[0].item_title, 'short sword')
+        self.assertEqual(result[0].message, "The wooden chest doesn't have a short sword in it.")
 
-        result, = self.command_processor_obj.process('put in the wooden chest')
-        self.assertIsInstance(result, command_bad_syntax)
-        self.assertEqual(result.command, 'PUT')
-        self.assertEqual(result.message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
+        self.game_state_obj.rooms_state.cursor.container_here.is_closed = True
+        result = self.command_processor_obj.process('put gold coin in wooden chest')
+        self.assertIsInstance(result[0], various_commands_container_is_closed)
+        self.assertEqual(result[0].target_object, 'wooden chest')
+        self.assertEqual(result[0].message, "The wooden chest is closed.")
+
+        self.game_state_obj.rooms_state.cursor.container_here.is_closed = False
+        result = self.command_processor_obj.process('put in the wooden chest')
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'PUT')
+        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
                                          "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
                                          "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
 
-        result, = self.command_processor_obj.process('put 1 gold coin in')  # check
-        self.assertIsInstance(result, command_bad_syntax)
-        self.assertEqual(result.command, 'PUT')
-        self.assertEqual(result.message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
+        result = self.command_processor_obj.process('put 1 gold coin in')  # check
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'PUT')
+        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
                                          "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
                                          "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
 
-        result, = self.command_processor_obj.process('put in')  # check
-        self.assertIsInstance(result, command_bad_syntax)
-        self.assertEqual(result.command, 'PUT')
-        self.assertEqual(result.message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
+        result = self.command_processor_obj.process('put in')  # check
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'PUT')
+        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
                                          "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
                                          "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
 
-        result, = self.command_processor_obj.process('put 1 gold coin on the wooden chest')  # check
-        self.assertIsInstance(result, command_bad_syntax)
-        self.assertEqual(result.command, 'PUT')
-        self.assertEqual(result.message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
+        result = self.command_processor_obj.process('put 1 gold coin on the wooden chest')  # check
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'PUT')
+        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
                                          "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
                                          "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
 
         self.game_state_obj.rooms_state.cursor.container_here.is_locked = True
         self.game_state_obj.rooms_state.cursor.container_here.is_closed = None
-        result, = self.command_processor_obj.process('inspect wooden chest')
-        self.assertIsInstance(result, inspect_command_found_container_here)
-        self.assertEqual(result.container_description, self.game_state_obj.rooms_state.cursor.container_here.description)
-        self.assertEqual(result.is_locked, self.game_state_obj.rooms_state.cursor.container_here.is_locked)
-        self.assertEqual(result.is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
-        self.assertEqual(result.message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is locked.')
+        result = self.command_processor_obj.process('inspect wooden chest')
+        self.assertIsInstance(result[0], inspect_command_found_container_here)
+        self.assertEqual(result[0].container_description, self.game_state_obj.rooms_state.cursor.container_here.description)
+        self.assertEqual(result[0].is_locked, self.game_state_obj.rooms_state.cursor.container_here.is_locked)
+        self.assertEqual(result[0].is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
+        self.assertEqual(result[0].message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is locked.')
 
         self.game_state_obj.rooms_state.cursor.container_here.is_locked = False
         self.game_state_obj.rooms_state.cursor.container_here.is_closed = None
-        result, = self.command_processor_obj.process('inspect wooden chest')
-        self.assertIsInstance(result, inspect_command_found_container_here)
-        self.assertEqual(result.container_description, self.game_state_obj.rooms_state.cursor.container_here.description)
-        self.assertEqual(result.is_locked, self.game_state_obj.rooms_state.cursor.container_here.is_locked)
-        self.assertEqual(result.is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
-        self.assertEqual(result.message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is unlocked.')
+        result = self.command_processor_obj.process('inspect wooden chest')
+        self.assertIsInstance(result[0], inspect_command_found_container_here)
+        self.assertEqual(result[0].container_description, self.game_state_obj.rooms_state.cursor.container_here.description)
+        self.assertEqual(result[0].is_locked, self.game_state_obj.rooms_state.cursor.container_here.is_locked)
+        self.assertEqual(result[0].is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
+        self.assertEqual(result[0].message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is unlocked.')
 
         self.game_state_obj.rooms_state.cursor.container_here.is_locked = None
         self.game_state_obj.rooms_state.cursor.container_here.is_closed = None
-        result, = self.command_processor_obj.process('inspect wooden chest')
-        self.assertIsInstance(result, inspect_command_found_container_here)
-        self.assertEqual(result.container_description, self.game_state_obj.rooms_state.cursor.container_here.description)
-        self.assertEqual(result.is_locked, self.game_state_obj.rooms_state.cursor.container_here.is_locked)
-        self.assertEqual(result.is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
-        self.assertEqual(result.message, f'{self.game_state_obj.rooms_state.cursor.container_here.description}')
+        result = self.command_processor_obj.process('inspect wooden chest')
+        self.assertIsInstance(result[0], inspect_command_found_container_here)
+        self.assertEqual(result[0].container_description, self.game_state_obj.rooms_state.cursor.container_here.description)
+        self.assertEqual(result[0].is_locked, self.game_state_obj.rooms_state.cursor.container_here.is_locked)
+        self.assertEqual(result[0].is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
+        self.assertEqual(result[0].message, f'{self.game_state_obj.rooms_state.cursor.container_here.description}')
 
-        result, = self.command_processor_obj.process('look at kobold')
-        self.assertIsInstance(result, inspect_command_found_creature_here)
-        self.assertEqual(result.creature_description, self.game_state_obj.rooms_state.cursor.creature_here.description)
-        self.assertEqual(result.message, f'{self.game_state_obj.rooms_state.cursor.creature_here.description}')
+        result = self.command_processor_obj.process('look at kobold')
+        self.assertIsInstance(result[0], inspect_command_found_creature_here)
+        self.assertEqual(result[0].creature_description, self.game_state_obj.rooms_state.cursor.creature_here.description)
+        self.assertEqual(result[0].message, f'{self.game_state_obj.rooms_state.cursor.creature_here.description}')
+
+        self.game_state_obj.rooms_state.cursor.container_here.is_closed = True
+        result = self.command_processor_obj.process('take gold coin from wooden chest')
+        self.assertIsInstance(result[0], various_commands_container_is_closed)
+        self.assertEqual(result[0].target_object, 'wooden chest')
+        self.assertEqual(result[0].message, "The wooden chest is closed.")

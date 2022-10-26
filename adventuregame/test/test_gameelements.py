@@ -6,9 +6,10 @@ import unittest
 
 from adventuregame import *
 
-from .utility import *
+from adventuregame.test.utility import *
 
 __name__ = 'adventuregame.test_gameelements'
+
 
 
 class test_container(unittest.TestCase):
@@ -302,10 +303,10 @@ class test_ability_scores(unittest.TestCase):
         ability_scores_obj.roll_stats()
         second_stat_roll = (ability_scores_obj.strength, ability_scores_obj.constitution, ability_scores_obj.dexterity,
                             ability_scores_obj.intelligence, ability_scores_obj.charisma, ability_scores_obj.wisdom)
-        # This is a test of a method with a random element, so the results are
-        # nondeterministic. I'm looking for the second call to `roll_stats()`
-        # to yield different stats, but there's a chance that the results are
-        # identical; so I reroll until the results are different.
+
+        # This is a test of a method with a random element, so the results are nondeterministic. I'm looking for the
+        # second call to `roll_stats()` to yield different stats, but there's a chance that the results are identical;
+        # so I reroll until the results are different.
         while first_stat_roll == second_stat_roll:
             ability_scores_obj.roll_stats()
             second_stat_roll = (ability_scores_obj.strength, ability_scores_obj.constitution,
@@ -344,9 +345,10 @@ class test_inventory(unittest.TestCase):
         self.inventory_obj.set('Longsword', 1, longsword_obj)
         self.assertTrue(self.inventory_obj.contains(longsword_obj.internal_name))
         self.assertEqual(set(self.inventory_obj.keys()), {'Longsword', 'Rapier', 'Mace', 'Staff', 'Warhammer',
-                                                          'Studded_Leather', 'Scale_Mail', 'Magic_Sword', 'Dagger',
-                                                          'Gold_Coin', 'Small_Leather_Armor', 'Short_Sword', 'Shield',
-                                                          'Mana_Potion', 'Health_Potion', 'Magic_Wand'})
+                                                          'Door_Key', 'Chest_Key', 'Studded_Leather', 'Scale_Mail',
+                                                          'Magic_Sword', 'Dagger', 'Gold_Coin', 'Small_Leather_Armor',
+                                                          'Short_Sword', 'Shield', 'Mana_Potion', 'Health_Potion',
+                                                          'Magic_Wand'})
         _, rapier_obj, = self.inventory_obj.get('Rapier')
         _, mace_obj, = self.inventory_obj.get('Mace')
         _, staff_obj = self.inventory_obj.get('Staff')
@@ -354,6 +356,8 @@ class test_inventory(unittest.TestCase):
         _, studded_leather_obj = self.inventory_obj.get('Studded_Leather')
         _, scale_mail_obj = self.inventory_obj.get('Scale_Mail')
         _, magic_sword_obj = self.inventory_obj.get('Magic_Sword')
+        _, chest_key_obj = self.inventory_obj.get('Chest_Key')
+        _, door_key_obj = self.inventory_obj.get('Door_Key')
         _, dagger_obj = self.inventory_obj.get('Dagger')
         _, gold_coin_obj = self.inventory_obj.get('Gold_Coin')
         _, small_leather_armor_obj = self.inventory_obj.get('Small_Leather_Armor')
@@ -366,7 +370,8 @@ class test_inventory(unittest.TestCase):
         self.assertTrue(all((1, item_obj) in inventory_values
                             for item_obj in (longsword_obj, rapier_obj, mace_obj, staff_obj)))
         inventory_items = tuple(sorted(self.inventory_obj.items(), key=operator.itemgetter(0)))
-        items_compare_with = (('Dagger', (1, dagger_obj)), ('Gold_Coin', (1, gold_coin_obj)),
+        items_compare_with = (('Chest_Key', (1, chest_key_obj)), ('Dagger', (1, dagger_obj)),
+                              ('Door_Key', (1, door_key_obj)), ('Gold_Coin', (1, gold_coin_obj)),
                               ('Health_Potion', (1, health_potion_obj)), ('Longsword', (1, longsword_obj)),
                               ('Mace', (1, mace_obj)), ('Magic_Sword', (1, magic_sword_obj)),
                               ('Magic_Wand', (1, magic_wand_obj)), ('Mana_Potion', (1, mana_potion_obj)),
@@ -375,12 +380,12 @@ class test_inventory(unittest.TestCase):
                               ('Small_Leather_Armor', (1, small_leather_armor_obj)), ('Staff', (1, staff_obj)),
                               ('Studded_Leather', (1, studded_leather_obj)), ('Warhammer', (1, warhammer_obj)))
         self.assertEqual(inventory_items, items_compare_with)
-        self.assertEqual(self.inventory_obj.size(), 16)
+        self.assertEqual(self.inventory_obj.size(), 18)
 
     def test_total_weight_and_burden_for_strength_score(self):
         for item_internal_name in ('Dagger', 'Gold_Coin', 'Health_Potion', 'Magic_Sword', 'Magic_Wand', 'Mana_Potion',
-                                   'Scale_Mail', 'Shield', 'Short_Sword', 'Small_Leather_Armor', 'Studded_Leather',
-                                   'Warhammer'):
+                                   'Scale_Mail', 'Door_Key', 'Chest_Key', 'Shield', 'Short_Sword',
+                                   'Small_Leather_Armor', 'Studded_Leather', 'Warhammer'):
             self.inventory_obj.remove_one(item_internal_name)
         self.assertEqual(self.inventory_obj.total_weight, 13)
         self.assertEqual(self.inventory_obj.burden_for_strength_score(4), inventory.Light)
@@ -390,6 +395,64 @@ class test_inventory(unittest.TestCase):
         self.assertEqual(self.inventory_obj.total_weight, 52)
         self.assertEqual(self.inventory_obj.burden_for_strength_score(6), inventory.Heavy)
         self.assertEqual(self.inventory_obj.burden_for_strength_score(3), inventory.Immobilizing)
+
+
+class test_door_and_doors_state(unittest.TestCase):
+
+    def __init__(self, *argl, **argd):
+        super().__init__(*argl, **argd)
+        self.maxDiff = None
+        self.doors_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Doors_Ini_Config_Text)
+
+    def setUp(self):
+        self.doors_state_obj = doors_state(**self.doors_ini_config_obj.sections)
+
+    def test_doors_state(self):
+        doors_state_keys = self.doors_state_obj.keys()
+        self.assertEqual(doors_state_keys, [('Room_1,1', 'Room_1,2'), ('Room_1,1', 'Room_2,1'), ('Room_1,2', 'Room_2,2'), ('Room_2,1', 'Room_2,2')])
+        doors_state_values = self.doors_state_obj.values()
+        self.assertTrue(all(isinstance(door_obj, door) and isinstance(door_obj, (wooden_door, iron_door, doorway)) for door_obj in doors_state_values))
+        doors_state_items = self.doors_state_obj.items()
+        self.assertEqual(list(map(operator.itemgetter(0, 1), doors_state_items)), [('Room_1,1', 'Room_1,2'), ('Room_1,1', 'Room_2,1'), ('Room_1,2', 'Room_2,2'), ('Room_2,1', 'Room_2,2')])
+        self.assertTrue(all(isinstance(door_obj, door) and isinstance(door_obj, (wooden_door, iron_door, doorway)) for door_obj in doors_state_values))
+        self.assertEqual(self.doors_state_obj.size(), 4)
+        self.assertTrue(self.doors_state_obj.contains('Room_2,1', 'Room_2,2'))
+        door_obj = self.doors_state_obj.get('Room_1,2', 'Room_2,2')
+        self.assertEqual(door_obj.title, 'doorway')
+        self.assertEqual(door_obj.description, 'This open doorway is outlined by a stone arch set into the wall.')
+        self.assertEqual(door_obj.door_type, 'doorway')
+        self.assertFalse(door_obj.is_locked, False)
+        self.assertFalse(door_obj.is_closed, False)
+        self.assertFalse(door_obj.closeable, False)
+        self.doors_state_obj.delete('Room_1,2', 'Room_2,2')
+        self.assertFalse(self.doors_state_obj.contains('Room_1,2', 'Room_2,2'))
+        self.doors_state_obj.set('Room_1,2', 'Room_2,2', door_obj)
+        self.assertTrue(self.doors_state_obj.contains('Room_1,2', 'Room_2,2'))
+
+    def test_doors_state_and_door(self):
+        door_obj = self.doors_state_obj.get('Room_1,1', 'Room_1,2')
+        self.assertEqual(door_obj.title, 'wooden door')
+        self.assertEqual(door_obj.description, 'This door is made of wooden planks secured together with iron divots.')
+        self.assertEqual(door_obj.door_type, 'wooden_door')
+        self.assertEqual(door_obj.is_locked, False)
+        self.assertEqual(door_obj.is_closed, True)
+        self.assertEqual(door_obj.closeable, True)
+
+        door_obj = self.doors_state_obj.get('Room_1,1', 'Room_2,1')
+        self.assertEqual(door_obj.title, 'iron door')
+        self.assertEqual(door_obj.description, 'This door is bound in iron plates with a small barred window set up high.')
+        self.assertEqual(door_obj.door_type, 'iron_door')
+        self.assertEqual(door_obj.is_locked, True)
+        self.assertEqual(door_obj.is_closed, True)
+        self.assertEqual(door_obj.closeable, True)
+
+        door_obj = self.doors_state_obj.get('Room_1,2', 'Room_2,2')
+        self.assertEqual(door_obj.title, 'doorway')
+        self.assertEqual(door_obj.description, 'This open doorway is outlined by a stone arch set into the wall.')
+        self.assertEqual(door_obj.door_type, 'doorway')
+        self.assertEqual(door_obj.is_locked, False)
+        self.assertEqual(door_obj.is_closed, False)
+        self.assertEqual(door_obj.closeable, False)
 
 
 class test_item_and_items_state(unittest.TestCase):
@@ -443,15 +506,18 @@ class test_item_and_items_state(unittest.TestCase):
         self.items_state_obj.set('Longsword', longsword_obj)
         self.assertTrue(self.items_state_obj.contains(longsword_obj.internal_name))
         self.assertEqual(set(self.items_state_obj.keys()), {'Longsword', 'Rapier', 'Mace', 'Staff', 'Warhammer',
-                                                            'Studded_Leather', 'Scale_Mail', 'Magic_Sword', 'Dagger',
-                                                            'Gold_Coin', 'Small_Leather_Armor', 'Short_Sword',
-                                                            'Shield', 'Mana_Potion', 'Magic_Wand', 'Health_Potion'})
+                                                            'Studded_Leather', 'Door_Key', 'Chest_Key', 'Scale_Mail',
+                                                            'Magic_Sword', 'Dagger', 'Gold_Coin', 'Small_Leather_Armor',
+                                                            'Short_Sword', 'Shield', 'Mana_Potion', 'Magic_Wand',
+                                                            'Health_Potion'})
         rapier_obj = self.items_state_obj.get('Rapier')
         mace_obj = self.items_state_obj.get('Mace')
         staff_obj = self.items_state_obj.get('Staff')
         warhammer_obj = self.items_state_obj.get('Warhammer')
         studded_leather_obj = self.items_state_obj.get('Studded_Leather')
         scale_mail_obj = self.items_state_obj.get('Scale_Mail')
+        door_key_obj = self.items_state_obj.get('Door_Key')
+        chest_key_obj = self.items_state_obj.get('Chest_Key')
         magic_sword_obj = self.items_state_obj.get('Magic_Sword')
         dagger_obj = self.items_state_obj.get('Dagger')
         gold_coin_obj = self.items_state_obj.get('Gold_Coin')
@@ -464,16 +530,15 @@ class test_item_and_items_state(unittest.TestCase):
         state_values = tuple(self.items_state_obj.values())
         self.assertTrue(all(item_obj in state_values for item_obj in (longsword_obj, rapier_obj, mace_obj, staff_obj)))
         state_items = tuple(sorted(self.items_state_obj.items(), key=operator.itemgetter(0)))
-        items_compare_with = (('Dagger', dagger_obj), ('Gold_Coin', gold_coin_obj),
-                              ('Health_Potion', health_potion_obj), ('Longsword', longsword_obj),
-                              ('Mace', mace_obj), ('Magic_Sword', magic_sword_obj),
-                              ('Magic_Wand', magic_wand_obj), ('Mana_Potion', mana_potion_obj),
-                              ('Rapier', rapier_obj), ('Scale_Mail', scale_mail_obj),
-                              ('Shield', shield_obj), ('Short_Sword', short_sword_obj),
+        items_compare_with = (('Chest_Key', chest_key_obj), ('Dagger', dagger_obj), ('Door_Key', door_key_obj),
+                              ('Gold_Coin', gold_coin_obj), ('Health_Potion', health_potion_obj),
+                              ('Longsword', longsword_obj), ('Mace', mace_obj), ('Magic_Sword', magic_sword_obj),
+                              ('Magic_Wand', magic_wand_obj), ('Mana_Potion', mana_potion_obj), ('Rapier', rapier_obj),
+                              ('Scale_Mail', scale_mail_obj), ('Shield', shield_obj), ('Short_Sword', short_sword_obj),
                               ('Small_Leather_Armor', small_leather_armor_obj), ('Staff', staff_obj),
                               ('Studded_Leather', studded_leather_obj), ('Warhammer', warhammer_obj))
         self.assertEqual(state_items, items_compare_with)
-        self.assertEqual(self.items_state_obj.size(), 16)
+        self.assertEqual(self.items_state_obj.size(), 18)
 
 
 class test_rooms_state_obj(unittest.TestCase):
@@ -482,15 +547,17 @@ class test_rooms_state_obj(unittest.TestCase):
         super().__init__(*argl, **argd)
         self.maxDiff = None
         self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
+        self.doors_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Doors_Ini_Config_Text)
         self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
         self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
         self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
+        self.doors_state_obj = doors_state(**self.doors_ini_config_obj.sections)
         self.containers_state_obj = containers_state(self.items_state_obj, **self.containers_ini_config_obj.sections)
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
-        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.items_state_obj, **self.rooms_ini_config_obj.sections)
+        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj, self.items_state_obj, **self.rooms_ini_config_obj.sections)
 
     def test_rooms_state_init(self):
         self.assertEqual(self.rooms_state_obj.cursor.internal_name, 'Room_1,1')
@@ -499,14 +566,27 @@ class test_rooms_state_obj(unittest.TestCase):
         self.assertEqual(self.rooms_state_obj.cursor.title, 'Southwest dungeon room')
         self.assertEqual(self.rooms_state_obj.cursor.description, 'Entrance room')
         self.assertTrue(self.rooms_state_obj.cursor.has_north_exit)
+        self.assertEqual(self.rooms_state_obj.cursor.north_exit.title, "north door")
+        self.assertEqual(self.rooms_state_obj.cursor.north_exit.description, "This door is made of wooden planks secured together with iron divots.")
+        self.assertEqual(self.rooms_state_obj.cursor.north_exit.door_type, "wooden_door")
+        self.assertEqual(self.rooms_state_obj.cursor.north_exit.is_locked, False)
+        self.assertEqual(self.rooms_state_obj.cursor.north_exit.is_closed, True)
+        self.assertEqual(self.rooms_state_obj.cursor.north_exit.closeable, True)
         self.assertTrue(self.rooms_state_obj.cursor.has_east_exit)
+        self.assertTrue(self.rooms_state_obj.cursor.east_exit.title, "east door")
+        self.assertTrue(self.rooms_state_obj.cursor.east_exit.description, "This door is bound in iron plates with a small barred window set up high.")
+        self.assertTrue(self.rooms_state_obj.cursor.east_exit.door_type, "iron_door")
+        self.assertTrue(self.rooms_state_obj.cursor.east_exit.is_locked, True)
+        self.assertTrue(self.rooms_state_obj.cursor.east_exit.is_closed, True)
+        self.assertTrue(self.rooms_state_obj.cursor.east_exit.closeable, True)
         self.assertFalse(self.rooms_state_obj.cursor.has_south_exit)
         self.assertFalse(self.rooms_state_obj.cursor.has_west_exit)
         self.rooms_state_obj.move(north=True)
 
     def test_rooms_state_move_east(self):
+        self.rooms_state_obj.cursor.east_exit.is_locked = False
         self.rooms_state_obj.move(east=True)
-        self.assertEqual(self.rooms_state_obj.cursor.internal_name, 'Room_1,2')
+        self.assertEqual(self.rooms_state_obj.cursor.internal_name, 'Room_2,1')
         self.assertFalse(self.rooms_state_obj.cursor.is_entrance)
         self.assertFalse(self.rooms_state_obj.cursor.is_exit)
         self.assertEqual(self.rooms_state_obj.cursor.title, 'Southeast dungeon room')
@@ -518,7 +598,7 @@ class test_rooms_state_obj(unittest.TestCase):
 
     def test_rooms_state_move_north(self):
         self.rooms_state_obj.move(north=True)
-        self.assertEqual(self.rooms_state_obj.cursor.internal_name, 'Room_2,1')
+        self.assertEqual(self.rooms_state_obj.cursor.internal_name, 'Room_1,2')
         self.assertFalse(self.rooms_state_obj.cursor.is_entrance)
         self.assertFalse(self.rooms_state_obj.cursor.is_exit)
         self.assertEqual(self.rooms_state_obj.cursor.title, 'Northwest dungeon room')
@@ -529,8 +609,15 @@ class test_rooms_state_obj(unittest.TestCase):
         self.assertFalse(self.rooms_state_obj.cursor.has_west_exit)
 
     def test_rooms_state_move_north_and_east(self):
+        self.rooms_state_obj.cursor.east_exit.is_locked = False
         self.rooms_state_obj.move(north=True)
         self.rooms_state_obj.move(east=True)
+        self.assertTrue(self.rooms_state_obj.cursor.west_exit.title, "west doorway")
+        self.assertTrue(self.rooms_state_obj.cursor.west_exit.description, "This door is bound in iron plates with a small barred window set up high.")
+        self.assertTrue(self.rooms_state_obj.cursor.west_exit.door_type, "doorway")
+        self.assertTrue(self.rooms_state_obj.cursor.west_exit.is_locked, False)
+        self.assertTrue(self.rooms_state_obj.cursor.west_exit.is_closed, False)
+        self.assertTrue(self.rooms_state_obj.cursor.west_exit.closeable, False)
         self.assertEqual(self.rooms_state_obj.cursor.internal_name, 'Room_2,2')
         self.assertTrue(self.rooms_state_obj.cursor.is_exit)
         self.assertFalse(self.rooms_state_obj.cursor.is_entrance)
@@ -556,6 +643,11 @@ class test_rooms_state_obj(unittest.TestCase):
         self.assertEqual(room_obj.items_here.get('Mana_Potion'), (1, mana_potion_obj))
         self.assertEqual(room_obj.items_here.get('Health_Potion'), (2, health_potion_obj))
 
+    def test_rooms_state_and_door_obj(self):
+        self.assertIsInstance(self.rooms_state_obj.cursor.north_exit, door)
+        self.assertEqual(self.rooms_state_obj.cursor.north_exit.internal_name, 'Room_1,1_x_Room_1,2')
+        self.assertEqual(self.rooms_state_obj.cursor.east_exit.internal_name, 'Room_1,1_x_Room_2,1')
+
 
 class test_game_state(unittest.TestCase):
 
@@ -564,15 +656,17 @@ class test_game_state(unittest.TestCase):
         self.maxDiff = None
         self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
         self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
+        self.doors_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Doors_Ini_Config_Text)
         self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
         self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
+        self.doors_state_obj = doors_state(**self.doors_ini_config_obj.sections)
         self.containers_state_obj = containers_state(self.items_state_obj, **self.containers_ini_config_obj.sections)
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
-        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.items_state_obj, **self.rooms_ini_config_obj.sections)
-        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj, self.items_state_obj)
+        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj, self.items_state_obj, **self.rooms_ini_config_obj.sections)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
 
     def test_game_state(self):
         self.assertFalse(self.game_state_obj.game_has_begun)

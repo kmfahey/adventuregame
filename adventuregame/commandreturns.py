@@ -4,8 +4,8 @@ import abc
 import math
 import operator
 
-from .gameelements import *
-from .utility import *
+from adventuregame.gameelements import *
+from adventuregame.utility import *
 
 __name__ = 'adventuregame.commandreturns'
 
@@ -37,7 +37,7 @@ class command_bad_syntax(game_state_message):
     @property
     def message(self):
         proper_syntax_options_str = "'%s'" % ("' or '".join(self.command.upper() + (' ' + option_str if option_str else '') for option_str in self.proper_syntax_options))
-        return f"{self.command.upper()} command: bad syntax. Should be {proper_syntax_options_str}."
+        return f'{self.command.upper()} command: bad syntax. Should be {proper_syntax_options_str}.'
 
     def __init__(self, command_str, *proper_syntax_strs):
         self.command = command_str
@@ -134,6 +134,32 @@ class drop_command_quantity_unclear(game_state_message):
     def __init__(self):
         pass
 
+class close_command_object_to_close_not_here(game_state_message):
+    __slots__ = 'target_title',
+
+    message = property(fget=lambda self: f'You found no {self.target_title} here to close.')
+
+    def __init__(self, target_title_str):
+        self.target_title = target_title_str
+
+
+class close_command_object_has_been_closed(game_state_message):
+    __slots__ = 'target_object',
+
+    message = property(fget=lambda self: f'You have closed the {self.target_object}.')
+
+    def __init__(self, target_object_str):
+        self.target_object = target_object_str
+
+
+class close_command_object_is_already_closed(game_state_message):
+    __slots__ ='target_object',
+
+    message = property(fget=lambda self: f'The {self.target_object} is already closed.')
+
+    def __init__(self, target_object_str):
+        self.target_object = target_object_str
+
 
 class drop_command_trying_to_drop_item_you_dont_have(game_state_message):
     __slots__ = 'item_title', 'amount_attempted'
@@ -202,10 +228,9 @@ class inspect_command_found_container_here(game_state_message):
                 return f'{self.container_description} It is closed but unlocked.'
             elif self.is_locked is False and self.is_closed is False:
                 return f'{self.container_description} It is unlocked and open. {self.contents}'
-            # `self.is_locked is True and self.is_closed is False` is not
-            # a possible outcome of these tests because it's an invalid
-            # combination, and is checked for in __init__. If that is the
-            # combination of booleans, an exception is raised.
+            # `self.is_locked is True and self.is_closed is False` is not a possible outcome of these tests because
+            # it's an invalid combination, and is checked for in __init__. If that is the combination of booleans, an
+            # exception is raised.
             elif self.is_locked is None and self.is_closed is True:
                 return f'{self.container_description} It is closed.'
             elif self.is_locked is None and self.is_closed is False:
@@ -284,6 +309,79 @@ class inspect_command_found_nothing(game_state_message):
 
     def __init__(self, entity_title_str):
         self.entity_title = entity_title_str
+
+
+class lock_command_object_has_been_locked(game_state_message):
+    __slots__ = 'target_object',
+
+    message = property(fget=lambda self: f'You have locked the {self.target_object}.')
+
+    def __init__(self, target_object_str):
+        self.target_object = target_object_str
+
+
+class lock_command_dont_possess_correct_key(game_state_message):
+    __slots__ = 'object_to_lock_title', 'key_needed',
+
+    message = property(fget=lambda self: f'To lock the {self.object_to_lock_title} you need a {self.key_needed}.')
+
+    def __init__(self, object_to_lock_title_str, key_needed_str):
+        self.object_to_lock_title = object_to_lock_title_str
+        self.key_needed = key_needed_str
+
+
+class lock_command_object_to_lock_not_here(game_state_message):
+    __slots__ = 'target_title',
+
+    message = property(fget=lambda self: f'You found no {self.target_title} here to lock.')
+
+    def __init__(self, target_title_str):
+        self.target_title = target_title_str
+
+
+class lock_command_object_is_already_locked(game_state_message):
+    __slots__ ='target_object',
+
+    message = property(fget=lambda self: f'The {self.target_object} is already locked.')
+
+    def __init__(self, target_object_str):
+        self.target_object = target_object_str
+
+
+class open_command_object_to_open_not_here(game_state_message):
+    __slots__ = 'target_title',
+
+    message = property(fget=lambda self: f'You found no {self.target_title} here to open.')
+
+    def __init__(self, target_title_str):
+        self.target_title = target_title_str
+
+
+class open_command_object_has_been_opened(game_state_message):
+    __slots__ = 'target_object',
+
+    message = property(fget=lambda self: f'You have opened the {self.target_object}.')
+
+    def __init__(self, target_object_str):
+        self.target_object = target_object_str
+
+
+class open_command_object_is_locked(game_state_message):
+    __slots__ ='target_object',
+
+    message = property(fget=lambda self: f'The {self.target_object} is locked.')
+
+    def __init__(self, target_object_str):
+        self.target_object = target_object_str
+
+
+class open_command_object_is_already_open(game_state_message):
+    __slots__ ='target_object',
+
+    message = property(fget=lambda self: f'The {self.target_object} is already open.')
+
+    def __init__(self, target_object_str):
+        self.target_object = target_object_str
 
 
 class pick_up_command_item_not_found(game_state_message):
@@ -413,7 +511,7 @@ class put_command_trying_to_put_more_than_you_have(game_state_message):
 
 class satisfied_command_game_begins(game_state_message):
 
-    message = property(fget=lambda self: "The game has begun!")
+    message = property(fget=lambda self: 'The game has begun!')
 
     def __init__(self):
         pass
@@ -531,6 +629,51 @@ class take_command_trying_to_take_more_than_is_present(game_state_message):
         self.item_title = item_title_str
         self.amount_attempted = amount_attempted_int
         self.amount_present = amount_present_int
+
+class unlock_command_object_has_been_unlocked(game_state_message):
+    __slots__ = 'target_object',
+
+    message = property(fget=lambda self: f'You have unlocked the {self.target_object}.')
+
+    def __init__(self, target_object_str):
+        self.target_object = target_object_str
+
+
+class unlock_command_object_to_unlock_not_here(game_state_message):
+    __slots__ = 'target_title',
+
+    message = property(fget=lambda self: f'You found no {self.target_title} here to unlock.')
+
+    def __init__(self, target_title_str):
+        self.target_title = target_title_str
+
+
+class unlock_command_dont_possess_correct_key(game_state_message):
+    __slots__ = 'object_to_unlock_title', 'key_needed',
+
+    message = property(fget=lambda self: f'To unlock the {self.object_to_unlock_title} you need a {self.key_needed}.')
+
+    def __init__(self, object_to_unlock_title_str, key_needed_str):
+        self.object_to_unlock_title = object_to_unlock_title_str
+        self.key_needed = key_needed_str
+
+
+class unlock_command_object_is_already_unlocked(game_state_message):
+    __slots__ ='target_object',
+
+    message = property(fget=lambda self: f'The {self.target_object} is already unlocked.')
+
+    def __init__(self, target_object_str):
+        self.target_object = target_object_str
+
+
+class various_commands_container_is_closed(game_state_message):
+    __slots__ = 'target_object',
+
+    message = property(fget=lambda self: f'The {self.target_object} is closed.')
+
+    def __init__(self, target_object_str):
+        self.target_object = target_object_str
 
 
 class various_commands_container_not_found(game_state_message):

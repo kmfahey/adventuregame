@@ -3,9 +3,9 @@
 import math
 import re
 
-from .commandreturns import *
-from .gameelements import *
-from .utility import *
+from adventuregame.commandreturns import *
+from adventuregame.gameelements import *
+from adventuregame.utility import *
 
 __name__ = 'adventuregame.commandprocessor'
 
@@ -13,17 +13,13 @@ __name__ = 'adventuregame.commandprocessor'
 class command_processor(object):
     __slots__ = 'game_state', 'dispatch_table'
 
-    # All return values from *_command methods in this class are
-    # tuples. Every *_command method returns one or more *_command_*
-    # objects, reflecting a sequence of changes in game state. (For
-    # example, an ATTACK action that doesn't kill the foe will prompt
-    # the foe to attack. The foe's attack might lead to the character's
-    # death. So the return value might be a `attack_command_attack_hit`
-    # object, a `be_attacked_by_command_attacked_and_hit` object, and a
-    # `be_attacked_by_command_character_death` object, each bearing a message in its
-    # `message` property. The code which handles the result of the
-    # ATTACK action knows it's receiving a tuple and will iterate through the
-    # result objects and display each one's message to the player in turn.
+    # All return values from *_command methods in this class are tuples. Every *_command method returns one or more
+    # *_command_* objects, reflecting a sequence of changes in game state. (For example, an ATTACK action that doesn't
+    # kill the foe will prompt the foe to attack. The foe's attack might lead to the character's death. So the return
+    # value might be a `attack_command_attack_hit` object, a `be_attacked_by_command_attacked_and_hit` object, and a
+    # `be_attacked_by_command_character_death` object, each bearing a message in its `message` property. The code which
+    # handles the result of the ATTACK action knows it's receiving a tuple and will iterate through the result objects
+    # and display each one's message to the player in turn.
 
     valid_name_re = re.compile('^[A-Z][a-z]+$')
 
@@ -96,11 +92,20 @@ class command_processor(object):
             else:
                 return be_attacked_by_command_attacked_and_hit(creature_obj.title, damage_done, self.game_state.character.hit_points),
 
-    def close_command(self):
-        pass
+    def close_command(self, *tokens):
+        result = self._lock_unlock_open_or_close_preproc('CLOSE', *tokens)
+        if isinstance(result[0], game_state_message):
+            return result
+        else:
+            object_to_close, = result
+        if object_to_close.is_closed:
+            return close_command_object_is_already_closed(object_to_close.title),
+        else:
+            object_to_close.is_closed = True
+            return close_command_object_has_been_closed(object_to_close.title),
 
     def drop_command(self, *tokens):
-        result = self._parse_item_qty_item_title_natlang('DROP', *tokens)
+        result = self._pick_up_or_drop_preproc('DROP', *tokens)
         if len(result) == 1 and isinstance(result[0], game_state_message):
             return result
         else:
@@ -134,6 +139,18 @@ class command_processor(object):
     def look_at_command(self, *tokens):
         return self.inspect_command(*tokens)
 
+    def lock_command(self, *tokens):
+        result = self._lock_unlock_open_or_close_preproc('LOCK', *tokens)
+        if isinstance(result[0], game_state_message):
+            return result
+        else:
+            object_to_lock, = result
+        if object_to_lock.is_locked:
+            return lock_command_object_is_already_locked(object_to_lock.title),
+        else:
+            object_to_lock.is_locked = True
+            return lock_command_object_has_been_locked(object_to_lock.title),
+
     def inspect_command(self, *tokens):
         entity_title_token = ' '.join(tokens)
         creature_here_obj = self.game_state.rooms_state.cursor.creature_here
@@ -151,40 +168,22 @@ class command_processor(object):
     def move_command(self):
         pass
 
-    def open_command(self):
-        pass
-
-    def _parse_item_qty_item_title_natlang(self, command, *tokens):
-        if tokens[0] == 'a' or tokens[0] == 'the' or tokens[0].isdigit() or lexical_number_in_1_99_re.match(tokens[0]):
-            if len(tokens) == 1:
-                return command_bad_syntax(command.upper(), f'<item name>', f'<number> <item name>'),
-            item_title = ' '.join(tokens[1:])
-            if tokens[0] == 'a':
-                if tokens[-1].endswith('s'):
-                    return (drop_command_quantity_unclear(),) if command.lower() == 'drop' else (pick_up_command_quantity_unclear(),)
-                item_qty = 1
-            elif tokens[0].isdigit():
-                item_qty = int(tokens[0])
-            elif tokens[0] == 'the':
-                if tokens[-1].endswith('s'):
-                    item_qty = math.nan
-                else:
-                    item_qty = 1
-            else:  # lexical_number_in_1_99_re.match(tokens[0]) is True
-                item_qty = lexical_number_to_digits(tokens[0])
-            if item_qty == 1 and item_title.endswith('s'):
-                return pick_up_command_quantity_unclear(),
+    def open_command(self, *tokens):
+        result = self._lock_unlock_open_or_close_preproc('OPEN', *tokens)
+        if isinstance(result[0], game_state_message):
+            return result
         else:
-            item_title = ' '.join(tokens[1:])
-            if item_title.endswith('s'):
-                item_qty = math.nan
-            else:
-                item_qty = 1
-        item_title = item_title.rstrip('s')
-        return item_qty, item_title
+            object_to_open, = result
+        if object_to_open.is_locked:
+            return open_command_object_is_locked(object_to_open.title),
+        elif object_to_open.is_closed:
+            object_to_open.is_closed = False
+            return open_command_object_has_been_opened(object_to_open.title),
+        else:
+            return open_command_object_is_already_open(object_to_open.title),
 
     def pick_up_command(self, *tokens):
-        result = self._parse_item_qty_item_title_natlang('PICK UP', *tokens)
+        result = self._pick_up_or_drop_preproc('PICK UP', *tokens)
         if len(result) == 1 and isinstance(result[0], game_state_message):
             return result
         else:
@@ -214,11 +213,42 @@ class command_processor(object):
             amount_had_now = amount_already_had + pick_up_amount
             return pick_up_command_item_picked_up(item_title, pick_up_amount, amount_had_now),
 
-    def satisfied_command(self, *tokens):
-        if len(tokens):
-            return command_bad_syntax('SATISFIED', f''),
-        self.game_state.game_has_begun = True
-        return satisfied_command_game_begins(),
+    def put_command(self, *tokens):
+        results = self._put_or_take_preproc('PUT', 'IN|ON', *tokens)
+
+        # The workhorse private method returns either a game_state_message subclass object (see
+        # adventuregame.commandreturns) or a tuple of amount to put, parsed title of item, parsed title of container,
+        # and the container object (as a matter of convenience, it's needed by the private method & why fetch it twice).
+        if len(results) == 1 and isinstance(results[0], game_state_message):
+            return results
+        else:
+            # len(results) == 4 and isinstance(results[0], int) and isinstance(results[1], str)
+            #     and isinstance(results[2], str) and isinstance(results[3], container)
+            put_amount, item_title, container_title, container_obj = results
+
+        # I read off the player's inventory and filter it for a (qty,obj) pair whose title matches the supplied item
+        # name.
+        inventory_list = tuple(filter(lambda pair: pair[1].title == item_title, self.game_state.character.list_items()))
+
+        if len(inventory_list) == 1:
+
+            # The player has the item in their inventory, so I save the qty they possess and the item object.
+            amount_possessed, item_obj = inventory_list[0]
+        else:
+            return put_command_item_not_in_inventory(item_title, put_amount),
+        if container_obj.contains(item_obj.internal_name):
+            amount_in_container, _ = container_obj.get(item_obj.internal_name)
+        else:
+            amount_in_container = 0
+        if put_amount > amount_possessed:
+            return put_command_trying_to_put_more_than_you_have(item_title, amount_possessed),
+        elif put_amount is math.nan:
+            put_amount = amount_possessed
+        else:
+            amount_possessed -= put_amount
+        self.game_state.character.drop_item(item_obj, qty=put_amount)
+        container_obj.set(item_obj.internal_name, amount_in_container + put_amount, item_obj)
+        return put_command_amount_put(item_title, container_title, container_obj.container_type, put_amount, amount_possessed),
 
     def reroll_command(self, *tokens):
         if len(tokens):
@@ -235,14 +265,17 @@ class command_processor(object):
 
     # Concerning both set_name_command() and set_class_command() below it:
     #
-    # The character object isn't instanced in game_state.__init__ because it
-    # depends on name and class choice. Its character_name and character_class
-    # setters have a side effect where if both have been set the character
-    # object is instanced automatically. So after valid input is determined, I
-    # check for the state of <both character_name and character_class are now
-    # non-None>; if so, the character object was just instanced. That means
-    # the ability scores were rolled and assigned. The player may choose to
-    # reroll, so the return tuple includes a prompt to do so.
+    # The character object isn't instanced in game_state.__init__ because it depends on name and class choice. Its
+    # character_name and character_class setters have a side effect where if both have been set the character object is
+    # instanced automatically. So after valid input is determined, I check for the state of <both character_name and
+    # character_class are now non-None>; if so, the character object was just instanced. That means the ability scores
+    # were rolled and assigned. The player may choose to reroll, so the return tuple includes a prompt to do so.
+
+    def satisfied_command(self, *tokens):
+        if len(tokens):
+            return command_bad_syntax('SATISFIED', f''),
+        self.game_state.game_has_begun = True
+        return satisfied_command_game_begins(),
 
     def set_name_command(self, *tokens):
         name_parts_tests = list(map(bool, map(self.valid_name_re.match, tokens)))
@@ -291,10 +324,159 @@ class command_processor(object):
         else:
             return set_class_command_class_set(class_str),
 
-    # Both PUT and TAKE have the same preprocessing challenges, so I refactored
-    # their logic into a shared private preprocessing method.
+    # This is a very hairy method on account of how much natural language processing it has to do to account for all the
+    # permutations on how a user writes TAKE item FROM container.
 
-    def _parse_item_joinword_container_natlang(self, command, joinword, *tokens):
+    def take_command(self, *tokens):
+        results = self._put_or_take_preproc('TAKE', 'FROM', *tokens)
+
+        # The workhorse private method returns either a game_state_message subclass object (see
+        # adventuregame.commandreturns) or a tuple of amount to take, parsed title of item, parsed title of container,
+        # and the container object (as a matter of convenience, it's needed by the private method & why fetch it twice).
+        if len(results) == 1 and isinstance(results[0], game_state_message):
+            return results
+        else:
+            # len(results) == 4 and isinstance(results[0], int) and isinstance(results[1], str)
+            #     and isinstance(results[2], str) and isinstance(results[3], container)
+            take_amount, item_title, container_title, container_obj = results
+
+        # The following loop iterates over all the items in the container. I use a while loop so it's possible for the
+        # search to fall off the end of the loop. If that code is reached, the specified item isn't in this container.
+        container_here_contents = list(container_obj.items())
+        index = 0
+        while index < len(container_here_contents):
+            item_internal_name, (item_qty, item_obj) = container_here_contents[index]
+
+            # This isn't the item specified.
+            if item_obj.title != item_title:
+                index += 1
+                continue
+
+            if take_amount is math.nan:
+                # This *is* the item, but the command didn't specify the quantity, so I set `take_amount` to the
+                # quantity in the container.
+                take_amount = item_qty
+
+            if take_amount > item_qty:
+
+                # The amount specified is more than how much is in the container, so I return an error.
+                return take_command_trying_to_take_more_than_is_present(container_title, container_obj.container_type, item_title, take_amount, item_qty),  # tested
+            elif take_amount == 1:
+
+                # We have a match. One item is remove from the container and added to the character's inventory; and a
+                # success return object is returned.
+                container_obj.remove_one(item_internal_name)
+                self.game_state.character.pick_up_item(item_obj)
+                return take_command_item_or_items_taken(container_title, item_title, take_amount),
+            else:
+
+                # We have a match.
+                if take_amount == item_qty:
+
+                    # The amount specified is how much is here, so I delete the item from the container.
+                    container_obj.delete(item_internal_name)
+                else:
+
+                    # There's more in the container than was specified, so I set the amount in the container to the
+                    # amount that was there minus the amount being taken.
+                    container_obj.set(item_internal_name, item_qty - take_amount, item_obj)
+
+                # The character's inventory is updated with the items taken, and a success object is returned.
+                self.game_state.character.pick_up_item(item_obj, qty=take_amount)
+                return take_command_item_or_items_taken(container_title, item_title, take_amount),
+
+            # The loop didn't find the item on this path, so I increment the index and try again.
+            index += 1
+
+        # The loop completed without finding the item, so it isn't present in the container. I return an error.
+        return take_command_item_not_found_in_container(container_title, take_amount, container_obj.container_type, item_title),  # tested
+
+    def _lock_unlock_open_or_close_preproc(self, command, *tokens):
+        if not len(tokens):
+            return command_bad_syntax(command.upper(), '<door name>', '<chest name>'),
+        target_title = ' '.join(tokens)
+        container_obj = self.game_state.rooms_state.cursor.container_here
+        if lock_unlock_mode := command.lower().endswith('lock'):
+            key_objs = [item_obj for _, item_obj in self.game_state.character.list_items() if item_obj.title.endswith(' key')]
+        if container_obj is not None and isinstance(container_obj, chest) and container_obj.title == target_title:
+            if lock_unlock_mode and (not len(key_objs) or not any(key_obj.title == 'chest key' for key_obj in key_objs)):
+                if command.lower() == 'unlock':
+                    return unlock_command_dont_possess_correct_key(container_obj.title, 'chest key'),
+                else:
+                    return lock_command_dont_possess_correct_key(container_obj.title, 'chest key'),
+            else:
+                return container_obj,
+        for exit_attr in ('north_exit', 'east_exit', 'south_exit', 'west_exit'):
+            if getattr(self.game_state.rooms_state.cursor, exit_attr, None) is None:
+                continue
+            door_obj = getattr(self.game_state.rooms_state.cursor, exit_attr)
+            if isinstance(door_obj, doorway):
+                continue
+            if door_obj.title == target_title:
+                if lock_unlock_mode and (not key_objs or not any(key_obj.title == 'door key' for key_obj in key_objs)):
+                    return ((unlock_command_dont_possess_correct_key(door_obj.title, 'door key'),)
+                                 if command.lower() == 'unlock'
+                                 else (lock_command_dont_possess_correct_key(door_obj.title, 'door key'),))
+                else:
+                    return door_obj,
+
+        # Control flow fell off the end of the loop, which means none of the doors in the room had a title matching the
+        # object title specified in the command, and if there's a chest in the room the chest didn't match either. So
+        # whatever the user wanted to lock/unlock, it's not here.
+        if command.lower() == 'unlock':
+            return unlock_command_object_to_unlock_not_here(target_title),
+        elif command.lower() == 'lock':
+            return lock_command_object_to_lock_not_here(target_title),
+        elif command.lower() == 'open':
+            return open_command_object_to_open_not_here(target_title),
+        else:
+            return close_command_object_to_close_not_here(target_title),
+
+    def unlock_command(self, *tokens):
+        result = self._lock_unlock_open_or_close_preproc('UNLOCK', *tokens)
+        if isinstance(result[0], game_state_message):
+            return result
+        else:
+            object_to_unlock, = result
+        if object_to_unlock.is_locked is False:
+            return unlock_command_object_is_already_unlocked(object_to_unlock.title),
+        else:
+            object_to_unlock.is_locked = False
+            return unlock_command_object_has_been_unlocked(object_to_unlock.title),
+
+    def _pick_up_or_drop_preproc(self, command, *tokens):
+        if tokens[0] == 'a' or tokens[0] == 'the' or tokens[0].isdigit() or lexical_number_in_1_99_re.match(tokens[0]):
+            if len(tokens) == 1:
+                return command_bad_syntax(command.upper(), f'<item name>', f'<number> <item name>'),
+            item_title = ' '.join(tokens[1:])
+            if tokens[0] == 'a':
+                if tokens[-1].endswith('s'):
+                    return (drop_command_quantity_unclear(),) if command.lower() == 'drop' else (pick_up_command_quantity_unclear(),)
+                item_qty = 1
+            elif tokens[0].isdigit():
+                item_qty = int(tokens[0])
+            elif tokens[0] == 'the':
+                if tokens[-1].endswith('s'):
+                    item_qty = math.nan
+                else:
+                    item_qty = 1
+            else:  # lexical_number_in_1_99_re.match(tokens[0]) is True
+                item_qty = lexical_number_to_digits(tokens[0])
+            if item_qty == 1 and item_title.endswith('s'):
+                return pick_up_command_quantity_unclear(),
+        else:
+            item_title = ' '.join(tokens)
+            if item_title.endswith('s'):
+                item_qty = math.nan
+            else:
+                item_qty = 1
+        item_title = item_title.rstrip('s')
+        return item_qty, item_title
+
+    # Both PUT and TAKE have the same preprocessing challenges, so I refactored their logic into a shared private
+    # preprocessing method.
+
+    def _put_or_take_preproc(self, command, joinword, *tokens):
         container_obj = self.game_state.rooms_state.cursor.container_here
 
         if command.lower() == 'put':
@@ -329,16 +511,15 @@ class command_processor(object):
         elif tokens[0] == 'a':
             joinword_index = tokens.index(joinword)
 
-            # The term before the joinword, which is the item title, is
-            # plural. The sentence is ungrammatical, so I return an error.
+            # The term before the joinword, which is the item title, is plural. The sentence is ungrammatical, so I
+            # return an error.
             if tokens[joinword_index - 1].endswith('s'):
                 return (take_command_quantity_unclear(),) if command == 'take' else (put_command_quantity_unclear(),)
             amount = 1
             del tokens[0]
 
-        # No other indication was given, so the amount will have to be
-        # determined later; either the total amount found in the container
-        # (for TAKE) or the total amount in the inventory (for PUT)
+        # No other indication was given, so the amount will have to be determined later; either the total amount found
+        # in the container (for TAKE) or the total amount in the inventory (for PUT)
         else:
             amount = math.nan
 
@@ -350,18 +531,16 @@ class command_processor(object):
         # The item_title begins with a direct article.
         if item_title.startswith('the ') or item_title.startswith('the') and len(item_title) == 3:
 
-            # The title is of the form, 'the gold coins', which means the
-            # amount intended is the total amount available-- either the total
-            # amount in the container (for TAKE) or the total amount in the
-            # character's inventory (for PUT). That will be dertermined later,
-            # so NaN is used as a signal value to be replaced when possible.
+            # The title is of the form, 'the gold coins', which means the amount intended is the total amount
+            # available-- either the total amount in the container (for TAKE) or the total amount in the character's
+            # inventory (for PUT). That will be dertermined later, so NaN is used as a signal value to be replaced when
+            # possible.
             if item_title.endswith('s'):
                 amount = math.nan
                 item_title = item_title[:-1]
             item_title = item_title[4:]
 
-            # `item_title` is *just* 'the'. The sentence is ungrammatical, so
-            # I return a syntax error.
+            # `item_title` is *just* 'the'. The sentence is ungrammatical, so I return a syntax error.
             if not item_title:
                 return command_bad_syntax(command.upper(), f'<item name> {joinword.upper()} <container name>',
                                                            f'<number> <item name> {joinword.upper()} <container name>'),
@@ -369,21 +548,18 @@ class command_processor(object):
         if item_title.endswith('s'):
             if amount == 1:
 
-                # The `item_title` ends in a plural, but an amount > 1 was
-                # specified. That's an ungrammatical sentence, so I return a
-                # syntax error.
+                # The `item_title` ends in a plural, but an amount > 1 was specified. That's an ungrammatical sentence,
+                # so I return a syntax error.
                 return command_bad_syntax(command.upper(), f'<item name> {joinword.upper()} <container name>',
                                                            f'<number> <item name> {joinword.upper()} <container name>'),
 
-            # The title is plural and `amount` is > 1. I strip the
-            # pluralizing 's' off to get the correct item title.
+            # The title is plural and `amount` is > 1. I strip the pluralizing 's' off to get the correct item title.
             item_title = item_title[:-1]
 
         if container_title.startswith('the ') or container_title.startswith('the') and len(container_title) == 3:
 
-            # The container term begins with a direct article and ends with a
-            # pluralizing 's'. That's invalid, no container in the dungeon is
-            # found in grouping of more than one, so I return a syntax error.
+            # The container term begins with a direct article and ends with a pluralizing 's'. That's invalid, no
+            # container in the dungeon is found in grouping of more than one, so I return a syntax error.
             if container_title.endswith('s'):
                 return command_bad_syntax(command.upper(), f'<item name> {joinword.upper()} <container name>',
                                                            f'<number> <item name> {joinword.upper()} <container name>'),
@@ -391,143 +567,24 @@ class command_processor(object):
             container_title = container_title[4:]
             if not container_title:
 
-                # Improbably, the item title is *just* 'the'. That's an
-                # ungrammatical sentence, so I return a syntax error.
+                # Improbably, the item title is *just* 'the'. That's an ungrammatical sentence, so I return a syntax
+                # error.
                 return command_bad_syntax(command.upper(), f'<item name> {joinword.upper()} <container name>',
                                                            f'<number> <item name> {joinword.upper()} <container name>'),
 
         if container_obj is None:
 
-            # There is no container in this room, so no TAKE command can be
-            # correct. I return an error.
+            # There is no container in this room, so no TAKE command can be correct. I return an error.
             return various_commands_container_not_found(container_title),  # tested
         elif not container_title == container_obj.title:
 
-            # The container name specified doesn't match the name of the
-            # container in this room, so I return an error.
+            # The container name specified doesn't match the name of the container in this room, so I return an error.
             return various_commands_container_not_found(container_title, container_obj.title),  # tested
+
+        elif container_obj.is_closed:
+
+            # The container can't be PUT IN to or TAKEn from because it is closed.
+            return various_commands_container_is_closed(container_obj.title),
 
         return amount, item_title, container_title, container_obj
 
-    # This is a very hairy method on account of how much natural language
-    # processing it has to do to account for all the permutations on how
-    # a user writes TAKE item FROM container.
-
-    def take_command(self, *tokens):
-        results = self._parse_item_joinword_container_natlang('TAKE', 'FROM', *tokens)
-
-        # The workhorse private method returns either a game_state_message
-        # subclass object (see adventuregame.commandreturns) or a tuple of
-        # amount to take, parsed title of item, parsed title of container, and
-        # the container object (as a matter of convenience, it's needed by the
-        # private method & why fetch it twice).
-        if len(results) == 1 and isinstance(results[0], game_state_message):
-            return results
-        else:
-            # len(results) == 4 and isinstance(results[0], int) and isinstance(results[1], str)
-            #     and isinstance(results[2], str) and isinstance(results[3], container)
-            take_amount, item_title, container_title, container_obj = results
-
-        # The following loop iterates over all the items in the container. I
-        # use a while loop so it's possible for the search to fall off the end
-        # of the loop. If that code is reached, the specified item isn't in
-        # this container.
-        container_here_contents = list(container_obj.items())
-        index = 0
-        while index < len(container_here_contents):
-            item_internal_name, (item_qty, item_obj) = container_here_contents[index]
-
-            # This isn't the item specified.
-            if item_obj.title != item_title:
-                index += 1
-                continue
-
-            if take_amount is math.nan:
-                # This *is* the item, but the command didn't specify the
-                # quantity, so I set `take_amount` to the quantity in the
-                # container.
-                take_amount = item_qty
-
-            if take_amount > item_qty:
-
-                # The amount specified is more than how much is in the
-                # container, so I return an error.
-                return take_command_trying_to_take_more_than_is_present(container_title, container_obj.container_type, item_title, take_amount, item_qty),  # tested
-            elif take_amount == 1:
-
-                # We have a match. One item is remove from the container and
-                # added to the character's inventory; and a success return
-                # object is returned.
-                container_obj.remove_one(item_internal_name)
-                self.game_state.character.pick_up_item(item_obj)
-                return take_command_item_or_items_taken(container_title, item_title, take_amount),
-            else:
-
-                # We have a match.
-                if take_amount == item_qty:
-
-                    # The amount specified is how much is here, so I delete
-                    # the item from the container.
-                    container_obj.delete(item_internal_name)
-                else:
-
-                    # There's more in the container than was specified, so I
-                    # set the amount in the container to the amount that was
-                    # there minus the amount being taken.
-                    container_obj.set(item_internal_name, item_qty - take_amount, item_obj)
-
-                # The character's inventory is updated with the items taken,
-                # and a success object is returned.
-                self.game_state.character.pick_up_item(item_obj, qty=take_amount)
-                return take_command_item_or_items_taken(container_title, item_title, take_amount),
-
-            # The loop didn't find the item on this path, so I increment the
-            # index and try again.
-            index += 1
-
-        # The loop completed without finding the item, so it isn't present in
-        # the container. I return an error.
-        return take_command_item_not_found_in_container(container_title, take_amount, container_obj.container_type, item_title),  # tested
-
-    def put_command(self, *tokens):
-        results = self._parse_item_joinword_container_natlang('PUT', 'IN|ON', *tokens)
-
-        # The workhorse private method returns either a game_state_message
-        # subclass object (see adventuregame.commandreturns) or a tuple of
-        # amount to put, parsed title of item, parsed title of container, and
-        # the container object (as a matter of convenience, it's needed by the
-        # private method & why fetch it twice).
-        if len(results) == 1 and isinstance(results[0], game_state_message):
-            return results
-        else:
-            # len(results) == 4 and isinstance(results[0], int) and isinstance(results[1], str)
-            #     and isinstance(results[2], str) and isinstance(results[3], container)
-            put_amount, item_title, container_title, container_obj = results
-
-        # I read off the player's inventory and filter it for a (qty,obj) pair
-        # whose title matches the supplied item name.
-        inventory_list = tuple(filter(lambda pair: pair[1].title == item_title, self.game_state.character.list_items()))
-
-        if len(inventory_list) == 1:
-
-            # The player has the item in their inventory, so I save the qty
-            # they possess and the item object.
-            amount_possessed, item_obj = inventory_list[0]
-        else:
-            return put_command_item_not_in_inventory(item_title, put_amount),
-        if container_obj.contains(item_obj.internal_name):
-            amount_in_container, _ = container_obj.get(item_obj.internal_name)
-        else:
-            amount_in_container = 0
-        if put_amount > amount_possessed:
-            return put_command_trying_to_put_more_than_you_have(item_title, amount_possessed),
-        elif put_amount is math.nan:
-            put_amount = amount_possessed
-        else:
-            amount_possessed -= put_amount
-        self.game_state.character.drop_item(item_obj, qty=put_amount)
-        container_obj.set(item_obj.internal_name, amount_in_container + put_amount, item_obj)
-        return put_command_amount_put(item_title, container_title, container_obj.container_type, put_amount, amount_possessed),
-
-    def unlock_command(self):
-        pass

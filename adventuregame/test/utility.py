@@ -10,7 +10,7 @@ __name__ = 'adventuregame.utility'
 
 # dungeon map
 #
-# Room_2,1 xx Room_2,2
+# Room_1,2 xx Room_2,2
 #     ||          ||
 # Room_1,1 xx Room 2,1
 
@@ -21,15 +21,15 @@ description=This door is made of wooden planks secured together with iron divots
 door_type=wooden_door
 is_locked=false
 is_closed=true
-closable=true
+closeable=true
 
 [Room_1,1_x_Room_2,1]
 title=iron door
 description=This door is bound in iron plates with a small barred window set up high.
-door_type=iron door
+door_type=iron_door
 is_locked=true
 is_closed=true
-closable=true
+closeable=true
 
 [Room_1,2_x_Room_2,2]
 title=doorway
@@ -37,15 +37,15 @@ description=This open doorway is outlined by a stone arch set into the wall.
 door_type=doorway
 is_locked=false
 is_closed=false
-closable=false
+closeable=false
 
 [Room_2,1_x_Room_2,2]
 title=iron door
 description=This door is bound in iron plates with a small barred window set up high.
-door_type=iron door
+door_type=iron_door
 is_locked=true
 is_closed=true
-closable=true
+closeable=true
 """
 
 Items_Ini_Config_Text = """
@@ -210,14 +210,26 @@ item_type=coin
 title=gold coin
 value=1
 weight=0.02
+
+[Door_Key]
+description=This large ornate brass key can be used to lock or unlock doors.
+item_type=key
+title=door key
+weight=0.16
+
+[Chest_Key]
+description=This small workmanlike brass key can be used to lock or unlock chests.
+item_type=key
+title=chest key
+weight=0.16
 """
 
 Rooms_Ini_Config_Text = """
 [Room_1,1]
 description=Entrance room
-east_exit=Room_1,2
+east_exit=Room_2,1
 is_entrance=true
-north_exit=Room_2,1
+north_exit=Room_1,2
 title=Southwest dungeon room
 creature_here=Kobold_Trysk
 container_here=Wooden_Chest_1
@@ -225,15 +237,15 @@ items_here=[1xMana_Potion,2xHealth_Potion]
 
 [Room_1,2]
 description=Nondescript room
-north_exit=Room_2,2
-title=Southeast dungeon room
-west_exit=Room_1,1
-
-[Room_2,1]
-description=Nondescript room
 east_exit=Room_2,2
 south_exit=Room_1,1
 title=Northwest dungeon room
+
+[Room_2,1]
+description=Nondescript room
+north_exit=Room_2,2
+title=Southeast dungeon room
+west_exit=Room_1,1
 
 [Room_2,2]
 description=Exit room
