@@ -2,6 +2,7 @@
 
 import math
 import re
+import operator
 
 from adventuregame.commandreturns import *
 from adventuregame.gameelements import *
@@ -35,16 +36,22 @@ class command_processor(object):
     def process(self, natural_language_str):
         tokens = natural_language_str.strip().split()
         command = tokens.pop(0).lower()
-        if command == 'look' and len(tokens) and tokens[0].lower() == 'at':
-            command = command + '_' + tokens.pop(0).lower()
-        elif command == 'set' and len(tokens) and (tokens[0].lower() == 'name' or tokens[0].lower() == 'class'):
-            command = command + '_' + tokens.pop(0).lower()
-            if len(tokens) and tokens[0] == 'to':
-                tokens.pop(0)
+        if command == 'cast' and len(tokens) and tokens[0].lower() == 'spell':
+            command += '_' + tokens.pop(0).lower()
         elif command == "i'm" and len(tokens) and tokens[0].lower() == 'satisfied':
             command = tokens.pop(0).lower()
-        elif command == 'pick' and len(tokens) and tokens[0].lower() == 'up':
+        elif command == 'look' and len(tokens) and tokens[0].lower() == 'at':
             command += '_' + tokens.pop(0).lower()
+        elif command == 'pick' and len(tokens) and (tokens[0].lower() == 'up' or tokens[0].lower() == 'lock'):
+            command += '_' + tokens.pop(0).lower()
+        elif command == 'set' and len(tokens) and (tokens[0].lower() == 'name' or tokens[0].lower() == 'class'):
+            command += '_' + tokens.pop(0).lower()
+            if len(tokens) and tokens[0] == 'to':
+                tokens.pop(0)
+        elif command == 'exit' and len(tokens) and (tokens[0].lower() == 'using' or tokens[0].lower() == 'via'):
+            tokens.pop(0)
+        elif command == 'show' and len(tokens) and tokens[0].lower() == 'inventory':
+            command = tokens.pop(0).lower()
         if command not in ('set_name', 'set_class'):
             tokens = tuple(map(str.lower, tokens))
         if command not in self.dispatch_table:
@@ -52,6 +59,9 @@ class command_processor(object):
         return self.dispatch_table[command](*tokens)
 
     def attack_command(self, *tokens):
+        if (not self.game_state.character.weapon_equipped
+                and (self.game_state.character_class != "Mage" or not self.game_state.character.wand_equipped)):
+            return attack_command_you_have_no_weapon_or_wand_equipped(self.game_state.character_class),
         creature_title_token = ' '.join(tokens)
         if not self.game_state.rooms_state.cursor.creature_here:
             return attack_command_opponent_not_found(creature_title_token),
@@ -92,6 +102,9 @@ class command_processor(object):
             else:
                 return be_attacked_by_command_attacked_and_hit(creature_obj.title, damage_done, self.game_state.character.hit_points),
 
+    def cast_spell_command(self, *tokens):
+        pass
+
     def close_command(self, *tokens):
         result = self._lock_unlock_open_or_close_preproc('CLOSE', *tokens)
         if isinstance(result[0], game_state_message):
@@ -103,6 +116,38 @@ class command_processor(object):
         else:
             object_to_close.is_closed = True
             return close_command_object_has_been_closed(object_to_close.title),
+
+    def drink(self, *tokens):
+        pass
+
+    def _pick_up_or_drop_preproc(self, command, *tokens):
+        if tokens[0] == 'a' or tokens[0] == 'the' or tokens[0].isdigit() or lexical_number_in_1_99_re.match(tokens[0]):
+            if len(tokens) == 1:
+                return command_bad_syntax(command.upper(), '<item name>', '<number> <item name>'),
+            item_title = ' '.join(tokens[1:])
+            if tokens[0] == 'a':
+                if tokens[-1].endswith('s'):
+                    return (drop_command_quantity_unclear(),) if command.lower() == 'drop' else (pick_up_command_quantity_unclear(),)
+                item_qty = 1
+            elif tokens[0].isdigit():
+                item_qty = int(tokens[0])
+            elif tokens[0] == 'the':
+                if tokens[-1].endswith('s'):
+                    item_qty = math.nan
+                else:
+                    item_qty = 1
+            else:  # lexical_number_in_1_99_re.match(tokens[0]) is True
+                item_qty = lexical_number_to_digits(tokens[0])
+            if item_qty == 1 and item_title.endswith('s'):
+                return pick_up_command_quantity_unclear(),
+        else:
+            item_title = ' '.join(tokens)
+            if item_title.endswith('s'):
+                item_qty = math.nan
+            else:
+                item_qty = 1
+        item_title = item_title.rstrip('s')
+        return item_qty, item_title
 
     def drop_command(self, *tokens):
         result = self._pick_up_or_drop_preproc('DROP', *tokens)
@@ -129,12 +174,94 @@ class command_processor(object):
             self.game_state.character.drop_item(item_obj, qty=drop_amount)
             if self.game_state.rooms_state.cursor.items_here is None:
                 self.game_state.rooms_state.cursor.items_here = items_multi_state()
-            self.game_state.rooms_state.cursor.items_here.set(item_obj.internal_name, amount_already_here + drop_amount, item_obj)
+            self.game_state.rooms_state.cursor.items_here.set(item_obj.internal_name,
+                                                              amount_already_here + drop_amount, item_obj)
             amount_had_now = item_had_qty - drop_amount
-            return drop_command_dropped_item(item_title, drop_amount, amount_already_here + drop_amount, amount_had_now),
+            return drop_command_dropped_item(item_title, drop_amount,
+                                             amount_already_here + drop_amount, amount_had_now),
 
-    def equip_command(self):
-        pass
+    def equip_command(self, *tokens):
+        if not tokens:
+            return command_bad_syntax('EQUIP', '<armor name>', '<shield name>', '<wand name>', '<weapon name>'),
+        item_title = ' '.join(tokens)
+        matching_item_tuple = tuple(item_obj for _, item_obj in self.game_state.character.list_items()
+                                             if item_obj.title == item_title)
+        if not len(matching_item_tuple):
+            return equip_command_no_such_item_in_inventory(item_title),
+        item_obj, = matching_item_tuple[0:1]
+        can_use_attr = self.game_state.character_class.lower() + '_can_use'
+        if not getattr(item_obj, can_use_attr):
+            return equip_command_class_cant_use_item(self.game_state.character_class, item_title, item_obj.item_type),
+        retval = tuple()
+        if item_obj.item_type == 'armor' and self.game_state.character.armor_equipped:
+            old_equipped_obj = self.game_state.character.armor_equipped
+            retval = equip_or_unequip_command_item_unequipped(old_equipped_obj.title, old_equipped_obj.item_type,
+                                                              self.game_state.character.armor_class, 'armor class'),
+        elif item_obj.item_type == 'shield' and self.game_state.character.shield_equipped:
+            old_equipped_obj = self.game_state.character.shield_equipped
+            retval = equip_or_unequip_command_item_unequipped(old_equipped_obj.title, old_equipped_obj.item_type,
+                                                              self.game_state.character.armor_class, 'armor class'),
+        elif item_obj.item_type == 'wand' and self.game_state.character.wand_equipped:
+            old_equipped_obj = self.game_state.character.wand_equipped
+            retval = equip_or_unequip_command_item_unequipped(old_equipped_obj.title, old_equipped_obj.item_type,
+                                                              change_text_str="You now can't attack."),
+        elif item_obj.item_type == 'weapon' and self.game_state.character.weapon_equipped:
+            old_equipped_obj = self.game_state.character.weapon_equipped
+            retval = equip_or_unequip_command_item_unequipped(old_equipped_obj.title, old_equipped_obj.item_type,
+                                                              change_text_str="You now can't attack."),
+        if item_obj.item_type == 'armor':
+            self.game_state.character.equip_armor(item_obj)
+            return retval + (equip_command_item_equipped(item_obj.title, 'armor',
+                                                         self.game_state.character.armor_class, 'armor class'),)
+        elif item_obj.item_type == 'shield':
+            self.game_state.character.equip_shield(item_obj)
+            return retval + (equip_command_item_equipped(item_obj.title, 'shield',
+                                                         self.game_state.character.armor_class, 'armor class'),)
+        elif item_obj.item_type == 'wand':
+            self.game_state.character.equip_wand(item_obj)
+            return retval + (equip_command_item_equipped(item_obj.title, 'wand',
+                                                         self.game_state.character.attack_bonus, 'attack bonus',
+                                                         self.game_state.character.damage_roll, 'damage'),)
+        else:
+            self.game_state.character.equip_weapon(item_obj)
+            return retval + (equip_command_item_equipped(item_obj.title, 'weapon',
+                                                         self.game_state.character.attack_bonus, 'attack bonus',
+                                                         self.game_state.character.damage_roll, 'damage'),)
+
+    def exit_command(self, *tokens):
+        if (not len(tokens) or len(tokens) != 2 or tokens[0] not in ('north', 'east', 'south', 'west')
+            or tokens[1] not in ('door', 'doorway', 'exit')):
+            return command_bad_syntax('EXIT', 'USING <compass direction> DOOR', 'USING <compass direction> DOORWAY'),
+        compass_dir = tokens[0]
+        portal_type = tokens[1]
+        exit_attr = f'{compass_dir}_exit'
+        door_obj = getattr(self.game_state.rooms_state.cursor, exit_attr, None)
+        if door_obj is None:
+            return various_commands_door_not_present(compass_dir, portal_type),
+        self.game_state.rooms_state.move(**{compass_dir: True})
+        return exit_command_exitted_room(compass_dir, portal_type),
+
+    def inventory_command(self, *tokens):
+        if len(tokens):
+            return command_bad_syntax('INVENTORY', ''),
+        inventory_contents = sorted(self.game_state.character.list_items(), key=lambda argl: argl[1].title)
+        display_strs_list = list()
+        for item_qty, item_obj in inventory_contents:
+            if item_obj.item_type == 'armor' and item_qty == 1:
+                display_strs_list.append(f"a suit of {item_obj.title}")
+            elif item_obj.item_type == 'armor' and item_qty > 1:
+                display_strs_list.append(f"{item_qty} suits of {item_obj.title}")
+            elif item_qty == 1 and item_obj.title[0] in 'aeiou':
+                display_strs_list.append(f"an {item_obj.title}")
+            elif item_qty == 1:
+                display_strs_list.append(f"a {item_obj.title}")
+            else:
+                display_strs_list.append(f"{item_qty} {item_obj.title}s")
+        return inventory_command_display_inventory(display_strs_list),
+
+
+    def leave_command(self, *tokens):
+        return self.exit(*tokens)
 
     def look_at_command(self, *tokens):
         return self.inspect_command(*tokens)
@@ -151,22 +278,97 @@ class command_processor(object):
             object_to_lock.is_locked = True
             return lock_command_object_has_been_locked(object_to_lock.title),
 
+    def _inspect_item_detail(self, item_obj):
+        descr_append_str = ''
+        if getattr(item_obj, 'item_type', '') in ('armor', 'shield', 'wand', 'weapon'):
+            if item_obj.item_type == 'wand' or item_obj.item_type == 'weapon':
+                descr_append_str = f" Its attack bonus is +{item_obj.attack_bonus} and its damage is {item_obj.damage}. "
+            else:  # item_type == 'armor' or item_type == 'shield'
+                descr_append_str = f" Its armor bonus is +{item_obj.armor_bonus}. "
+            can_use_list = []
+            for character_class in ("warrior", "thief", "mage", "priest"):
+                if getattr(item_obj, f"{character_class}_can_use", False):
+                    can_use_list.append(f"{character_class}s" if character_class != 'thief' else 'thieves')
+            can_use_list[0] = can_use_list[0].title()
+            if len(can_use_list) == 1:
+                descr_append_str += f"{can_use_list[0]} can use this."
+            elif len(can_use_list) == 2:
+                descr_append_str += f"{can_use_list[0]} and {can_use_list[1]} can use this."
+            else:
+                can_use_joined = ', '.join(can_use_list[:-1])
+                descr_append_str += f"{can_use_joined}, and {can_use_list[-1]} can use this."
+        elif getattr(item_obj, 'item_type', '') == 'consumable':
+            if item_obj.title == 'mana potion':
+                descr_append_str = f' It restores {item_obj.mana_points_recovered} mana points.'
+            elif item_obj.title == 'health potion':
+                descr_append_str = f' It restores {item_obj.hit_points_recovered} hit points.'
+        return item_obj.description + descr_append_str
+
     def inspect_command(self, *tokens):
-        entity_title_token = ' '.join(tokens)
+        if (not tokens or tokens[0] in ('in', 'on') or tokens[-1] in ('in', 'on') or
+            (tokens[-1] in ('door', 'doorway') and (len(tokens) != 2 or tokens[0] not in ('north', 'south', 'east', 'west')))):
+            return command_bad_syntax('INSPECT', '<item name>', '<item name> IN <chest name>',
+                                      '<item name> IN INVENTORY', '<item name> ON <corpse name>',
+                                      '<compass direction> DOOR', '<compass direction> DOORWAY'),
+        item_contained = item_in_inventory = item_in_chest = item_on_corpse = False
+        if 'in' in tokens or 'on' in tokens:
+            item_contained = True
+            if 'in' in tokens:
+                joinword_index = tokens.index('in')
+                if tokens[joinword_index+1:] == ('inventory',):
+                    item_in_inventory = True
+                else:
+                    item_in_chest = True
+            else:
+                joinword_index = tokens.index('on')
+                item_on_corpse = True
+            target_title = ' '.join(tokens[:joinword_index])
+            location_title = ' '.join(tokens[joinword_index+1:])
+        elif tokens[-1] == 'door' or tokens[-1] == 'doorway':
+            compass_direction = tokens[0]
+            door_attr = f"{compass_direction}_exit"
+            door_obj = getattr(self.game_state.rooms_state.cursor, door_attr, None)
+            if door_obj is None:
+                return various_commands_door_not_present(compass_direction),
+            else:
+                return inspect_command_found_door_or_doorway(compass_direction, door_obj),
+        else:
+            target_title = ' '.join(tokens)
         creature_here_obj = self.game_state.rooms_state.cursor.creature_here
         container_here_obj = self.game_state.rooms_state.cursor.container_here
-        if creature_here_obj is not None and creature_here_obj.title == entity_title_token.lower():
+        if item_in_chest and isinstance(container_here_obj, corpse) or item_on_corpse and isinstance(container_here_obj, chest):
+            return command_bad_syntax('INSPECT', '<item name>', '<item name> IN <chest name>',
+                                      '<item name> IN INVENTORY', '<item name> ON <corpse name>',
+                                      '<compass direction> DOOR', '<compass direction> DOORWAY'),
+        if creature_here_obj is not None and creature_here_obj.title == target_title.lower():
             return inspect_command_found_creature_here(creature_here_obj.description),
-        elif container_here_obj is not None and container_here_obj.title == entity_title_token.lower():
+        elif container_here_obj is not None and container_here_obj.title == target_title.lower():
             return inspect_command_found_container_here(container_here_obj),
+        elif item_contained:
+            if item_in_inventory:
+                for item_qty, item_obj in self.game_state.character.list_items():
+                    if item_obj.title != target_title:
+                        continue
+                    return inspect_command_found_item_or_items_here(self._inspect_item_detail(item_obj), item_qty),
+                return inspect_command_found_nothing(target_title, 'inventory', 'inventory')
+            else:
+                if container_here_obj is None or container_here_obj.title != location_title:
+                    return various_commands_container_not_found(location_title),
+                elif container_here_obj is not None and container_here_obj.title == location_title:
+                    for item_qty, item_obj in container_here_obj.values():
+                        if item_obj.title != target_title:
+                            continue
+                        return inspect_command_found_item_or_items_here(self._inspect_item_detail(item_obj), item_qty),
+                    return inspect_command_found_nothing(target_title, location_title, 'chest' if item_in_chest else 'corpse'),
+                else:
+                    return various_commands_container_not_found(location_title),
+            
         else:
             for item_name, (item_qty, item_obj) in self.game_state.rooms_state.cursor.items_here.items():
-                if item_obj.title == entity_title_token:
-                    return inspect_command_found_item_or_items_here(item_obj.description, item_qty),
-            return inspect_command_found_nothing(entity_title_token),
-
-    def move_command(self):
-        pass
+                if item_obj.title != target_title:
+                    continue
+                return inspect_command_found_item_or_items_here(self._inspect_item_detail(item_obj), item_qty),
+            return inspect_command_found_nothing(target_title),
 
     def open_command(self, *tokens):
         result = self._lock_unlock_open_or_close_preproc('OPEN', *tokens)
@@ -181,6 +383,9 @@ class command_processor(object):
             return open_command_object_has_been_opened(object_to_open.title),
         else:
             return open_command_object_is_already_open(object_to_open.title),
+
+    def pick_lock_command(self, *tokens):
+        pass
 
     def pick_up_command(self, *tokens):
         result = self._pick_up_or_drop_preproc('PICK UP', *tokens)
@@ -209,9 +414,125 @@ class command_processor(object):
             if item_qty == pick_up_amount:
                 self.game_state.rooms_state.cursor.items_here.delete(item_obj.internal_name)
             else:
-                self.game_state.rooms_state.cursor.items_here.set(item_obj.internal_name, item_qty - pick_up_amount, item_obj)
+                self.game_state.rooms_state.cursor.items_here.set(item_obj.internal_name,
+                                                                  item_qty - pick_up_amount, item_obj)
             amount_had_now = amount_already_had + pick_up_amount
             return pick_up_command_item_picked_up(item_title, pick_up_amount, amount_had_now),
+
+    # Both PUT and TAKE have the same preprocessing challenges, so I refactored their logic into a shared private
+    # preprocessing method.
+
+    def _put_or_take_preproc(self, command, joinword, *tokens):
+        container_obj = self.game_state.rooms_state.cursor.container_here
+
+        if command.lower() == 'put':
+            if container_obj.container_type == 'chest':
+                joinword = 'IN'
+            else:
+                joinword = 'ON'
+
+        command, joinword = command.lower(), joinword.lower()
+        tokens = list(tokens)
+
+        # Whatever the user wrote, it doesn't contain the joinword, which is a required token.
+        if joinword not in tokens or tokens.index(joinword) == 0 or tokens.index(joinword) == len(tokens) - 1:
+            if command == 'take':
+                return command_bad_syntax(command.upper(), f'<item name> {joinword.upper()} <container name>',
+                                                           f'<number> <item name> {joinword.upper()} <container name>'),
+            else:
+                return command_bad_syntax(command.upper(), '<item name> IN <chest name>',
+                                                           '<number> <item name> IN <chest name>',
+                                                           '<item name> ON <corpse name>',
+                                                           '<number> <item name> ON <corpse name>'),
+
+        # The first token is a digital number, great.
+        if digit_re.match(tokens[0]):
+            amount = int(tokens.pop(0))
+
+        # The first token is a lexical number, so I convert it.
+        elif lexical_number_in_1_99_re.match(tokens[0]):
+            amount = lexical_number_to_digits(tokens.pop(0))
+
+        # The first token is an indirect article, which would mean '1'.
+        elif tokens[0] == 'a':
+            joinword_index = tokens.index(joinword)
+
+            # The term before the joinword, which is the item title, is plural. The sentence is ungrammatical, so I
+            # return an error.
+            if tokens[joinword_index - 1].endswith('s'):
+                return (take_command_quantity_unclear(),) if command == 'take' else (put_command_quantity_unclear(),)
+            amount = 1
+            del tokens[0]
+
+        # No other indication was given, so the amount will have to be determined later; either the total amount found
+        # in the container (for TAKE) or the total amount in the inventory (for PUT)
+        else:
+            amount = math.nan
+
+        # I form up the item_title and container_title, but I'm not done testing them.
+        joinword_index = tokens.index(joinword)
+        item_title = ' '.join(tokens[0:joinword_index])
+        container_title = ' '.join(tokens[joinword_index+1:])
+
+        # The item_title begins with a direct article.
+        if item_title.startswith('the ') or item_title.startswith('the') and len(item_title) == 3:
+
+            # The title is of the form, 'the gold coins', which means the amount intended is the total amount
+            # available-- either the total amount in the container (for TAKE) or the total amount in the character's
+            # inventory (for PUT). That will be dertermined later, so NaN is used as a signal value to be replaced when
+            # possible.
+            if item_title.endswith('s'):
+                amount = math.nan
+                item_title = item_title[:-1]
+            item_title = item_title[4:]
+
+            # `item_title` is *just* 'the'. The sentence is ungrammatical, so I return a syntax error.
+            if not item_title:
+                return command_bad_syntax(command.upper(), f'<item name> {joinword.upper()} <container name>',
+                                                           f'<number> <item name> {joinword.upper()} <container name>'),
+
+        if item_title.endswith('s'):
+            if amount == 1:
+
+                # The `item_title` ends in a plural, but an amount > 1 was specified. That's an ungrammatical sentence,
+                # so I return a syntax error.
+                return command_bad_syntax(command.upper(), f'<item name> {joinword.upper()} <container name>',
+                                                           f'<number> <item name> {joinword.upper()} <container name>'),
+
+            # The title is plural and `amount` is > 1. I strip the pluralizing 's' off to get the correct item title.
+            item_title = item_title[:-1]
+
+        if container_title.startswith('the ') or container_title.startswith('the') and len(container_title) == 3:
+
+            # The container term begins with a direct article and ends with a pluralizing 's'. That's invalid, no
+            # container in the dungeon is found in grouping of more than one, so I return a syntax error.
+            if container_title.endswith('s'):
+                return command_bad_syntax(command.upper(), f'<item name> {joinword.upper()} <container name>',
+                                                           f'<number> <item name> {joinword.upper()} <container name>'),
+
+            container_title = container_title[4:]
+            if not container_title:
+
+                # Improbably, the item title is *just* 'the'. That's an ungrammatical sentence, so I return a syntax
+                # error.
+                return command_bad_syntax(command.upper(), f'<item name> {joinword.upper()} <container name>',
+                                                           f'<number> <item name> {joinword.upper()} <container name>'),
+
+        if container_obj is None:
+
+            # There is no container in this room, so no TAKE command can be correct. I return an error.
+            return various_commands_container_not_found(container_title),  # tested
+        elif not container_title == container_obj.title:
+
+            # The container name specified doesn't match the name of the container in this room, so I return an error.
+            return various_commands_container_not_found(container_title, container_obj.title),  # tested
+
+        elif container_obj.is_closed:
+
+            # The container can't be PUT IN to or TAKEn from because it is closed.
+            return various_commands_container_is_closed(container_obj.title),
+
+        return amount, item_title, container_title, container_obj
 
     def put_command(self, *tokens):
         results = self._put_or_take_preproc('PUT', 'IN|ON', *tokens)
@@ -305,7 +626,7 @@ class command_processor(object):
 
     def set_class_command(self, *tokens):
         if len(tokens) > 1:
-            return command_too_many_words(1),
+            return command_too_many_words(1),  # FIXME
         elif not self.valid_class_re.match(tokens[0]):
             return set_class_command_invalid_class(tokens[0]),
         class_str = tokens[0]
@@ -326,6 +647,29 @@ class command_processor(object):
 
     # This is a very hairy method on account of how much natural language processing it has to do to account for all the
     # permutations on how a user writes TAKE item FROM container.
+
+    def status_command(self, *tokens):
+        if len(tokens):
+            return command_bad_syntax('STATUS', f''),
+        character_obj = self.game_state.character
+        output_args = dict()
+        output_args['hit_points_int'] = character_obj.hit_points
+        output_args['hit_point_total_int'] = character_obj.hit_point_total
+        if character_obj.character_class in ('Mage', 'Priest'):
+            output_args['mana_points_int'] = character_obj.mana_points
+            output_args['mana_point_total_int'] = character_obj.mana_point_total
+        else:
+            output_args['mana_points_int'] = None
+            output_args['mana_point_total_int'] = None
+        output_args['armor_class_int'] = character_obj.armor_class
+        output_args['attack_bonus_int'] = character_obj.attack_bonus
+        output_args['damage_str'] = character_obj.damage_roll
+        output_args['armor_str'] = character_obj.armor.title if character_obj.armor_equipped else None
+        output_args['shield_str'] = character_obj.shield.title if character_obj.shield_equipped else None
+        output_args['wand_str'] = character_obj.wand.title if character_obj.wand_equipped else None
+        output_args['weapon_str'] = character_obj.weapon.title if character_obj.weapon_equipped else None
+        output_args['is_mage_bool'] = character_obj.character_class == 'Mage'
+        return status_command_output(**output_args),
 
     def take_command(self, *tokens):
         results = self._put_or_take_preproc('TAKE', 'FROM', *tokens)
@@ -432,6 +776,56 @@ class command_processor(object):
         else:
             return close_command_object_to_close_not_here(target_title),
 
+    def unequip_command(self, *tokens):
+        if not tokens:
+            return command_bad_syntax('UNEQUIP', '<armor name>', '<shield name>', '<wand name>', '<weapon name>'),
+        item_title = ' '.join(tokens)
+        matching_item_tuple = tuple(item_obj for _, item_obj in self.game_state.character.list_items() if item_obj.title == item_title)
+        if not len(matching_item_tuple):
+            matching_item_tuple = tuple(item_obj for item_obj in self.game_state.items_state.values() if item_obj.title == item_title)
+            if matching_item_tuple:
+                item_obj, = matching_item_tuple[0:1]
+                return unequip_command_item_not_equipped(item_obj.title, item_obj.item_type),
+            else:
+                return unequip_command_item_not_equipped(item_title),
+        item_obj, = matching_item_tuple[0:1]
+        if item_obj.item_type == 'armor':
+            if self.game_state.character.armor_equipped is not None:
+                if self.game_state.character.armor_equipped.title == item_title:
+                    self.game_state.character.unequip_armor()
+                    return equip_or_unequip_command_item_unequipped(item_title, 'armor', self.game_state.character.armor_class, 'armor class'),
+                else:
+                    return unequip_command_item_not_equipped(item_title, 'armor', self.game_state.character.armor_equipped.title),
+            else:
+                return unequip_command_item_not_equipped(item_title, 'armor'),
+        elif item_obj.item_type == 'shield':
+            if self.game_state.character.shield_equipped is not None:
+                if self.game_state.character.shield_equipped.title == item_title:
+                    self.game_state.character.unequip_shield()
+                    return equip_or_unequip_command_item_unequipped(item_title, 'shield', self.game_state.character.armor_class, 'armor class'),
+                else:
+                    return unequip_command_item_not_equipped(item_title, 'shield', self.game_state.character.shield_equipped.title),
+            else:
+                return unequip_command_item_not_equipped(item_title, 'shield'),
+        elif item_obj.item_type == 'wand':
+            if self.game_state.character.wand_equipped is not None:
+                if self.game_state.character.wand_equipped.title == item_title:
+                    self.game_state.character.unequip_wand()
+                    return equip_or_unequip_command_item_unequipped(item_title, 'wand', change_text_str="You now can't attack."),
+                else:
+                    return unequip_command_item_not_equipped(item_title, 'wand'),
+            else:
+                return unequip_command_item_not_equipped(item_title, 'wand'),
+        elif item_obj.item_type == 'weapon':
+            if self.game_state.character.weapon_equipped is not None:
+                if self.game_state.character.weapon_equipped.title == item_title:
+                    self.game_state.character.unequip_weapon()
+                    return equip_or_unequip_command_item_unequipped(item_title, 'weapon', change_text_str="You now can't attack."),
+                else:
+                    return unequip_command_item_not_equipped(item_obj.title, 'weapon'),
+            else:
+                return unequip_command_item_not_equipped(item_obj.title, 'weapon'),
+
     def unlock_command(self, *tokens):
         result = self._lock_unlock_open_or_close_preproc('UNLOCK', *tokens)
         if isinstance(result[0], game_state_message):
@@ -443,148 +837,4 @@ class command_processor(object):
         else:
             object_to_unlock.is_locked = False
             return unlock_command_object_has_been_unlocked(object_to_unlock.title),
-
-    def _pick_up_or_drop_preproc(self, command, *tokens):
-        if tokens[0] == 'a' or tokens[0] == 'the' or tokens[0].isdigit() or lexical_number_in_1_99_re.match(tokens[0]):
-            if len(tokens) == 1:
-                return command_bad_syntax(command.upper(), f'<item name>', f'<number> <item name>'),
-            item_title = ' '.join(tokens[1:])
-            if tokens[0] == 'a':
-                if tokens[-1].endswith('s'):
-                    return (drop_command_quantity_unclear(),) if command.lower() == 'drop' else (pick_up_command_quantity_unclear(),)
-                item_qty = 1
-            elif tokens[0].isdigit():
-                item_qty = int(tokens[0])
-            elif tokens[0] == 'the':
-                if tokens[-1].endswith('s'):
-                    item_qty = math.nan
-                else:
-                    item_qty = 1
-            else:  # lexical_number_in_1_99_re.match(tokens[0]) is True
-                item_qty = lexical_number_to_digits(tokens[0])
-            if item_qty == 1 and item_title.endswith('s'):
-                return pick_up_command_quantity_unclear(),
-        else:
-            item_title = ' '.join(tokens)
-            if item_title.endswith('s'):
-                item_qty = math.nan
-            else:
-                item_qty = 1
-        item_title = item_title.rstrip('s')
-        return item_qty, item_title
-
-    # Both PUT and TAKE have the same preprocessing challenges, so I refactored their logic into a shared private
-    # preprocessing method.
-
-    def _put_or_take_preproc(self, command, joinword, *tokens):
-        container_obj = self.game_state.rooms_state.cursor.container_here
-
-        if command.lower() == 'put':
-            if container_obj.container_type == 'chest':
-                joinword = 'IN'
-            else:
-                joinword = 'ON'
-
-        command, joinword = command.lower(), joinword.lower()
-        tokens = list(tokens)
-
-        # Whatever the user wrote, it doesn't contain the joinword, which is a required token.
-        if joinword not in tokens or tokens.index(joinword) == 0 or tokens.index(joinword) == len(tokens) - 1:
-            if command == 'take':
-                return command_bad_syntax(command.upper(), f'<item name> {joinword.upper()} <container name>',
-                                                           f'<number> <item name> {joinword.upper()} <container name>'),
-            else:
-                return command_bad_syntax(command.upper(), f'<item name> IN <chest name>',
-                                                           f'<number> <item name> IN <chest name>',
-                                                           f'<item name> ON <corpse name>',
-                                                           f'<number> <item name> ON <corpse name>'),
-
-        # The first token is a digital number, great.
-        if digit_re.match(tokens[0]):
-            amount = int(tokens.pop(0))
-
-        # The first token is a lexical number, so I convert it.
-        elif lexical_number_in_1_99_re.match(tokens[0]):
-            amount = lexical_number_to_digits(tokens.pop(0))
-
-        # The first token is an indirect article, which would mean '1'.
-        elif tokens[0] == 'a':
-            joinword_index = tokens.index(joinword)
-
-            # The term before the joinword, which is the item title, is plural. The sentence is ungrammatical, so I
-            # return an error.
-            if tokens[joinword_index - 1].endswith('s'):
-                return (take_command_quantity_unclear(),) if command == 'take' else (put_command_quantity_unclear(),)
-            amount = 1
-            del tokens[0]
-
-        # No other indication was given, so the amount will have to be determined later; either the total amount found
-        # in the container (for TAKE) or the total amount in the inventory (for PUT)
-        else:
-            amount = math.nan
-
-        # I form up the item_title and container_title, but I'm not done testing them.
-        joinword_index = tokens.index(joinword)
-        item_title = ' '.join(tokens[0:joinword_index])
-        container_title = ' '.join(tokens[joinword_index+1:])
-
-        # The item_title begins with a direct article.
-        if item_title.startswith('the ') or item_title.startswith('the') and len(item_title) == 3:
-
-            # The title is of the form, 'the gold coins', which means the amount intended is the total amount
-            # available-- either the total amount in the container (for TAKE) or the total amount in the character's
-            # inventory (for PUT). That will be dertermined later, so NaN is used as a signal value to be replaced when
-            # possible.
-            if item_title.endswith('s'):
-                amount = math.nan
-                item_title = item_title[:-1]
-            item_title = item_title[4:]
-
-            # `item_title` is *just* 'the'. The sentence is ungrammatical, so I return a syntax error.
-            if not item_title:
-                return command_bad_syntax(command.upper(), f'<item name> {joinword.upper()} <container name>',
-                                                           f'<number> <item name> {joinword.upper()} <container name>'),
-
-        if item_title.endswith('s'):
-            if amount == 1:
-
-                # The `item_title` ends in a plural, but an amount > 1 was specified. That's an ungrammatical sentence,
-                # so I return a syntax error.
-                return command_bad_syntax(command.upper(), f'<item name> {joinword.upper()} <container name>',
-                                                           f'<number> <item name> {joinword.upper()} <container name>'),
-
-            # The title is plural and `amount` is > 1. I strip the pluralizing 's' off to get the correct item title.
-            item_title = item_title[:-1]
-
-        if container_title.startswith('the ') or container_title.startswith('the') and len(container_title) == 3:
-
-            # The container term begins with a direct article and ends with a pluralizing 's'. That's invalid, no
-            # container in the dungeon is found in grouping of more than one, so I return a syntax error.
-            if container_title.endswith('s'):
-                return command_bad_syntax(command.upper(), f'<item name> {joinword.upper()} <container name>',
-                                                           f'<number> <item name> {joinword.upper()} <container name>'),
-
-            container_title = container_title[4:]
-            if not container_title:
-
-                # Improbably, the item title is *just* 'the'. That's an ungrammatical sentence, so I return a syntax
-                # error.
-                return command_bad_syntax(command.upper(), f'<item name> {joinword.upper()} <container name>',
-                                                           f'<number> <item name> {joinword.upper()} <container name>'),
-
-        if container_obj is None:
-
-            # There is no container in this room, so no TAKE command can be correct. I return an error.
-            return various_commands_container_not_found(container_title),  # tested
-        elif not container_title == container_obj.title:
-
-            # The container name specified doesn't match the name of the container in this room, so I return an error.
-            return various_commands_container_not_found(container_title, container_obj.title),  # tested
-
-        elif container_obj.is_closed:
-
-            # The container can't be PUT IN to or TAKEn from because it is closed.
-            return various_commands_container_is_closed(container_obj.title),
-
-        return amount, item_title, container_title, container_obj
 

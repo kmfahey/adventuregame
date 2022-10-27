@@ -1,15 +1,11 @@
 #!/usr/bin/python3
 
 import abc
+import collections
 import math
+import operator
 import random
 import re
-import operator
-import functools
-import operator
-import collections
-
-import iniconfig
 
 from adventuregame.utility import *
 
@@ -49,8 +45,7 @@ class ini_entry(object):
         inner_capture = value_match.groups(1)[0]
         capture_split = inner_capture.split(',')
         qty_strval_pairs = tuple((int(item_qty), item_name) for item_qty, item_name in (
-                                    name_x_qty_str.split('x', maxsplit=1) for name_x_qty_str in capture_split)
-                                )
+                                    name_x_qty_str.split('x', maxsplit=1) for name_x_qty_str in capture_split))
         return qty_strval_pairs
 
 
@@ -313,13 +308,22 @@ class character(object):  # has been tested
         else:  # By exclusion, (`character_class` == 'Mage' and self._equipment_obj.wand_equipped)
             return 'intelligence'
 
-    _item_attacking_with = property(fget=(lambda self: self._equipment_obj.weapon
-                                                       if not self._equipment_obj.wand_equipped
-                                                       else self._equipment_obj.wand))
+    @property
+    def _item_attacking_with(self):
+        if self._equipment_obj.wand_equipped:
+            return self._equipment_obj.wand
+        elif self._equipment_obj.weapon_equipped:
+            return self._equipment_obj.weapon
+        else:
+            return None
+
+    hit_point_total = property(fget=(lambda self: self._hit_point_maximum))
 
     hit_points = property(fget=(lambda self: self._current_hit_points))
 
     mana_points = property(fget=(lambda self: self._current_mana_points))
+
+    mana_point_total = property(fget=(lambda self: self._mana_point_maximum))
 
     def take_damage(self, damage_value):
         if self._current_hit_points - damage_value < 0:
@@ -361,10 +365,7 @@ class character(object):  # has been tested
     @property
     def attack_roll(self):
         if not (self._equipment_obj.weapon_equipped or self._equipment_obj.wand_equipped):
-            if self.character_class != 'Mage':
-                raise bad_command_exception('ATTACK', 'You have no weapon equipped.')
-            else:
-                raise bad_command_exception('ATTACK', 'You have no weapon or wand equipped.')
+            return None
         stat_dependency = self._attack_or_damage_stat_dependency()
         item_attacking_with = self._item_attacking_with
         stat_mod = getattr(self.ability_scores, stat_dependency+'_mod')
@@ -374,6 +375,8 @@ class character(object):  # has been tested
 
     @property
     def damage_roll(self):
+        if not (self._equipment_obj.weapon_equipped or self._equipment_obj.wand_equipped):
+            return None
         stat_dependency = self._attack_or_damage_stat_dependency()
         item_attacking_with = self._item_attacking_with
         item_damage = item_attacking_with.damage
@@ -487,6 +490,18 @@ class character(object):  # has been tested
         if not self.inventory.contains(item_obj.internal_name):
             raise internal_exception("equipping an `item` object that is not in the character's `inventory` object is not allowed")
         return self._equipment_obj.equip_wand(item_obj)
+
+    def unequip_armor(self):
+        return self._equipment_obj.unequip_armor()
+
+    def unequip_shield(self):
+        return self._equipment_obj.unequip_shield()
+
+    def unequip_weapon(self):
+        return self._equipment_obj.unequip_weapon()
+
+    def unequip_wand(self):
+        return self._equipment_obj.unequip_wand()
     # END passthrough methods for private _equipment_obj
 
     # These aren't passthrough methods because the `_equipment_obj` returns values for these character parameters that
@@ -521,10 +536,11 @@ class equipment(object):  # has been tested
 
     wand_equipped = property(fget=(lambda self: getattr(self, 'wand', None)))
 
-    def __init__(self, character_class, armor_item=None, shield_item=None, weapon_item=None):
+    def __init__(self, character_class, armor_item=None, shield_item=None, weapon_item=None, wand_item=None):
         self.character_class = character_class
         self.armor = armor_item
         self.shield = shield_item
+        self.wand = wand_item
         self.weapon = weapon_item
 
     def equip_armor(self, item_obj):
@@ -547,6 +563,18 @@ class equipment(object):  # has been tested
             raise internal_exception('the method `equip_wand()` only accepts `wand` objects for its argument')
         self._equip('wand', item_obj)
 
+    def unequip_armor(self):
+        self._unequip('armor')
+
+    def unequip_shield(self):
+        self._unequip('shield')
+
+    def unequip_weapon(self):
+        self._unequip('weapon')
+
+    def unequip_wand(self):
+        self._unequip('wand')
+
     def _equip(self, equipment_slot, item_obj):
         if equipment_slot not in ('armor', 'shield', 'weapon', 'wand'):
             raise internal_exception(f'equipment slot {equipment_slot} not recognized')
@@ -558,6 +586,18 @@ class equipment(object):  # has been tested
             self.weapon = item_obj
         elif equipment_slot == 'wand':
             self.wand = item_obj
+
+    def _unequip(self, equipment_slot):
+        if equipment_slot not in ('armor', 'shield', 'weapon', 'wand'):
+            raise internal_exception(f'equipment slot {equipment_slot} not recognized')
+        if equipment_slot == 'armor':
+            self.armor = None
+        elif equipment_slot == 'shield':
+            self.shield = None
+        elif equipment_slot == 'weapon':
+            self.weapon = None
+        elif equipment_slot == 'wand':
+            self.wand = None
 
     @property
     def armor_class(self):
@@ -679,7 +719,7 @@ class creature(ini_entry, character):
             pluralizer = 's' if len(missing_names) > 1 else ''
             raise internal_exception(f'bad creatures.ini specification for creature {internal_name}: creature '
                                      f'ini config dict `inventory_items` value indicated item{pluralizer}'
-                                     " not present in `items_state` argument: " + (', '.join(missing_names)))
+                                     ' not present in `items_state` argument: ' + (', '.join(missing_names)))
         ini_entry_init_argd = argd
         return character_init_argd, ini_entry_init_argd, equipment_argd, inventory_qty_name_pairs
 
@@ -766,7 +806,7 @@ class door(ini_entry):
 
     def other_room_internal_name(self, room_internal_name):
 
-        if not room_internal_name in self._linked_rooms_internal_names:
+        if room_internal_name not in self._linked_rooms_internal_names:
             raise internal_exception(f'room internal name {room_internal_name} not one of the two rooms linked by this'
                                       ' door object')
 
@@ -779,6 +819,7 @@ class door(ini_entry):
 
     def copy(self):
         return door(**{attr: getattr(self, attr, None) for attr in self.__slots__})
+
 
 class doorway(door):
     pass

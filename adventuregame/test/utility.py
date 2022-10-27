@@ -127,7 +127,7 @@ weight=1
 [Warhammer]
 attack_bonus=0
 damage=1d8
-description=A heavy hammer with a heavy iron head with a tapered striking point and a long leather-wrapped hast.
+description=A heavy hammer with a heavy iron head with a tapered striking point and a long leather-wrapped haft.
 item_type=weapon
 priest_can_use==true
 title=warhammer
@@ -144,12 +144,22 @@ value=45
 warrior_can_use=true
 weight=15
 
-[Shield]
-armor_bonus=2
-description=A broad panel of leather-bound wood with a metal rim that is useful for sheltering behind.
+[Buckler]
+armor_bonus=1
+description=A small convex disk made of stiffened leather with an armstrap affixed to the inside.
 item_type=shield
 priest_can_use=true
-title=shield
+title=buckler
+value=15
+warrior_can_use=true
+weight=5
+
+[Steel_Shield]
+armor_bonus=2
+description=A broad panel of leather-bound steel with a metal rim that is useful for sheltering behind.
+item_type=shield
+priest_can_use=true
+title=steel shield
 value=10
 warrior_can_use=true
 weight=6
@@ -174,6 +184,16 @@ value=15
 warrior_can_use=true
 weight=3
 
+[Magic_Wand_2]
+attack_bonus=3
+damage=2d12+3
+description=A palpably magical tapered length of polished ash wood tipped with a glowing red carnelian gem.
+item_type=wand
+mage_can_use=true
+title=magic wand 2
+value=100
+weight=0.5
+
 [Magic_Wand]
 attack_bonus=3
 damage=2d12+3
@@ -186,6 +206,7 @@ weight=0.5
 
 [Mana_Potion]
 description=A small, stoppered bottle that contains a pungeant but drinkable blue liquid with a discernable magic aura.
+mana_points_recovered=25
 item_type=consumable
 mage_can_use=true
 priest_can_use=true
@@ -195,6 +216,7 @@ weight=.1
 
 [Health_Potion]
 description=A small, stoppered bottle that contains a pungeant but drinkable red liquid with a discernable magic aura.
+hit_points_recovered=25
 item_type=consumable
 mage_can_use=true
 priest_can_use=true

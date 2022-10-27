@@ -4,7 +4,6 @@ import math
 import unittest
 
 from adventuregame import *
-
 from adventuregame.test.utility import *
 
 __name__ = 'adventuregame.test_utility'

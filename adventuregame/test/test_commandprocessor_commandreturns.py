@@ -3,14 +3,646 @@
 import math
 import operator
 import unittest
+import sys
 
 from adventuregame import *
-
 from adventuregame.test.utility import *
 
 __name__ = 'adventuregame.test_commandprocessor_commandreturns'
 
 
+
+
+class test_status(unittest.TestCase):
+
+    def __init__(self, *argl, **argd):
+        super().__init__(*argl, **argd)
+        self.maxDiff = None
+        self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
+        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
+        self.doors_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Doors_Ini_Config_Text)
+        self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
+        self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
+
+    def setUp(self):
+        self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
+        self.doors_state_obj = doors_state(**self.doors_ini_config_obj.sections)
+        self.containers_ini_config_obj.sections['Wooden_Chest_1']['contents'] = '[20xGold_Coin,1xWarhammer,1xMana_Potion,1xHealth_Potion,1xSteel_Shield,1xScale_Mail,1xMagic_Wand]'
+        self.containers_state_obj = containers_state(self.items_state_obj, **self.containers_ini_config_obj.sections)
+        self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
+        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
+                                           self.items_state_obj, **self.rooms_ini_config_obj.sections)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
+                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.command_processor_obj = command_processor(self.game_state_obj)
+
+    def test_status1(self):
+        self.command_processor_obj.game_state.character_name = 'Niath'
+        self.command_processor_obj.game_state.character_class = 'Warrior'
+        result = self.command_processor_obj.process('status status')
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'STATUS')
+        self.assertEqual(result[0].message, "STATUS command: bad syntax. Should be 'STATUS'.")
+
+    def test_status2(self):
+        self.command_processor_obj.game_state.character_name = 'Niath'
+        self.command_processor_obj.game_state.character_class = 'Warrior'
+        longsword_obj = self.command_processor_obj.game_state.items_state.get('Longsword')
+        scale_mail_obj = self.command_processor_obj.game_state.items_state.get('Scale_Mail')
+        shield_obj = self.command_processor_obj.game_state.items_state.get('Steel_Shield')
+        self.command_processor_obj.game_state.character.pick_up_item(longsword_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(scale_mail_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(shield_obj)
+        self.command_processor_obj.game_state.character.equip_weapon(longsword_obj)
+        self.command_processor_obj.game_state.character.equip_armor(scale_mail_obj)
+        self.command_processor_obj.game_state.character.equip_shield(shield_obj)
+        result = self.command_processor_obj.process('status')
+        self.assertIsInstance(result[0], status_command_output)
+        self.assertRegex(result[0].message, "Hit Points: \d+/\d+ | Attack: [+-]\d+ (\d+d[\d+-]+ damage) - Armor Class: \d+ | Weapon: [a-z ]+ - Armor: [a-z ]+ - Shield: [a-z ]+")
+
+    def test_status3(self):
+        self.command_processor_obj.game_state.character_name = 'Mialee'
+        self.command_processor_obj.game_state.character_class = 'Mage'
+        staff_obj = self.command_processor_obj.game_state.items_state.get('Staff')
+        magic_wand_obj = self.command_processor_obj.game_state.items_state.get('Magic_Wand')
+        self.command_processor_obj.game_state.character.pick_up_item(staff_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(magic_wand_obj)
+        self.command_processor_obj.game_state.character.equip_weapon(staff_obj)
+        self.command_processor_obj.game_state.character.equip_wand(magic_wand_obj)
+        result = self.command_processor_obj.process('status')
+        self.assertIsInstance(result[0], status_command_output)
+        self.assertRegex(result[0].message, "Hit Points: \d+/\d+ - Mana Points: \d+/\d+ | Attack: [+-]\d+ (\d+d[\d+-]+ damage) - Armor Class: \d+ | Wand: [a-z ]+ - Weapon: [a-z ]+ - Armor: [a-z ]+ - Shield: [a-z ]+")
+
+
+class test_inventory(unittest.TestCase):
+
+    def __init__(self, *argl, **argd):
+        super().__init__(*argl, **argd)
+        self.maxDiff = None
+        self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
+        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
+        self.doors_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Doors_Ini_Config_Text)
+        self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
+        self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
+
+    def setUp(self):
+        self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
+        self.doors_state_obj = doors_state(**self.doors_ini_config_obj.sections)
+        self.containers_ini_config_obj.sections['Wooden_Chest_1']['contents'] = '[20xGold_Coin,1xWarhammer,1xMana_Potion,1xHealth_Potion,1xSteel_Shield,1xScale_Mail,1xMagic_Wand]'
+        self.containers_state_obj = containers_state(self.items_state_obj, **self.containers_ini_config_obj.sections)
+        self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
+        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
+                                           self.items_state_obj, **self.rooms_ini_config_obj.sections)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
+                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.command_processor_obj = command_processor(self.game_state_obj)
+        self.command_processor_obj.game_state.character_name = 'Niath'
+        self.command_processor_obj.game_state.character_class = 'Warrior'
+        longsword_obj = self.command_processor_obj.game_state.items_state.get('Longsword')
+        scale_mail_obj = self.command_processor_obj.game_state.items_state.get('Scale_Mail')
+        shield_obj = self.command_processor_obj.game_state.items_state.get('Steel_Shield')
+        magic_wand_obj = self.command_processor_obj.game_state.items_state.get('Magic_Wand')
+        mana_potion_obj = self.command_processor_obj.game_state.items_state.get('Mana_Potion')
+        gold_coin_obj = self.command_processor_obj.game_state.items_state.get('Gold_Coin')
+        self.command_processor_obj.game_state.character.pick_up_item(longsword_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(scale_mail_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(shield_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(magic_wand_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(mana_potion_obj, qty=2)
+        self.command_processor_obj.game_state.character.pick_up_item(gold_coin_obj, qty=30)
+
+    def test_inventory1(self):
+        result = self.command_processor_obj.process('inventory show')
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'INVENTORY')
+        self.assertEqual(result[0].message, "INVENTORY command: bad syntax. Should be 'INVENTORY'.")
+
+    def test_inventory2(self):
+        result = self.command_processor_obj.process('inventory')
+        self.assertIsInstance(result[0], inventory_command_display_inventory)
+        self.assertEqual(result[0].inventory_contents, ['30 gold coins', 'a longsword', 'a magic wand',
+                                                        '2 mana potions', 'a suit of scale mail armor',
+                                                        'a steel shield'])
+        self.assertEqual(result[0].message, 'You have 30 gold coins, a longsword, a magic wand, 2 mana potions, a suit '
+                                            'of scale mail armor, and a steel shield in your inventory.')
+
+
+class test_exit(unittest.TestCase):
+
+    def __init__(self, *argl, **argd):
+        super().__init__(*argl, **argd)
+        self.maxDiff = None
+        self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
+        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
+        self.doors_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Doors_Ini_Config_Text)
+        self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
+        self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
+
+    def setUp(self):
+        self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
+        self.doors_state_obj = doors_state(**self.doors_ini_config_obj.sections)
+        self.containers_ini_config_obj.sections['Wooden_Chest_1']['contents'] = '[20xGold_Coin,1xWarhammer,1xMana_Potion,1xHealth_Potion,1xSteel_Shield,1xScale_Mail,1xMagic_Wand]'
+        self.containers_state_obj = containers_state(self.items_state_obj, **self.containers_ini_config_obj.sections)
+        self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
+        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
+                                           self.items_state_obj, **self.rooms_ini_config_obj.sections)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
+                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.command_processor_obj = command_processor(self.game_state_obj)
+        self.command_processor_obj.game_state.character_name = 'Niath'
+        self.command_processor_obj.game_state.character_class = 'Warrior'
+
+    def test_exit1(self):
+        result = self.command_processor_obj.process('exit')
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'EXIT')
+        self.assertEqual(result[0].message, "EXIT command: bad syntax. Should be 'EXIT USING <compass direction> DOOR' "
+                                            "or 'EXIT USING <compass direction> DOORWAY'.")
+
+    def test_exit2(self):
+        result = self.command_processor_obj.process('exit using')
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'EXIT')
+        self.assertEqual(result[0].message, "EXIT command: bad syntax. Should be 'EXIT USING <compass direction> DOOR' "
+                                            "or 'EXIT USING <compass direction> DOORWAY'.")
+
+    def test_exit3(self):
+        result = self.command_processor_obj.process('exit using north')
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'EXIT')
+        self.assertEqual(result[0].message, "EXIT command: bad syntax. Should be 'EXIT USING <compass direction> DOOR' "
+                                            "or 'EXIT USING <compass direction> DOORWAY'.")
+
+    def test_exit4(self):
+        result = self.command_processor_obj.process('exit using west door')
+        self.assertIsInstance(result[0], various_commands_door_not_present)
+        self.assertEqual(result[0].compass_dir, 'west')
+        self.assertEqual(result[0].message, 'This room does not have a west door.')
+
+    def test_exit5(self):
+        result = self.command_processor_obj.process('exit using north door')
+        self.assertIsInstance(result[0], exit_command_exitted_room)
+        self.assertEqual(result[0].compass_dir, 'north')
+        self.assertEqual(result[0].message, 'You leave the room via the north door.')
+        self.assertEqual(self.command_processor_obj.game_state.rooms_state.cursor.internal_name, 'Room_1,2')
+
+
+class test_inspect(unittest.TestCase):
+
+    def __init__(self, *argl, **argd):
+        super().__init__(*argl, **argd)
+        self.maxDiff = None
+        self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
+        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
+        self.doors_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Doors_Ini_Config_Text)
+        self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
+        self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
+
+    def setUp(self):
+        self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
+        self.doors_state_obj = doors_state(**self.doors_ini_config_obj.sections)
+        self.containers_ini_config_obj.sections['Wooden_Chest_1']['contents'] = '[20xGold_Coin,1xWarhammer,1xMana_Potion,1xHealth_Potion,1xSteel_Shield,1xScale_Mail,1xMagic_Wand]'
+        self.containers_state_obj = containers_state(self.items_state_obj, **self.containers_ini_config_obj.sections)
+        self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
+        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
+                                           self.items_state_obj, **self.rooms_ini_config_obj.sections)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
+                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.command_processor_obj = command_processor(self.game_state_obj)
+        self.command_processor_obj.game_state.character_name = 'Niath'
+        self.command_processor_obj.game_state.character_class = 'Warrior'
+
+    def test_inspect_1(self):
+        result = self.command_processor_obj.process('inspect')
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'INSPECT')
+        self.assertEqual(result[0].message, "INSPECT command: bad syntax. Should be 'INSPECT <item name>', "
+                                            "'INSPECT <item name> IN <chest name>', "
+                                            "'INSPECT <item name> IN INVENTORY', "
+                                            "'INSPECT <item name> ON <corpse name>', "
+                                            "'INSPECT <compass direction> DOOR', or "
+                                            "'INSPECT <compass direction> DOORWAY'.")
+
+    def test_inspect_2(self):
+        result = self.command_processor_obj.process('inspect on')
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'INSPECT')
+        self.assertEqual(result[0].message, "INSPECT command: bad syntax. Should be 'INSPECT <item name>', "
+                                            "'INSPECT <item name> IN <chest name>', "
+                                            "'INSPECT <item name> IN INVENTORY', "
+                                            "'INSPECT <item name> ON <corpse name>', "
+                                            "'INSPECT <compass direction> DOOR', or "
+                                            "'INSPECT <compass direction> DOORWAY'.")
+
+    def test_inspect_3(self):
+        result = self.command_processor_obj.process('inspect in')
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'INSPECT')
+        self.assertEqual(result[0].message, "INSPECT command: bad syntax. Should be 'INSPECT <item name>', "
+                                            "'INSPECT <item name> IN <chest name>', "
+                                            "'INSPECT <item name> IN INVENTORY', "
+                                            "'INSPECT <item name> ON <corpse name>', "
+                                            "'INSPECT <compass direction> DOOR', or "
+                                            "'INSPECT <compass direction> DOORWAY'.")
+
+    def test_inspect_4(self):
+        result = self.command_processor_obj.process('inspect mana potion in')
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'INSPECT')
+        self.assertEqual(result[0].message, "INSPECT command: bad syntax. Should be 'INSPECT <item name>', "
+                                            "'INSPECT <item name> IN <chest name>', "
+                                            "'INSPECT <item name> IN INVENTORY', "
+                                            "'INSPECT <item name> ON <corpse name>', "
+                                            "'INSPECT <compass direction> DOOR', or "
+                                            "'INSPECT <compass direction> DOORWAY'.")
+
+    def test_inspect_5(self):
+        result = self.command_processor_obj.process('inspect health potion on')
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'INSPECT')
+        self.assertEqual(result[0].message, "INSPECT command: bad syntax. Should be 'INSPECT <item name>', "
+                                            "'INSPECT <item name> IN <chest name>', "
+                                            "'INSPECT <item name> IN INVENTORY', "
+                                            "'INSPECT <item name> ON <corpse name>', "
+                                            "'INSPECT <compass direction> DOOR', or "
+                                            "'INSPECT <compass direction> DOORWAY'.")
+
+    def test_inspect_6(self):
+        result = self.command_processor_obj.process('inspect health potion on wooden chest')
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'INSPECT')
+        self.assertEqual(result[0].message, "INSPECT command: bad syntax. Should be 'INSPECT <item name>', "
+                                            "'INSPECT <item name> IN <chest name>', "
+                                            "'INSPECT <item name> IN INVENTORY', "
+                                            "'INSPECT <item name> ON <corpse name>', "
+                                            "'INSPECT <compass direction> DOOR', or "
+                                            "'INSPECT <compass direction> DOORWAY'.")
+
+    def test_inspect_7(self):
+        self.command_processor_obj.game_state.rooms_state.cursor.container_here = \
+            self.command_processor_obj.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
+        result = self.command_processor_obj.process('inspect mana potion in kobold corpse')
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'INSPECT')
+        self.assertEqual(result[0].message, "INSPECT command: bad syntax. Should be 'INSPECT <item name>', "
+                                            "'INSPECT <item name> IN <chest name>', "
+                                            "'INSPECT <item name> IN INVENTORY', "
+                                            "'INSPECT <item name> ON <corpse name>', "
+                                            "'INSPECT <compass direction> DOOR', or "
+                                            "'INSPECT <compass direction> DOORWAY'.")
+
+    def test_inspect_7(self):
+        self.command_processor_obj.game_state.rooms_state.cursor.container_here = None
+        result = self.command_processor_obj.process('inspect mana potion in wooden chest')
+        self.assertIsInstance(result[0], various_commands_container_not_found)
+        self.assertEqual(result[0].container_not_found_title, 'wooden chest')
+        self.assertEqual(result[0].message, 'There is no wooden chest here.')
+
+    def test_inspect_8(self):
+        result = self.command_processor_obj.process('inspect gold coin in wooden chest')
+        self.assertIsInstance(result[0], inspect_command_found_item_or_items_here)
+        self.assertEqual(result[0].item_qty, 20)
+        self.assertEqual(result[0].item_description, 'A small shiny gold coin imprinted with an indistinct bust on one '
+                                                     'side and a worn state seal on the other.')
+        self.assertEqual(result[0].message, 'A small shiny gold coin imprinted with an indistinct bust on one side and '
+                                            'a worn state seal on the other. You see 20 here.')
+
+    def test_inspect_9(self):
+        result = self.command_processor_obj.process('inspect warhammer in wooden chest')
+        self.assertIsInstance(result[0], inspect_command_found_item_or_items_here)
+        self.assertEqual(result[0].item_qty, 1)
+        self.assertEqual(result[0].item_description, 'A heavy hammer with a heavy iron head with a tapered striking '
+                                                     'point and a long leather-wrapped haft. Its attack bonus is +0 '
+                                                     'and its damage is 1d8. Warriors and priests can use this.')
+        self.assertEqual(result[0].message, 'A heavy hammer with a heavy iron head with a tapered striking point and '
+                                            'a long leather-wrapped haft. Its attack bonus is +0 and its damage is 1d8.'
+                                            ' Warriors and priests can use this.')
+
+    def test_inspect_10(self):
+        result = self.command_processor_obj.process('inspect steel shield in wooden chest')
+        self.assertIsInstance(result[0], inspect_command_found_item_or_items_here)
+        self.assertEqual(result[0].item_qty, 1)
+        self.assertEqual(result[0].item_description, "A broad panel of leather-bound steel with a metal rim that is "
+                                                     "useful for sheltering behind. Its armor bonus is +2. Warriors "
+                                                     "and priests can use this.")
+        self.assertEqual(result[0].message, "A broad panel of leather-bound steel with a metal rim that is useful for "
+                                            "sheltering behind. Its armor bonus is +2. Warriors and priests can use "
+                                            "this.")
+
+    def test_inspect_11(self):
+        result = self.command_processor_obj.process('inspect steel shield in wooden chest')
+        self.assertIsInstance(result[0], inspect_command_found_item_or_items_here)
+        self.assertEqual(result[0].item_qty, 1)
+        self.assertEqual(result[0].item_description, "A broad panel of leather-bound steel with a metal rim that is "
+                                                     "useful for sheltering behind. Its armor bonus is +2. Warriors "
+                                                     "and priests can use this.")
+        self.assertEqual(result[0].message, "A broad panel of leather-bound steel with a metal rim that is useful for "
+                                            "sheltering behind. Its armor bonus is +2. Warriors and priests can use "
+                                            "this.")
+
+    def test_inspect_12(self):
+        result = self.command_processor_obj.process('inspect mana potion in wooden chest')
+        self.assertIsInstance(result[0], inspect_command_found_item_or_items_here)
+        self.assertEqual(result[0].item_qty, 1)
+        self.assertEqual(result[0].item_description, "A small, stoppered bottle that contains a pungeant but drinkable "
+                                                     "blue liquid with a discernable magic aura. It restores 25 mana "
+                                                     "points.")
+        self.assertEqual(result[0].message, "A small, stoppered bottle that contains a pungeant but drinkable blue "
+                                            "liquid with a discernable magic aura. It restores 25 mana points.")
+
+    def test_inspect_13(self):
+        result = self.command_processor_obj.process('inspect health potion in wooden chest')
+        self.assertIsInstance(result[0], inspect_command_found_item_or_items_here)
+        self.assertEqual(result[0].item_qty, 1)
+        self.assertEqual(result[0].item_description, "A small, stoppered bottle that contains a pungeant but drinkable "
+                                                     "red liquid with a discernable magic aura. It restores 25 hit "
+                                                     "points.")
+        self.assertEqual(result[0].message, "A small, stoppered bottle that contains a pungeant but drinkable red "
+                                            "liquid with a discernable magic aura. It restores 25 hit points.")
+
+    def test_inspect_14(self):
+        result = self.command_processor_obj.process('inspect north door')
+        self.assertIsInstance(result[0], inspect_command_found_door_or_doorway)
+        self.assertEqual(result[0].compass_dir, 'north')
+        self.assertEqual(result[0].message, 'This door is set into the north wall of the room. This door is made of '
+                                            'wooden planks secured together with iron divots. It is closed but '
+                                            'unlocked.')
+
+    def test_inspect_15(self):
+        self.command_processor_obj.game_state.rooms_state.cursor.north_exit.is_locked = True
+        result = self.command_processor_obj.process('inspect north door')
+        self.assertIsInstance(result[0], inspect_command_found_door_or_doorway)
+        self.assertEqual(result[0].compass_dir, 'north')
+        self.assertEqual(result[0].message, 'This door is set into the north wall of the room. This door is made of '
+                                            'wooden planks secured together with iron divots. It is closed and '
+                                            'locked.')
+
+    def test_inspect_16(self):
+        self.command_processor_obj.game_state.rooms_state.cursor.north_exit.is_closed = False
+        result = self.command_processor_obj.process('inspect north door')
+        self.assertIsInstance(result[0], inspect_command_found_door_or_doorway)
+        self.assertEqual(result[0].compass_dir, 'north')
+        self.assertEqual(result[0].message, 'This door is set into the north wall of the room. This door is made of '
+                                            'wooden planks secured together with iron divots. It is open.')
+
+    def test_inspect_17(self):
+        self.command_processor_obj.game_state.rooms_state.cursor.north_exit.is_closed = False
+        result = self.command_processor_obj.process('inspect west door')
+        self.assertIsInstance(result[0], various_commands_door_not_present)
+        self.assertEqual(result[0].compass_dir, 'west')
+        self.assertEqual(result[0].message, 'This room does not have a west exit.')
+
+    def test_inspect_18(self):
+        self.command_processor_obj.game_state.rooms_state.move(north=True)
+        result = self.command_processor_obj.process('inspect east doorway')
+        self.assertIsInstance(result[0], inspect_command_found_door_or_doorway)
+        self.assertEqual(result[0].compass_dir, 'east')
+        self.assertEqual(result[0].message, 'This doorway is set into the east wall of the room. This open doorway is '
+                                            'outlined by a stone arch set into the wall.')
+
+    def test_inspect_19(self):
+        self.command_processor_obj.game_state.character.pick_up_item(
+            self.command_processor_obj.game_state.items_state.get('Longsword'))
+        result = self.command_processor_obj.process('inspect longsword in inventory')
+        self.assertIsInstance(result[0], inspect_command_found_item_or_items_here)
+        self.assertEqual(result[0].item_qty, 1)
+        self.assertEqual(result[0].item_description, 'A hefty sword with a long blade, a broad hilt and a leathern '
+                                                     'grip. Its attack bonus is +0 and its damage is 1d8. Warriors can '
+                                                     'use this.')
+        self.assertEqual(result[0].message, 'A hefty sword with a long blade, a broad hilt and a leathern grip. Its '
+                                            'attack bonus is +0 and its damage is 1d8. Warriors can use this.')
+
+    def test_inspect_19(self):
+        self.command_processor_obj.game_state.character.pick_up_item(
+            self.command_processor_obj.game_state.items_state.get('Magic_Wand'))
+        result = self.command_processor_obj.process('inspect magic wand in inventory')
+        self.assertIsInstance(result[0], inspect_command_found_item_or_items_here)
+        self.assertEqual(result[0].item_qty, 1)
+        self.assertEqual(result[0].item_description, 'A palpably magical tapered length of polished ash wood tipped '
+                                                     'with a glowing red carnelian gem. Its attack bonus is +3 and '
+                                                     'its damage is 2d12+3. Mages can use this.')
+        self.assertEqual(result[0].message, 'A palpably magical tapered length of polished ash wood tipped with a '
+                                            'glowing red carnelian gem. Its attack bonus is +3 and its damage is '
+                                            '2d12+3. Mages can use this.')
+
+
+class test_command_equip_unequip(unittest.TestCase):
+
+    def __init__(self, *argl, **argd):
+        super().__init__(*argl, **argd)
+        self.maxDiff = None
+        self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
+        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
+        self.doors_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Doors_Ini_Config_Text)
+        self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
+        self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
+
+    def setUp(self):
+        self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
+        self.doors_state_obj = doors_state(**self.doors_ini_config_obj.sections)
+        self.containers_state_obj = containers_state(self.items_state_obj, **self.containers_ini_config_obj.sections)
+        self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
+        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
+                                           self.items_state_obj, **self.rooms_ini_config_obj.sections)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
+                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.command_processor_obj = command_processor(self.game_state_obj)
+
+    def test_equip_1(self):
+        self.command_processor_obj.game_state.character_name = 'Arliss'
+        self.command_processor_obj.game_state.character_class = 'Mage'
+
+        result = self.command_processor_obj.process('equip')
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'EQUIP')
+        self.assertEqual(result[0].message, "EQUIP command: bad syntax. Should be 'EQUIP <armor name>', "
+                                            "'EQUIP <shield name>', 'EQUIP <wand name>', or 'EQUIP <weapon name>'.")
+
+        longsword_obj = self.command_processor_obj.game_state.items_state.get('Longsword')
+        scale_mail_obj = self.command_processor_obj.game_state.items_state.get('Scale_Mail')
+        shield_obj = self.command_processor_obj.game_state.items_state.get('Steel_Shield')
+        magic_wand_obj = self.command_processor_obj.game_state.items_state.get('Magic_Wand')
+        magic_wand_2_obj = self.command_processor_obj.game_state.items_state.get('Magic_Wand_2')
+
+        result = self.command_processor_obj.process('equip longsword')
+        self.assertIsInstance(result[0], equip_command_no_such_item_in_inventory)
+        self.assertEqual(result[0].item_title, 'longsword')
+        self.assertEqual(result[0].message, "You don't have a longsword in your inventory.")
+
+        self.command_processor_obj.game_state.character.pick_up_item(longsword_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(scale_mail_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(shield_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(magic_wand_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(magic_wand_2_obj)
+
+        result = self.command_processor_obj.process('equip longsword')
+        self.assertIsInstance(result[0], equip_command_class_cant_use_item)
+        self.assertEqual(result[0].item_title, 'longsword')
+        self.assertEqual(result[0].item_type, 'weapon')
+        self.assertEqual(result[0].message, "Mages can't wield longswords.")
+
+        result = self.command_processor_obj.process('equip scale mail armor')
+        self.assertIsInstance(result[0], equip_command_class_cant_use_item)
+        self.assertEqual(result[0].item_title, 'scale mail armor')
+        self.assertEqual(result[0].item_type, 'armor')
+        self.assertEqual(result[0].message, "Mages can't wear scale mail armor.")
+
+        result = self.command_processor_obj.process('equip steel shield')
+        self.assertIsInstance(result[0], equip_command_class_cant_use_item)
+        self.assertEqual(result[0].item_title, 'steel shield')
+        self.assertEqual(result[0].item_type, 'shield')
+        self.assertEqual(result[0].message, "Mages can't carry steel shields.")
+
+        result = self.command_processor_obj.process('equip magic wand')
+        self.assertIsInstance(result[0], equip_command_item_equipped)
+        self.assertEqual(result[0].item_title, 'magic wand')
+        self.assertEqual(result[0].item_type, 'wand')
+        self.assertRegex(result[0].message, "^You're now using a magic wand. Your attack bonus is [\d+-]+, and your damage is [\dd+-]+.$")
+
+        result = self.command_processor_obj.process('equip magic wand 2')
+        self.assertIsInstance(result[0], equip_or_unequip_command_item_unequipped)
+        self.assertEqual(result[0].item_title, 'magic wand')
+        self.assertEqual(result[0].item_type, 'wand')
+        self.assertEqual(result[0].message, "You're no longer using a magic wand. You now can't attack.")
+        self.assertIsInstance(result[1], equip_command_item_equipped)
+        self.assertEqual(result[1].item_title, 'magic wand 2')
+        self.assertEqual(result[1].item_type, 'wand')
+        self.assertRegex(result[1].message, "^You're now using a magic wand 2. Your attack bonus is [\d+-]+, and your damage is [\dd+-]+.$")
+
+    def test_unequip_1(self):
+        self.command_processor_obj.game_state.character_name = 'Niath'
+        self.command_processor_obj.game_state.character_class = 'Warrior'
+
+        mace_obj = self.command_processor_obj.game_state.items_state.get('Mace')
+        studded_leather_obj = self.command_processor_obj.game_state.items_state.get('Studded_Leather')
+        buckler_obj = self.command_processor_obj.game_state.items_state.get('Buckler')
+        longsword_obj = self.command_processor_obj.game_state.items_state.get('Longsword')
+        scale_mail_obj = self.command_processor_obj.game_state.items_state.get('Scale_Mail')
+        shield_obj = self.command_processor_obj.game_state.items_state.get('Steel_Shield')
+        magic_wand_obj = self.command_processor_obj.game_state.items_state.get('Magic_Wand')
+
+        self.command_processor_obj.game_state.character.pick_up_item(mace_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(studded_leather_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(buckler_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(longsword_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(scale_mail_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(shield_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(magic_wand_obj)
+
+        result = self.command_processor_obj.process('unequip')
+        self.assertIsInstance(result[0], command_bad_syntax)
+        self.assertEqual(result[0].command, 'UNEQUIP')
+        self.assertEqual(result[0].message, "UNEQUIP command: bad syntax. Should be 'UNEQUIP <armor name>', "
+                                            "'UNEQUIP <shield name>', 'UNEQUIP <wand name>', or 'UNEQUIP <weapon name>'.")
+
+        result = self.command_processor_obj.process('unequip mace')
+        self.assertIsInstance(result[0], unequip_command_item_not_equipped)
+        self.assertEqual(result[0].item_asked_title, 'mace')
+        self.assertEqual(result[0].message, "You're not wielding a mace.")
+
+        result = self.command_processor_obj.process('unequip steel shield')
+        self.assertIsInstance(result[0], unequip_command_item_not_equipped)
+        self.assertEqual(result[0].item_asked_title, 'steel shield')
+        self.assertEqual(result[0].message, "You're not carrying a steel shield.")
+
+        result = self.command_processor_obj.process('unequip scale mail armor')
+        self.assertIsInstance(result[0], unequip_command_item_not_equipped)
+        self.assertEqual(result[0].item_asked_title, 'scale mail armor')
+        self.assertEqual(result[0].message, "You're not wearing scale mail armor.")
+
+        result = self.command_processor_obj.process('unequip magic wand')
+        self.assertIsInstance(result[0], unequip_command_item_not_equipped)
+        self.assertEqual(result[0].item_asked_title, 'magic wand')
+        self.assertEqual(result[0].message, "You're not using a magic wand.")
+
+        result = self.command_processor_obj.process('equip mace')
+        result = self.command_processor_obj.process('unequip mace')
+        self.assertIsInstance(result[0], equip_or_unequip_command_item_unequipped)
+        self.assertEqual(result[0].item_title, 'mace')
+        self.assertEqual(result[0].message, "You're no longer wielding a mace. You now can't attack.")
+
+        result = self.command_processor_obj.process('equip steel shield')
+        result = self.command_processor_obj.process('unequip steel shield')
+        self.assertIsInstance(result[0], equip_or_unequip_command_item_unequipped)
+        self.assertEqual(result[0].item_title, 'steel shield')
+        self.assertRegex(result[0].message, r"^You're no longer carrying a steel shield. Your armor class is \d+.$")
+
+        result = self.command_processor_obj.process('equip scale mail armor')
+        result = self.command_processor_obj.process('unequip scale mail armor')
+        self.assertIsInstance(result[0], equip_or_unequip_command_item_unequipped)
+        self.assertEqual(result[0].item_title, 'scale mail armor')
+        self.assertRegex(result[0].message, r"^You're no longer wearing scale mail armor. Your armor class is \d+.$")
+
+
+    def test_equip_2(self):
+        self.command_processor_obj.game_state.character_name = 'Niath'
+        self.command_processor_obj.game_state.character_class = 'Warrior'
+
+        mace_obj = self.command_processor_obj.game_state.items_state.get('Mace')
+        studded_leather_obj = self.command_processor_obj.game_state.items_state.get('Studded_Leather')
+        buckler_obj = self.command_processor_obj.game_state.items_state.get('Buckler')
+        longsword_obj = self.command_processor_obj.game_state.items_state.get('Longsword')
+        scale_mail_obj = self.command_processor_obj.game_state.items_state.get('Scale_Mail')
+        shield_obj = self.command_processor_obj.game_state.items_state.get('Steel_Shield')
+        magic_wand_obj = self.command_processor_obj.game_state.items_state.get('Magic_Wand')
+
+        self.command_processor_obj.game_state.character.pick_up_item(mace_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(studded_leather_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(buckler_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(longsword_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(scale_mail_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(shield_obj)
+        self.command_processor_obj.game_state.character.pick_up_item(magic_wand_obj)
+
+        result = self.command_processor_obj.process('equip longsword')
+        self.assertIsInstance(result[0], equip_command_item_equipped)
+        self.assertEqual(result[0].item_title, 'longsword')
+        self.assertRegex(result[0].message, "^You're now wielding a longsword. Your attack bonus is [\d+-]+, and your damage is [\dd+-]+.$")
+
+        result = self.command_processor_obj.process('equip scale mail armor')
+        self.assertIsInstance(result[0], equip_command_item_equipped)
+        self.assertEqual(result[0].item_title, 'scale mail armor')
+        self.assertRegex(result[0].message, "^You're now wearing scale mail armor. Your armor class is \d+.$")
+
+        result = self.command_processor_obj.process('equip steel shield')
+        self.assertIsInstance(result[0], equip_command_item_equipped)
+        self.assertEqual(result[0].item_title, 'steel shield')
+        self.assertRegex(result[0].message, "^You're now carrying a steel shield. Your armor class is \d+.$")
+
+        result = self.command_processor_obj.process('equip magic wand')
+        self.assertIsInstance(result[0], equip_command_class_cant_use_item)
+        self.assertEqual(result[0].item_title, 'magic wand')
+        self.assertEqual(result[0].message, "Warriors can't use magic wands.")
+
+        result = self.command_processor_obj.process('equip mace')
+        self.assertIsInstance(result[0], equip_or_unequip_command_item_unequipped)
+        self.assertEqual(result[0].item_title, 'longsword')
+        self.assertEqual(result[0].item_type, 'weapon')
+        self.assertEqual(result[0].message, "You're no longer wielding a longsword. You now can't attack.")
+        self.assertIsInstance(result[1], equip_command_item_equipped)
+        self.assertEqual(result[1].item_title, 'mace')
+        self.assertEqual(result[1].item_type, 'weapon')
+        self.assertRegex(result[1].message, "^You're now wielding a mace. Your attack bonus is [\d+-]+, and your damage is [\dd+-]+.$")
+
+        result = self.command_processor_obj.process('equip buckler')
+        self.assertIsInstance(result[0], equip_or_unequip_command_item_unequipped)
+        self.assertEqual(result[0].item_title, 'steel shield')
+        self.assertEqual(result[0].item_type, 'shield')
+        self.assertRegex(result[0].message, "^You're no longer carrying a steel shield. Your armor class is \d+.$")
+        self.assertIsInstance(result[1], equip_command_item_equipped)
+        self.assertEqual(result[1].item_title, 'buckler')
+        self.assertEqual(result[1].item_type, 'shield')
+        self.assertRegex(result[1].message, "^You're now carrying a buckler. Your armor class is [\d+-]+.$")
+
+        result = self.command_processor_obj.process('equip studded leather armor')
+        self.assertIsInstance(result[0], equip_or_unequip_command_item_unequipped)
+        self.assertEqual(result[0].item_title, 'scale mail armor')
+        self.assertEqual(result[0].item_type, 'armor')
+        self.assertRegex(result[0].message, "^You're no longer wearing scale mail armor. Your armor class is \d+.$")
+        self.assertIsInstance(result[1], equip_command_item_equipped)
+        self.assertEqual(result[1].item_title, 'studded leather armor')
+        self.assertEqual(result[1].item_type, 'armor')
+        self.assertRegex(result[1].message, "^You're now wearing studded leather armor. Your armor class is \d+.$")
 
 
 class test_command_processor_lock_vs_unlock(unittest.TestCase):
@@ -106,7 +738,6 @@ class test_command_processor_lock_vs_unlock(unittest.TestCase):
         self.assertEqual(result[0].target_object, chest_title)
         self.assertEqual(result[0].message, f'You have unlocked the {chest_title}.')
         self.assertFalse(chest_obj.is_locked)
-
 
     def test_lock(self):
         result = self.command_processor_obj.process('lock')
@@ -323,7 +954,7 @@ class test_command_processor_pick_up_vs_drop(unittest.TestCase):
         self.assertIsInstance(result[0], command_bad_syntax)
         self.assertEqual(result[0].command, 'PICK UP')
         self.assertEqual(result[0].message, "PICK UP command: bad syntax. Should be 'PICK UP <item name>' or 'PICK UP <number> <item name>'."),
-        
+
         result = self.command_processor_obj.process('pick up a gold coins')  # check
         self.assertIsInstance(result[0], pick_up_command_quantity_unclear)
         self.assertEqual(result[0].message, 'Amount to pick up unclear. How many do you mean?')
@@ -372,7 +1003,7 @@ class test_command_processor_pick_up_vs_drop(unittest.TestCase):
         self.assertEqual(result[0].pick_up_amount, 1)
         self.assertEqual(result[0].amount_had, 2)
         self.assertEqual(result[0].message, 'You picked up a health potion. You have 2 health potions.')
-        
+
         gold_coin_obj = self.items_state_obj.get('Gold_Coin')
         self.command_processor_obj.game_state.rooms_state.cursor.items_here.set('Gold_Coin', 30, gold_coin_obj)
 
@@ -395,7 +1026,7 @@ class test_command_processor_pick_up_vs_drop(unittest.TestCase):
         self.assertIsInstance(result[0], command_bad_syntax)
         self.assertEqual(result[0].command, 'DROP')
         self.assertEqual(result[0].message, "DROP command: bad syntax. Should be 'DROP <item name>' or 'DROP <number> <item name>'."),
-        
+
         result = self.command_processor_obj.process('drop a gold coins')  # check
         self.assertIsInstance(result[0], drop_command_quantity_unclear)
         self.assertEqual(result[0].message, 'Amount to drop unclear. How many do you mean?')
@@ -440,7 +1071,6 @@ class test_command_processor_pick_up_vs_drop(unittest.TestCase):
         self.assertEqual(result[0].amount_on_floor, 1)
         self.assertEqual(result[0].amount_left, 29)
         self.assertEqual(result[0].message, 'You dropped a gold coin. You see a gold coin here. You have 29 gold coins left.')
-
 
 
 class test_command_processor_set_name_vs_set_class_vs_reroll_vs_satisfied(unittest.TestCase):
@@ -497,11 +1127,11 @@ class test_command_processor_set_name_vs_set_class_vs_reroll_vs_satisfied(unitte
                                             f'Charisma {result[1].charisma}.\nAre you satisfied with these scores or '
                                             'would you like to reroll?')
 
-        first_roll = {'strength': result[1].strength, 'dexterity': result[1].dexterity, 
+        first_roll = {'strength': result[1].strength, 'dexterity': result[1].dexterity,
                       'constitution': result[1].constitution, 'intelligence': result[1].intelligence,
                       'wisdom': result[1].wisdom, 'charisma': result[1].charisma}
         result = self.command_processor_obj.process('reroll')
-        second_roll = {'strength': result[0].strength, 'dexterity': result[0].dexterity, 
+        second_roll = {'strength': result[0].strength, 'dexterity': result[0].dexterity,
                       'constitution': result[0].constitution, 'intelligence': result[0].intelligence,
                       'wisdom': result[0].wisdom, 'charisma': result[0].charisma}
         self.assertIsInstance(result[0], set_name_or_class_command_display_rolled_stats)
@@ -530,7 +1160,7 @@ class test_command_processor_set_name_vs_set_class_vs_reroll_vs_satisfied(unitte
         self.assertEqual(result[0].message, "SATISFIED command: bad syntax. Should be 'SATISFIED'.")
         self.assertFalse(self.command_processor_obj.game_state.game_has_begun)
 
-    def test_set_name_and_class_2(self):
+    def test_set_name_and_class_4(self):
         result = self.command_processor_obj.process('set name to Kerne0')
         self.assertIsInstance(result[0], set_name_command_invalid_part)
         self.assertEqual(result[0].name_part, 'Kerne0')
@@ -572,7 +1202,7 @@ class test_command_processor_set_name_vs_set_class_vs_reroll_vs_satisfied(unitte
         self.assertIsInstance(result[1].charisma, int)
         self.assertTrue(3 <= result[1].charisma <= 18)
 
-    def test_set_name_and_class_3(self):
+    def test_set_name_and_class_5(self):
         self.assertFalse(self.command_processor_obj.game_state.game_has_begun)
         self.command_processor_obj.process('set class to Warrior')
         self.command_processor_obj.process('set name to Kerne')
@@ -582,7 +1212,7 @@ class test_command_processor_set_name_vs_set_class_vs_reroll_vs_satisfied(unitte
         self.assertEqual(result[0].message, "SATISFIED command: bad syntax. Should be 'SATISFIED'.")
         self.assertFalse(self.command_processor_obj.game_state.game_has_begun)
 
-    def test_set_name_and_class_4(self):
+    def test_set_name_and_class_6(self):
         self.assertFalse(self.command_processor_obj.game_state.game_has_begun)
         self.command_processor_obj.process('set class to Warrior')
         self.command_processor_obj.process('set name to Kerne')
@@ -618,12 +1248,17 @@ class test_command_processor_attack_vs_be_attacked_by(unittest.TestCase):
         self.game_state_obj.character_class = 'Warrior'
         self.game_state_obj.character.pick_up_item(self.items_state_obj.get('Longsword'))
         self.game_state_obj.character.pick_up_item(self.items_state_obj.get('Studded_Leather'))
-        self.game_state_obj.character.pick_up_item(self.items_state_obj.get('Shield'))
+        self.game_state_obj.character.pick_up_item(self.items_state_obj.get('Steel_Shield'))
         self.game_state_obj.character.equip_weapon(self.items_state_obj.get('Longsword'))
         self.game_state_obj.character.equip_armor(self.items_state_obj.get('Studded_Leather'))
-        self.game_state_obj.character.equip_shield(self.items_state_obj.get('Shield'))
+        self.game_state_obj.character.equip_shield(self.items_state_obj.get('Steel_Shield'))
 
     def test_attack_bad_usages(self):
+        self.command_processor_obj.process('unequip longsword')
+        result = self.command_processor_obj.process('attack sorcerer')
+        self.assertIsInstance(result[0], attack_command_you_have_no_weapon_or_wand_equipped)
+        self.assertEqual(result[0].message, "You have no weapon equipped; you can't attack.")
+        self.command_processor_obj.process('equip longsword')
         result = self.command_processor_obj.process('attack sorcerer')
         self.assertIsInstance(result[0], attack_command_opponent_not_found)
         self.assertEqual(result[0].creature_title_given, 'sorcerer')
@@ -878,31 +1513,30 @@ class test_command_processor_attack_vs_be_attacked_by(unittest.TestCase):
         result = self.command_processor_obj.process('put on the kobold corpse')
         self.assertIsInstance(result[0], command_bad_syntax)
         self.assertEqual(result[0].command, 'PUT')
-        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
-                                         "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
-                                         "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
+        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>', "
+                                         "'PUT <number> <item name> IN <chest name>', 'PUT <item name> ON "
+                                         "<corpse name>', or 'PUT <number> <item name> ON <corpse name>'."),
 
         result = self.command_processor_obj.process('put one small leather armor on')  # check
         self.assertIsInstance(result[0], command_bad_syntax)
         self.assertEqual(result[0].command, 'PUT')
-        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
-                                         "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
-                                         "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
+        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>', "
+                                         "'PUT <number> <item name> IN <chest name>', 'PUT <item name> ON "
+                                         "<corpse name>', or 'PUT <number> <item name> ON <corpse name>'."),
 
         result = self.command_processor_obj.process('put on')  # check
         self.assertIsInstance(result[0], command_bad_syntax)
         self.assertEqual(result[0].command, 'PUT')
-        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
-                                         "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
-                                         "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
+        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>', "
+                                         "'PUT <number> <item name> IN <chest name>', 'PUT <item name> ON "
+                                         "<corpse name>', or 'PUT <number> <item name> ON <corpse name>'."),
 
         result = self.command_processor_obj.process('put 1 gold coin in the kobold corpse')  # check
         self.assertIsInstance(result[0], command_bad_syntax)
         self.assertEqual(result[0].command, 'PUT')
-        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
-                                         "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
-                                         "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
-
+        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>', "
+                                         "'PUT <number> <item name> IN <chest name>', 'PUT <item name> ON "
+                                         "<corpse name>', or 'PUT <number> <item name> ON <corpse name>'."),
 
     def test_inspect_also_two_take_cases(self):
         result = self.command_processor_obj.process('inspect kobold')
@@ -1020,36 +1654,36 @@ class test_command_processor_attack_vs_be_attacked_by(unittest.TestCase):
         result = self.command_processor_obj.process('put gold coin in wooden chest')
         self.assertIsInstance(result[0], various_commands_container_is_closed)
         self.assertEqual(result[0].target_object, 'wooden chest')
-        self.assertEqual(result[0].message, "The wooden chest is closed.")
+        self.assertEqual(result[0].message, 'The wooden chest is closed.')
 
         self.game_state_obj.rooms_state.cursor.container_here.is_closed = False
         result = self.command_processor_obj.process('put in the wooden chest')
         self.assertIsInstance(result[0], command_bad_syntax)
         self.assertEqual(result[0].command, 'PUT')
-        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
-                                         "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
-                                         "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
+        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>', "
+                                         "'PUT <number> <item name> IN <chest name>', 'PUT <item name> ON "
+                                         "<corpse name>', or 'PUT <number> <item name> ON <corpse name>'."),
 
         result = self.command_processor_obj.process('put 1 gold coin in')  # check
         self.assertIsInstance(result[0], command_bad_syntax)
         self.assertEqual(result[0].command, 'PUT')
-        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
-                                         "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
-                                         "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
+        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>', "
+                                            "'PUT <number> <item name> IN <chest name>', 'PUT <item name> ON "
+                                            "<corpse name>', or 'PUT <number> <item name> ON <corpse name>'."),
 
         result = self.command_processor_obj.process('put in')  # check
         self.assertIsInstance(result[0], command_bad_syntax)
         self.assertEqual(result[0].command, 'PUT')
-        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
-                                         "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
-                                         "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
+        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>', "
+                                            "'PUT <number> <item name> IN <chest name>', 'PUT <item name> ON "
+                                            "<corpse name>', or 'PUT <number> <item name> ON <corpse name>'."),
 
         result = self.command_processor_obj.process('put 1 gold coin on the wooden chest')  # check
         self.assertIsInstance(result[0], command_bad_syntax)
         self.assertEqual(result[0].command, 'PUT')
-        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>' or "
-                                         "'PUT <number> <item name> IN <chest name>' or 'PUT <item name> ON "
-                                         "<corpse name>' or 'PUT <number> <item name> ON <corpse name>'."),
+        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>', "
+                                            "'PUT <number> <item name> IN <chest name>', 'PUT <item name> ON "
+                                            "<corpse name>', or 'PUT <number> <item name> ON <corpse name>'."),
 
         self.game_state_obj.rooms_state.cursor.container_here.is_locked = True
         self.game_state_obj.rooms_state.cursor.container_here.is_closed = None
@@ -1087,4 +1721,4 @@ class test_command_processor_attack_vs_be_attacked_by(unittest.TestCase):
         result = self.command_processor_obj.process('take gold coin from wooden chest')
         self.assertIsInstance(result[0], various_commands_container_is_closed)
         self.assertEqual(result[0].target_object, 'wooden chest')
-        self.assertEqual(result[0].message, "The wooden chest is closed.")
+        self.assertEqual(result[0].message, 'The wooden chest is closed.')
