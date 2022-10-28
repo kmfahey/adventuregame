@@ -26,15 +26,15 @@ class test_open_command(unittest.TestCase):
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
         self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
                                            self.items_state_obj, **self.rooms_ini_config_obj.sections)
-        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
-                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj,
+                                         self.doors_state_obj, self.items_state_obj)
         self.command_processor_obj = command_processor(self.game_state_obj)
         self.command_processor_obj.game_state.character_name = 'Niath'
         self.command_processor_obj.game_state.character_class = 'Warrior'
         self.game_state_obj.game_has_begun = True
         self.chest_obj = self.command_processor_obj.game_state.rooms_state.cursor.container_here
         self.chest_title = self.chest_obj.title
-        self.door_obj = self.command_processor_obj.game_state.rooms_state.cursor.north_exit
+        self.door_obj = self.command_processor_obj.game_state.rooms_state.cursor.north_door
         self.door_obj.is_closed = False
         self.door_title = self.door_obj.title
 
@@ -119,8 +119,8 @@ class test_pick_lock_command(unittest.TestCase):
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
         self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
                                            self.items_state_obj, **self.rooms_ini_config_obj.sections)
-        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
-                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj,
+                                         self.doors_state_obj, self.items_state_obj)
         self.command_processor_obj = command_processor(self.game_state_obj)
 
     def test_pick_lock1(self):
@@ -187,34 +187,34 @@ class test_pick_lock_command(unittest.TestCase):
         self.command_processor_obj.game_state.character_name = 'Lidda'
         self.command_processor_obj.game_state.character_class = 'Thief'
         self.game_state_obj.game_has_begun = True
-        self.assertTrue(self.command_processor_obj.game_state.rooms_state.cursor.east_exit.is_locked)
+        self.assertTrue(self.command_processor_obj.game_state.rooms_state.cursor.east_door.is_locked)
         result = self.command_processor_obj.process('pick lock on east door')
         self.assertIsInstance(result[0], pick_lock_command_target_has_been_unlocked)
         self.assertEqual(result[0].target_title, 'east door')
         self.assertEqual(result[0].message, 'You have unlocked the east door.')
-        self.assertFalse(self.command_processor_obj.game_state.rooms_state.cursor.east_exit.is_locked)
+        self.assertFalse(self.command_processor_obj.game_state.rooms_state.cursor.east_door.is_locked)
 
     def test_pick_lock8(self):
         self.command_processor_obj.game_state.character_name = 'Lidda'
         self.command_processor_obj.game_state.character_class = 'Thief'
         self.game_state_obj.game_has_begun = True
-        self.assertTrue(self.command_processor_obj.game_state.rooms_state.cursor.east_exit.is_locked)
+        self.assertTrue(self.command_processor_obj.game_state.rooms_state.cursor.east_door.is_locked)
         result = self.command_processor_obj.process('pick lock on east door')
         self.assertIsInstance(result[0], pick_lock_command_target_has_been_unlocked)
         self.assertEqual(result[0].target_title, 'east door')
         self.assertEqual(result[0].message, 'You have unlocked the east door.')
-        self.assertFalse(self.command_processor_obj.game_state.rooms_state.cursor.east_exit.is_locked)
+        self.assertFalse(self.command_processor_obj.game_state.rooms_state.cursor.east_door.is_locked)
 
     def test_pick_lock9(self):
         self.command_processor_obj.game_state.character_name = 'Lidda'
         self.command_processor_obj.game_state.character_class = 'Thief'
         self.game_state_obj.game_has_begun = True
-        self.assertTrue(self.command_processor_obj.game_state.rooms_state.cursor.east_exit.is_locked)
+        self.assertTrue(self.command_processor_obj.game_state.rooms_state.cursor.east_door.is_locked)
         result = self.command_processor_obj.process('pick lock on east door')
         self.assertIsInstance(result[0], pick_lock_command_target_has_been_unlocked)
         self.assertEqual(result[0].target_title, 'east door')
         self.assertEqual(result[0].message, 'You have unlocked the east door.')
-        self.assertFalse(self.command_processor_obj.game_state.rooms_state.cursor.east_exit.is_locked)
+        self.assertFalse(self.command_processor_obj.game_state.rooms_state.cursor.east_door.is_locked)
 
     def test_pick_lock10(self):
         self.command_processor_obj.game_state.character_name = 'Lidda'
@@ -246,8 +246,8 @@ class test_pick_up_command(unittest.TestCase):
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
         self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
                                            self.items_state_obj, **self.rooms_ini_config_obj.sections)
-        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
-                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj,
+                                         self.doors_state_obj, self.items_state_obj)
         self.command_processor_obj = command_processor(self.game_state_obj)
         self.command_processor_obj.game_state.character_name = 'Niath'
         self.command_processor_obj.game_state.character_class = 'Warrior'
@@ -257,7 +257,8 @@ class test_pick_up_command(unittest.TestCase):
         result = self.command_processor_obj.process('pick up the')  # check
         self.assertIsInstance(result[0], command_bad_syntax)
         self.assertEqual(result[0].command, 'PICK UP')
-        self.assertEqual(result[0].message, "PICK UP command: bad syntax. Should be 'PICK UP <item name>' or 'PICK UP <number> <item name>'."),
+        self.assertEqual(result[0].message, "PICK UP command: bad syntax. Should be 'PICK UP <item name>' or 'PICK UP"
+                                            "<number> <item name>'."),
 
     def test_pick_up_2(self):
         result = self.command_processor_obj.process('pick up a gold coins')  # check
@@ -270,7 +271,8 @@ class test_pick_up_command(unittest.TestCase):
         self.assertEqual(result[0].item_title, 'gold coin')
         self.assertEqual(result[0].amount_attempted, 15)
         self.assertEqual(result[0].items_here, ((2, 'health potion'), (1, 'mana potion')))
-        self.assertEqual(result[0].message, 'You see no gold coins here. However, there is 2 health potions and a mana potion here.')
+        self.assertEqual(result[0].message, 'You see no gold coins here. However, there is 2 health potions and a '
+                                            'mana potion here.')
 
     def test_pick_up_4(self):
         result = self.command_processor_obj.process('pick up a short sword')  # check
@@ -278,7 +280,8 @@ class test_pick_up_command(unittest.TestCase):
         self.assertEqual(result[0].item_title, 'short sword')
         self.assertEqual(result[0].amount_attempted, 1)
         self.assertEqual(result[0].items_here, ((2, 'health potion'), (1, 'mana potion')))
-        self.assertEqual(result[0].message, 'You see no short sword here. However, there is 2 health potions and a mana potion here.')
+        self.assertEqual(result[0].message, 'You see no short sword here. However, there is 2 health potions and a '
+                                            'mana potion here.')
 
     def test_pick_up_5(self):
         self.command_processor_obj.game_state.rooms_state.move(north=True)
@@ -350,8 +353,8 @@ class test_put_command(unittest.TestCase):
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
         self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
                                            self.items_state_obj, **self.rooms_ini_config_obj.sections)
-        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
-                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj,
+                                         self.doors_state_obj, self.items_state_obj)
         self.command_processor_obj = command_processor(self.game_state_obj)
         self.game_state_obj.character_name = 'Niath'
         self.game_state_obj.character_class = 'Warrior'
@@ -362,7 +365,8 @@ class test_put_command(unittest.TestCase):
         self.game_state_obj.character.equip_weapon(self.items_state_obj.get('Longsword'))
         self.game_state_obj.character.equip_armor(self.items_state_obj.get('Studded_Leather'))
         self.game_state_obj.character.equip_shield(self.items_state_obj.get('Steel_Shield'))
-        (_, self.gold_coin_obj) = self.command_processor_obj.game_state.rooms_state.cursor.container_here.get('Gold_Coin')
+        (_, self.gold_coin_obj) = \
+            self.command_processor_obj.game_state.rooms_state.cursor.container_here.get('Gold_Coin')
 
     def test_put_1(self):
         self.game_state_obj.rooms_state.cursor.container_here.is_locked = None
@@ -506,8 +510,8 @@ class test_quit_command(unittest.TestCase):
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
         self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
                                            self.items_state_obj, **self.rooms_ini_config_obj.sections)
-        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
-                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj,
+                                         self.doors_state_obj, self.items_state_obj)
         self.command_processor_obj = command_processor(self.game_state_obj)
 
     def test_quit_1(self):
@@ -541,8 +545,8 @@ class test_set_name_vs_set_class_vs_reroll_vs_begin_game_commands(unittest.TestC
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
         self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
                                            self.items_state_obj, **self.rooms_ini_config_obj.sections)
-        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
-                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj,
+                                         self.doors_state_obj, self.items_state_obj)
         self.command_processor_obj = command_processor(self.game_state_obj)
 
     def test_reroll_1(self):
@@ -601,7 +605,8 @@ class test_set_name_vs_set_class_vs_reroll_vs_begin_game_commands(unittest.TestC
             result = self.command_processor_obj.process(bad_argument_str)
             self.assertIsInstance(result[0], command_bad_syntax)
             self.assertEqual(result[0].command, 'SET CLASS')
-            self.assertEqual(result[0].message, "SET CLASS command: bad syntax. Should be 'SET CLASS <Warrior, Thief, Mage or Priest>'.")
+            self.assertEqual(result[0].message, "SET CLASS command: bad syntax. Should be 'SET CLASS <Warrior, Thief, "
+                                                "Mage or Priest>'.")
 
         result = self.command_processor_obj.process('set class to Warrior')
         self.assertIsInstance(result[0], set_class_command_class_set)
@@ -671,15 +676,18 @@ class test_set_name_vs_set_class_vs_reroll_vs_begin_game_commands(unittest.TestC
         result = self.command_processor_obj.process('set name to Kerne0')
         self.assertIsInstance(result[0], set_name_command_invalid_part)
         self.assertEqual(result[0].name_part, 'Kerne0')
-        self.assertEqual(result[0].message, 'The name Kerne0 is invalid; must be a capital letter followed by lowercase letters.')
+        self.assertEqual(result[0].message, 'The name Kerne0 is invalid; must be a capital letter followed by '
+                                            'lowercase letters.')
 
         result = self.command_processor_obj.process('set name to Kerne MacDonald0 Fahey1')
         self.assertIsInstance(result[0], set_name_command_invalid_part)
         self.assertEqual(result[0].name_part, 'MacDonald0')
-        self.assertEqual(result[0].message, 'The name MacDonald0 is invalid; must be a capital letter followed by lowercase letters.')
+        self.assertEqual(result[0].message, 'The name MacDonald0 is invalid; must be a capital letter followed by '
+                                            'lowercase letters.')
         self.assertIsInstance(result[1], set_name_command_invalid_part)
         self.assertEqual(result[1].name_part, 'Fahey1')
-        self.assertEqual(result[1].message, 'The name Fahey1 is invalid; must be a capital letter followed by lowercase letters.')
+        self.assertEqual(result[1].message, 'The name Fahey1 is invalid; must be a capital letter followed by '
+                                            'lowercase letters.')
 
         result = self.command_processor_obj.process('set name to Kerne')
         self.assertIsInstance(result[0], set_name_command_name_set)
@@ -689,7 +697,8 @@ class test_set_name_vs_set_class_vs_reroll_vs_begin_game_commands(unittest.TestC
         result = self.command_processor_obj.process('set class to Ranger')
         self.assertIsInstance(result[0], set_class_command_invalid_class)
         self.assertEqual(result[0].bad_class, 'Ranger')
-        self.assertEqual(result[0].message, "'Ranger' is not a valid class choice. Please choose Warrior, Thief, Mage, or Priest.")
+        self.assertEqual(result[0].message, "'Ranger' is not a valid class choice. Please choose Warrior, Thief, "
+                                            "Mage, or Priest.")
 
         result = self.command_processor_obj.process('set class to Warrior')
         self.assertIsInstance(result[0], set_class_command_class_set)

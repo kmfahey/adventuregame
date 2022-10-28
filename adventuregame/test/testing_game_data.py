@@ -42,6 +42,15 @@ door_type=iron_door
 is_locked=true
 is_closed=true
 closeable=true
+
+[Room_2,2_x_Exit]
+title=iron door
+description=This door is bound in iron plates with a small barred window set up high.
+door_type=iron_door
+is_exit=true
+is_locked=true
+is_closed=true
+closeable=true
 """
 
 Items_Ini_Config_Text = """
@@ -244,33 +253,34 @@ weight=0.16
 
 Rooms_Ini_Config_Text = """
 [Room_1,1]
-description=Entrance room
-east_exit=Room_2,1
+description=Entrance room.
+east_door=Room_2,1
 is_entrance=true
-north_exit=Room_1,2
+north_door=Room_1,2
 title=Southwest dungeon room
 creature_here=Kobold_Trysk
 container_here=Wooden_Chest_1
 items_here=[1xMana_Potion,2xHealth_Potion]
 
 [Room_1,2]
-description=Nondescript room
-east_exit=Room_2,2
-south_exit=Room_1,1
+description=Nondescript room.
+east_door=Room_2,2
+south_door=Room_1,1
 title=Northwest dungeon room
 
 [Room_2,1]
-description=Nondescript room
-north_exit=Room_2,2
+description=Nondescript room.
+north_door=Room_2,2
 title=Southeast dungeon room
-west_exit=Room_1,1
+west_door=Room_1,1
 
 [Room_2,2]
-description=Exit room
+description=Exit room.
 is_exit=true
-south_exit=Room_1,2
+south_door=Room_1,2
 title=Northeast dungeon room
-west_exit=Room_2,1
+west_door=Room_2,1
+north_door=Exit
 """
 
 Chests_Ini_Config_Text = """

@@ -27,8 +27,8 @@ class test_status_command(unittest.TestCase):
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
         self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
                                            self.items_state_obj, **self.rooms_ini_config_obj.sections)
-        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
-                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj,
+                                         self.doors_state_obj, self.items_state_obj)
         self.command_processor_obj = command_processor(self.game_state_obj)
 
     def test_status1(self):
@@ -110,7 +110,8 @@ class test_status_command(unittest.TestCase):
         result = self.command_processor_obj.process('status')
         self.assertIsInstance(result[0], status_command_output)
         self.assertRegex(result[0].message, r'Hit Points: (?!(\d+)/\1)\d+/\d+ - Mana Points: \d+/\d+ \| Attack: no '
-                                            r'weapon equipped - Armor Class: \d+ \| Weapon: none - Armor: none - Shield: none')
+                                            r'weapon equipped - Armor Class: \d+ \| Weapon: none - Armor: none - '
+                                             'Shield: none')
 
     def test_status8(self):
         self.command_processor_obj.game_state.character_name = 'Kaeva'
@@ -142,8 +143,8 @@ class test_take_command(unittest.TestCase):
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
         self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
                                            self.items_state_obj, **self.rooms_ini_config_obj.sections)
-        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
-                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj,
+                                         self.doors_state_obj, self.items_state_obj)
         self.command_processor_obj = command_processor(self.game_state_obj)
         self.game_state_obj.character_name = 'Niath'
         self.game_state_obj.character_class = 'Warrior'
@@ -154,12 +155,14 @@ class test_take_command(unittest.TestCase):
         self.game_state_obj.character.equip_weapon(self.items_state_obj.get('Longsword'))
         self.game_state_obj.character.equip_armor(self.items_state_obj.get('Studded_Leather'))
         self.game_state_obj.character.equip_shield(self.items_state_obj.get('Steel_Shield'))
-        (_, self.gold_coin_obj) = self.command_processor_obj.game_state.rooms_state.cursor.container_here.get('Gold_Coin')
+        (_, self.gold_coin_obj) = \
+            self.command_processor_obj.game_state.rooms_state.cursor.container_here.get('Gold_Coin')
 
     def test_take_1(self):
         self.command_processor_obj.game_state.rooms_state.cursor.container_here = \
             self.command_processor_obj.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
-        (potion_qty, health_potion_obj) = self.command_processor_obj.game_state.rooms_state.cursor.container_here.get('Health_Potion')
+        (potion_qty, health_potion_obj) = \
+            self.command_processor_obj.game_state.rooms_state.cursor.container_here.get('Health_Potion')
         result = self.command_processor_obj.process('take a health potion from the kobold corpse')
         self.assertIsInstance(result[0], take_command_item_or_items_taken)
         self.assertEqual(result[0].container_title, 'kobold corpse')
@@ -167,8 +170,10 @@ class test_take_command(unittest.TestCase):
         self.assertEqual(result[0].amount_taken, 1)
         self.assertEqual(result[0].message, 'You took a health potion from the kobold corpse.')
         self.assertTrue(self.command_processor_obj.game_state.character.inventory.contains('Health_Potion'))
-        self.assertFalse(self.command_processor_obj.game_state.rooms_state.cursor.container_here.contains('Health_Potion'))
-        self.assertTrue(self.command_processor_obj.game_state.character.inventory.get('Health_Potion'), (1, health_potion_obj))
+        self.assertFalse(self.command_processor_obj.game_state.rooms_state.cursor.container_here\
+                         .contains('Health_Potion'))
+        self.assertEqual(self.command_processor_obj.game_state.character.inventory.get('Health_Potion'),
+                         (1, health_potion_obj))
 
     def test_take_2(self):
         self.command_processor_obj.game_state.rooms_state.cursor.container_here = \
@@ -182,12 +187,14 @@ class test_take_command(unittest.TestCase):
         self.assertTrue(self.command_processor_obj.game_state.character.have_item(self.gold_coin_obj))
         self.assertEqual(self.command_processor_obj.game_state.character.item_have_qty(self.gold_coin_obj), 15)
         self.assertTrue(self.command_processor_obj.game_state.rooms_state.cursor.container_here.contains('Gold_Coin'))
-        self.assertTrue(self.command_processor_obj.game_state.rooms_state.cursor.container_here.get('Gold_Coin'), (15, self.gold_coin_obj))
+        self.assertEqual(self.command_processor_obj.game_state.rooms_state.cursor.container_here.get('Gold_Coin'),
+                         (15, self.gold_coin_obj))
 
     def test_take_3(self):
         self.command_processor_obj.game_state.rooms_state.cursor.container_here = \
             self.command_processor_obj.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
-        (_, short_sword_obj) = self.command_processor_obj.game_state.rooms_state.cursor.container_here.get('Short_Sword')
+        (_, short_sword_obj) = \
+            self.command_processor_obj.game_state.rooms_state.cursor.container_here.get('Short_Sword')
         result = self.command_processor_obj.process('take one short sword from the kobold corpse')
         self.assertIsInstance(result[0], take_command_item_or_items_taken)
 
@@ -197,7 +204,8 @@ class test_take_command(unittest.TestCase):
         result = self.command_processor_obj.process('take one small leather armors from the kobold corpse')  # check
         self.assertIsInstance(result[0], command_bad_syntax)
         self.assertEqual(result[0].command, 'TAKE')
-        self.assertEqual(result[0].message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container name>' or 'TAKE <number> <item name> FROM <container name>'."),
+        self.assertEqual(result[0].message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container "
+                                            "name>' or 'TAKE <number> <item name> FROM <container name>'."),
 
     def test_take_5(self):
         self.command_processor_obj.game_state.rooms_state.cursor.container_here = \
@@ -205,7 +213,8 @@ class test_take_command(unittest.TestCase):
         result = self.command_processor_obj.process('take one small leather armor from the kobold corpses')  # check
         self.assertIsInstance(result[0], command_bad_syntax)
         self.assertEqual(result[0].command, 'TAKE')
-        self.assertEqual(result[0].message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container name>' or 'TAKE <number> <item name> FROM <container name>'."),
+        self.assertEqual(result[0].message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container "
+                                            "name>' or 'TAKE <number> <item name> FROM <container name>'."),
 
     def test_take_6(self):
         self.command_processor_obj.game_state.rooms_state.cursor.container_here = \
@@ -213,7 +222,8 @@ class test_take_command(unittest.TestCase):
         result = self.command_processor_obj.process('take one small leather armor')  # check
         self.assertIsInstance(result[0], command_bad_syntax)
         self.assertEqual(result[0].command, 'TAKE')
-        self.assertEqual(result[0].message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container name>' or 'TAKE <number> <item name> FROM <container name>'."),
+        self.assertEqual(result[0].message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container "
+                                            "name>' or 'TAKE <number> <item name> FROM <container name>'."),
 
     def test_take_7(self):
         self.command_processor_obj.game_state.rooms_state.cursor.container_here = \
@@ -221,7 +231,8 @@ class test_take_command(unittest.TestCase):
         result = self.command_processor_obj.process('take the from the kobold corpse')  # check
         self.assertIsInstance(result[0], command_bad_syntax)
         self.assertEqual(result[0].command, 'TAKE')
-        self.assertEqual(result[0].message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container name>' or 'TAKE <number> <item name> FROM <container name>'."),
+        self.assertEqual(result[0].message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container "
+                                            "name>' or 'TAKE <number> <item name> FROM <container name>'."),
 
     def test_take_8(self):
         self.command_processor_obj.game_state.rooms_state.cursor.container_here = \
@@ -229,7 +240,8 @@ class test_take_command(unittest.TestCase):
         result = self.command_processor_obj.process('take the short sword from the')  # check
         self.assertIsInstance(result[0], command_bad_syntax)
         self.assertEqual(result[0].command, 'TAKE')
-        self.assertEqual(result[0].message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container name>' or 'TAKE <number> <item name> FROM <container name>'."),
+        self.assertEqual(result[0].message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container "
+                                            "name>' or 'TAKE <number> <item name> FROM <container name>'."),
 
     def test_take_9(self):
         self.command_processor_obj.game_state.rooms_state.cursor.container_here = \
@@ -238,7 +250,8 @@ class test_take_command(unittest.TestCase):
         self.assertIsInstance(result[0], various_commands_container_not_found)
         self.assertEqual(result[0].container_not_found_title, 'sorcerer corpse')
         self.assertEqual(result[0].container_present_title, 'kobold corpse')
-        self.assertEqual(result[0].message, 'There is no sorcerer corpse here. However, there *is* a kobold corpse here.')
+        self.assertEqual(result[0].message, 'There is no sorcerer corpse here. However, there *is* a kobold corpse '
+                                            'here.')
 
     def test_take_10(self):
         self.command_processor_obj.game_state.rooms_state.cursor.container_here = \
@@ -262,7 +275,8 @@ class test_take_command(unittest.TestCase):
         self.assertEqual(result[0].item_title, 'small leather armor')
         self.assertEqual(result[0].amount_attempted, 3)
         self.assertEqual(result[0].amount_present, 1)
-        self.assertEqual(result[0].message, "You can't take 3 small leather armors from the kobold corpse. Only 1 is there.")
+        self.assertEqual(result[0].message, "You can't take 3 small leather armors from the kobold corpse. Only 1 is "
+                                            "there.")
 
     def test_take_12(self):
         self.command_processor_obj.game_state.rooms_state.cursor.container_here = \
@@ -343,7 +357,8 @@ class test_take_command(unittest.TestCase):
         self.assertEqual(result[0].container_type, 'corpse')
         self.assertEqual(result[0].amount_put, 15)
         self.assertEqual(result[0].amount_left, 15)
-        self.assertEqual(result[0].message, "You put 15 gold coins on the kobold corpse's person. You have 15 gold coins left.")
+        self.assertEqual(result[0].message, "You put 15 gold coins on the kobold corpse's person. You have 15 gold "
+                                            "coins left.")
 
     def test_take_19(self):
         self.command_processor_obj.game_state.rooms_state.cursor.container_here = \
@@ -357,7 +372,8 @@ class test_take_command(unittest.TestCase):
         self.assertEqual(result[0].container_type, 'corpse')
         self.assertEqual(result[0].amount_put, 1)
         self.assertEqual(result[0].amount_left, 14)
-        self.assertEqual(result[0].message, "You put 1 gold coin on the kobold corpse's person. You have 14 gold coins left.")
+        self.assertEqual(result[0].message, "You put 1 gold coin on the kobold corpse's person. You have 14 gold "
+                                            "coins left.")
 
     def test_take_20(self):
         self.command_processor_obj.game_state.rooms_state.cursor.container_here = \
@@ -371,7 +387,8 @@ class test_take_command(unittest.TestCase):
         self.assertEqual(result[0].container_type, 'corpse')
         self.assertEqual(result[0].amount_put, 13)
         self.assertEqual(result[0].amount_left, 1)
-        self.assertEqual(result[0].message, "You put 13 gold coins on the kobold corpse's person. You have 1 gold coin left.")
+        self.assertEqual(result[0].message, "You put 13 gold coins on the kobold corpse's person. You have 1 gold "
+                                            "coin left.")
 
     def test_take_21(self):
         self.command_processor_obj.game_state.rooms_state.cursor.container_here = \
@@ -385,7 +402,8 @@ class test_take_command(unittest.TestCase):
         self.assertEqual(result[0].container_type, 'corpse')
         self.assertEqual(result[0].amount_put, 1)
         self.assertEqual(result[0].amount_left, 0)
-        self.assertEqual(result[0].message, "You put 1 gold coin on the kobold corpse's person. You have no more gold coins.")
+        self.assertEqual(result[0].message, "You put 1 gold coin on the kobold corpse's person. You have no more gold "
+                                            "coins.")
 
     def test_take_22(self):
         self.command_processor_obj.game_state.rooms_state.cursor.container_here = \
@@ -519,8 +537,8 @@ class test_unequip_command(unittest.TestCase):
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
         self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
                                            self.items_state_obj, **self.rooms_ini_config_obj.sections)
-        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
-                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj,
+                                         self.doors_state_obj, self.items_state_obj)
         self.command_processor_obj = command_processor(self.game_state_obj)
         self.buckler_obj = self.command_processor_obj.game_state.items_state.get('Buckler')
         self.longsword_obj = self.command_processor_obj.game_state.items_state.get('Longsword')
@@ -546,7 +564,8 @@ class test_unequip_command(unittest.TestCase):
         self.assertIsInstance(result[0], command_bad_syntax)
         self.assertEqual(result[0].command, 'UNEQUIP')
         self.assertEqual(result[0].message, "UNEQUIP command: bad syntax. Should be 'UNEQUIP <armor name>', "
-                                            "'UNEQUIP <shield name>', 'UNEQUIP <wand name>', or 'UNEQUIP <weapon name>'.")
+                                            "'UNEQUIP <shield name>', 'UNEQUIP <wand name>', or 'UNEQUIP <weapon "
+                                            "name>'.")
 
     def test_unequip_2(self):
         result = self.command_processor_obj.process('unequip mace')
@@ -612,16 +631,16 @@ class test_unlock_command(unittest.TestCase):
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
         self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
                                            self.items_state_obj, **self.rooms_ini_config_obj.sections)
-        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
-                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj,
+                                         self.doors_state_obj, self.items_state_obj)
         self.command_processor_obj = command_processor(self.game_state_obj)
         self.command_processor_obj.game_state.character_name = 'Niath'
         self.command_processor_obj.game_state.character_class = 'Warrior'
         self.game_state_obj.game_has_begun = True
 
-        self.door_obj = self.command_processor_obj.game_state.rooms_state.cursor.north_exit
+        self.door_obj = self.command_processor_obj.game_state.rooms_state.cursor.north_door
         self.door_obj.is_locked = True
-        self.door_title = self.command_processor_obj.game_state.rooms_state.cursor.north_exit.title
+        self.door_title = self.command_processor_obj.game_state.rooms_state.cursor.north_door.title
         self.chest_obj = self.command_processor_obj.game_state.rooms_state.cursor.container_here
         self.chest_obj.is_locked = True
         self.chest_title = self.chest_obj.title
@@ -638,8 +657,8 @@ class test_unlock_command(unittest.TestCase):
         self.assertIsInstance(result[0], unlock_command_object_to_unlock_not_here)
         self.assertEqual(result[0].target_title, 'west door')
         self.assertEqual(result[0].message, 'You found no west door here to unlock.'),
-        self.command_processor_obj.game_state.rooms_state.cursor.north_exit.is_locked
-        self.door_title = self.command_processor_obj.game_state.rooms_state.cursor.north_exit.title
+        self.command_processor_obj.game_state.rooms_state.cursor.north_door.is_locked
+        self.door_title = self.command_processor_obj.game_state.rooms_state.cursor.north_door.title
 
     def test_unlock_3(self):
         result = self.command_processor_obj.process(f'unlock {self.door_title}')

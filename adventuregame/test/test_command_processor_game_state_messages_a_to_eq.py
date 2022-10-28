@@ -27,8 +27,8 @@ class test_attack(unittest.TestCase):
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
         self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
                                            self.items_state_obj, **self.rooms_ini_config_obj.sections)
-        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
-                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj,
+                                         self.doors_state_obj, self.items_state_obj)
         self.command_processor_obj = command_processor(self.game_state_obj)
         self.game_state_obj.character_name = 'Niath'
         self.game_state_obj.character_class = 'Warrior'
@@ -39,7 +39,8 @@ class test_attack(unittest.TestCase):
         self.game_state_obj.character.equip_weapon(self.items_state_obj.get('Longsword'))
         self.game_state_obj.character.equip_armor(self.items_state_obj.get('Studded_Leather'))
         self.game_state_obj.character.equip_shield(self.items_state_obj.get('Steel_Shield'))
-        (_, self.gold_coin_obj) = self.command_processor_obj.game_state.rooms_state.cursor.container_here.get('Gold_Coin')
+        (_, self.gold_coin_obj) = \
+            self.command_processor_obj.game_state.rooms_state.cursor.container_here.get('Gold_Coin')
 
     def test_attack_1(self):
         self.command_processor_obj.process('unequip longsword')
@@ -68,14 +69,16 @@ class test_attack(unittest.TestCase):
         while not len(results) or not isinstance(results[-1], various_commands_foe_death):
             self.setUp()
             results = self.command_processor_obj.process('attack kobold')
-            while not (isinstance(results[-1], be_attacked_by_command_character_death) or isinstance(results[-1], various_commands_foe_death)):
+            while not (isinstance(results[-1], be_attacked_by_command_character_death)
+                       or isinstance(results[-1], various_commands_foe_death)):
                 results += self.command_processor_obj.process('attack kobold')
             for index in range(0, len(results)):
                 command_results_obj = results[index]
                 if isinstance(command_results_obj, attack_command_attack_hit):
                     self.assertEqual(results[index].creature_title, 'kobold')
                     self.assertTrue(isinstance(results[index].damage_done, int))
-                    self.assertRegex(results[index].message, r'Your attack on the kobold hit! You did [1-9][0-9]* damage.( The kobold turns to attack!)?')
+                    self.assertRegex(results[index].message, r'Your attack on the kobold hit! You did [1-9][0-9]* '
+                                                             r'damage.( The kobold turns to attack!)?')
                 elif isinstance(command_results_obj, attack_command_attack_missed):
                     self.assertEqual(results[index].creature_title, 'kobold')
                     self.assertEqual(results[index].message, 'Your attack on the kobold missed. It turns to attack!')
@@ -86,7 +89,8 @@ class test_attack(unittest.TestCase):
                     self.assertEqual(results[index].creature_title, 'kobold')
                     self.assertTrue(isinstance(results[index].damage_done, int))
                     self.assertTrue(isinstance(results[index].hit_points_left, int))
-                    self.assertRegex(results[index].message, r'The kobold attacks! Their attack hits. They did [0-9]+ damage! You have [0-9]+ hit points left.')
+                    self.assertRegex(results[index].message, r'The kobold attacks! Their attack hits. They did [0-9]+ '
+                                                             r'damage! You have [0-9]+ hit points left.')
                 elif isinstance(command_results_obj, various_commands_foe_death):
                     self.assertEqual(results[index].creature_title, 'kobold')
                     self.assertRegex(results[index].message, r'The kobold is slain.')
@@ -98,7 +102,8 @@ class test_attack(unittest.TestCase):
                                                r'(attack_command_attack_hit various_commands_foe_death'
                                                r'|be_attacked_by_command_character_death)')
         self.assertIsInstance(self.game_state_obj.rooms_state.cursor.container_here, corpse)
-        corpse_belonging_list = sorted(self.game_state_obj.rooms_state.cursor.container_here.items(), key=operator.itemgetter(0))
+        corpse_belonging_list = sorted(self.game_state_obj.rooms_state.cursor.container_here.items(),
+                                       key=operator.itemgetter(0))
         self.gold_coin_obj = self.game_state_obj.items_state.get('Gold_Coin')
         health_potion_obj = self.game_state_obj.items_state.get('Health_Potion')
         short_sword_obj = self.game_state_obj.items_state.get('Short_Sword')
@@ -126,8 +131,8 @@ class test_begin_game_command(unittest.TestCase):
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
         self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
                                            self.items_state_obj, **self.rooms_ini_config_obj.sections)
-        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
-                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj,
+                                         self.doors_state_obj, self.items_state_obj)
         self.command_processor_obj = command_processor(self.game_state_obj)
 
     def test_begin_game_1(self):
@@ -135,7 +140,9 @@ class test_begin_game_command(unittest.TestCase):
         self.assertIsInstance(result[0], begin_game_command_name_or_class_not_set)
         self.assertEqual(result[0].character_name, None)
         self.assertEqual(result[0].character_class, None)
-        self.assertEqual(result[0].message, "You need to set your character name and class before you begin the game. Use SET NAME <name> to set your name and SET CLASS <Warrior, Thief, Mage or Priest> to select your class.")
+        self.assertEqual(result[0].message, "You need to set your character name and class before you begin the game. "
+                                            "Use SET NAME <name> to set your name and SET CLASS <Warrior, Thief, Mage "
+                                            "or Priest> to select your class.")
 
     def test_begin_game_2(self):
         self.command_processor_obj.process('set class to Warrior')
@@ -143,7 +150,8 @@ class test_begin_game_command(unittest.TestCase):
         self.assertIsInstance(result[0], begin_game_command_name_or_class_not_set)
         self.assertEqual(result[0].character_name, None)
         self.assertEqual(result[0].character_class, 'Warrior')
-        self.assertEqual(result[0].message, "You need to set your character name before you begin the game. Use SET NAME <name> to set your name.")
+        self.assertEqual(result[0].message, "You need to set your character name before you begin the game. Use SET "
+                                            "NAME <name> to set your name.")
 
     def test_begin_game_3(self):
         self.command_processor_obj.process('set name to Kerne')
@@ -151,7 +159,8 @@ class test_begin_game_command(unittest.TestCase):
         self.assertIsInstance(result[0], begin_game_command_name_or_class_not_set)
         self.assertEqual(result[0].character_name, 'Kerne')
         self.assertEqual(result[0].character_class, None)
-        self.assertEqual(result[0].message, "You need to set your character class before you begin the game. Use SET CLASS <Warrior, Thief, Mage or Priest> to select your class.")
+        self.assertEqual(result[0].message, "You need to set your character class before you begin the game. Use SET "
+                                            "CLASS <Warrior, Thief, Mage or Priest> to select your class.")
 
     def test_begin_game_4(self):
         self.command_processor_obj.process('set class to Warrior')
@@ -168,6 +177,10 @@ class test_begin_game_command(unittest.TestCase):
         self.assertIsInstance(result[0], begin_game_command_game_begins)
         self.assertEqual(result[0].message, 'The game has begun!')
         self.assertTrue(self.command_processor_obj.game_state.game_has_begun)
+        self.assertIsInstance(result[1], various_commands_entered_room)
+        self.assertIsInstance(result[1].room_obj, room)
+        self.assertEqual(result[1].message, 'Entrance room. You see a wooden chest here. There is a kobold in the '
+                                            'room. You see a mana potion and 2 health potions on the floor.')
 
 
 class test_cast_spell_command(unittest.TestCase):
@@ -188,8 +201,8 @@ class test_cast_spell_command(unittest.TestCase):
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
         self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
                                            self.items_state_obj, **self.rooms_ini_config_obj.sections)
-        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
-                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj,
+                                         self.doors_state_obj, self.items_state_obj)
         self.command_processor_obj = command_processor(self.game_state_obj)
 
     def test_cast_spell1(self):
@@ -226,8 +239,8 @@ class test_cast_spell_command(unittest.TestCase):
         self.assertEqual(result[0].mana_point_total, self.command_processor_obj.game_state.character.mana_point_total)
         self.assertEqual(result[0].spell_mana_cost, Spell_Mana_Cost)
         self.assertEqual(result[0].message,  "You don't have enough mana points to cast a spell. Casting a spell costs "
-                                            f'{Spell_Mana_Cost} mana points. Your mana points are {current_mana_points}/'
-                                            f'{mana_point_total}.')
+                                            f'{Spell_Mana_Cost} mana points. Your mana points are '
+                                            f'{current_mana_points}/{mana_point_total}.')
 
     def test_cast_spell4(self):
         self.command_processor_obj.game_state.character_name = 'Mialee'
@@ -272,8 +285,8 @@ class test_close_command(unittest.TestCase):
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
         self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
                                            self.items_state_obj, **self.rooms_ini_config_obj.sections)
-        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
-                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj,
+                                         self.doors_state_obj, self.items_state_obj)
         self.command_processor_obj = command_processor(self.game_state_obj)
         self.command_processor_obj.game_state.character_name = 'Niath'
         self.command_processor_obj.game_state.character_class = 'Warrior'
@@ -282,7 +295,7 @@ class test_close_command(unittest.TestCase):
         self.chest_obj.is_closed = True
         self.chest_obj.is_locked = False
         self.chest_title = self.chest_obj.title
-        self.door_obj = self.command_processor_obj.game_state.rooms_state.cursor.north_exit
+        self.door_obj = self.command_processor_obj.game_state.rooms_state.cursor.north_door
         self.door_obj.is_closed = True
         self.door_title = self.door_obj.title
 
@@ -348,8 +361,8 @@ class test_command_processor_process(unittest.TestCase):
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
         self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
                                            self.items_state_obj, **self.rooms_ini_config_obj.sections)
-        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
-                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj,
+                                         self.doors_state_obj, self.items_state_obj)
         self.command_processor_obj = command_processor(self.game_state_obj)
 
     def test_command_not_recognized_in_pregame(self):
@@ -367,13 +380,13 @@ class test_command_processor_process(unittest.TestCase):
         result = self.command_processor_obj.process('juggle')
         self.assertIsInstance(result[0], command_not_recognized)
         self.assertEqual(result[0].command, 'juggle')
-        self.assertEqual(result[0].allowed_commands, {'attack', 'cast_spell', 'close', 'drink', 'drop', 'equip', 'exit',
-                                                      'inventory', 'leave', 'look_at', 'lock', 'inspect', 'open', 
-                                                      'pick_lock', 'pick_up', 'put', 'quit', 'status', 'take', 
+        self.assertEqual(result[0].allowed_commands, {'attack', 'cast_spell', 'close', 'drink', 'drop', 'equip',
+                                                      'leave', 'inventory', 'leave', 'look_at', 'lock', 'inspect',
+                                                      'open', 'pick_lock', 'pick_up', 'put', 'quit', 'status', 'take',
                                                       'unequip', 'unlock'})
         self.assertEqual(result[0].message, "Command 'juggle' not recognized. Commands allowed during the game are "
-                                            "ATTACK, CAST SPELL, CLOSE, DRINK, DROP, EQUIP, EXIT, INSPECT, INVENTORY, "
-                                            "LEAVE, LOCK, LOOK AT, OPEN, PICK LOCK, PICK UP, PUT, QUIT, STATUS, TAKE, "
+                                            "ATTACK, CAST SPELL, CLOSE, DRINK, DROP, EQUIP, INSPECT, INVENTORY, LEAVE, "
+                                            "LOCK, LOOK AT, OPEN, PICK LOCK, PICK UP, PUT, QUIT, STATUS, TAKE, "
                                             "UNEQUIP, and UNLOCK.")
 
     def test_command_not_allowed_in_pregame(self):
@@ -391,14 +404,14 @@ class test_command_processor_process(unittest.TestCase):
         result = self.command_processor_obj.process('reroll')
         self.assertIsInstance(result[0], command_not_allowed_now)
         self.assertEqual(result[0].command, 'reroll')
-        self.assertEqual(result[0].allowed_commands, {'attack', 'cast_spell', 'close', 'drink', 'drop', 'equip', 'exit',
-                                                      'inventory', 'leave', 'look_at', 'lock', 'inspect', 'open', 
-                                                      'pick_lock', 'pick_up', 'quit', 'put', 'quit', 'status', 'take', 
-                                                      'unequip', 'unlock'})
+        self.assertEqual(result[0].allowed_commands, {'attack', 'cast_spell', 'close', 'drink', 'drop', 'equip',
+                                                      'leave', 'inventory', 'leave', 'look_at', 'lock', 'inspect',
+                                                      'open', 'pick_lock', 'pick_up', 'quit', 'put', 'quit', 'status',
+                                                      'take', 'unequip', 'unlock'})
         self.assertEqual(result[0].message, "Command 'reroll' not allowed during the game. Commands allowed during "
-                                            "the game are ATTACK, CAST SPELL, CLOSE, DRINK, DROP, EQUIP, EXIT, "
-                                            "INSPECT, INVENTORY, LEAVE, LOCK, LOOK AT, OPEN, PICK LOCK, PICK UP, PUT, "
-                                            "QUIT, STATUS, TAKE, UNEQUIP, and UNLOCK.")
+                                            "the game are ATTACK, CAST SPELL, CLOSE, DRINK, DROP, EQUIP, INSPECT, "
+                                            "INVENTORY, LEAVE, LOCK, LOOK AT, OPEN, PICK LOCK, PICK UP, PUT, QUIT, "
+                                            "STATUS, TAKE, UNEQUIP, and UNLOCK.")
 
 
 class test_drink_command(unittest.TestCase):
@@ -452,7 +465,8 @@ class test_drink_command(unittest.TestCase):
         result = self.command_processor_obj.process('drink health potion')
         self.assertIsInstance(result[0], various_commands_underwent_healing_effect)
         self.assertEqual(result[0].amount_healed, 10)
-        self.assertRegex(result[0].message, r"You regained 10 hit points. You're fully healed! Your hit points are (\d+)/\1.")
+        self.assertRegex(result[0].message, r"You regained 10 hit points. You're fully healed! Your hit points are "
+                                            r"(\d+)/\1.")
 
     def test_drink4(self):
         self.command_processor_obj.game_state.character_name = 'Niath'
@@ -489,7 +503,8 @@ class test_drink_command(unittest.TestCase):
         self.assertEqual(mana_potion_obj.mana_points_recovered, 20)
         self.assertIsInstance(result[0], drink_command_drank_mana_potion)
         self.assertEqual(result[0].amount_regained, 10)
-        self.assertRegex(result[0].message, r'You regained 10 mana points. You have full mana points! Your mana points are (\d+)/\1.')
+        self.assertRegex(result[0].message, r'You regained 10 mana points. You have full mana points! Your mana '
+                                            r'points are (\d+)/\1.')
 
     def test_drink7(self):
         self.command_processor_obj.game_state.character_name = 'Mialee'
@@ -566,8 +581,8 @@ class test_drop_command(unittest.TestCase):
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
         self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
                                            self.items_state_obj, **self.rooms_ini_config_obj.sections)
-        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
-                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj,
+                                         self.doors_state_obj, self.items_state_obj)
         self.command_processor_obj = command_processor(self.game_state_obj)
         self.command_processor_obj.game_state.character_name = 'Niath'
         self.command_processor_obj.game_state.character_class = 'Warrior'
@@ -579,7 +594,8 @@ class test_drop_command(unittest.TestCase):
         result = self.command_processor_obj.process('drop the')  # check
         self.assertIsInstance(result[0], command_bad_syntax)
         self.assertEqual(result[0].command, 'DROP')
-        self.assertEqual(result[0].message, "DROP command: bad syntax. Should be 'DROP <item name>' or 'DROP <number> <item name>'."),
+        self.assertEqual(result[0].message, "DROP command: bad syntax. Should be 'DROP <item name>' or 'DROP <number> "
+                                            "<item name>'."),
 
     def test_drop_2(self):
         result = self.command_processor_obj.process('drop a gold coins')  # check
@@ -599,7 +615,8 @@ class test_drop_command(unittest.TestCase):
         self.assertEqual(result[0].item_title, 'gold coin')
         self.assertEqual(result[0].amount_attempted, 45)
         self.assertEqual(result[0].amount_had, 30)
-        self.assertEqual(result[0].message, "You can't drop 45 gold coins. You only have 30 gold coins in your inventory.")
+        self.assertEqual(result[0].message, "You can't drop 45 gold coins. You only have 30 gold coins in your "
+                                            "inventory.")
 
     def test_drop_5(self):
         result = self.command_processor_obj.process('drop 15 gold coins')  # check
@@ -608,7 +625,8 @@ class test_drop_command(unittest.TestCase):
         self.assertEqual(result[0].amount_dropped, 15)
         self.assertEqual(result[0].amount_on_floor, 15)
         self.assertEqual(result[0].amount_left, 15)
-        self.assertEqual(result[0].message, 'You dropped 15 gold coins. You see 15 gold coins here. You have 15 gold coins left.')
+        self.assertEqual(result[0].message, 'You dropped 15 gold coins. You see 15 gold coins here. You have 15 gold '
+                                            'coins left.')
 
         result = self.command_processor_obj.process('drop 14 gold coins')  # check
         self.assertIsInstance(result[0], drop_command_dropped_item)
@@ -616,7 +634,8 @@ class test_drop_command(unittest.TestCase):
         self.assertEqual(result[0].amount_dropped, 14)
         self.assertEqual(result[0].amount_on_floor, 29)
         self.assertEqual(result[0].amount_left, 1)
-        self.assertEqual(result[0].message, 'You dropped 14 gold coins. You see 29 gold coins here. You have 1 gold coin left.')
+        self.assertEqual(result[0].message, 'You dropped 14 gold coins. You see 29 gold coins here. You have 1 gold '
+                                            'coin left.')
 
     def test_drop_6(self):
         self.command_processor_obj.process('pick up 29 gold coins')  # check
@@ -626,7 +645,8 @@ class test_drop_command(unittest.TestCase):
         self.assertEqual(result[0].amount_dropped, 1)
         self.assertEqual(result[0].amount_on_floor, 1)
         self.assertEqual(result[0].amount_left, 29)
-        self.assertEqual(result[0].message, 'You dropped a gold coin. You see a gold coin here. You have 29 gold coins left.')
+        self.assertEqual(result[0].message, 'You dropped a gold coin. You see a gold coin here. You have 29 gold '
+                                            'coins left.')
 
 
 class test_equip_command_1(unittest.TestCase):
@@ -647,8 +667,8 @@ class test_equip_command_1(unittest.TestCase):
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
         self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
                                            self.items_state_obj, **self.rooms_ini_config_obj.sections)
-        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
-                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj,
+                                         self.doors_state_obj, self.items_state_obj)
         self.command_processor_obj = command_processor(self.game_state_obj)
         self.longsword_obj = self.command_processor_obj.game_state.items_state.get('Longsword')
         self.scale_mail_obj = self.command_processor_obj.game_state.items_state.get('Scale_Mail')
@@ -707,7 +727,8 @@ class test_equip_command_1(unittest.TestCase):
         self.assertIsInstance(result[0], equip_command_item_equipped)
         self.assertEqual(result[0].item_title, 'magic wand')
         self.assertEqual(result[0].item_type, 'wand')
-        self.assertRegex(result[0].message, r"^You're now using a magic wand. Your attack bonus is [\d+-]+, and your damage is [\dd+-]+.$")
+        self.assertRegex(result[0].message, r"^You're now using a magic wand. Your attack bonus is [\d+-]+, and your "
+                                            r"damage is [\dd+-]+.$")
 
     def test_equip_6(self):
         self.command_processor_obj.process('equip magic wand')
@@ -719,7 +740,8 @@ class test_equip_command_1(unittest.TestCase):
         self.assertIsInstance(result[1], equip_command_item_equipped)
         self.assertEqual(result[1].item_title, 'magic wand 2')
         self.assertEqual(result[1].item_type, 'wand')
-        self.assertRegex(result[1].message, r"^You're now using a magic wand 2. Your attack bonus is [\d+-]+, and your damage is [\dd+-]+.$")
+        self.assertRegex(result[1].message, r"^You're now using a magic wand 2. Your attack bonus is [\d+-]+, and "
+                                            r"your damage is [\dd+-]+.$")
 
 
 class test_equip_command_2(unittest.TestCase):
@@ -740,8 +762,8 @@ class test_equip_command_2(unittest.TestCase):
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
         self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
                                            self.items_state_obj, **self.rooms_ini_config_obj.sections)
-        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj,
-                                                          self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj,
+                                         self.doors_state_obj, self.items_state_obj)
         self.command_processor_obj = command_processor(self.game_state_obj)
         self.buckler_obj = self.command_processor_obj.game_state.items_state.get('Buckler')
         self.longsword_obj = self.command_processor_obj.game_state.items_state.get('Longsword')
@@ -766,7 +788,8 @@ class test_equip_command_2(unittest.TestCase):
         result = self.command_processor_obj.process('equip longsword')
         self.assertIsInstance(result[0], equip_command_item_equipped)
         self.assertEqual(result[0].item_title, 'longsword')
-        self.assertRegex(result[0].message, r"^You're now wielding a longsword. Your attack bonus is [\d+-]+, and your damage is [\dd+-]+.$")
+        self.assertRegex(result[0].message, r"^You're now wielding a longsword. Your attack bonus is [\d+-]+, and "
+                                            r"your damage is [\dd+-]+.$")
         result = self.command_processor_obj.process('equip mace')
         self.assertIsInstance(result[0], equip_or_unequip_command_item_unequipped)
         self.assertEqual(result[0].item_title, 'longsword')
@@ -775,7 +798,8 @@ class test_equip_command_2(unittest.TestCase):
         self.assertIsInstance(result[1], equip_command_item_equipped)
         self.assertEqual(result[1].item_title, 'mace')
         self.assertEqual(result[1].item_type, 'weapon')
-        self.assertRegex(result[1].message, r"^You're now wielding a mace. Your attack bonus is [\d+-]+, and your damage is [\dd+-]+.$")
+        self.assertRegex(result[1].message, r"^You're now wielding a mace. Your attack bonus is [\d+-]+, and your "
+                                            r"damage is [\dd+-]+.$")
 
     def test_equip_3(self):
         result = self.command_processor_obj.process('equip scale mail armor')

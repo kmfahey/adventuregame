@@ -26,8 +26,10 @@ class command_bad_syntax(game_state_message):
 
     @property
     def message(self):
-        syntax_options = tuple(f"'{self.command.upper()} {syntax_option}'" if syntax_option else f"'{self.command.upper()}'"
-                                   for syntax_option in self.proper_syntax_options)
+        syntax_options = tuple(f"'{self.command.upper()} {syntax_option}'"
+                                if syntax_option
+                                else f"'{self.command.upper()}'"
+                                for syntax_option in self.proper_syntax_options)
         if len(syntax_options) == 1:
             proper_syntax_options_str = syntax_options[0]
         elif len(syntax_options) == 2:
@@ -304,7 +306,8 @@ class drink_command_drank_mana_potion_when_not_a_spellcaster(game_state_message)
 class drink_command_tried_to_drink_more_than_possessed(game_state_message):
     __slots__ = 'item_title', 'attempted_qty', 'possessed_qty'
 
-    message = property(fget=lambda self: f"You can't drink {self.attempted_qty} {self.item_title}s. You only have {self.possessed_qty} of them.")
+    message = property(fget=lambda self: f"You can't drink {self.attempted_qty} {self.item_title}s. You only have "
+                                          "{self.possessed_qty} of them.")
 
     def __init__(self, item_title, attempted_qty, possessed_qty):
         self.item_title = item_title
@@ -425,9 +428,11 @@ class drop_command_trying_to_drop_more_than_you_have(game_state_message):
     @property
     def message(self):
         if self.amount_attempted > 1 and self.amount_had == 1:
-            return f"You can't drop {self.amount_attempted} {self.item_title}s. You only have {self.amount_had} {self.item_title} in your inventory."
+            return f"You can't drop {self.amount_attempted} {self.item_title}s. You only have {self.amount_had} "
+                    "{self.item_title} in your inventory."
         else:   # self.amount_attempted > 1 and self.amount_had > 1
-            return f"You can't drop {self.amount_attempted} {self.item_title}s. You only have {self.amount_had} {self.item_title}s in your inventory."
+            return f"You can't drop {self.amount_attempted} {self.item_title}s. You only have {self.amount_had} "
+                    "{self.item_title}s in your inventory."
 
     def __init__(self, item_title, amount_attempted, amount_had):
         self.item_title = item_title
@@ -451,7 +456,8 @@ class equip_command_class_cant_use_item(game_state_message):
 
 
 class equip_command_item_equipped(game_state_message):
-    __slots__ = 'item_title', 'item_type', 'changed_value_1', 'value_type_1', 'changed_value_2', 'value_type_2', 'change_text'
+    __slots__ = ('item_title', 'item_type', 'changed_value_1', 'value_type_1', 'changed_value_2', 'value_type_2', 
+                'change_text')
 
     @property
     def message(self):
@@ -471,7 +477,8 @@ class equip_command_item_equipped(game_state_message):
             return_str += ' ' + self.change_text
         return return_str
 
-    def __init__(self, item_title, item_type, changed_value_1=None, value_type_1=None, changed_value_2=None, value_type_2=None, change_text=''):
+    def __init__(self, item_title, item_type, changed_value_1=None, value_type_1=None, changed_value_2=None, 
+                       value_type_2=None, change_text=''):
         self.item_title = item_title
         self.item_type = item_type
         self.changed_value_1 = changed_value_1
@@ -491,7 +498,8 @@ class equip_command_no_such_item_in_inventory(game_state_message):
 
 
 class equip_or_unequip_command_item_unequipped(game_state_message):
-    __slots__ = 'item_title', 'item_type', 'changed_value_1', 'value_type_1', 'changed_value_2', 'value_type_2', 'change_text',
+    __slots__ = ('item_title', 'item_type', 'changed_value_1', 'value_type_1', 'changed_value_2', 'value_type_2', 
+                'change_text')
 
     @property
     def message(self):
@@ -511,7 +519,8 @@ class equip_or_unequip_command_item_unequipped(game_state_message):
         else:
             return return_str
 
-    def __init__(self, item_title, item_type, changed_value_1=None, value_type_1=None, changed_value_2=None, value_type_2=None, change_text=''):
+    def __init__(self, item_title, item_type, changed_value_1=None, value_type_1=None, changed_value_2=None, 
+                       value_type_2=None, change_text=''):
         self.item_title = item_title
         self.item_type = item_type
         self.changed_value_1 = changed_value_1
@@ -521,7 +530,7 @@ class equip_or_unequip_command_item_unequipped(game_state_message):
         self.change_text = change_text
 
 
-class exit_command_exitted_room(game_state_message):
+class leave_command_left_room(game_state_message):
     __slots__ = 'compass_dir', 'portal_type'
 
     message = property(fget=lambda self: f'You leave the room via the {self.compass_dir} {self.portal_type}.')
@@ -531,13 +540,23 @@ class exit_command_exitted_room(game_state_message):
         self.portal_type = portal_type
 
 
+class leave_command_won_the_game(game_state_message):
+    __slots__ = ()
+
+    message = property(fget=lambda self: f'You found the exit to the dungeon. You have won the game!')
+
+    def __init__(self):
+        pass
+
+
 class inspect_command_found_door_or_doorway(game_state_message):
     __slots__ = 'compass_dir', 'door_obj'
 
     @property
     def message(self):
         door_or_doorway = 'doorway' if self.door_obj.door_type == 'doorway' else 'door'
-        descr_str = f'This {door_or_doorway} is set into the {self.compass_dir} wall of the room. {self.door_obj.description}'
+        descr_str = (f'This {door_or_doorway} is set into the {self.compass_dir} wall of the room. '
+                      '{self.door_obj.description}')
         if self.door_obj.closeable:
             if self.door_obj.is_closed and self.door_obj.is_locked:
                 descr_str += ' It is closed and locked.'
@@ -611,7 +630,8 @@ class inspect_command_found_container_here(game_state_message):
         self.is_closed = container_obj.is_closed
         self.container_type = container_obj.container_type
         if self.is_locked is True and self.is_closed is False:
-            raise internal_exception(f'Container {container_obj.internal_name} has is_locked = True and is_open = False, invalid combination of parameters.')
+            raise internal_exception(f'Container {container_obj.internal_name} has is_locked = True and is_open = '
+                                      'False, invalid combination of parameters.')
 
 
 class inspect_command_found_creature_here(game_state_message):
@@ -803,7 +823,8 @@ class pick_up_command_item_not_found(game_state_message):
     def message(self):
         item_pluralizer = 's' if self.amount_attempted > 1 else ''
         if self.items_here:
-            items_here_str_tuple = tuple(f'a {item_title}' if item_count == 1 else f'{item_count} {item_title}s' for item_count, item_title in self.items_here)
+            items_here_str_tuple = tuple(f'a {item_title}' if item_count == 1 else f'{item_count} {item_title}s'
+                                         for item_count, item_title in self.items_here)
             if len(items_here_str_tuple) == 1:
                 items_here_str = items_here_str_tuple[0]
             elif len(items_here_str_tuple) == 2:
@@ -830,7 +851,8 @@ class pick_up_command_item_picked_up(game_state_message):
         elif self.pick_up_amount == 1 and self.amount_had > 1:
             return f'You picked up a {self.item_title}. You have {self.amount_had} {self.item_title}s.'
         else:
-            return f'You picked up {self.pick_up_amount} {self.item_title}s. You have {self.amount_had} {self.item_title}s.'
+            return f'You picked up {self.pick_up_amount} {self.item_title}s. You have {self.amount_had} '
+                   f'{self.item_title}s.'
 
     def __init__(self, item_title, pick_up_amount, amount_had):
         self.item_title = item_title
@@ -849,7 +871,8 @@ class pick_up_command_quantity_unclear(game_state_message):
 class pick_up_command_trying_to_pick_up_more_than_is_present(game_state_message):
     __slots__ = 'item_title', 'amount_attempted', 'amount_present'
 
-    message = property(fget=lambda self: f"You can't pick up {self.amount_attempted} {self.item_title}s. Only {self.amount_present} is here.")
+    message = property(fget=lambda self: f"You can't pick up {self.amount_attempted} {self.item_title}s. Only "
+                                          "{self.amount_present} is here.")
 
     def __init__(self, item_title, amount_attempted, amount_present):
         self.item_title = item_title
@@ -871,10 +894,12 @@ class put_command_amount_put(game_state_message):
             return (f'You put {self.amount_put} {self.item_title}{amount_put_pluralizer} in the {self.container_title}.'
                     f' You have no more {self.item_title}{amount_left_pluralizer}.')
         elif self.amount_left and self.container_type == 'corpse':
-            return (f"You put {self.amount_put} {self.item_title}{amount_put_pluralizer} on the {self.container_title}'s person."
+            return (f"You put {self.amount_put} {self.item_title}{amount_put_pluralizer} on the "
+                     "{self.container_title}'s person."
                     f' You have {self.amount_left} {self.item_title}{amount_left_pluralizer} left.')
         else:  # not self.amount_left and self.container_type == 'corpse':
-            return (f"You put {self.amount_put} {self.item_title}{amount_put_pluralizer} on the {self.container_title}'s person."
+            return (f"You put {self.amount_put} {self.item_title}{amount_put_pluralizer} on the "
+                     "{self.container_title}'s person."
                     f' You have no more {self.item_title}{amount_left_pluralizer}.')
 
     def __init__(self, item_title, container_title, container_type, amount_put, amount_left):
@@ -1097,7 +1122,8 @@ class take_command_quantity_unclear(game_state_message):
 class take_command_trying_to_take_more_than_is_present(game_state_message):
     __slots__ = 'container_title', 'container_type', 'item_title', 'amount_attempted', 'amount_present'
 
-    message = property(fget=lambda self: f"You can't take {self.amount_attempted} {self.item_title}s from the {self.container_title}. Only {self.amount_present} is there.")
+    message = property(fget=lambda self: f"You can't take {self.amount_attempted} {self.item_title}s from the "
+                                          "{self.container_title}. Only {self.amount_present} is there.")
 
     def __init__(self, container_title, container_type, item_title, amount_attempted, amount_present):
         self.container_title = container_title
@@ -1115,7 +1141,8 @@ class unequip_command_item_not_equipped(game_state_message):
         item_usage_verb = usage_verb(self.item_asked_type, gerund=True)
         indirect_article = 'a ' if self.item_asked_type != 'armor' else ''
         if self.item_asked_type and self.item_present_title:
-            return f"You're not {item_usage_verb} {indirect_article}{self.item_asked_title}. You're {item_usage_verb} {indirect_article}{self.item_present_title}."
+            return f"You're not {item_usage_verb} {indirect_article}{self.item_asked_title}. You're {item_usage_verb} "
+                   f"{indirect_article}{self.item_present_title}."
         elif self.item_asked_type:
             return f"You're not {item_usage_verb} {indirect_article}{self.item_asked_title}."
         else:
@@ -1179,7 +1206,8 @@ class various_commands_container_not_found(game_state_message):
     @property
     def message(self):
         if self.container_present_title is not None:
-            return f'There is no {self.container_not_found_title} here. However, there *is* a {self.container_present_title} here.'
+            return f'There is no {self.container_not_found_title} here. However, there *is* a '
+                    '{self.container_present_title} here.'
         else:
             return f'There is no {self.container_not_found_title} here.'
 
@@ -1196,11 +1224,53 @@ class various_commands_door_not_present(game_state_message):
         if self.portal_type is not None:
             return f'This room does not have a {self.compass_dir} {self.portal_type}.'
         else:
-            return f'This room does not have a {self.compass_dir} exit.'
+            return f'This room does not have a {self.compass_dir} door.'
 
     def __init__(self, compass_dir, portal_type=None):
         self.compass_dir = compass_dir
         self.portal_type = portal_type
+
+
+class various_commands_entered_room(game_state_message):
+    __slots__ = 'room_obj',
+
+    @property
+    def message(self):
+        message_list = list()
+        message_list.append(self.room_obj.description)
+        if self.room_obj.container_here is not None:
+            message_list.append(f'You see a {self.room_obj.container_here.title} here.')
+        if self.room_obj.creature_here is not None:
+            message_list.append(f'There is a {self.room_obj.creature_here.title} in the room.')
+        if self.room_obj.items_here is not None:
+            room_items = list()
+            for item_qty, item_obj in self.room_obj.items_here.values():
+                quantifier = 'a' if item_qty == 1 else str(item_qty)
+                pluralizer = '' if item_qty == 1 else 's'
+                room_items.append(quantifier + ' ' + item_obj.title + pluralizer)
+            if len(room_items) == 1:
+                items_here_str = room_items[0]
+            elif len(room_items) == 2:
+                items_here_str = ' and '.join(room_items)
+            else:
+                items_here_str = ', '.join(room_items[:-1]) + ' and ' + room_items[-1]
+            message_list.append(f'You see {items_here_str} on the floor.')
+        door_list = list()
+        for compass_dir in ('north', 'east', 'south', 'west'):
+            dir_attr = compass_dir + '_door'
+            door_obj = getattr(self.room_obj, dir_attr, None)
+            if door_obj is None:
+                continue
+            door_list.append(f'a {door_obj.title} to the {compass_dir}')
+        if len(door_list) == 1
+            door_str = 'There is {door_list[0]}.'
+        elif len(door_list) == 2:
+            door_str = 'There is {door_list
+
+        return ' '.join(message_list)
+
+    def __init__(self, room_obj):
+        self.room_obj = room_obj
 
 
 class various_commands_foe_death(game_state_message):

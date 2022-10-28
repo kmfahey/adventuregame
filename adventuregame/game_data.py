@@ -244,6 +244,15 @@ door_type=iron_door
 is_locked=true
 is_closed=true
 closeable=true
+
+[Room_3,6_x_Exit]
+title=iron door
+description=This door is bound in iron plates with a small barred window set up high.
+door_type=iron_door
+is_exit=true
+is_locked=true
+is_closed=true
+closeable=true
 """
 
 items_ini_config_text = """
@@ -445,101 +454,101 @@ weight=0.16
 
 rooms_ini_config_text = """
 [Room_2,1]
-description=Antechamber of dungeon
-entrance=true
-north_exit=Room_2,2
+description=Antechamber of dungeon.
+is_entrance=true
+north_door=Room_2,2
 
 [Room_1,2]
-description=Dungeon room
-east_exit=Room_2,2
-north_exit=Room_1,3
+description=Dungeon room.
+east_door=Room_2,2
+north_door=Room_1,3
 
 [Room_2,2]
-description=Dungeon room
-east_exit=Room_3,2
-south_exit=Room_2,1
-west_exit=Room_1,2
+description=Dungeon room.
+east_door=Room_3,2
+south_door=Room_2,1
+west_door=Room_1,2
 
 [Room_3,2]
-description=Dungeon room
-east_exit=Room_4,2
-north_exit=Room_3,3
-west_exit=Room_2,2
+description=Dungeon room.
+east_door=Room_4,2
+north_door=Room_3,3
+west_door=Room_2,2
 
 [Room_4,2]
-description=Dungeon room
-north_exit=Room_4,3
-west_exit=Room_3,2
+description=Dungeon room.
+north_door=Room_4,3
+west_door=Room_3,2
 
 [Room_1,3]
-description=Dungeon room
-east_exit=Room_2,2
-south_exit=Room_1,2
+description=Dungeon room.
+east_door=Room_2,2
+south_door=Room_1,2
 
 [Room_2,3]
-description=Dungeon room
-north_exit=Room_2,4
-west_exit=Room_1,3
+description=Dungeon room.
+north_door=Room_2,4
+west_door=Room_1,3
 
 [Room_3,3]
-description=Dungeon room
-east_exit=Room_4,2
-north_exit=Room_3,4
-south_exit=Room_3,2
+description=Dungeon room.
+east_door=Room_4,2
+north_door=Room_3,4
+south_door=Room_3,2
 
 [Room_4,3]
-description=Dungeon room
-north_exit=Room_4,4
-south_exit=Room_4,2
-west_exit=Room_3,3
+description=Dungeon room.
+north_door=Room_4,4
+south_door=Room_4,2
+west_door=Room_3,3
 
 [Room_1,4]
-description=Dungeon room
-east_exit=Room_2,3
-north_exit=Room_1,5
+description=Dungeon room.
+east_door=Room_2,3
+north_door=Room_1,5
 
 [Room_2,4]
-description=Dungeon room
-east_exit=Room_3,4
-north_exit=Room_2,5
-south_exit=Room_2,3
-west_exit=Room_1,5
+description=Dungeon room.
+east_door=Room_3,4
+north_door=Room_2,5
+south_door=Room_2,3
+west_door=Room_1,5
 
 [Room_3,4]
-description=Dungeon room
-south_exit=Room_3,3
-west_exit=Room_2,4
+description=Dungeon room.
+south_door=Room_3,3
+west_door=Room_2,4
 
 [Room_4,4]
-description=Dungeon room
-north_exit=Room_4,5
-south_exit=Room_4,3
+description=Dungeon room.
+north_door=Room_4,5
+south_door=Room_4,3
 
 [Room_1,5]
-description=Dungeon room
-east_exit=Room_2,5
-south_exit=Room_1,4
+description=Dungeon room.
+east_door=Room_2,5
+south_door=Room_1,4
 
 [Room_2,5]
-description=Dungeon room
-east_exit=Room_3,5
-south_exit=Room_2,4
-west_exit=Room_1,5
+description=Dungeon room.
+east_door=Room_3,5
+south_door=Room_2,4
+west_door=Room_1,5
 
 [Room_3,5]
-description=Dungeon room
-east_exit=Room_4,5
-north_exit=Room_3,6
-west_exit=Room_2,5
+description=Dungeon room.
+east_door=Room_4,5
+north_door=Room_3,6
+west_door=Room_2,5
 
 [Room_4,5]
-description=Dungeon room
-south_exit=Room_4,4
-west_exit=Room_3,5
+description=Dungeon room.
+south_door=Room_4,4
+west_door=Room_3,5
 
 [Room_3,6]
-description=Dungeon exit
-exit=true
-south_exit=Room_3,5
-
+description=Dungeon exit.
+is_exit=true
+south_door=Room_3,5
+north_door=Exit
 """

@@ -54,7 +54,8 @@ class state(abc.ABC):
     __abstractmethods__ = frozenset(('__init__',))
 
     def contains(self, item_internal_name):  # check
-        return any(item_internal_name == contained_item_obj.internal_name for contained_item_obj in self._contents.values())
+        return any(item_internal_name == contained_item_obj.internal_name
+                   for contained_item_obj in self._contents.values())
 
     def get(self, item_internal_name):  # check
         return self._contents[item_internal_name]
@@ -99,14 +100,16 @@ class items_multi_state(items_state):
             self._contents[item_internal_name] = (1, item_obj)
 
     def contains(self, item_internal_name):
-        return(any(contained_item_obj.internal_name == item_internal_name for _, contained_item_obj in self._contents.values()))
+        return(any(contained_item_obj.internal_name == item_internal_name
+                   for _, contained_item_obj in self._contents.values()))
 
     def set(self, item_internal_name, item_qty, item_obj):
         self._contents[item_internal_name] = item_qty, item_obj
 
     def add_one(self, item_internal_name, item_obj):
         if self.contains(item_internal_name):
-            self._contents[item_internal_name] = self._contents[item_internal_name][0] + 1, self._contents[item_internal_name][1]
+            self._contents[item_internal_name] = (self._contents[item_internal_name][0] + 1,
+                                                  self._contents[item_internal_name][1])
         else:
             self._contents[item_internal_name] = 1, item_obj
 
@@ -116,7 +119,8 @@ class items_multi_state(items_state):
         elif self._contents[item_internal_name][0] == 1:
             del self._contents[item_internal_name]
         else:
-            self._contents[item_internal_name] = self._contents[item_internal_name][0] - 1, self._contents[item_internal_name][1]
+            self._contents[item_internal_name] = (self._contents[item_internal_name][0] - 1,
+                                                  self._contents[item_internal_name][1])
 
 
 # This class doesn't subclass `state` because it re-implements every method.
@@ -127,11 +131,13 @@ class doors_state(object):
         self._contents = collections.defaultdict(dict)
         for door_internal_name, door_argd in dict_of_dicts.items():
             first_room_internal_name, second_room_internal_name = door_internal_name.split('_x_')
-            self._contents[first_room_internal_name][second_room_internal_name] = door.subclassing_factory(internal_name=door_internal_name, **door_argd)
+            self._contents[first_room_internal_name][second_room_internal_name] = \
+                door.subclassing_factory(internal_name=door_internal_name, **door_argd)
             pass
 
     def contains(self, first_room_internal_name, second_room_internal_name):  # tested
-        return first_room_internal_name in self._contents and second_room_internal_name in self._contents[first_room_internal_name]
+        return (first_room_internal_name in self._contents
+                and second_room_internal_name in self._contents[first_room_internal_name])
 
     def get(self, first_room_internal_name, second_room_internal_name):  # tested
         return self._contents[first_room_internal_name][second_room_internal_name]
@@ -200,9 +206,11 @@ class inventory(items_multi_state):  # has been tested
         total_weight_val = 0
         for item_name, (item_count, item_obj) in self._contents.items():
             if item_obj.weight <= 0:
-                raise internal_exception('item ' + item_obj.internal_name + ' has invalid weight ' + str(item_obj.weight) + ': is <= 0')
+                raise internal_exception('item ' + item_obj.internal_name
+                                         + ' has invalid weight ' + str(item_obj.weight) + ': is <= 0')
             elif item_count <= 0:
-                raise internal_exception('item ' + item_obj.internal_name + ' is stored with invalid count ' + str(item_count) + ': is <= 0')
+                raise internal_exception('item ' + item_obj.internal_name + ' is stored with invalid count '
+                                         + str(item_count) + ': is <= 0')
             total_weight_val += item_obj.weight * item_count
         return total_weight_val
 
@@ -267,9 +275,11 @@ class character(object):  # has been tested
 
     def _set_up_hit_points_and_mana_points(self, base_hit_points, base_mana_points, magic_key_stat):
         if base_hit_points:
-            self._hit_point_maximum = self._current_hit_points = base_hit_points + self.ability_scores.constitution_mod * 3
+            self._hit_point_maximum = self._current_hit_points = (base_hit_points + 
+                                                                  self.ability_scores.constitution_mod * 3)
         else:
-            self._hit_point_maximum = self._current_hit_points = self._hitpoint_base[self.character_class] + self.ability_scores.constitution_mod * 3
+            self._hit_point_maximum = self._current_hit_points = (self._hitpoint_base[self.character_class]
+                                                                  + self.ability_scores.constitution_mod * 3)
         if magic_key_stat:
             if magic_key_stat not in ('intelligence', 'wisdom', 'charisma'):
                 raise internal_exception("`magic_key_stat` argument '" + magic_key_stat + "' not recognized")
@@ -294,7 +304,8 @@ class character(object):  # has been tested
             self._mana_point_maximum = self._current_mana_points = 0
 
     def _attack_or_damage_stat_dependency(self):
-        if self.character_class in ('Warrior', 'Priest') or (self.character_class == 'Mage' and self._equipment_obj.weapon_equipped):
+        if self.character_class in ('Warrior', 'Priest') or (self.character_class == 'Mage'
+                                                             and self._equipment_obj.weapon_equipped):
             return 'strength'
         elif self.character_class == 'Thief':
             return 'dexterity'
@@ -382,10 +393,14 @@ class character(object):  # has been tested
         stat_dependency = self._attack_or_damage_stat_dependency()
         item_attacking_with = self._item_attacking_with
         item_damage = item_attacking_with.damage
-        damage_base_dice, damage_mod = item_damage.split('+') if '+' in item_damage else item_damage.split('-') if '-' in item_damage else (item_damage, '0')
+        damage_base_dice, damage_mod = (item_damage.split('+') if '+' in item_damage
+                                        else item_damage.split('-') if '-' in item_damage
+                                        else (item_damage, '0'))
         damage_mod = int(damage_mod)
         total_damage_mod = damage_mod + getattr(self.ability_scores, stat_dependency+'_mod')
-        damage_str = damage_base_dice + ('+' + str(total_damage_mod) if total_damage_mod > 0 else str(total_damage_mod) if total_damage_mod < 0 else '')
+        damage_str = damage_base_dice + ('+' + str(total_damage_mod) if total_damage_mod > 0
+                                         else str(total_damage_mod) if total_damage_mod < 0
+                                         else '')
         return damage_str
 
     # This class keeps its `ability_scores`, `equipment` and `inventory` objects in private attributes, just as a matter
@@ -475,22 +490,26 @@ class character(object):  # has been tested
 
     def equip_armor(self, item_obj):
         if not self.inventory.contains(item_obj.internal_name):
-            raise internal_exception("equipping an `item` object that is not in the character's `inventory` object is not allowed")
+            raise internal_exception("equipping an `item` object that is not in the character's `inventory` object is "
+                                     'not allowed')
         return self._equipment_obj.equip_armor(item_obj)
 
     def equip_shield(self, item_obj):
         if not self.inventory.contains(item_obj.internal_name):
-            raise internal_exception("equipping an `item` object that is not in the character's `inventory` object is not allowed")
+            raise internal_exception("equipping an `item` object that is not in the character's `inventory` object is "
+                                     'not allowed')
         return self._equipment_obj.equip_shield(item_obj)
 
     def equip_weapon(self, item_obj):
         if not self.inventory.contains(item_obj.internal_name):
-            raise internal_exception("equipping an `item` object that is not in the character's `inventory` object is not allowed")
+            raise internal_exception("equipping an `item` object that is not in the character's `inventory` object is "
+                                     'not allowed')
         return self._equipment_obj.equip_weapon(item_obj)
 
     def equip_wand(self, item_obj):
         if not self.inventory.contains(item_obj.internal_name):
-            raise internal_exception("equipping an `item` object that is not in the character's `inventory` object is not allowed")
+            raise internal_exception("equipping an `item` object that is not in the character's `inventory` object is "
+                                     'not allowed')
         return self._equipment_obj.equip_wand(item_obj)
 
     def unequip_armor(self):
@@ -520,10 +539,13 @@ class character(object):  # has been tested
 
     @property
     def attack_bonus(self):
-        if not (self._equipment_obj.weapon_equipped or self.character_class == 'Mage' and self._equipment_obj.wand_equipped):
-            raise internal_exception('The character does not have a weapon equipped; no valid value for `attack_bonus` can be computed.')
+        if (not (self._equipment_obj.weapon_equipped
+            or self.character_class == 'Mage' and self._equipment_obj.wand_equipped)):
+            raise internal_exception('The character does not have a weapon equipped; no valid value for '
+                                     '`attack_bonus` can be computed.')
         stat_dependency = self._attack_or_damage_stat_dependency()
-        base_attack_bonus = self._equipment_obj.weapon.attack_bonus if self._equipment_obj.weapon_equipped else self._equipment_obj.wand.attack_bonus
+        base_attack_bonus = (self._equipment_obj.weapon.attack_bonus if self._equipment_obj.weapon_equipped
+                             else self._equipment_obj.wand.attack_bonus)
         return base_attack_bonus + getattr(self.ability_scores, stat_dependency + '_mod')
 
 
@@ -748,7 +770,8 @@ class creature(ini_entry, character):
         internal_name = self.internal_name
         description = self.description_dead
         title = f'{self.title} corpse'
-        corpse_obj = corpse(self._items_state_obj, internal_name, container_type='corpse', description=description, title=title)
+        corpse_obj = corpse(self._items_state_obj, internal_name, container_type='corpse',
+                            description=description, title=title)
         for item_internal_name, (item_qty, item_obj) in self.inventory.items():
             corpse_obj.set(item_internal_name, item_qty, item_obj)
         return corpse_obj
@@ -762,7 +785,8 @@ class container(ini_entry, items_multi_state):
         ini_entry.__init__(self, internal_name=internal_name, **ini_constr_argd)
         if contents_str:
             contents_qtys_names = self._process_list_value(contents_str)
-            contents_qtys_item_objs = tuple((item_qty, item_state_obj.get(item_internal_name)) for item_qty, item_internal_name in contents_qtys_names)
+            contents_qtys_item_objs = tuple((item_qty, item_state_obj.get(item_internal_name))
+                                             for item_qty, item_internal_name in contents_qtys_names)
         items_multi_state.__init__(self)
         if contents_str:
             for item_qty, item_obj in contents_qtys_item_objs:
@@ -787,7 +811,8 @@ class corpse(container):
 
 
 class door(ini_entry):
-    __slots__ = ('internal_name', 'title', 'description', 'door_type', 'is_locked', 'is_closed', 'closeable', '_linked_rooms_internal_names')
+    __slots__ = ('internal_name', 'title', 'description', 'door_type', 'is_locked', 'is_closed', 'closeable', 
+                 '_linked_rooms_internal_names', 'is_exit')
 
     def __init__(self, **argd):
         super().__init__(**argd)
@@ -836,8 +861,9 @@ class iron_door(door):
 
 
 class item(ini_entry):  # has been tested
-    __slots__ = ('internal_name', 'title', 'description', 'weight', 'value', 'damage', 'attack_bonus', 'armor_bonus', 'item_type', 'warrior_can_use',
-                 'thief_can_use', 'priest_can_use', 'mage_can_use', 'hit_points_recovered', 'mana_points_recovered')
+    __slots__ = ('internal_name', 'title', 'description', 'weight', 'value', 'damage', 'attack_bonus', 'armor_bonus', 
+                 'item_type', 'warrior_can_use', 'thief_can_use', 'priest_can_use', 'mage_can_use', 
+                 'hit_points_recovered', 'mana_points_recovered')
 
     def __init__(self, **argd):
         super().__init__(**argd)
@@ -899,25 +925,25 @@ class weapon(item):
 
 
 class room(ini_entry):  # has been tested
-    __slots__ = ('internal_name', 'title', 'description', 'north_exit', 'west_exit', 'south_exit', 'east_exit',
+    __slots__ = ('internal_name', 'title', 'description', 'north_door', 'west_door', 'south_door', 'east_door',
                  'occupant', 'item', 'is_entrance', 'is_exit', '_containers_state_obj', '_creatures_state_obj',
                  '_doors_state_obj', '_items_state_obj', 'creature_here', 'container_here', 'items_here')
 
     @property
-    def has_north_exit(self):
-        return bool(getattr(self, 'north_exit', False))
+    def has_north_door(self):
+        return bool(getattr(self, 'north_door', False))
 
     @property
-    def has_south_exit(self):
-        return bool(getattr(self, 'south_exit', False))
+    def has_south_door(self):
+        return bool(getattr(self, 'south_door', False))
 
     @property
-    def has_west_exit(self):
-        return bool(getattr(self, 'west_exit', False))
+    def has_west_door(self):
+        return bool(getattr(self, 'west_door', False))
 
     @property
-    def has_east_exit(self):
-        return bool(getattr(self, 'east_exit', False))
+    def has_east_door(self):
+        return bool(getattr(self, 'east_door', False))
 
     def __init__(self, creatures_state_obj, containers_state_obj, doors_state_obj, items_state_obj, **argd):
         super().__init__(**argd)
@@ -944,17 +970,19 @@ class room(ini_entry):  # has been tested
                 items_state_obj.set(item_internal_name, item_qty, item_obj)
             self.items_here = items_state_obj
         for compass_dir in ('north', 'east', 'south', 'west'):
-            exit_attr = f'{compass_dir}_exit'
-            if not getattr(self, exit_attr, False):
+            door_attr = f'{compass_dir}_door'
+            if not getattr(self, door_attr, False):
                 continue
-            sorted_pair = tuple(sorted((self.internal_name, getattr(self, exit_attr))))
+            sorted_pair = tuple(sorted((self.internal_name, getattr(self, door_attr))))
+            if sorted_pair[0] == 'Exit':
+                sorted_pair = tuple(reversed(sorted_pair))
 
             # The door objects stored in each room object are not identical with the door objects in
             # self._doors_state_obj because each door gets a new title based on its compass direction; the same door can
             # be titled 'north door' in the southern of the two rooms it connects and 'south door' in the northern one.
             door_obj = self._doors_state_obj.get(*sorted_pair).copy()
             door_obj.title = f'{compass_dir} doorway' if door_obj.title == 'doorway' else f'{compass_dir} door'
-            setattr(self, exit_attr, door_obj)
+            setattr(self, door_attr, door_obj)
 
 
 class items_multi_state(items_state):
@@ -969,14 +997,16 @@ class items_multi_state(items_state):
             self._contents[item_internal_name] = (1, item_obj)
 
     def contains(self, item_internal_name):
-        return(any(contained_item_obj.internal_name == item_internal_name for _, contained_item_obj in self._contents.values()))
+        return(any(contained_item_obj.internal_name == item_internal_name
+                   for _, contained_item_obj in self._contents.values()))
 
     def set(self, item_internal_name, item_qty, item_obj):
         self._contents[item_internal_name] = item_qty, item_obj
 
     def add_one(self, item_internal_name, item_obj):
         if self.contains(item_internal_name):
-            self._contents[item_internal_name] = self._contents[item_internal_name][0] + 1, self._contents[item_internal_name][1]
+            self._contents[item_internal_name] = (self._contents[item_internal_name][0] + 1,
+                                                  self._contents[item_internal_name][1])
         else:
             self._contents[item_internal_name] = 1, item_obj
 
@@ -986,7 +1016,8 @@ class items_multi_state(items_state):
         elif self._contents[item_internal_name][0] == 1:
             del self._contents[item_internal_name]
         else:
-            self._contents[item_internal_name] = self._contents[item_internal_name][0] - 1, self._contents[item_internal_name][1]
+            self._contents[item_internal_name] = (self._contents[item_internal_name][0] - 1,
+                                                  self._contents[item_internal_name][1])
 
 
 class game_state(object):
@@ -1038,7 +1069,8 @@ class containers_state(items_state):
     def __init__(self, items_state_obj, **dict_of_dicts):
         self._contents = dict()
         for container_internal_name, container_dict in dict_of_dicts.items():
-            container_obj = container.subclassing_factory(items_state_obj, internal_name=container_internal_name, **container_dict)
+            container_obj = container.subclassing_factory(items_state_obj, internal_name=container_internal_name,
+                                                          **container_dict)
             self._contents[container_internal_name] = container_obj
 
 
@@ -1052,7 +1084,8 @@ class creatures_state(state):
 
 
 class rooms_state(object):  # has been tested
-    __slots__ = '_creatures_state_obj', '_containers_state_obj', '_items_state_obj', '_doors_state_obj', '_rooms_objs', '_room_cursor'
+    __slots__ = ('_creatures_state_obj', '_containers_state_obj', '_items_state_obj', '_doors_state_obj',
+                 '_rooms_objs', '_room_cursor')
 
     @property
     def cursor(self):
@@ -1075,25 +1108,28 @@ class rooms_state(object):  # has been tested
         self._rooms_objs[room_internal_name] = room_obj
 
     def move(self, north=False, west=False, south=False, east=False):
-        if (north and west) or (north and south) or (north and east) or (west and south) or (west and east) or (south and east):
-            raise internal_exception('move() must receive only *one* True argument of the four keys `north`, `south`, `east` and `west`')
+        if ((north and west) or (north and south) or (north and east) or (west and south)
+            or (west and east) or (south and east)):
+            raise internal_exception('move() must receive only *one* True argument of the four keys `north`, `south`, '
+                                     '`east` and `west`')
         if north:
-            exit_name = 'north_exit'
+            exit_name = 'north_door'
             exit_key = 'NORTH'
         elif west:
-            exit_name = 'west_exit'
+            exit_name = 'west_door'
             exit_key = 'WEST'
         elif south:
-            exit_name = 'south_exit'
+            exit_name = 'south_door'
             exit_key = 'SOUTH'
         elif east:
-            exit_name = 'east_exit'
+            exit_name = 'east_door'
             exit_key = 'EAST'
         if not getattr(self.cursor, exit_name):
             raise bad_command_exception('MOVE', f'This room has no <{exit_key}> exit.')
         door_obj = getattr(self.cursor, exit_name)
         if door_obj.is_locked:
-            raise internal_exception(f'exiting {self.cursor.internal_name} via the {exit_name.replace("_"," ")}: door is locked')
+            raise internal_exception(f'exiting {self.cursor.internal_name} via the {exit_name.replace("_"," ")}: door '
+                                      'is locked')
         other_room_internal_name = door_obj.other_room_internal_name(self.cursor.internal_name)
         new_room_dest = self._rooms_objs[other_room_internal_name]
         self._room_cursor = new_room_dest.internal_name

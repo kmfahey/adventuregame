@@ -32,9 +32,9 @@ class command_processor(object):
 
     pregame_commands = {'set_name', 'set_class', 'reroll', 'begin_game', 'quit'}
 
-    ingame_commands = {'attack', 'cast_spell', 'close', 'drink', 'drop', 'equip', 'exit', 'inventory', 'leave',
-                       'look_at', 'lock', 'inspect', 'open', 'pick_lock', 'pick_up', 'quit', 'put', 'quit', 'status',
-                       'take', 'unequip', 'unlock'}
+    ingame_commands = {'attack', 'cast_spell', 'close', 'drink', 'drop', 'equip', 'leave', 'inventory', 'look_at', 
+                       'lock', 'inspect', 'open', 'pick_lock', 'pick_up', 'quit', 'put', 'quit', 'status', 'take', 
+                       'unequip', 'unlock'}
 
     def __init__(self, game_state_obj):
         self.dispatch_table = dict()
@@ -60,7 +60,7 @@ class command_processor(object):
         command = tokens.pop(0).lower()
         if command == 'cast' and len(tokens) and tokens[0].lower() == 'spell':
             command += '_' + tokens.pop(0).lower()
-        elif command == 'exit' and len(tokens) and (tokens[0].lower() == 'using' or tokens[0].lower() == 'via'):
+        elif command == 'leave' and len(tokens) and (tokens[0].lower() == 'using' or tokens[0].lower() == 'via'):
             tokens.pop(0)
         elif command == "begin":
             if len(tokens) >= 1 and tokens[0] == 'game' or len(tokens) >= 2 and tokens[0:2] == ['the', 'game']:
@@ -104,7 +104,8 @@ class command_processor(object):
         if not self.game_state.rooms_state.cursor.creature_here:
             return attack_command_opponent_not_found(creature_title_token),
         elif self.game_state.rooms_state.cursor.creature_here.title.lower() != creature_title_token:
-            return attack_command_opponent_not_found(creature_title_token, self.game_state.rooms_state.cursor.creature_here.title),
+            return attack_command_opponent_not_found(creature_title_token,
+                                                     self.game_state.rooms_state.cursor.creature_here.title),
         creature_obj = self.game_state.rooms_state.cursor.creature_here
         attack_roll_dice_expr = self.game_state.character.attack_roll
         damage_roll_dice_expr = self.game_state.character.damage_roll
@@ -120,7 +121,8 @@ class command_processor(object):
                 corpse_obj = creature_obj.convert_to_corpse()
                 self.game_state.rooms_state.cursor.container_here = corpse_obj
                 self.game_state.rooms_state.cursor.creature_here = None
-                return attack_command_attack_hit(creature_obj.title, damage_result, True), various_commands_foe_death(creature_obj.title),
+                return (attack_command_attack_hit(creature_obj.title, damage_result, True),
+                        various_commands_foe_death(creature_obj.title))
             else:
                 attack_hit_result = attack_command_attack_hit(creature_obj.title, damage_result, False)
                 be_attacked_by_result = self._be_attacked_by_command(creature_obj)
@@ -136,9 +138,11 @@ class command_processor(object):
             damage_done = roll_dice(damage_roll_dice_expr)
             self.game_state.character.take_damage(damage_done)
             if self.game_state.character.is_dead:
-                return be_attacked_by_command_attacked_and_hit(creature_obj.title, damage_done, 0), be_attacked_by_command_character_death(),
+                return (be_attacked_by_command_attacked_and_hit(creature_obj.title, damage_done, 0),
+                        be_attacked_by_command_character_death())
             else:
-                return be_attacked_by_command_attacked_and_hit(creature_obj.title, damage_done, self.game_state.character.hit_points),
+                return be_attacked_by_command_attacked_and_hit(creature_obj.title, damage_done,
+                                                               self.game_state.character.hit_points)
 
     def cast_spell_command(self, *tokens):
         if self.game_state.character_class not in ('Mage', 'Priest'):
@@ -156,10 +160,12 @@ class command_processor(object):
                 creature_obj = self.game_state.rooms_state.cursor.creature_here
                 creature_obj.take_damage(damage_dealt)
                 if creature_obj.is_dead:
-                    return cast_spell_command_cast_damaging_spell(creature_obj.title, damage_dealt), various_commands_foe_death(creature_obj.title),
+                    return (cast_spell_command_cast_damaging_spell(creature_obj.title, damage_dealt),
+                            various_commands_foe_death(creature_obj.title))
                 else:
                     be_attacked_by_result = self._be_attacked_by_command(creature_obj)
-                    return (cast_spell_command_cast_damaging_spell(creature_obj.title, damage_dealt),) + be_attacked_by_result
+                    return ((cast_spell_command_cast_damaging_spell(creature_obj.title, damage_dealt),) + 
+                                                                    be_attacked_by_result)
         else:
             damage_rolled = roll_dice(Spell_Damage)
             healed_amt = self.game_state.character.heal_damage(damage_rolled)
@@ -208,14 +214,16 @@ class command_processor(object):
             hit_points_recovered = item_obj.hit_points_recovered
             healed_amt = self.game_state.character.heal_damage(hit_points_recovered)
             self.game_state.character.drop_item(item_obj)
-            return various_commands_underwent_healing_effect(healed_amt, self.game_state.character.hit_points, self.game_state.character.hit_point_total),
+            return various_commands_underwent_healing_effect(healed_amt, self.game_state.character.hit_points,
+                                                             self.game_state.character.hit_point_total),
         else:   # item_obj.title == 'mana potion':
             if self.game_state.character_class not in ('Mage', 'Priest'):
                 return drink_command_drank_mana_potion_when_not_a_spellcaster(),
             mana_points_recovered = item_obj.mana_points_recovered
             regained_amt = self.game_state.character.regain_mana(mana_points_recovered)
             self.game_state.character.drop_item(item_obj)
-            return drink_command_drank_mana_potion(regained_amt, self.game_state.character.mana_points, self.game_state.character.mana_point_total),
+            return drink_command_drank_mana_potion(regained_amt, self.game_state.character.mana_points,
+                                                   self.game_state.character.mana_point_total),
 
     def _pick_up_or_drop_preproc(self, command, *tokens):
         if tokens[0] == 'a' or tokens[0] == 'the' or tokens[0].isdigit() or lexical_number_in_1_99_re.match(tokens[0]):
@@ -224,7 +232,9 @@ class command_processor(object):
             item_title = ' '.join(tokens[1:])
             if tokens[0] == 'a':
                 if tokens[-1].endswith('s'):
-                    return (drop_command_quantity_unclear(),) if command.lower() == 'drop' else (pick_up_command_quantity_unclear(),)
+                    return (drop_command_quantity_unclear(),)
+                            if command.lower() == 'drop'
+                            else (pick_up_command_quantity_unclear(),)
                 item_qty = 1
             elif tokens[0].isdigit():
                 item_qty = int(tokens[0])
@@ -325,19 +335,6 @@ class command_processor(object):
                                                          self.game_state.character.attack_bonus, 'attack bonus',
                                                          self.game_state.character.damage_roll, 'damage'),)
 
-    def exit_command(self, *tokens):
-        if (not len(tokens) or len(tokens) != 2 or tokens[0] not in ('north', 'east', 'south', 'west')
-            or tokens[1] not in ('door', 'doorway', 'exit')):
-            return command_bad_syntax('EXIT', 'USING <compass direction> DOOR', 'USING <compass direction> DOORWAY'),
-        compass_dir = tokens[0]
-        portal_type = tokens[1]
-        exit_attr = f'{compass_dir}_exit'
-        door_obj = getattr(self.game_state.rooms_state.cursor, exit_attr, None)
-        if door_obj is None:
-            return various_commands_door_not_present(compass_dir, portal_type),
-        self.game_state.rooms_state.move(**{compass_dir: True})
-        return exit_command_exitted_room(compass_dir, portal_type),
-
     def inventory_command(self, *tokens):
         if len(tokens):
             return command_bad_syntax('INVENTORY', ''),
@@ -345,7 +342,20 @@ class command_processor(object):
         return inventory_command_display_inventory(inventory_contents),
 
     def leave_command(self, *tokens):
-        return self.exit(*tokens)
+        if (not len(tokens) or len(tokens) != 2 or tokens[0] not in ('north', 'east', 'south', 'west')
+            or tokens[1] not in ('door', 'doorway', 'exit')):
+            return command_bad_syntax('LEAVE', 'USING <compass direction> DOOR', 'USING <compass direction> DOORWAY'),
+        compass_dir = tokens[0]
+        portal_type = tokens[1]
+        door_attr = f'{compass_dir}_door'
+        door_obj = getattr(self.game_state.rooms_state.cursor, door_attr, None)
+        if door_obj is None:
+            return various_commands_door_not_present(compass_dir, portal_type),
+        elif door_obj.is_exit:
+            return leave_command_left_room(compass_dir, portal_type), leave_command_won_the_game()
+        self.game_state.rooms_state.move(**{compass_dir: True})
+        return (leave_command_left_room(compass_dir, portal_type),
+                various_commands_entered_room(self.game_state.rooms_state.cursor))
 
     def look_at_command(self, *tokens):
         return self.inspect_command(*tokens)
@@ -366,7 +376,8 @@ class command_processor(object):
         descr_append_str = ''
         if getattr(item_obj, 'item_type', '') in ('armor', 'shield', 'wand', 'weapon'):
             if item_obj.item_type == 'wand' or item_obj.item_type == 'weapon':
-                descr_append_str = f" Its attack bonus is +{item_obj.attack_bonus} and its damage is {item_obj.damage}. "
+                descr_append_str = (f" Its attack bonus is +{item_obj.attack_bonus} and its damage is "
+                                    f"{item_obj.damage}. ")
             else:  # item_type == 'armor' or item_type == 'shield'
                 descr_append_str = f" Its armor bonus is +{item_obj.armor_bonus}. "
             can_use_list = []
@@ -389,8 +400,9 @@ class command_processor(object):
         return item_obj.description + descr_append_str
 
     def inspect_command(self, *tokens):
-        if (not tokens or tokens[0] in ('in', 'on') or tokens[-1] in ('in', 'on') or
-            (tokens[-1] in ('door', 'doorway') and (len(tokens) != 2 or tokens[0] not in ('north', 'south', 'east', 'west')))):
+        if (not tokens or tokens[0] in ('in', 'on') or tokens[-1] in ('in', 'on')
+            or (tokens[-1] in ('door', 'doorway') and (len(tokens) != 2
+            or tokens[0] not in ('north', 'south', 'east', 'west')))):
             return command_bad_syntax('INSPECT', '<item name>', '<item name> IN <chest name>',
                                       '<item name> IN INVENTORY', '<item name> ON <corpse name>',
                                       '<compass direction> DOOR', '<compass direction> DOORWAY'),
@@ -410,7 +422,7 @@ class command_processor(object):
             location_title = ' '.join(tokens[joinword_index+1:])
         elif tokens[-1] == 'door' or tokens[-1] == 'doorway':
             compass_direction = tokens[0]
-            door_attr = f"{compass_direction}_exit"
+            door_attr = f"{compass_direction}_door"
             door_obj = getattr(self.game_state.rooms_state.cursor, door_attr, None)
             if door_obj is None:
                 return various_commands_door_not_present(compass_direction),
@@ -420,7 +432,8 @@ class command_processor(object):
             target_title = ' '.join(tokens)
         creature_here_obj = self.game_state.rooms_state.cursor.creature_here
         container_here_obj = self.game_state.rooms_state.cursor.container_here
-        if item_in_chest and isinstance(container_here_obj, corpse) or item_on_corpse and isinstance(container_here_obj, chest):
+        if (item_in_chest and isinstance(container_here_obj, corpse)
+            or item_on_corpse and isinstance(container_here_obj, chest)):
             return command_bad_syntax('INSPECT', '<item name>', '<item name> IN <chest name>',
                                       '<item name> IN INVENTORY', '<item name> ON <corpse name>',
                                       '<compass direction> DOOR', '<compass direction> DOORWAY'),
@@ -443,7 +456,8 @@ class command_processor(object):
                         if item_obj.title != target_title:
                             continue
                         return inspect_command_found_item_or_items_here(self._inspect_item_detail(item_obj), item_qty),
-                    return inspect_command_found_nothing(target_title, location_title, 'chest' if item_in_chest else 'corpse'),
+                    return inspect_command_found_nothing(target_title, location_title,
+                                                         'chest' if item_in_chest else 'corpse'),
                 else:
                     return various_commands_container_not_found(location_title),
         else:
@@ -480,7 +494,7 @@ class command_processor(object):
         container_obj = self.game_state.rooms_state.cursor.container_here
         door_objs = []
         for compass_dir in ('north', 'east', 'south', 'west'):
-            door_obj = getattr(self.game_state.rooms_state.cursor, f'{compass_dir}_exit', None)
+            door_obj = getattr(self.game_state.rooms_state.cursor, f'{compass_dir}_door', None)
             if door_obj is None:
                 continue
             door_objs.append(door_obj)
@@ -655,8 +669,9 @@ class command_processor(object):
         results = self._put_or_take_preproc('PUT', 'IN|ON', *tokens)
 
         # The workhorse private method returns either a game_state_message subclass object (see
-        # adventuregame.game_state_messages) or a tuple of amount to put, parsed title of item, parsed title of container,
-        # and the container object (as a matter of convenience, it's needed by the private method & why fetch it twice).
+        # adventuregame.game_state_messages) or a tuple of amount to put, parsed title of item, parsed title of
+        # container, and the container object (as a matter of convenience, it's needed by the private method & why fetch
+        # it twice).
         if len(results) == 1 and isinstance(results[0], game_state_message):
             return results
         else:
@@ -686,7 +701,8 @@ class command_processor(object):
             amount_possessed -= put_amount
         self.game_state.character.drop_item(item_obj, qty=put_amount)
         container_obj.set(item_obj.internal_name, amount_in_container + put_amount, item_obj)
-        return put_command_amount_put(item_title, container_title, container_obj.container_type, put_amount, amount_possessed),
+        return put_command_amount_put(item_title, container_title, container_obj.container_type, put_amount,
+                                      amount_possessed),
 
     def quit_command(self, *tokens):
         if len(tokens):
@@ -726,7 +742,7 @@ class command_processor(object):
         if not character_name or not character_class:
             return begin_game_command_name_or_class_not_set(character_name, character_class),
         self.game_state.game_has_begun = True
-        return begin_game_command_game_begins(),
+        return begin_game_command_game_begins(), various_commands_entered_room(self.game_state.rooms_state.cursor)
 
     def set_name_command(self, *tokens):
         if len(tokens) == 0:
@@ -811,8 +827,9 @@ class command_processor(object):
         results = self._put_or_take_preproc('TAKE', 'FROM', *tokens)
 
         # The workhorse private method returns either a game_state_message subclass object (see
-        # adventuregame.game_state_messages) or a tuple of amount to take, parsed title of item, parsed title of container,
-        # and the container object (as a matter of convenience, it's needed by the private method & why fetch it twice).
+        # adventuregame.game_state_messages) or a tuple of amount to take, parsed title of item, parsed title of
+        # container, and the container object (as a matter of convenience, it's needed by the private method & why fetch
+        # it twice).
         if len(results) == 1 and isinstance(results[0], game_state_message):
             return results
         else:
@@ -840,7 +857,8 @@ class command_processor(object):
             if take_amount > item_qty:
 
                 # The amount specified is more than how much is in the container, so I return an error.
-                return take_command_trying_to_take_more_than_is_present(container_title, container_obj.container_type, item_title, take_amount, item_qty),  # tested
+                return take_command_trying_to_take_more_than_is_present(container_title, container_obj.container_type,
+                                                                        item_title, take_amount, item_qty),  # tested
             elif take_amount == 1:
 
                 # We have a match. One item is remove from the container and added to the character's inventory; and a
@@ -869,7 +887,8 @@ class command_processor(object):
             index += 1
 
         # The loop completed without finding the item, so it isn't present in the container. I return an error.
-        return take_command_item_not_found_in_container(container_title, take_amount, container_obj.container_type, item_title),  # tested
+        return take_command_item_not_found_in_container(container_title, take_amount, container_obj.container_type,
+                                                        item_title),  # tested
 
     def _lock_unlock_open_or_close_preproc(self, command, *tokens):
         if not len(tokens):
@@ -877,19 +896,21 @@ class command_processor(object):
         target_title = ' '.join(tokens)
         container_obj = self.game_state.rooms_state.cursor.container_here
         if lock_unlock_mode := command.lower().endswith('lock'):
-            key_objs = [item_obj for _, item_obj in self.game_state.character.list_items() if item_obj.title.endswith(' key')]
+            key_objs = [item_obj for _, item_obj in self.game_state.character.list_items()
+                        if item_obj.title.endswith(' key')]
         if container_obj is not None and isinstance(container_obj, chest) and container_obj.title == target_title:
-            if lock_unlock_mode and (not len(key_objs) or not any(key_obj.title == 'chest key' for key_obj in key_objs)):
+            if lock_unlock_mode and (not len(key_objs) or not any(key_obj.title == 'chest key'
+                                                                  for key_obj in key_objs)):
                 if command.lower() == 'unlock':
                     return unlock_command_dont_possess_correct_key(container_obj.title, 'chest key'),
                 else:
                     return lock_command_dont_possess_correct_key(container_obj.title, 'chest key'),
             else:
                 return container_obj,
-        for exit_attr in ('north_exit', 'east_exit', 'south_exit', 'west_exit'):
-            if getattr(self.game_state.rooms_state.cursor, exit_attr, None) is None:
+        for door_attr in ('north_door', 'east_door', 'south_door', 'west_door'):
+            if getattr(self.game_state.rooms_state.cursor, door_attr, None) is None:
                 continue
-            door_obj = getattr(self.game_state.rooms_state.cursor, exit_attr)
+            door_obj = getattr(self.game_state.rooms_state.cursor, door_attr)
             if isinstance(door_obj, doorway):
                 continue
             if door_obj.title == target_title:
@@ -916,9 +937,11 @@ class command_processor(object):
         if not tokens:
             return command_bad_syntax('UNEQUIP', '<armor name>', '<shield name>', '<wand name>', '<weapon name>'),
         item_title = ' '.join(tokens)
-        matching_item_tuple = tuple(item_obj for _, item_obj in self.game_state.character.list_items() if item_obj.title == item_title)
+        matching_item_tuple = tuple(item_obj for _, item_obj in self.game_state.character.list_items()
+                                    if item_obj.title == item_title)
         if not len(matching_item_tuple):
-            matching_item_tuple = tuple(item_obj for item_obj in self.game_state.items_state.values() if item_obj.title == item_title)
+            matching_item_tuple = tuple(item_obj for item_obj in self.game_state.items_state.values()
+                                        if item_obj.title == item_title)
             if matching_item_tuple:
                 item_obj, = matching_item_tuple[0:1]
                 return unequip_command_item_not_equipped(item_obj.title, item_obj.item_type),
@@ -929,25 +952,32 @@ class command_processor(object):
             if self.game_state.character.armor_equipped is not None:
                 if self.game_state.character.armor_equipped.title == item_title:
                     self.game_state.character.unequip_armor()
-                    return equip_or_unequip_command_item_unequipped(item_title, 'armor', self.game_state.character.armor_class, 'armor class'),
+                    return equip_or_unequip_command_item_unequipped(item_title, 'armor',
+                                                                    self.game_state.character.armor_class,
+                                                                    'armor class'),
                 else:
-                    return unequip_command_item_not_equipped(item_title, 'armor', self.game_state.character.armor_equipped.title),
+                    return unequip_command_item_not_equipped(item_title, 'armor',
+                                                             self.game_state.character.armor_equipped.title),
             else:
                 return unequip_command_item_not_equipped(item_title, 'armor'),
         elif item_obj.item_type == 'shield':
             if self.game_state.character.shield_equipped is not None:
                 if self.game_state.character.shield_equipped.title == item_title:
                     self.game_state.character.unequip_shield()
-                    return equip_or_unequip_command_item_unequipped(item_title, 'shield', self.game_state.character.armor_class, 'armor class'),
+                    return equip_or_unequip_command_item_unequipped(item_title, 'shield',
+                                                                    self.game_state.character.armor_class,
+                                                                    'armor class'),
                 else:
-                    return unequip_command_item_not_equipped(item_title, 'shield', self.game_state.character.shield_equipped.title),
+                    return unequip_command_item_not_equipped(item_title, 'shield',
+                                                             self.game_state.character.shield_equipped.title),
             else:
                 return unequip_command_item_not_equipped(item_title, 'shield'),
         elif item_obj.item_type == 'wand':
             if self.game_state.character.wand_equipped is not None:
                 if self.game_state.character.wand_equipped.title == item_title:
                     self.game_state.character.unequip_wand()
-                    return equip_or_unequip_command_item_unequipped(item_title, 'wand', change_text="You now can't attack."),
+                    return equip_or_unequip_command_item_unequipped(item_title, 'wand',
+                                                                    change_text="You now can't attack."),
                 else:
                     return unequip_command_item_not_equipped(item_title, 'wand'),
             else:
@@ -956,7 +986,8 @@ class command_processor(object):
             if self.game_state.character.weapon_equipped is not None:
                 if self.game_state.character.weapon_equipped.title == item_title:
                     self.game_state.character.unequip_weapon()
-                    return equip_or_unequip_command_item_unequipped(item_title, 'weapon', change_text="You now can't attack."),
+                    return equip_or_unequip_command_item_unequipped(item_title, 'weapon',
+                                                                    change_text="You now can't attack."),
                 else:
                     return unequip_command_item_not_equipped(item_obj.title, 'weapon'),
             else:

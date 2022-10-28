@@ -26,7 +26,8 @@ class test_container(unittest.TestCase):
         container_obj = self.containers_state_obj.get('Wooden_Chest_1')
         self.assertEqual(container_obj.internal_name, 'Wooden_Chest_1')
         self.assertEqual(container_obj.title, 'wooden chest')
-        self.assertEqual(container_obj.description, 'This small, serviceable chest is made of wooden slat bounds within an iron framing, and features a sturdy-looking lock.')
+        self.assertEqual(container_obj.description, 'This small, serviceable chest is made of wooden slat bounds '
+                                                    'within an iron framing, and features a sturdy-looking lock.')
         self.assertEqual(container_obj.is_locked, True)
         self.assertTrue(container_obj.contains('Gold_Coin'))
         self.assertTrue(container_obj.contains('Warhammer'))
@@ -70,7 +71,8 @@ class test_character(unittest.TestCase):
         self.assertTrue(character_obj.weapon_equipped)
         self.assertFalse(character_obj.wand_equipped)
         strength_mod = character_obj.strength_mod
-        strength_mod_str = '+' + str(strength_mod) if strength_mod > 0 else str(strength_mod) if strength_mod < 0 else ''
+        strength_mod_str = ('+' + str(strength_mod) if strength_mod > 0
+                            else str(strength_mod) if strength_mod < 0 else '')
         self.assertEqual(character_obj.attack_roll, '1d20' + strength_mod_str)
         self.assertEqual(character_obj.damage_roll, '1d8' + strength_mod_str)
         self.assertEqual(character_obj.attack_bonus, character_obj.strength_mod)
@@ -97,8 +99,10 @@ class test_character(unittest.TestCase):
         self.assertTrue(character_obj.wand_equipped)
         total_atk_bonus = wand_obj.attack_bonus + character_obj.intelligence_mod
         total_dmg_bonus = int(wand_obj.damage.split('+')[1]) + character_obj.intelligence_mod
-        total_atk_bonus_str = '+' + str(total_atk_bonus) if total_atk_bonus > 0 else str(total_atk_bonus) if total_atk_bonus < 0 else ''
-        total_dmg_bonus_str = '+' + str(total_dmg_bonus) if total_dmg_bonus > 0 else str(total_dmg_bonus) if total_dmg_bonus < 0 else ''
+        total_atk_bonus_str = ('+' + str(total_atk_bonus) if total_atk_bonus > 0
+                               else str(total_atk_bonus) if total_atk_bonus < 0 else '')
+        total_dmg_bonus_str = ('+' + str(total_dmg_bonus) if total_dmg_bonus > 0
+                               else str(total_dmg_bonus) if total_dmg_bonus < 0 else '')
         self.assertEqual(character_obj.attack_roll, '1d20' + total_atk_bonus_str)
         self.assertEqual(character_obj.damage_roll, '3d8' + total_dmg_bonus_str)
         self.assertEqual(character_obj.attack_bonus, int(wand_obj.attack_bonus)
@@ -204,7 +208,8 @@ class test_character(unittest.TestCase):
         self.assertFalse(character_obj.is_dead)
 
     def test_character_init_ability_score_and_hp_overrides(self):
-        character_obj = character('Regdar', 'Warrior', base_hit_points=50, strength=15, constitution=14, dexterity=13, intelligence=12, wisdom=8, charisma=10)
+        character_obj = character('Regdar', 'Warrior', base_hit_points=50, strength=15, constitution=14,
+                                  dexterity=13, intelligence=12, wisdom=8, charisma=10)
         self.assertEqual(character_obj.strength, 15)
         self.assertEqual(character_obj.constitution, 14)
         self.assertEqual(character_obj.dexterity, 13)
@@ -214,7 +219,8 @@ class test_character(unittest.TestCase):
         self.assertEqual(character_obj.hit_points, 56)  # base_hit_points := 50 + 3 * floor((constitution - 10) / 2)
 
     def test_mana_points(self):
-        character_obj = character('Hennet', 'Mage', base_hit_points=30, strength=12, constitution=13, dexterity=14, intelligence=15, wisdom=10, charisma=8)
+        character_obj = character('Hennet', 'Mage', base_hit_points=30, strength=12, constitution=13, dexterity=14,
+                                  intelligence=15, wisdom=10, charisma=8)
         self.assertEqual(character_obj.mana_points, 23)
         self.assertEqual(character_obj.mana_point_total, 23)
         result = character_obj.spend_mana(10)
@@ -243,7 +249,8 @@ class test_creature(unittest.TestCase):
         self.assertEqual(kobold_obj.character_class, 'Thief')
         self.assertEqual(kobold_obj.character_name, 'Trysk')
         self.assertEqual(kobold_obj.species, 'Kobold')
-        self.assertEqual(kobold_obj.description, 'This diminuitive draconic humanoid is dressed in leather armor and has a short sword at its hip. It eyes you warily.')
+        self.assertEqual(kobold_obj.description, 'This diminuitive draconic humanoid is dressed in leather armor and '
+                                                 'has a short sword at its hip. It eyes you warily.')
         self.assertEqual(kobold_obj.character_class, 'Thief')
         self.assertEqual(kobold_obj.strength, 9)
         self.assertEqual(kobold_obj.dexterity, 13)
@@ -398,8 +405,9 @@ class test_inventory(unittest.TestCase):
         self.assertEqual(set(self.inventory_obj.keys()), {'Longsword', 'Rapier', 'Buckler', 'Mace', 'Staff',
                                                           'Warhammer', 'Door_Key', 'Chest_Key', 'Studded_Leather',
                                                           'Scale_Mail', 'Magic_Sword', 'Dagger', 'Gold_Coin',
-                                                          'Small_Leather_Armor', 'Short_Sword', 'Steel_Shield', 'Mana_Potion',
-                                                          'Health_Potion', 'Magic_Wand', 'Magic_Wand_2'})
+                                                          'Small_Leather_Armor', 'Short_Sword', 'Steel_Shield',
+                                                          'Mana_Potion', 'Health_Potion', 'Magic_Wand',
+                                                          'Magic_Wand_2'})
         _, rapier_obj, = self.inventory_obj.get('Rapier')
         _, mace_obj, = self.inventory_obj.get('Mace')
         _, staff_obj = self.inventory_obj.get('Staff')
@@ -463,13 +471,21 @@ class test_door_and_doors_state(unittest.TestCase):
 
     def test_doors_state(self):
         doors_state_keys = self.doors_state_obj.keys()
-        self.assertEqual(doors_state_keys, [('Room_1,1', 'Room_1,2'), ('Room_1,1', 'Room_2,1'), ('Room_1,2', 'Room_2,2'), ('Room_2,1', 'Room_2,2')])
+        self.assertEqual(doors_state_keys, [('Room_1,1', 'Room_1,2'), ('Room_1,1', 'Room_2,1'),
+                                            ('Room_1,2', 'Room_2,2'), ('Room_2,1', 'Room_2,2'),
+                                            ('Room_2,2', 'Exit')])
         doors_state_values = self.doors_state_obj.values()
-        self.assertTrue(all(isinstance(door_obj, door) and isinstance(door_obj, (wooden_door, iron_door, doorway)) for door_obj in doors_state_values))
+        self.assertTrue(all(isinstance(door_obj, door) and isinstance(door_obj, (wooden_door, iron_door, doorway))
+                            for door_obj in doors_state_values))
         doors_state_items = self.doors_state_obj.items()
-        self.assertEqual(list(map(operator.itemgetter(0, 1), doors_state_items)), [('Room_1,1', 'Room_1,2'), ('Room_1,1', 'Room_2,1'), ('Room_1,2', 'Room_2,2'), ('Room_2,1', 'Room_2,2')])
-        self.assertTrue(all(isinstance(door_obj, door) and isinstance(door_obj, (wooden_door, iron_door, doorway)) for door_obj in doors_state_values))
-        self.assertEqual(self.doors_state_obj.size(), 4)
+        self.assertEqual(list(map(operator.itemgetter(0, 1), doors_state_items)), [('Room_1,1', 'Room_1,2'),
+                                                                                   ('Room_1,1', 'Room_2,1'),
+                                                                                   ('Room_1,2', 'Room_2,2'),
+                                                                                   ('Room_2,1', 'Room_2,2'),
+                                                                                   ('Room_2,2', 'Exit')])
+        self.assertTrue(all(isinstance(door_obj, door) and isinstance(door_obj, (wooden_door, iron_door, doorway))
+                            for door_obj in doors_state_values))
+        self.assertEqual(self.doors_state_obj.size(), 5)
         self.assertTrue(self.doors_state_obj.contains('Room_2,1', 'Room_2,2'))
         door_obj = self.doors_state_obj.get('Room_1,2', 'Room_2,2')
         self.assertEqual(door_obj.title, 'doorway')
@@ -494,7 +510,8 @@ class test_door_and_doors_state(unittest.TestCase):
 
         door_obj = self.doors_state_obj.get('Room_1,1', 'Room_2,1')
         self.assertEqual(door_obj.title, 'iron door')
-        self.assertEqual(door_obj.description, 'This door is bound in iron plates with a small barred window set up high.')
+        self.assertEqual(door_obj.description, 'This door is bound in iron plates with a small barred window set up '
+                                               'high.')
         self.assertEqual(door_obj.door_type, 'iron_door')
         self.assertEqual(door_obj.is_locked, True)
         self.assertEqual(door_obj.is_closed, True)
@@ -591,8 +608,8 @@ class test_item_and_items_state(unittest.TestCase):
                               ('Door_Key', door_key_obj), ('Gold_Coin', gold_coin_obj),
                               ('Health_Potion', health_potion_obj), ('Longsword', longsword_obj), ('Mace', mace_obj),
                               ('Magic_Sword', magic_sword_obj), ('Magic_Wand', magic_wand_obj),
-                              ('Magic_Wand_2', magic_wand_2_obj), ('Mana_Potion', mana_potion_obj), ('Rapier', rapier_obj),
-                              ('Scale_Mail', scale_mail_obj), ('Short_Sword', short_sword_obj),
+                              ('Magic_Wand_2', magic_wand_2_obj), ('Mana_Potion', mana_potion_obj),
+                              ('Rapier', rapier_obj), ('Scale_Mail', scale_mail_obj), ('Short_Sword', short_sword_obj),
                               ('Small_Leather_Armor', small_leather_armor_obj), ('Staff', staff_obj),
                               ('Steel_Shield', shield_obj), ('Studded_Leather', studded_leather_obj),
                               ('Warhammer', warhammer_obj))
@@ -616,44 +633,47 @@ class test_rooms_state_obj(unittest.TestCase):
         self.doors_state_obj = doors_state(**self.doors_ini_config_obj.sections)
         self.containers_state_obj = containers_state(self.items_state_obj, **self.containers_ini_config_obj.sections)
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
-        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj, self.items_state_obj, **self.rooms_ini_config_obj.sections)
+        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj,
+                                           self.items_state_obj, **self.rooms_ini_config_obj.sections)
 
     def test_rooms_state_init(self):
         self.assertEqual(self.rooms_state_obj.cursor.internal_name, 'Room_1,1')
         self.assertTrue(self.rooms_state_obj.cursor.is_entrance)
         self.assertFalse(self.rooms_state_obj.cursor.is_exit)
         self.assertEqual(self.rooms_state_obj.cursor.title, 'Southwest dungeon room')
-        self.assertEqual(self.rooms_state_obj.cursor.description, 'Entrance room')
-        self.assertTrue(self.rooms_state_obj.cursor.has_north_exit)
-        self.assertEqual(self.rooms_state_obj.cursor.north_exit.title, 'north door')
-        self.assertEqual(self.rooms_state_obj.cursor.north_exit.description, 'This door is made of wooden planks secured together with iron divots.')
-        self.assertEqual(self.rooms_state_obj.cursor.north_exit.door_type, 'wooden_door')
-        self.assertEqual(self.rooms_state_obj.cursor.north_exit.is_locked, False)
-        self.assertEqual(self.rooms_state_obj.cursor.north_exit.is_closed, True)
-        self.assertEqual(self.rooms_state_obj.cursor.north_exit.closeable, True)
-        self.assertTrue(self.rooms_state_obj.cursor.has_east_exit)
-        self.assertTrue(self.rooms_state_obj.cursor.east_exit.title, 'east door')
-        self.assertTrue(self.rooms_state_obj.cursor.east_exit.description, 'This door is bound in iron plates with a small barred window set up high.')
-        self.assertTrue(self.rooms_state_obj.cursor.east_exit.door_type, 'iron_door')
-        self.assertTrue(self.rooms_state_obj.cursor.east_exit.is_locked, True)
-        self.assertTrue(self.rooms_state_obj.cursor.east_exit.is_closed, True)
-        self.assertTrue(self.rooms_state_obj.cursor.east_exit.closeable, True)
-        self.assertFalse(self.rooms_state_obj.cursor.has_south_exit)
-        self.assertFalse(self.rooms_state_obj.cursor.has_west_exit)
+        self.assertEqual(self.rooms_state_obj.cursor.description, 'Entrance room.')
+        self.assertTrue(self.rooms_state_obj.cursor.has_north_door)
+        self.assertEqual(self.rooms_state_obj.cursor.north_door.title, 'north door')
+        self.assertEqual(self.rooms_state_obj.cursor.north_door.description, 'This door is made of wooden planks '
+                                                                             'secured together with iron divots.')
+        self.assertEqual(self.rooms_state_obj.cursor.north_door.door_type, 'wooden_door')
+        self.assertEqual(self.rooms_state_obj.cursor.north_door.is_locked, False)
+        self.assertEqual(self.rooms_state_obj.cursor.north_door.is_closed, True)
+        self.assertEqual(self.rooms_state_obj.cursor.north_door.closeable, True)
+        self.assertTrue(self.rooms_state_obj.cursor.has_east_door)
+        self.assertTrue(self.rooms_state_obj.cursor.east_door.title, 'east door')
+        self.assertTrue(self.rooms_state_obj.cursor.east_door.description, 'This door is bound in iron plates with a '
+                                                                           'small barred window set up high.')
+        self.assertTrue(self.rooms_state_obj.cursor.east_door.door_type, 'iron_door')
+        self.assertTrue(self.rooms_state_obj.cursor.east_door.is_locked, True)
+        self.assertTrue(self.rooms_state_obj.cursor.east_door.is_closed, True)
+        self.assertTrue(self.rooms_state_obj.cursor.east_door.closeable, True)
+        self.assertFalse(self.rooms_state_obj.cursor.has_south_door)
+        self.assertFalse(self.rooms_state_obj.cursor.has_west_door)
         self.rooms_state_obj.move(north=True)
 
     def test_rooms_state_move_east(self):
-        self.rooms_state_obj.cursor.east_exit.is_locked = False
+        self.rooms_state_obj.cursor.east_door.is_locked = False
         self.rooms_state_obj.move(east=True)
         self.assertEqual(self.rooms_state_obj.cursor.internal_name, 'Room_2,1')
         self.assertFalse(self.rooms_state_obj.cursor.is_entrance)
         self.assertFalse(self.rooms_state_obj.cursor.is_exit)
         self.assertEqual(self.rooms_state_obj.cursor.title, 'Southeast dungeon room')
-        self.assertEqual(self.rooms_state_obj.cursor.description, 'Nondescript room')
-        self.assertTrue(self.rooms_state_obj.cursor.has_north_exit)
-        self.assertFalse(self.rooms_state_obj.cursor.has_east_exit)
-        self.assertFalse(self.rooms_state_obj.cursor.has_south_exit)
-        self.assertTrue(self.rooms_state_obj.cursor.has_west_exit)
+        self.assertEqual(self.rooms_state_obj.cursor.description, 'Nondescript room.')
+        self.assertTrue(self.rooms_state_obj.cursor.has_north_door)
+        self.assertFalse(self.rooms_state_obj.cursor.has_east_door)
+        self.assertFalse(self.rooms_state_obj.cursor.has_south_door)
+        self.assertTrue(self.rooms_state_obj.cursor.has_west_door)
 
     def test_rooms_state_move_north(self):
         self.rooms_state_obj.move(north=True)
@@ -661,31 +681,32 @@ class test_rooms_state_obj(unittest.TestCase):
         self.assertFalse(self.rooms_state_obj.cursor.is_entrance)
         self.assertFalse(self.rooms_state_obj.cursor.is_exit)
         self.assertEqual(self.rooms_state_obj.cursor.title, 'Northwest dungeon room')
-        self.assertEqual(self.rooms_state_obj.cursor.description, 'Nondescript room')
-        self.assertFalse(self.rooms_state_obj.cursor.has_north_exit)
-        self.assertTrue(self.rooms_state_obj.cursor.has_east_exit)
-        self.assertTrue(self.rooms_state_obj.cursor.has_south_exit)
-        self.assertFalse(self.rooms_state_obj.cursor.has_west_exit)
+        self.assertEqual(self.rooms_state_obj.cursor.description, 'Nondescript room.')
+        self.assertFalse(self.rooms_state_obj.cursor.has_north_door)
+        self.assertTrue(self.rooms_state_obj.cursor.has_east_door)
+        self.assertTrue(self.rooms_state_obj.cursor.has_south_door)
+        self.assertFalse(self.rooms_state_obj.cursor.has_west_door)
 
     def test_rooms_state_move_north_and_east(self):
-        self.rooms_state_obj.cursor.east_exit.is_locked = False
+        self.rooms_state_obj.cursor.east_door.is_locked = False
         self.rooms_state_obj.move(north=True)
         self.rooms_state_obj.move(east=True)
-        self.assertTrue(self.rooms_state_obj.cursor.west_exit.title, 'west doorway')
-        self.assertTrue(self.rooms_state_obj.cursor.west_exit.description, 'This door is bound in iron plates with a small barred window set up high.')
-        self.assertTrue(self.rooms_state_obj.cursor.west_exit.door_type, 'doorway')
-        self.assertTrue(self.rooms_state_obj.cursor.west_exit.is_locked, False)
-        self.assertTrue(self.rooms_state_obj.cursor.west_exit.is_closed, False)
-        self.assertTrue(self.rooms_state_obj.cursor.west_exit.closeable, False)
+        self.assertTrue(self.rooms_state_obj.cursor.west_door.title, 'west doorway')
+        self.assertTrue(self.rooms_state_obj.cursor.west_door.description, 'This door is bound in iron plates with a '
+                                                                           'small barred window set up high.')
+        self.assertTrue(self.rooms_state_obj.cursor.west_door.door_type, 'doorway')
+        self.assertTrue(self.rooms_state_obj.cursor.west_door.is_locked, False)
+        self.assertTrue(self.rooms_state_obj.cursor.west_door.is_closed, False)
+        self.assertTrue(self.rooms_state_obj.cursor.west_door.closeable, False)
         self.assertEqual(self.rooms_state_obj.cursor.internal_name, 'Room_2,2')
         self.assertTrue(self.rooms_state_obj.cursor.is_exit)
         self.assertFalse(self.rooms_state_obj.cursor.is_entrance)
         self.assertEqual(self.rooms_state_obj.cursor.title, 'Northeast dungeon room')
-        self.assertEqual(self.rooms_state_obj.cursor.description, 'Exit room')
-        self.assertFalse(self.rooms_state_obj.cursor.has_north_exit)
-        self.assertFalse(self.rooms_state_obj.cursor.has_east_exit)
-        self.assertTrue(self.rooms_state_obj.cursor.has_south_exit)
-        self.assertTrue(self.rooms_state_obj.cursor.has_west_exit)
+        self.assertEqual(self.rooms_state_obj.cursor.description, 'Exit room.')
+        self.assertTrue(self.rooms_state_obj.cursor.has_north_door)
+        self.assertFalse(self.rooms_state_obj.cursor.has_east_door)
+        self.assertTrue(self.rooms_state_obj.cursor.has_south_door)
+        self.assertTrue(self.rooms_state_obj.cursor.has_west_door)
 
     def test_rooms_state_invalid_move(self):
         with self.assertRaises(bad_command_exception):
@@ -703,9 +724,9 @@ class test_rooms_state_obj(unittest.TestCase):
         self.assertEqual(room_obj.items_here.get('Health_Potion'), (2, health_potion_obj))
 
     def test_rooms_state_and_door_obj(self):
-        self.assertIsInstance(self.rooms_state_obj.cursor.north_exit, door)
-        self.assertEqual(self.rooms_state_obj.cursor.north_exit.internal_name, 'Room_1,1_x_Room_1,2')
-        self.assertEqual(self.rooms_state_obj.cursor.east_exit.internal_name, 'Room_1,1_x_Room_2,1')
+        self.assertIsInstance(self.rooms_state_obj.cursor.north_door, door)
+        self.assertEqual(self.rooms_state_obj.cursor.north_door.internal_name, 'Room_1,1_x_Room_1,2')
+        self.assertEqual(self.rooms_state_obj.cursor.east_door.internal_name, 'Room_1,1_x_Room_2,1')
 
 
 class test_game_state(unittest.TestCase):
@@ -724,8 +745,10 @@ class test_game_state(unittest.TestCase):
         self.doors_state_obj = doors_state(**self.doors_ini_config_obj.sections)
         self.containers_state_obj = containers_state(self.items_state_obj, **self.containers_ini_config_obj.sections)
         self.creatures_state_obj = creatures_state(self.items_state_obj, **self.creatures_ini_config_obj.sections)
-        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj, self.items_state_obj, **self.rooms_ini_config_obj.sections)
-        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj, self.items_state_obj)
+        self.rooms_state_obj = rooms_state(self.creatures_state_obj, self.containers_state_obj, self.doors_state_obj, 
+                                           self.items_state_obj, **self.rooms_ini_config_obj.sections)
+        self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj, 
+                                         self.doors_state_obj, self.items_state_obj)
 
     def test_game_state(self):
         self.assertFalse(self.game_state_obj.game_has_begun)
