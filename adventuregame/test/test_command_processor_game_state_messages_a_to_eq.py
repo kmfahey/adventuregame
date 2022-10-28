@@ -7,6 +7,7 @@ import sys
 
 from adventuregame import *
 from adventuregame.test.utility import *
+from adventuregame.testing_game_data import *
 
 __name__ = 'adventuregame.test_command_processor_game_state_messages_a_to_eq'
 
@@ -16,11 +17,11 @@ class test_attack(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
-        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
-        self.doors_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Doors_Ini_Config_Text)
-        self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
-        self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
+        self.containers_ini_config_obj = iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
+        self.items_ini_config_obj = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
+        self.doors_ini_config_obj = iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
+        self.creatures_ini_config_obj = iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
+        self.rooms_ini_config_obj = iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
 
     def setUp(self):
@@ -121,11 +122,11 @@ class test_cast_spell_command(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
-        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
-        self.doors_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Doors_Ini_Config_Text)
-        self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
-        self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
+        self.containers_ini_config_obj = iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
+        self.items_ini_config_obj = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
+        self.doors_ini_config_obj = iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
+        self.creatures_ini_config_obj = iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
+        self.rooms_ini_config_obj = iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
@@ -185,11 +186,11 @@ class test_close_command(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
-        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
-        self.doors_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Doors_Ini_Config_Text)
-        self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
-        self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
+        self.containers_ini_config_obj = iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
+        self.items_ini_config_obj = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
+        self.doors_ini_config_obj = iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
+        self.creatures_ini_config_obj = iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
+        self.rooms_ini_config_obj = iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
@@ -261,11 +262,11 @@ class test_drink_command(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
-        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
-        self.doors_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Doors_Ini_Config_Text)
-        self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
-        self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
+        self.containers_ini_config_obj = iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
+        self.items_ini_config_obj = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
+        self.doors_ini_config_obj = iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
+        self.creatures_ini_config_obj = iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
+        self.rooms_ini_config_obj = iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
@@ -397,11 +398,11 @@ class test_drop_command(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
-        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
-        self.doors_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Doors_Ini_Config_Text)
-        self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
-        self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
+        self.containers_ini_config_obj = iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
+        self.items_ini_config_obj = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
+        self.doors_ini_config_obj = iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
+        self.creatures_ini_config_obj = iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
+        self.rooms_ini_config_obj = iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
@@ -478,11 +479,11 @@ class test_equip_command_1(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
-        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
-        self.doors_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Doors_Ini_Config_Text)
-        self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
-        self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
+        self.containers_ini_config_obj = iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
+        self.items_ini_config_obj = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
+        self.doors_ini_config_obj = iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
+        self.creatures_ini_config_obj = iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
+        self.rooms_ini_config_obj = iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
@@ -571,11 +572,11 @@ class test_equip_command_2(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
-        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
-        self.doors_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Doors_Ini_Config_Text)
-        self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
-        self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
+        self.containers_ini_config_obj = iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
+        self.items_ini_config_obj = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
+        self.doors_ini_config_obj = iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
+        self.creatures_ini_config_obj = iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
+        self.rooms_ini_config_obj = iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)

@@ -15,8 +15,8 @@ class test_container(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
-        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
+        self.containers_ini_config_obj = iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
+        self.items_ini_config_obj = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
@@ -45,7 +45,7 @@ class test_character(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
+        self.items_ini_config_obj = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
@@ -231,8 +231,8 @@ class test_creature(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
-        self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
+        self.items_ini_config_obj = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
+        self.creatures_ini_config_obj = iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
@@ -277,7 +277,7 @@ class test_equipment(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
+        self.items_ini_config_obj = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
@@ -370,7 +370,7 @@ class test_inventory(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
+        self.items_ini_config_obj = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
 
     def setUp(self):
         self.inventory_obj = inventory(**self.items_ini_config_obj.sections)
@@ -455,7 +455,7 @@ class test_door_and_doors_state(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.doors_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Doors_Ini_Config_Text)
+        self.doors_ini_config_obj = iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
 
     def setUp(self):
         self.doors_state_obj = doors_state(**self.doors_ini_config_obj.sections)
@@ -513,7 +513,7 @@ class test_item_and_items_state(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
+        self.items_ini_config_obj = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
@@ -604,11 +604,11 @@ class test_rooms_state_obj(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
-        self.doors_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Doors_Ini_Config_Text)
-        self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
-        self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
-        self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
+        self.items_ini_config_obj = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
+        self.doors_ini_config_obj = iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
+        self.containers_ini_config_obj = iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
+        self.creatures_ini_config_obj = iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
+        self.rooms_ini_config_obj = iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
@@ -712,11 +712,11 @@ class test_game_state(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Chests_Ini_Config_Text)
-        self.items_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Items_Ini_Config_Text)
-        self.doors_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Doors_Ini_Config_Text)
-        self.creatures_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Creatures_Ini_Config_Text)
-        self.rooms_ini_config_obj = create_temp_ini_file_and_instance_IniConfig(Rooms_Ini_Config_Text)
+        self.containers_ini_config_obj = iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
+        self.items_ini_config_obj = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
+        self.doors_ini_config_obj = iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
+        self.creatures_ini_config_obj = iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
+        self.rooms_ini_config_obj = iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)

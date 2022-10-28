@@ -2,10 +2,10 @@
 
 import os
 import tempfile
-
 import iniconfig
 
-__name__ = 'adventuregame.utility'
+
+__name__ = 'adventuregame.test.testing_game_data'
 
 
 # dungeon map
@@ -327,13 +327,3 @@ title=sorcerer
 weapon_equipped=Dagger
 wisdom=12
 """
-
-
-def create_temp_ini_file_and_instance_IniConfig(ini_config_text):
-    _, temp_ini_config_file = tempfile.mkstemp(suffix='.ini')
-    temp_ini_config_fh = open(temp_ini_config_file, 'w')
-    temp_ini_config_fh.write(ini_config_text)
-    temp_ini_config_fh.close()
-    ini_config_obj = iniconfig.IniConfig(temp_ini_config_file)
-    os.remove(temp_ini_config_file)
-    return ini_config_obj

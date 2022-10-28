@@ -7,6 +7,6 @@ from adventuregame.test.test_command_processor_game_state_messages_a_to_eq impor
 from adventuregame.test.test_command_processor_game_state_messages_ex_to_l import *
 from adventuregame.test.test_command_processor_game_state_messages_o_to_se import *
 from adventuregame.test.test_command_processor_game_state_messages_st_to_u import *
-from adventuregame.test.utility import *
+from adventuregame.test.testing_game_data import *
 
-__name__ = 'adventuregame.__init__'
+__name__ = 'adventuregame.test.__init__'
