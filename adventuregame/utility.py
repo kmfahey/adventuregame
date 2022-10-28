@@ -5,6 +5,7 @@ import random
 import re
 import iniconfig
 import tempfile
+import os
 
 __name__ = 'adventuregame.utility'
 

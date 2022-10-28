@@ -1,9 +1,5 @@
 #!/usr/bin/python3
 
-import os
-import tempfile
-import iniconfig
-
 
 __name__ = 'adventuregame.test.testing_game_data'
 

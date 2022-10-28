@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-import adventuregame.game_data.ini_temp_file
-
 
 __name__ = "adventuregame.game_data"
 

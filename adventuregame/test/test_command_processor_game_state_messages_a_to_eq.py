@@ -6,8 +6,7 @@ import unittest
 import sys
 
 from adventuregame import *
-from adventuregame.test.utility import *
-from adventuregame.testing_game_data import *
+from adventuregame.test.testing_game_data import *
 
 __name__ = 'adventuregame.test_command_processor_game_state_messages_a_to_eq'
 

@@ -6,7 +6,7 @@ import unittest
 import sys
 
 from adventuregame import *
-from adventuregame.test.utility import *
+from adventuregame.test.testing_game_data import *
 
 __name__ = 'adventuregame.test_command_processor_commandreturns_st_to_u'
 

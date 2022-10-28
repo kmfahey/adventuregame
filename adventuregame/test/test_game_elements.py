@@ -5,7 +5,7 @@ import operator
 import unittest
 
 from adventuregame import *
-from adventuregame.test.utility import *
+from adventuregame.test.testing_game_data import *
 
 __name__ = 'adventuregame.test_game_elements'
 
