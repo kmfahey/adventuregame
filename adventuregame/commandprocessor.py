@@ -11,6 +11,9 @@ from adventuregame.utility import *
 __name__ = 'adventuregame.commandprocessor'
 
 
+Spell_Damage = "3d8+5"
+
+
 class command_processor(object):
     __slots__ = 'game_state', 'dispatch_table'
 
@@ -38,6 +41,8 @@ class command_processor(object):
         command = tokens.pop(0).lower()
         if command == 'cast' and len(tokens) and tokens[0].lower() == 'spell':
             command += '_' + tokens.pop(0).lower()
+        elif command == 'exit' and len(tokens) and (tokens[0].lower() == 'using' or tokens[0].lower() == 'via'):
+            tokens.pop(0)
         elif command == "i'm" and len(tokens) and tokens[0].lower() == 'satisfied':
             command = tokens.pop(0).lower()
         elif command == 'look' and len(tokens) and tokens[0].lower() == 'at':
@@ -48,8 +53,6 @@ class command_processor(object):
             command += '_' + tokens.pop(0).lower()
             if len(tokens) and tokens[0] == 'to':
                 tokens.pop(0)
-        elif command == 'exit' and len(tokens) and (tokens[0].lower() == 'using' or tokens[0].lower() == 'via'):
-            tokens.pop(0)
         elif command == 'show' and len(tokens) and tokens[0].lower() == 'inventory':
             command = tokens.pop(0).lower()
         if command not in ('set_name', 'set_class'):
@@ -82,7 +85,7 @@ class command_processor(object):
                 corpse_obj = creature_obj.convert_to_corpse()
                 self.game_state.rooms_state.cursor.container_here = corpse_obj
                 self.game_state.rooms_state.cursor.creature_here = None
-                return attack_command_attack_hit(creature_obj.title, damage_result, True), attack_command_foe_death(creature_obj.title),
+                return attack_command_attack_hit(creature_obj.title, damage_result, True), various_commands_foe_death(creature_obj.title),
             else:
                 attack_hit_result = attack_command_attack_hit(creature_obj.title, damage_result, False)
                 be_attacked_by_result = self._be_attacked_by_command(creature_obj)
@@ -103,7 +106,28 @@ class command_processor(object):
                 return be_attacked_by_command_attacked_and_hit(creature_obj.title, damage_done, self.game_state.character.hit_points),
 
     def cast_spell_command(self, *tokens):
-        pass
+        if self.game_state.character_class not in ('Mage', 'Priest'):
+            return command_class_restricted('CAST SPELL', 'mage', 'priest'),
+        elif len(tokens):
+            return command_bad_syntax('CAST SPELL', ''),
+        elif self.game_state.character_class == 'Mage':
+            if self.game_state.rooms_state.cursor.creature_here is None:
+                return cast_spell_command_no_creature_to_target(),
+            else:
+                damage_dealt = roll_dice(Spell_Damage)
+                creature_obj = self.game_state.rooms_state.cursor.creature_here
+                creature_obj.take_damage(damage_dealt)
+                if creature_obj.is_dead:
+                    return cast_spell_command_cast_damaging_spell(creature_obj.title, damage_dealt), various_commands_foe_death(creature_obj.title),
+                else:
+                    be_attacked_by_result = self._be_attacked_by_command(creature_obj)
+                    return (cast_spell_command_cast_damaging_spell(creature_obj.title, damage_dealt),) + be_attacked_by_result 
+        else:
+            damage_rolled = roll_dice(Spell_Damage)
+            healed_amt = self.game_state.character.heal_damage(damage_rolled)
+            return (cast_spell_command_cast_healing_spell(),
+                    various_commands_underwent_healing_effect(healed_amt, self.game_state.character.hit_points,
+                                                              self.game_state.character.hit_point_total))
 
     def close_command(self, *tokens):
         result = self._lock_unlock_open_or_close_preproc('CLOSE', *tokens)
@@ -117,8 +141,43 @@ class command_processor(object):
             object_to_close.is_closed = True
             return close_command_object_has_been_closed(object_to_close.title),
 
-    def drink(self, *tokens):
-        pass
+    def drink_command(self, *tokens):
+        if not len(tokens) or tokens == ('the',):
+            return command_bad_syntax('DRINK', '[THE] <potion name>'),
+        if tokens[0] == 'the' or tokens[0] == 'a':
+            drinking_qty = 1
+            tokens = tokens[1:]
+        elif tokens[0].isdigit() or lexical_number_in_1_99_re.match(tokens[0]):
+            drinking_qty = int(tokens[0]) if tokens[0].isdigit() else lexical_number_to_digits(tokens[0])
+            if (drinking_qty > 1 and not tokens[-1].endswith('s')) or (drinking_qty == 1 and tokens[-1].endswith('s')):
+                return command_bad_syntax('DRINK', '[THE] <potion name>'),
+            tokens = tokens[1:]
+        else:
+            drinking_qty = 1
+            if tokens[-1].endswith('s'):
+                return command_bad_syntax('DRINK', '[THE] <potion name>'),
+        item_title = ' '.join(tokens).rstrip('s')
+        matching_items_qtys_objs = tuple(filter(lambda argl: argl[1].title == item_title,
+                                                self.game_state.character.list_items()))
+        if not len(matching_items_qtys_objs):
+            return drink_command_item_not_in_inventory(item_title),
+        item_qty, item_obj = matching_items_qtys_objs[0]
+        if not item_obj.title.endswith(' potion'):
+            return drink_command_item_not_drinkable(item_title),
+        elif drinking_qty > item_qty:
+            return drink_command_tried_to_drink_more_than_possessed(item_title, drinking_qty, item_qty),
+        elif item_obj.title == 'health potion':
+            hit_points_recovered = item_obj.hit_points_recovered
+            healed_amt = self.game_state.character.heal_damage(hit_points_recovered)
+            self.game_state.character.drop_item(item_obj)
+            return various_commands_underwent_healing_effect(healed_amt, self.game_state.character.hit_points, self.game_state.character.hit_point_total),
+        else:   # item_obj.title == 'mana potion':
+            if self.game_state.character_class not in ('Mage', 'Priest'):
+                return drink_command_drank_mana_potion_when_not_a_spellcaster(),
+            mana_points_recovered = item_obj.mana_points_recovered
+            regained_amt = self.game_state.character.regain_mana(mana_points_recovered)
+            self.game_state.character.drop_item(item_obj)
+            return drink_command_drank_mana_potion(regained_amt, self.game_state.character.mana_points, self.game_state.character.mana_point_total),
 
     def _pick_up_or_drop_preproc(self, command, *tokens):
         if tokens[0] == 'a' or tokens[0] == 'the' or tokens[0].isdigit() or lexical_number_in_1_99_re.match(tokens[0]):
@@ -204,11 +263,11 @@ class command_processor(object):
         elif item_obj.item_type == 'wand' and self.game_state.character.wand_equipped:
             old_equipped_obj = self.game_state.character.wand_equipped
             retval = equip_or_unequip_command_item_unequipped(old_equipped_obj.title, old_equipped_obj.item_type,
-                                                              change_text_str="You now can't attack."),
+                                                              change_text="You now can't attack."),
         elif item_obj.item_type == 'weapon' and self.game_state.character.weapon_equipped:
             old_equipped_obj = self.game_state.character.weapon_equipped
             retval = equip_or_unequip_command_item_unequipped(old_equipped_obj.title, old_equipped_obj.item_type,
-                                                              change_text_str="You now can't attack."),
+                                                              change_text="You now can't attack."),
         if item_obj.item_type == 'armor':
             self.game_state.character.equip_armor(item_obj)
             return retval + (equip_command_item_equipped(item_obj.title, 'armor',
@@ -245,20 +304,7 @@ class command_processor(object):
         if len(tokens):
             return command_bad_syntax('INVENTORY', ''),
         inventory_contents = sorted(self.game_state.character.list_items(), key=lambda argl: argl[1].title)
-        display_strs_list = list()
-        for item_qty, item_obj in inventory_contents:
-            if item_obj.item_type == 'armor' and item_qty == 1:
-                display_strs_list.append(f"a suit of {item_obj.title}")
-            elif item_obj.item_type == 'armor' and item_qty > 1:
-                display_strs_list.append(f"{item_qty} suits of {item_obj.title}")
-            elif item_qty == 1 and item_obj.title[0] in 'aeiou':
-                display_strs_list.append(f"an {item_obj.title}")
-            elif item_qty == 1:
-                display_strs_list.append(f"a {item_obj.title}")
-            else:
-                display_strs_list.append(f"{item_qty} {item_obj.title}s")
-        return inventory_command_display_inventory(display_strs_list),
-
+        return inventory_command_display_inventory(inventory_contents),
 
     def leave_command(self, *tokens):
         return self.exit(*tokens)
@@ -385,7 +431,41 @@ class command_processor(object):
             return open_command_object_is_already_open(object_to_open.title),
 
     def pick_lock_command(self, *tokens):
-        pass
+        if self.game_state.character_class != 'Thief':
+            return command_class_restricted('PICK LOCK', 'thief'),
+        if not len(tokens) or tokens[0] != 'on' or tokens == ('on',) or tokens == ('on', 'the',):
+            return command_bad_syntax('PICK LOCK', 'ON [THE] <chest name>', 'ON [THE] <door name>'),
+        elif tokens[1] == 'the':
+            tokens = tokens[2:]
+        else:
+            tokens = tokens[1:]
+        target_title = ' '.join(tokens)
+        container_obj = self.game_state.rooms_state.cursor.container_here
+        door_objs = []
+        for compass_dir in ('north', 'east', 'south', 'west'):
+            door_obj = getattr(self.game_state.rooms_state.cursor, f'{compass_dir}_exit', None)
+            if door_obj is None:
+                continue
+            door_objs.append(door_obj)
+        if container_obj is not None and container_obj.title == target_title:
+            if not getattr(container_obj, 'is_locked', False):
+                return pick_lock_command_target_not_locked(target_title),
+            else:
+                container_obj.is_locked = False
+                return pick_lock_command_target_has_been_unlocked(target_title),
+        elif target_title.endswith('door'):
+            door_obj_match = tuple(filter(lambda door_obj: door_obj.title == target_title, door_objs))
+            if not door_obj_match:
+                return pick_lock_command_target_not_found(target_title),
+            else:
+                door_obj, = door_obj_match[0:1]
+                if not door_obj.is_locked:
+                    return pick_lock_command_target_not_locked(target_title),
+                else:
+                    door_obj.is_locked = False
+                    return pick_lock_command_target_has_been_unlocked(target_title),
+        else:
+            return pick_lock_command_target_cant_be_unlocked_or_not_found(target_title),
 
     def pick_up_command(self, *tokens):
         result = self._pick_up_or_drop_preproc('PICK UP', *tokens)
@@ -576,12 +656,12 @@ class command_processor(object):
             return command_bad_syntax('REROLL', f''),
         self.game_state.character.ability_scores.roll_stats()
         return set_name_or_class_command_display_rolled_stats(
-                   strength_int=self.game_state.character.strength,
-                   dexterity_int=self.game_state.character.dexterity,
-                   constitution_int=self.game_state.character.constitution,
-                   intelligence_int=self.game_state.character.intelligence,
-                   wisdom_int=self.game_state.character.wisdom,
-                   charisma_int=self.game_state.character.charisma),
+                   strength=self.game_state.character.strength,
+                   dexterity=self.game_state.character.dexterity,
+                   constitution=self.game_state.character.constitution,
+                   intelligence=self.game_state.character.intelligence,
+                   wisdom=self.game_state.character.wisdom,
+                   charisma=self.game_state.character.charisma),
         
 
     # Concerning both set_name_command() and set_class_command() below it:
@@ -599,6 +679,8 @@ class command_processor(object):
         return satisfied_command_game_begins(),
 
     def set_name_command(self, *tokens):
+        if len(tokens) == 0:
+            return command_bad_syntax('SET NAME', f'<character name>'),
         name_parts_tests = list(map(bool, map(self.valid_name_re.match, tokens)))
         name_was_none = self.game_state.character_name is None
         if False in name_parts_tests:
@@ -614,19 +696,19 @@ class command_processor(object):
             self.game_state.character_name = ' '.join(tokens)
             if self.game_state.character_class is not None and name_was_none:
                 return (set_name_command_name_set(name_str), set_name_or_class_command_display_rolled_stats(
-                            strength_int=self.game_state.character.strength,
-                            dexterity_int=self.game_state.character.dexterity,
-                            constitution_int=self.game_state.character.constitution,
-                            intelligence_int=self.game_state.character.intelligence,
-                            wisdom_int=self.game_state.character.wisdom,
-                            charisma_int=self.game_state.character.charisma
+                            strength=self.game_state.character.strength,
+                            dexterity=self.game_state.character.dexterity,
+                            constitution=self.game_state.character.constitution,
+                            intelligence=self.game_state.character.intelligence,
+                            wisdom=self.game_state.character.wisdom,
+                            charisma=self.game_state.character.charisma
                 ))
             else:
                 return set_name_command_name_set(self.game_state.character_name),
 
     def set_class_command(self, *tokens):
-        if len(tokens) > 1:
-            return command_too_many_words(1),  # FIXME
+        if len(tokens) == 0 or len(tokens) > 1:
+            return command_bad_syntax('SET CLASS', f'<Warrior, Thief, Mage or Priest>'),
         elif not self.valid_class_re.match(tokens[0]):
             return set_class_command_invalid_class(tokens[0]),
         class_str = tokens[0]
@@ -635,12 +717,12 @@ class command_processor(object):
         if self.game_state.character_name is not None and class_was_none:
             return (set_class_command_class_set(class_str),
                     set_name_or_class_command_display_rolled_stats(
-                        strength_int=self.game_state.character.strength,
-                        dexterity_int=self.game_state.character.dexterity,
-                        constitution_int=self.game_state.character.constitution,
-                        intelligence_int=self.game_state.character.intelligence,
-                        wisdom_int=self.game_state.character.wisdom,
-                        charisma_int=self.game_state.character.charisma
+                        strength=self.game_state.character.strength,
+                        dexterity=self.game_state.character.dexterity,
+                        constitution=self.game_state.character.constitution,
+                        intelligence=self.game_state.character.intelligence,
+                        wisdom=self.game_state.character.wisdom,
+                        charisma=self.game_state.character.charisma
             ))
         else:
             return set_class_command_class_set(class_str),
@@ -653,22 +735,26 @@ class command_processor(object):
             return command_bad_syntax('STATUS', f''),
         character_obj = self.game_state.character
         output_args = dict()
-        output_args['hit_points_int'] = character_obj.hit_points
-        output_args['hit_point_total_int'] = character_obj.hit_point_total
+        output_args['hit_points'] = character_obj.hit_points
+        output_args['hit_point_total'] = character_obj.hit_point_total
         if character_obj.character_class in ('Mage', 'Priest'):
-            output_args['mana_points_int'] = character_obj.mana_points
-            output_args['mana_point_total_int'] = character_obj.mana_point_total
+            output_args['mana_points'] = character_obj.mana_points
+            output_args['mana_point_total'] = character_obj.mana_point_total
         else:
-            output_args['mana_points_int'] = None
-            output_args['mana_point_total_int'] = None
-        output_args['armor_class_int'] = character_obj.armor_class
-        output_args['attack_bonus_int'] = character_obj.attack_bonus
-        output_args['damage_str'] = character_obj.damage_roll
-        output_args['armor_str'] = character_obj.armor.title if character_obj.armor_equipped else None
-        output_args['shield_str'] = character_obj.shield.title if character_obj.shield_equipped else None
-        output_args['wand_str'] = character_obj.wand.title if character_obj.wand_equipped else None
-        output_args['weapon_str'] = character_obj.weapon.title if character_obj.weapon_equipped else None
-        output_args['is_mage_bool'] = character_obj.character_class == 'Mage'
+            output_args['mana_points'] = None
+            output_args['mana_point_total'] = None
+        output_args['armor_class'] = character_obj.armor_class
+        if character_obj.weapon_equipped or (character_obj.character_class == "Mage" and character_obj.wand_equipped):
+            output_args['attack_bonus'] = character_obj.attack_bonus
+            output_args['damage'] = character_obj.damage_roll
+        else:
+            output_args['attack_bonus'] = 0
+            output_args['damage'] = ''
+        output_args['armor'] = character_obj.armor.title if character_obj.armor_equipped else None
+        output_args['shield'] = character_obj.shield.title if character_obj.shield_equipped else None
+        output_args['wand'] = character_obj.wand.title if character_obj.wand_equipped else None
+        output_args['weapon'] = character_obj.weapon.title if character_obj.weapon_equipped else None
+        output_args['is_mage'] = character_obj.character_class == 'Mage'
         return status_command_output(**output_args),
 
     def take_command(self, *tokens):
@@ -811,7 +897,7 @@ class command_processor(object):
             if self.game_state.character.wand_equipped is not None:
                 if self.game_state.character.wand_equipped.title == item_title:
                     self.game_state.character.unequip_wand()
-                    return equip_or_unequip_command_item_unequipped(item_title, 'wand', change_text_str="You now can't attack."),
+                    return equip_or_unequip_command_item_unequipped(item_title, 'wand', change_text="You now can't attack."),
                 else:
                     return unequip_command_item_not_equipped(item_title, 'wand'),
             else:
@@ -820,7 +906,7 @@ class command_processor(object):
             if self.game_state.character.weapon_equipped is not None:
                 if self.game_state.character.weapon_equipped.title == item_title:
                     self.game_state.character.unequip_weapon()
-                    return equip_or_unequip_command_item_unequipped(item_title, 'weapon', change_text_str="You now can't attack."),
+                    return equip_or_unequip_command_item_unequipped(item_title, 'weapon', change_text="You now can't attack."),
                 else:
                     return unequip_command_item_not_equipped(item_obj.title, 'weapon'),
             else:

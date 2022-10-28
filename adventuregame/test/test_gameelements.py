@@ -95,10 +95,12 @@ class test_character(unittest.TestCase):
         self.assertFalse(character_obj.shield_equipped)
         self.assertFalse(character_obj.weapon_equipped)
         self.assertTrue(character_obj.wand_equipped)
-        total_bonus = wand_obj.attack_bonus + character_obj.intelligence_mod
-        total_bonus_str = '+' + str(total_bonus) if total_bonus > 0 else str(total_bonus) if total_bonus < 0 else ''
-        self.assertEqual(character_obj.attack_roll, '1d20' + total_bonus_str)
-        self.assertEqual(character_obj.damage_roll, '2d12' + total_bonus_str)
+        total_atk_bonus = wand_obj.attack_bonus + character_obj.intelligence_mod
+        total_dmg_bonus = int(wand_obj.damage.split('+')[1]) + character_obj.intelligence_mod
+        total_atk_bonus_str = '+' + str(total_atk_bonus) if total_atk_bonus > 0 else str(total_atk_bonus) if total_atk_bonus < 0 else ''
+        total_dmg_bonus_str = '+' + str(total_dmg_bonus) if total_dmg_bonus > 0 else str(total_dmg_bonus) if total_dmg_bonus < 0 else ''
+        self.assertEqual(character_obj.attack_roll, '1d20' + total_atk_bonus_str)
+        self.assertEqual(character_obj.damage_roll, '3d8' + total_dmg_bonus_str)
         self.assertEqual(character_obj.attack_bonus, int(wand_obj.attack_bonus)
                                                      + character_obj.intelligence_mod)
         self.assertEqual(character_obj.armor_class, 10 + character_obj.dexterity_mod)
@@ -152,6 +154,25 @@ class test_character(unittest.TestCase):
         self.assertEqual(math.floor((character_obj.wisdom - 10) / 2), character_obj.wisdom_mod)
         self.assertEqual(math.floor((character_obj.charisma - 10) / 2), character_obj.charisma_mod)
 
+    def test_character_mana_points_and_spending_mana_and_regaining_it(self):
+        character_obj = character('Mialee', 'Mage')
+        bonus_mana_points = {-4: 0, -3: 0, -2: 0, -1: 0, 0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
+        self.assertEqual(character_obj.mana_points, 19 + bonus_mana_points[character_obj.intelligence_mod])
+        self.assertEqual(character_obj.mana_point_total, 19 + bonus_mana_points[character_obj.intelligence_mod])
+        character_obj.spend_mana(10)
+        self.assertEqual(character_obj.mana_points, 9 + bonus_mana_points[character_obj.intelligence_mod])
+        self.assertEqual(character_obj.mana_point_total, 19 + bonus_mana_points[character_obj.intelligence_mod])
+        regained_amt = character_obj.regain_mana(20)
+        self.assertEqual(regained_amt, 10)
+        self.assertEqual(character_obj.mana_points, 19 + bonus_mana_points[character_obj.intelligence_mod])
+        self.assertEqual(character_obj.mana_point_total, 19 + bonus_mana_points[character_obj.intelligence_mod])
+        character_obj = character('Kaeva', 'Priest')
+        bonus_mana_points = {-4: 0, -3: 0, -2: 0, -1: 0, 0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
+        self.assertEqual(character_obj.mana_points, 16 + bonus_mana_points[character_obj.wisdom_mod])
+        self.assertEqual(character_obj.mana_point_total, 16 + bonus_mana_points[character_obj.wisdom_mod])
+        spent_amt = character_obj.spend_mana(50)
+        self.assertEqual(spent_amt, 0)
+
     def test_character_hitpoints_and_taking_damage_and_healing(self):
         character_obj = character('Regdar', 'Warrior')
         self.assertEqual(character_obj.hit_points, 40 + 3 * character_obj.constitution_mod)
@@ -159,6 +180,9 @@ class test_character(unittest.TestCase):
         character_obj.take_damage(10)
         self.assertEqual(character_obj.hit_points, 30 + 3 * character_obj.constitution_mod)
         self.assertEqual(character_obj.hit_point_total, 40 + 3 * character_obj.constitution_mod)
+        healed_amt = character_obj.heal_damage(20)
+        self.assertEqual(healed_amt, 10)
+        self.assertEqual(character_obj.hit_points, 40 + 3 * character_obj.constitution_mod)
         character_obj = character('Tordek', 'Priest')
         self.assertEqual(character_obj.hit_points, 30 + 3 * character_obj.constitution_mod)
         self.assertEqual(character_obj.hit_point_total, 30 + 3 * character_obj.constitution_mod)
@@ -193,11 +217,11 @@ class test_character(unittest.TestCase):
         character_obj = character('Hennet', 'Mage', base_hit_points=30, strength=12, constitution=13, dexterity=14, intelligence=15, wisdom=10, charisma=8)
         self.assertEqual(character_obj.mana_points, 23)
         self.assertEqual(character_obj.mana_point_total, 23)
-        result = character_obj.attempt_to_spend_mana(10)
+        result = character_obj.spend_mana(10)
         self.assertTrue(result)
         self.assertEqual(character_obj.mana_points, 13)
         self.assertEqual(character_obj.mana_point_total, 23)
-        result = character_obj.attempt_to_spend_mana(15)
+        result = character_obj.spend_mana(15)
         self.assertFalse(result)
         self.assertEqual(character_obj.mana_points, 13)
 

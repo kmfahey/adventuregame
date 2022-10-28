@@ -186,7 +186,7 @@ weight=3
 
 [Magic_Wand_2]
 attack_bonus=3
-damage=2d12+3
+damage=3d8+5
 description=A palpably magical tapered length of polished ash wood tipped with a glowing red carnelian gem.
 item_type=wand
 mage_can_use=true
@@ -196,7 +196,7 @@ weight=0.5
 
 [Magic_Wand]
 attack_bonus=3
-damage=2d12+3
+damage=3d8+5
 description=A palpably magical tapered length of polished ash wood tipped with a glowing red carnelian gem.
 item_type=wand
 mage_can_use=true
@@ -206,7 +206,7 @@ weight=0.5
 
 [Mana_Potion]
 description=A small, stoppered bottle that contains a pungeant but drinkable blue liquid with a discernable magic aura.
-mana_points_recovered=25
+mana_points_recovered=20
 item_type=consumable
 mage_can_use=true
 priest_can_use=true
@@ -216,7 +216,7 @@ weight=.1
 
 [Health_Potion]
 description=A small, stoppered bottle that contains a pungeant but drinkable red liquid with a discernable magic aura.
-hit_points_recovered=25
+hit_points_recovered=20
 item_type=consumable
 mage_can_use=true
 priest_can_use=true

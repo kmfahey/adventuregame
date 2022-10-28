@@ -234,7 +234,7 @@ class character(object):  # has been tested
 
     _base_mana_points = {'Priest': 16, 'Mage': 19}
 
-    _bonus_mana_points = {1: 1, 2: 4, 3: 9, 4: 16}
+    _bonus_mana_points = {-4: 0, -3: 0, -2: 0, -1: 0, 0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
 
     _hitpoint_base = {'Warrior': 40, 'Priest': 30, 'Thief': 30, 'Mage': 20}
 
@@ -286,17 +286,11 @@ class character(object):  # has been tested
                 return
         magic_key_stat_mod = getattr(self, self.magic_key_stat + '_mod')
         if base_mana_points:
-            mana_points_init_val = base_mana_points
+            self._mana_point_maximum = self._current_mana_points = (base_mana_points
+                                                                    + self._bonus_mana_points[magic_key_stat_mod])
         elif self.character_class in self._base_mana_points:
-            mana_points_init_val = self._base_mana_points[self.character_class]
-        else:
-            mana_points_init_val = 0
-        if mana_points_init_val:
-            if magic_key_stat_mod > 0:
-                self._mana_point_maximum = self._current_mana_points = (mana_points_init_val
-                                                                        + self._bonus_mana_points[magic_key_stat_mod])
-            else:
-                self._mana_point_maximum = self._current_mana_points = mana_points_init_val
+            self._mana_point_maximum = self._current_mana_points = (self._base_mana_points[self.character_class]
+                                                                    + self._bonus_mana_points[magic_key_stat_mod])
         else:
             self._mana_point_maximum = self._current_mana_points = 0
 
@@ -327,28 +321,37 @@ class character(object):  # has been tested
 
     def take_damage(self, damage_value):
         if self._current_hit_points - damage_value < 0:
+            taken_amount = self._current_hit_points 
             self._current_hit_points = 0
+            return taken_amount
         else:
             self._current_hit_points -= damage_value
+            return damage_value
 
     def heal_damage(self, healing_value):
         if self._current_hit_points + healing_value > self._hit_point_maximum:
+            amount_healed = self._hit_point_maximum - self._current_hit_points
             self._current_hit_points = self._hit_point_maximum
+            return amount_healed
         else:
             self._current_hit_points += healing_value
+            return healing_value
 
-    def attempt_to_spend_mana(self, spent_amount):
+    def spend_mana(self, spent_amount):
         if self._current_mana_points < spent_amount:
-            return False
+            return 0
         else:
             self._current_mana_points -= spent_amount
-            return True
+            return spent_amount
 
-    def regain_mana(self, regained_amount):
-        if self._current_mana_points + regained_amount > self._mana_point_maximum:
+    def regain_mana(self, regaining_value):
+        if self._current_mana_points + regaining_value > self._mana_point_maximum:
+            amount_regained = self._mana_point_maximum - self._current_mana_points
             self._current_mana_points = self._mana_point_maximum
+            return amount_regained
         else:
-            self._current_mana_points += regained_amount
+            self._current_mana_points += regaining_value
+            return regaining_value
 
     is_alive = property(fget=(lambda self: self._current_hit_points > 0))
 

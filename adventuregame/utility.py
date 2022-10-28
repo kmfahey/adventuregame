@@ -81,5 +81,8 @@ def roll_dice(dice_expr):
     match_obj = dice_expression_re.match(dice_expr)
     if not match_obj:
         raise internal_exception('invalid dice expression: ' + dice_expr)
-    number_of_dice, sidedness_of_dice, modifier_to_roll = map(int, match_obj.groups())
+    number_of_dice, sidedness_of_dice, modifier_to_roll = match_obj.groups()
+    number_of_dice = int(number_of_dice)
+    sidedness_of_dice = int(sidedness_of_dice)
+    modifier_to_roll = int(modifier_to_roll) if modifier_to_roll is not None else 0
     return sum(random.randint(1, sidedness_of_dice) for _ in range(0, number_of_dice)) + modifier_to_roll
