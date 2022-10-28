@@ -1,9 +1,7 @@
 #!/usr/bin/python3
 
-import math
 import operator
 import unittest
-import sys
 
 from adventuregame import *
 from adventuregame.test.testing_game_data import *
@@ -35,6 +33,7 @@ class test_exit(unittest.TestCase):
         self.command_processor_obj = command_processor(self.game_state_obj)
         self.command_processor_obj.game_state.character_name = 'Niath'
         self.command_processor_obj.game_state.character_class = 'Warrior'
+        self.game_state_obj.game_has_begun = True
 
     def test_exit1(self):
         result = self.command_processor_obj.process('exit')
@@ -71,7 +70,6 @@ class test_exit(unittest.TestCase):
         self.assertEqual(self.command_processor_obj.game_state.rooms_state.cursor.internal_name, 'Room_1,2')
 
 
-
 class test_inspect_command(unittest.TestCase):
 
     def __init__(self, *argl, **argd):
@@ -82,7 +80,6 @@ class test_inspect_command(unittest.TestCase):
         self.doors_ini_config_obj = iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
         self.creatures_ini_config_obj = iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
         self.rooms_ini_config_obj = iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
-
 
     def setUp(self):
         self.items_state_obj = items_state(**self.items_ini_config_obj.sections)
@@ -96,6 +93,7 @@ class test_inspect_command(unittest.TestCase):
         self.command_processor_obj = command_processor(self.game_state_obj)
         self.game_state_obj.character_name = 'Niath'
         self.game_state_obj.character_class = 'Warrior'
+        self.game_state_obj.game_has_begun = True
         self.game_state_obj.character.pick_up_item(self.items_state_obj.get('Longsword'))
         self.game_state_obj.character.pick_up_item(self.items_state_obj.get('Studded_Leather'))
         self.game_state_obj.character.pick_up_item(self.items_state_obj.get('Steel_Shield'))
@@ -104,15 +102,13 @@ class test_inspect_command(unittest.TestCase):
         self.game_state_obj.character.equip_shield(self.items_state_obj.get('Steel_Shield'))
         (_, self.gold_coin_obj) = self.command_processor_obj.game_state.rooms_state.cursor.container_here.get('Gold_Coin')
 
-
     def test_inspect_1(self):
         result = self.command_processor_obj.process('inspect kobold')
         self.assertIsInstance(result[0], inspect_command_found_creature_here)
         self.assertEqual(result[0].creature_description, self.game_state_obj.rooms_state.cursor.creature_here.description)
         self.assertEqual(result[0].message, self.game_state_obj.rooms_state.cursor.creature_here.description)
 
-
-    def test_inspect_1(self):
+    def test_inspect_2(self):
         self.command_processor_obj.game_state.rooms_state.cursor.container_here = \
             self.command_processor_obj.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         result = self.command_processor_obj.process('inspect kobold corpse')
@@ -123,8 +119,7 @@ class test_inspect_command(unittest.TestCase):
                                           'have 30 gold coins, a health potion, a short sword, and a small leather '
                                           'armor on them.')
 
-
-    def test_inspect_2(self):
+    def test_inspect_3(self):
         self.game_state_obj.rooms_state.cursor.container_here.is_locked = True
         self.game_state_obj.rooms_state.cursor.container_here.is_closed = True
         result = self.command_processor_obj.process('inspect wooden chest')
@@ -134,8 +129,7 @@ class test_inspect_command(unittest.TestCase):
         self.assertEqual(result[0].is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
         self.assertEqual(result[0].message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is closed and locked.')
 
-
-    def test_inspect_3(self):
+    def test_inspect_4(self):
         self.game_state_obj.rooms_state.cursor.container_here.is_locked = False
         self.game_state_obj.rooms_state.cursor.container_here.is_closed = True
         result = self.command_processor_obj.process('inspect wooden chest')
@@ -145,8 +139,7 @@ class test_inspect_command(unittest.TestCase):
         self.assertEqual(result[0].is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
         self.assertEqual(result[0].message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is closed but unlocked.')
 
-
-    def test_inspect_4(self):
+    def test_inspect_5(self):
         self.game_state_obj.rooms_state.cursor.container_here.is_locked = False
         self.game_state_obj.rooms_state.cursor.container_here.is_closed = False
         result = self.command_processor_obj.process('inspect wooden chest')
@@ -154,18 +147,18 @@ class test_inspect_command(unittest.TestCase):
         self.assertEqual(result[0].container_description, self.game_state_obj.rooms_state.cursor.container_here.description)
         self.assertEqual(result[0].is_locked, self.game_state_obj.rooms_state.cursor.container_here.is_locked)
         self.assertEqual(result[0].is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
-        self.assertEqual(result[0].message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is '
-                                          'unlocked and open. It contains 20 gold coins, a mana potion, and a warhammer.')
+        self.assertEqual(result[0].message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It '
+                                             'is unlocked and open. It contains 20 gold coins, a health potion, a '
+                                             'magic wand, a mana potion, a scale mail armor, a steel shield, and a '
+                                             'warhammer.')
 
-
-    def test_inspect_5(self):
+    def test_inspect_6(self):
         self.game_state_obj.rooms_state.cursor.container_here.is_locked = True
         self.game_state_obj.rooms_state.cursor.container_here.is_closed = False
         with self.assertRaises(internal_exception):
-            result = self.command_processor_obj.process('inspect wooden chest')
+            self.command_processor_obj.process('inspect wooden chest')
 
-
-    def test_inspect_6(self):
+    def test_inspect_7(self):
         self.game_state_obj.rooms_state.cursor.container_here.is_locked = None
         self.game_state_obj.rooms_state.cursor.container_here.is_closed = True
         result = self.command_processor_obj.process('inspect wooden chest')
@@ -175,8 +168,7 @@ class test_inspect_command(unittest.TestCase):
         self.assertEqual(result[0].is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
         self.assertEqual(result[0].message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is closed.')
 
-
-    def test_inspect_7(self):
+    def test_inspect_8(self):
         self.game_state_obj.rooms_state.cursor.container_here.is_locked = None
         self.game_state_obj.rooms_state.cursor.container_here.is_closed = False
         result = self.command_processor_obj.process('inspect wooden chest')
@@ -184,11 +176,11 @@ class test_inspect_command(unittest.TestCase):
         self.assertEqual(result[0].container_description, self.game_state_obj.rooms_state.cursor.container_here.description)
         self.assertEqual(result[0].is_locked, self.game_state_obj.rooms_state.cursor.container_here.is_locked)
         self.assertEqual(result[0].is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
-        self.assertEqual(result[0].message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is '
-                                             'open. It contains 20 gold coins, a mana potion, and a warhammer.')
+        self.assertEqual(result[0].message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It '
+                                             'is open. It contains 20 gold coins, a health potion, a magic wand, a '
+                                             'mana potion, a scale mail armor, a steel shield, and a warhammer.')
 
-
-    def test_inspect_8(self):
+    def test_inspect_9(self):
         self.game_state_obj.rooms_state.cursor.container_here.is_locked = True
         self.game_state_obj.rooms_state.cursor.container_here.is_closed = None
         result = self.command_processor_obj.process('inspect wooden chest')
@@ -198,8 +190,7 @@ class test_inspect_command(unittest.TestCase):
         self.assertEqual(result[0].is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
         self.assertEqual(result[0].message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is locked.')
 
-
-    def test_inspect_9(self):
+    def test_inspect_10(self):
         self.game_state_obj.rooms_state.cursor.container_here.is_locked = False
         self.game_state_obj.rooms_state.cursor.container_here.is_closed = None
         result = self.command_processor_obj.process('inspect wooden chest')
@@ -209,8 +200,7 @@ class test_inspect_command(unittest.TestCase):
         self.assertEqual(result[0].is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
         self.assertEqual(result[0].message, f'{self.game_state_obj.rooms_state.cursor.container_here.description} It is unlocked.')
 
-
-    def test_inspect_10(self):
+    def test_inspect_11(self):
         self.game_state_obj.rooms_state.cursor.container_here.is_locked = None
         self.game_state_obj.rooms_state.cursor.container_here.is_closed = None
         result = self.command_processor_obj.process('inspect wooden chest')
@@ -220,14 +210,11 @@ class test_inspect_command(unittest.TestCase):
         self.assertEqual(result[0].is_closed, self.game_state_obj.rooms_state.cursor.container_here.is_closed)
         self.assertEqual(result[0].message, f'{self.game_state_obj.rooms_state.cursor.container_here.description}')
 
-
-    def test_inspect_11(self):
+    def test_inspect_12(self):
         result = self.command_processor_obj.process('look at kobold')
         self.assertIsInstance(result[0], inspect_command_found_creature_here)
         self.assertEqual(result[0].creature_description, self.game_state_obj.rooms_state.cursor.creature_here.description)
         self.assertEqual(result[0].message, f'{self.game_state_obj.rooms_state.cursor.creature_here.description}')
-
-
 
 
 class test_inspect(unittest.TestCase):
@@ -254,6 +241,7 @@ class test_inspect(unittest.TestCase):
         self.command_processor_obj = command_processor(self.game_state_obj)
         self.command_processor_obj.game_state.character_name = 'Niath'
         self.command_processor_obj.game_state.character_class = 'Warrior'
+        self.game_state_obj.game_has_begun = True
 
     def test_inspect_1(self):
         result = self.command_processor_obj.process('inspect')
@@ -334,14 +322,14 @@ class test_inspect(unittest.TestCase):
                                             "'INSPECT <compass direction> DOOR', or "
                                             "'INSPECT <compass direction> DOORWAY'.")
 
-    def test_inspect_7(self):
+    def test_inspect_8(self):
         self.command_processor_obj.game_state.rooms_state.cursor.container_here = None
         result = self.command_processor_obj.process('inspect mana potion in wooden chest')
         self.assertIsInstance(result[0], various_commands_container_not_found)
         self.assertEqual(result[0].container_not_found_title, 'wooden chest')
         self.assertEqual(result[0].message, 'There is no wooden chest here.')
 
-    def test_inspect_8(self):
+    def test_inspect_9(self):
         result = self.command_processor_obj.process('inspect gold coin in wooden chest')
         self.assertIsInstance(result[0], inspect_command_found_item_or_items_here)
         self.assertEqual(result[0].item_qty, 20)
@@ -350,7 +338,7 @@ class test_inspect(unittest.TestCase):
         self.assertEqual(result[0].message, 'A small shiny gold coin imprinted with an indistinct bust on one side and '
                                             'a worn state seal on the other. You see 20 here.')
 
-    def test_inspect_9(self):
+    def test_inspect_10(self):
         result = self.command_processor_obj.process('inspect warhammer in wooden chest')
         self.assertIsInstance(result[0], inspect_command_found_item_or_items_here)
         self.assertEqual(result[0].item_qty, 1)
@@ -360,17 +348,6 @@ class test_inspect(unittest.TestCase):
         self.assertEqual(result[0].message, 'A heavy hammer with a heavy iron head with a tapered striking point and '
                                             'a long leather-wrapped haft. Its attack bonus is +0 and its damage is 1d8.'
                                             ' Warriors and priests can use this.')
-
-    def test_inspect_10(self):
-        result = self.command_processor_obj.process('inspect steel shield in wooden chest')
-        self.assertIsInstance(result[0], inspect_command_found_item_or_items_here)
-        self.assertEqual(result[0].item_qty, 1)
-        self.assertEqual(result[0].item_description, 'A broad panel of leather-bound steel with a metal rim that is '
-                                                     'useful for sheltering behind. Its armor bonus is +2. Warriors '
-                                                     'and priests can use this.')
-        self.assertEqual(result[0].message, 'A broad panel of leather-bound steel with a metal rim that is useful for '
-                                            'sheltering behind. Its armor bonus is +2. Warriors and priests can use '
-                                            'this.')
 
     def test_inspect_11(self):
         result = self.command_processor_obj.process('inspect steel shield in wooden chest')
@@ -384,6 +361,17 @@ class test_inspect(unittest.TestCase):
                                             'this.')
 
     def test_inspect_12(self):
+        result = self.command_processor_obj.process('inspect steel shield in wooden chest')
+        self.assertIsInstance(result[0], inspect_command_found_item_or_items_here)
+        self.assertEqual(result[0].item_qty, 1)
+        self.assertEqual(result[0].item_description, 'A broad panel of leather-bound steel with a metal rim that is '
+                                                     'useful for sheltering behind. Its armor bonus is +2. Warriors '
+                                                     'and priests can use this.')
+        self.assertEqual(result[0].message, 'A broad panel of leather-bound steel with a metal rim that is useful for '
+                                            'sheltering behind. Its armor bonus is +2. Warriors and priests can use '
+                                            'this.')
+
+    def test_inspect_13(self):
         result = self.command_processor_obj.process('inspect mana potion in wooden chest')
         self.assertIsInstance(result[0], inspect_command_found_item_or_items_here)
         self.assertEqual(result[0].item_qty, 1)
@@ -393,7 +381,7 @@ class test_inspect(unittest.TestCase):
         self.assertEqual(result[0].message, 'A small, stoppered bottle that contains a pungeant but drinkable blue '
                                             'liquid with a discernable magic aura. It restores 20 mana points.')
 
-    def test_inspect_13(self):
+    def test_inspect_14(self):
         result = self.command_processor_obj.process('inspect health potion in wooden chest')
         self.assertIsInstance(result[0], inspect_command_found_item_or_items_here)
         self.assertEqual(result[0].item_qty, 1)
@@ -403,7 +391,7 @@ class test_inspect(unittest.TestCase):
         self.assertEqual(result[0].message, 'A small, stoppered bottle that contains a pungeant but drinkable red '
                                             'liquid with a discernable magic aura. It restores 20 hit points.')
 
-    def test_inspect_14(self):
+    def test_inspect_15(self):
         result = self.command_processor_obj.process('inspect north door')
         self.assertIsInstance(result[0], inspect_command_found_door_or_doorway)
         self.assertEqual(result[0].compass_dir, 'north')
@@ -411,7 +399,7 @@ class test_inspect(unittest.TestCase):
                                             'wooden planks secured together with iron divots. It is closed but '
                                             'unlocked.')
 
-    def test_inspect_15(self):
+    def test_inspect_16(self):
         self.command_processor_obj.game_state.rooms_state.cursor.north_exit.is_locked = True
         result = self.command_processor_obj.process('inspect north door')
         self.assertIsInstance(result[0], inspect_command_found_door_or_doorway)
@@ -420,7 +408,7 @@ class test_inspect(unittest.TestCase):
                                             'wooden planks secured together with iron divots. It is closed and '
                                             'locked.')
 
-    def test_inspect_16(self):
+    def test_inspect_17(self):
         self.command_processor_obj.game_state.rooms_state.cursor.north_exit.is_closed = False
         result = self.command_processor_obj.process('inspect north door')
         self.assertIsInstance(result[0], inspect_command_found_door_or_doorway)
@@ -428,14 +416,14 @@ class test_inspect(unittest.TestCase):
         self.assertEqual(result[0].message, 'This door is set into the north wall of the room. This door is made of '
                                             'wooden planks secured together with iron divots. It is open.')
 
-    def test_inspect_17(self):
+    def test_inspect_18(self):
         self.command_processor_obj.game_state.rooms_state.cursor.north_exit.is_closed = False
         result = self.command_processor_obj.process('inspect west door')
         self.assertIsInstance(result[0], various_commands_door_not_present)
         self.assertEqual(result[0].compass_dir, 'west')
         self.assertEqual(result[0].message, 'This room does not have a west exit.')
 
-    def test_inspect_18(self):
+    def test_inspect_19(self):
         self.command_processor_obj.game_state.rooms_state.move(north=True)
         result = self.command_processor_obj.process('inspect east doorway')
         self.assertIsInstance(result[0], inspect_command_found_door_or_doorway)
@@ -443,7 +431,7 @@ class test_inspect(unittest.TestCase):
         self.assertEqual(result[0].message, 'This doorway is set into the east wall of the room. This open doorway is '
                                             'outlined by a stone arch set into the wall.')
 
-    def test_inspect_19(self):
+    def test_inspect_20(self):
         self.command_processor_obj.game_state.character.pick_up_item(
             self.command_processor_obj.game_state.items_state.get('Longsword'))
         result = self.command_processor_obj.process('inspect longsword in inventory')
@@ -455,7 +443,7 @@ class test_inspect(unittest.TestCase):
         self.assertEqual(result[0].message, 'A hefty sword with a long blade, a broad hilt and a leathern grip. Its '
                                             'attack bonus is +0 and its damage is 1d8. Warriors can use this.')
 
-    def test_inspect_19(self):
+    def test_inspect_21(self):
         self.command_processor_obj.game_state.character.pick_up_item(
             self.command_processor_obj.game_state.items_state.get('Magic_Wand'))
         result = self.command_processor_obj.process('inspect magic wand in inventory')
@@ -467,7 +455,6 @@ class test_inspect(unittest.TestCase):
         self.assertEqual(result[0].message, 'A palpably magical tapered length of polished ash wood tipped with a '
                                             'glowing red carnelian gem. Its attack bonus is +3 and its damage is '
                                             '3d8+5. Mages can use this.')
-
 
 
 class test_inventory(unittest.TestCase):
@@ -497,6 +484,7 @@ class test_inventory(unittest.TestCase):
         self.command_processor_obj = command_processor(self.game_state_obj)
         self.command_processor_obj.game_state.character_name = 'Niath'
         self.command_processor_obj.game_state.character_class = 'Warrior'
+        self.game_state_obj.game_has_begun = True
         longsword_obj = self.command_processor_obj.game_state.items_state.get('Longsword')
         self.scale_mail_obj = self.command_processor_obj.game_state.items_state.get('Scale_Mail')
         self.shield_obj = self.command_processor_obj.game_state.items_state.get('Steel_Shield')
@@ -530,7 +518,6 @@ class test_inventory(unittest.TestCase):
                                             'of scale mail armor, and a steel shield in your inventory.')
 
 
-
 class test_lock_command(unittest.TestCase):
 
     def __init__(self, *argl, **argd):
@@ -554,6 +541,7 @@ class test_lock_command(unittest.TestCase):
         self.command_processor_obj = command_processor(self.game_state_obj)
         self.command_processor_obj.game_state.character_name = 'Niath'
         self.command_processor_obj.game_state.character_class = 'Warrior'
+        self.game_state_obj.game_has_begun = True
         self.door_obj = self.command_processor_obj.game_state.rooms_state.cursor.north_exit
         self.door_obj.is_locked = True
         self.door_title = self.command_processor_obj.game_state.rooms_state.cursor.north_exit.title

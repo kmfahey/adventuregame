@@ -2,6 +2,7 @@
 
 import abc
 import math
+import operator
 
 from adventuregame.game_elements import *
 from adventuregame.utility import *
@@ -66,13 +67,45 @@ class command_class_restricted(game_state_message):
         self.classes = classes
 
 
-class command_not_recognized(game_state_message):
-    __slots__ = 'command',
+class game_state_message_listing_commands(game_state_message):
+    __slots__ = 'command', 'allowed_commands', 'game_has_begun'
 
-    message = property(fget=(lambda self: 'Command not recognized.'))
+    def _join_commands_list(self, commands_set):
+        commands_tuple = tuple(command.upper().replace('_', ' ') for command in sorted(commands_set))
+        if len(commands_tuple) == 1:
+            commands_str = commands_tuple[0]
+        elif len(commands_tuple) == 2:
+            commands_str = f'{commands_tuple[0]} and {commands_tuple[0]}.'
+        else:
+            commands_str = ', '.join(commands_tuple[:-1]) + ', and ' + commands_tuple[-1]
+        return commands_str
 
-    def __init__(self, command):
+    def __init__(self, command, allowed_commands, game_has_begun):
         self.command = command
+        self.allowed_commands = allowed_commands
+        self.game_has_begun = game_has_begun
+
+
+class command_not_allowed_now(game_state_message_listing_commands):
+
+    @property
+    def message(self):
+        game_state_str = 'before game start' if not self.game_has_begun else 'during the game'
+        message_str = f"Command '{self.command}' not allowed {game_state_str}. "
+        commands_str = self._join_commands_list(self.allowed_commands)
+        message_str += f'Commands allowed {game_state_str} are {commands_str}.'
+        return message_str
+
+
+class command_not_recognized(game_state_message_listing_commands):
+
+    @property
+    def message(self):
+        message_str = f"Command '{self.command}' not recognized. "
+        game_state_str = 'before game start' if not self.game_has_begun else 'during the game'
+        commands_str = self._join_commands_list(self.allowed_commands)
+        message_str += f'Commands allowed {game_state_str} are {commands_str}.'
+        return message_str
 
 
 class attack_command_attack_missed(game_state_message):
@@ -161,10 +194,51 @@ class be_attacked_by_command_character_death(game_state_message):
         pass
 
 
+class begin_game_command_name_or_class_not_set(game_state_message):
+    __slots__ = 'character_name', 'character_class'
+
+    @property
+    def message(self):
+        if not self.character_name and not self.character_class:
+            return ("You need to set your character name and class before you begin the game. Use SET NAME <name> to "
+                    "set your name and SET CLASS <Warrior, Thief, Mage or Priest> to select your class.")
+        elif not self.character_name:
+            return ("You need to set your character name before you begin the game. Use SET NAME <name> to set your "
+                    "name.")
+        else:  # not self.character_class:
+            return ("You need to set your character class before you begin the game. Use SET CLASS <Warrior, Thief, "
+                    "Mage or Priest> to select your class.")
+
+    def __init__(self, character_name, character_class):
+        self.character_name = character_name
+        self.character_class = character_class
+
+
+class begin_game_command_game_begins(game_state_message):
+
+    message = property(fget=lambda self: 'The game has begun!')
+
+    def __init__(self):
+        pass
+
+
+class cast_spell_command_insuffient_mana(game_state_message):
+    __slots__ = 'current_mana_points', 'mana_point_total', 'spell_mana_cost'
+
+    message = property(fget=lambda self:  "You don't have enough mana points to cast a spell. Casting a spell costs "
+                                         f'{self.spell_mana_cost} mana points. Your mana points are '
+                                         f'{self.current_mana_points}/{self.mana_point_total}.')
+
+    def __init__(self, current_mana_points, mana_point_total, spell_mana_cost):
+        self.current_mana_points = current_mana_points
+        self.mana_point_total = mana_point_total
+        self.spell_mana_cost = spell_mana_cost
+
+
 class cast_spell_command_no_creature_to_target(game_state_message):
     __slots__ = ()
 
-    message = property(fget=lambda self: f"You can't cast magic missile here; there is no creature here to target.")
+    message = property(fget=lambda self: "You can't cast magic missile here; there is no creature here to target.")
 
     def __init__(self):
         pass
@@ -173,9 +247,9 @@ class cast_spell_command_no_creature_to_target(game_state_message):
 class cast_spell_command_cast_damaging_spell(game_state_message):
     __slots__ = 'creature_title', 'damage_dealt'
 
-    message = property(fget=lambda self: f"A magic missile springs from your gesturing hand and unerringly strikes "
-                                         f"the {self.creature_title}. You have done {self.damage_dealt} points of "
-                                          "damage.")
+    message = property(fget=lambda self: f'A magic missile springs from your gesturing hand and unerringly strikes '
+                                         f'the {self.creature_title}. You have done {self.damage_dealt} points of '
+                                          'damage.')
 
     def __init__(self, creature_title, damage_dealt):
         self.creature_title = creature_title
@@ -185,7 +259,7 @@ class cast_spell_command_cast_damaging_spell(game_state_message):
 class cast_spell_command_cast_healing_spell(game_state_message):
     __slots__ = ()
 
-    message = property(fget=lambda self: "You cast a healing spell on yourself.")
+    message = property(fget=lambda self: 'You cast a healing spell on yourself.')
 
     def __init__(self):
         pass
@@ -221,7 +295,7 @@ class close_command_object_to_close_not_here(game_state_message):
 class drink_command_drank_mana_potion_when_not_a_spellcaster(game_state_message):
     __slots__ = ()
 
-    message = property(fget=lambda self: f'You feel a little strange, but otherwise nothing happens.')
+    message = property(fget=lambda self: 'You feel a little strange, but otherwise nothing happens.')
 
     def __init__(self):
         pass
@@ -244,19 +318,20 @@ class drink_command_drank_mana_potion(game_state_message):
     @property
     def message(self):
         if self.amount_regained and self.current_mana_points == self.mana_point_total:
-            return (f"You regained {self.amount_regained} mana points. You have full mana points! "
-                    f"Your mana points are {self.current_mana_points}/{self.mana_point_total}.")
+            return (f'You regained {self.amount_regained} mana points. You have full mana points! '
+                    f'Your mana points are {self.current_mana_points}/{self.mana_point_total}.')
         elif self.amount_regained:
-            return (f"You regained {self.amount_regained} mana points. Your mana points are "
-                    f"{self.current_mana_points}/{self.mana_point_total}.")
+            return (f'You regained {self.amount_regained} mana points. Your mana points are '
+                    f'{self.current_mana_points}/{self.mana_point_total}.')
         else:
             return (f"You didn't regain any mana points. Your mana points are "
-                    f"{self.current_mana_points}/{self.mana_point_total}.")
+                    f'{self.current_mana_points}/{self.mana_point_total}.')
 
     def __init__(self, amount_regained, current_mana_points, mana_point_total):
         self.amount_regained = amount_regained
         self.current_mana_points = current_mana_points
         self.mana_point_total = mana_point_total
+
 
 class various_commands_underwent_healing_effect(game_state_message):
     __slots__ = 'amount_healed', 'current_hit_points', 'hit_point_total',
@@ -265,13 +340,13 @@ class various_commands_underwent_healing_effect(game_state_message):
     def message(self):
         if self.amount_healed and self.current_hit_points == self.hit_point_total:
             return (f"You regained {self.amount_healed} hit points. You're fully healed! Your hit points are "
-                    f"{self.current_hit_points}/{self.hit_point_total}.")
+                    f'{self.current_hit_points}/{self.hit_point_total}.')
         elif self.amount_healed:
-            return (f"You regained {self.amount_healed} hit points. Your hit points are "
-                    f"{self.current_hit_points}/{self.hit_point_total}.")
+            return (f'You regained {self.amount_healed} hit points. Your hit points are '
+                    f'{self.current_hit_points}/{self.hit_point_total}.')
         else:
             return (f"You didn't regain any hit points. Your hit points are "
-                    f"{self.current_hit_points}/{self.hit_point_total}.")
+                    f'{self.current_hit_points}/{self.hit_point_total}.')
 
     def __init__(self, amount_healed, current_hit_points, hit_point_total):
         self.amount_healed = amount_healed
@@ -282,7 +357,7 @@ class various_commands_underwent_healing_effect(game_state_message):
 class drink_command_item_not_drinkable(game_state_message):
     __slots__ = 'item_title',
 
-    message = property(fget=lambda self: f"A {self.item_title} is not drinkable.")
+    message = property(fget=lambda self: f'A {self.item_title} is not drinkable.')
 
     def __init__(self, item_title):
         self.item_title = item_title
@@ -387,11 +462,11 @@ class equip_command_item_equipped(game_state_message):
             return_str = f"You're now {item_usage_verb} {indirect_article}{self.item_title}."
         elif self.changed_value_2 is None:
             return_str = (f"You're now {item_usage_verb} {indirect_article}{self.item_title}. "
-                          f"Your {self.value_type_1} is {plussign}{self.changed_value_1}.")
+                          f'Your {self.value_type_1} is {plussign}{self.changed_value_1}.')
         else:
             return_str = (f"You're now {item_usage_verb} {indirect_article}{self.item_title}. "
-                          f"Your {self.value_type_1} is {plussign}{self.changed_value_1}, "
-                          f"and your {self.value_type_2} is {self.changed_value_2}.")
+                          f'Your {self.value_type_1} is {plussign}{self.changed_value_1}, '
+                          f'and your {self.value_type_2} is {self.changed_value_2}.')
         if self.change_text:
             return_str += ' ' + self.change_text
         return return_str
@@ -426,11 +501,11 @@ class equip_or_unequip_command_item_unequipped(game_state_message):
             return_str = f"You're no longer {item_usage_verb} {indirect_article}{self.item_title}."
         elif self.changed_value_2 is None:
             return_str = (f"You're no longer {item_usage_verb} {indirect_article}{self.item_title}. "
-                          f"Your {self.value_type_1} is {self.changed_value_1}.")
+                          f'Your {self.value_type_1} is {self.changed_value_1}.')
         else:
             return_str = (f"You're no longer {item_usage_verb} {indirect_article}{self.item_title}. "
-                          f"Your {self.value_type_1} is {self.changed_value_1}, "
-                          f"and your {self.value_type_2} is {self.changed_value_2}.")
+                          f'Your {self.value_type_1} is {self.changed_value_1}, '
+                          f'and your {self.value_type_2} is {self.changed_value_2}.')
         if self.change_text:
             return return_str + ' ' + self.change_text
         else:
@@ -462,14 +537,14 @@ class inspect_command_found_door_or_doorway(game_state_message):
     @property
     def message(self):
         door_or_doorway = 'doorway' if self.door_obj.door_type == 'doorway' else 'door'
-        descr_str = f"This {door_or_doorway} is set into the {self.compass_dir} wall of the room. {self.door_obj.description}"
+        descr_str = f'This {door_or_doorway} is set into the {self.compass_dir} wall of the room. {self.door_obj.description}'
         if self.door_obj.closeable:
             if self.door_obj.is_closed and self.door_obj.is_locked:
-                descr_str += " It is closed and locked."
+                descr_str += ' It is closed and locked.'
             elif self.door_obj.is_closed and not self.door_obj.is_locked:
-                descr_str += " It is closed but unlocked."
+                descr_str += ' It is closed but unlocked.'
             else:
-                descr_str += " It is open."
+                descr_str += ' It is open.'
         return descr_str
 
     def __init__(self, compass_dir, door_obj):
@@ -590,23 +665,23 @@ class inventory_command_display_inventory(game_state_message):
         display_strs_list = list()
         for item_qty, item_obj in self.inventory_contents:
             if item_obj.item_type == 'armor' and item_qty == 1:
-                display_strs_list.append(f"a suit of {item_obj.title}")
+                display_strs_list.append(f'a suit of {item_obj.title}')
             elif item_obj.item_type == 'armor' and item_qty > 1:
-                display_strs_list.append(f"{item_qty} suits of {item_obj.title}")
+                display_strs_list.append(f'{item_qty} suits of {item_obj.title}')
             elif item_qty == 1 and item_obj.title[0] in 'aeiou':
-                display_strs_list.append(f"an {item_obj.title}")
+                display_strs_list.append(f'an {item_obj.title}')
             elif item_qty == 1:
-                display_strs_list.append(f"a {item_obj.title}")
+                display_strs_list.append(f'a {item_obj.title}')
             else:
-                display_strs_list.append(f"{item_qty} {item_obj.title}s")
+                display_strs_list.append(f'{item_qty} {item_obj.title}s')
         if len(display_strs_list) == 1:
-            return f"You have {display_strs_list[0]} in your inventory."
+            return f'You have {display_strs_list[0]} in your inventory.'
         elif len(display_strs_list) == 2:
-            return f"You have {display_strs_list[0]} and {display_strs_list[1]} in your inventory."
+            return f'You have {display_strs_list[0]} and {display_strs_list[1]} in your inventory.'
         else:
             inventory_str = ', '.join(display_strs_list[0:-1])
             inventory_str += f', and {display_strs_list[-1]}'
-            return f"You have {inventory_str} in your inventory."
+            return f'You have {inventory_str} in your inventory.'
 
     def __init__(self, inventory_contents_list):
         self.inventory_contents = inventory_contents_list
@@ -846,12 +921,33 @@ class put_command_trying_to_put_more_than_you_have(game_state_message):
         self.amount_present = amount_present
 
 
-class satisfied_command_game_begins(game_state_message):
+class quit_command_have_quit_the_game(game_state_message):
+    __slots__ = ()
 
-    message = property(fget=lambda self: 'The game has begun!')
+    message = property(fget=lambda self: "You have quit the game.")
 
     def __init__(self):
         pass
+
+
+class reroll_command_name_or_class_not_set(game_state_message):
+    __slots__ = 'character_name', 'character_class'
+
+    @property
+    def message(self):
+        if not self.character_name and not self.character_class:
+            return ("Your character's stats haven't been rolled yet, so there's nothing to reroll. Use SET NAME "
+                    "<name> to set your name and SET CLASS <Warrior, Thief, Mage or Priest> to select your class.")
+        elif not self.character_name:
+            return ("Your character's stats haven't been rolled yet, so there's nothing to reroll. Use SET NAME "
+                    "<name> to set your name.")
+        else:  # not self.character_class:
+            return ("Your character's stats haven't been rolled yet, so there's nothing to reroll. Use SET CLASS "
+                    "<Warrior, Thief, Mage or Priest> to select your class.")
+
+    def __init__(self, character_name, character_class):
+        self.character_name = character_name
+        self.character_class = character_class
 
 
 class set_class_command_class_set(game_state_message):
@@ -899,7 +995,7 @@ class set_name_or_class_command_display_rolled_stats(game_state_message):
     def message(self):
         return (f'Your ability scores are Strength {self.strength}, Dexterity {self.dexterity}, Constitution '
                 f'{self.constitution}, Intelligence {self.intelligence}, Wisdom {self.wisdom}, Charisma {self.charisma}'
-                '.\nAre you satisfied with these scores or would you like to reroll?')
+                '.\nWould you like to reroll or begin game?')
 
     def __init__(self, strength, dexterity, constitution, intelligence, wisdom, charisma):
         self.strength = strength
@@ -932,7 +1028,8 @@ class take_command_item_not_found_in_container(game_state_message):
 
 
 class status_command_output(game_state_message):
-    __slots__ = 'hit_points', 'hit_point_total', 'armor_class', 'attack_bonus', 'damage','mana_points', 'mana_point_total', 'armor', 'shield', 'weapon', 'wand', 'is_mage'
+    __slots__ = ('hit_points', 'hit_point_total', 'armor_class', 'attack_bonus', 'damage', 'mana_points', 
+                 'mana_point_total', 'armor', 'shield', 'weapon', 'wand', 'is_mage')
 
     @property
     def message(self):
@@ -1115,7 +1212,3 @@ class various_commands_foe_death(game_state_message):
 
     def __init__(self, creature_title):
         self.creature_title = creature_title
-
-
-
-

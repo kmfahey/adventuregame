@@ -314,6 +314,7 @@ class test_equipment(unittest.TestCase):
         equipment_obj.unequip_wand()
         self.assertFalse(equipment_obj.wand_equipped)
 
+
 class test_ability_scores(unittest.TestCase):
 
     def __init__(self, *argl, **argd):
@@ -734,6 +735,7 @@ class test_game_state(unittest.TestCase):
         self.assertIs(getattr(self.game_state_obj, 'character_obj', None), None)
         self.game_state_obj.character_name = 'Kaeva'
         self.game_state_obj.character_class = 'Priest'
+        self.game_state_obj.game_has_begun = True
         self.assertEqual(self.game_state_obj.character_name, 'Kaeva')
         self.assertEqual(self.game_state_obj.character_class, 'Priest')
         self.assertIsNot(getattr(self.game_state_obj, 'character', None), None)

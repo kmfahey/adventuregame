@@ -44,11 +44,11 @@ description_dead=This dead half-elf is dressed in breeches but shirtless. He is 
 description=Stripped to the waist and inscribed with dragon chest tattoos, this half-elf is clearly a sorcerer.
 dexterity=16
 intelligence=10
-inventory_items=[2xMana_Potion,1xDagger,10xGold_Piece]
+inventory_items=[2xMana_Potion,1xDagger,10xGold_Piece,1xDagger]
 species=human
 strength=8
 title=sorcerer
-weapon_equipped=dagger
+weapon_equipped=Dagger
 wisdom=12
 """
 
@@ -543,4 +543,3 @@ exit=true
 south_exit=Room_3,5
 
 """
-

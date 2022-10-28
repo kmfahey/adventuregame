@@ -3,7 +3,6 @@
 import abc
 import collections
 import math
-import operator
 import random
 import re
 
@@ -321,7 +320,7 @@ class character(object):  # has been tested
 
     def take_damage(self, damage_value):
         if self._current_hit_points - damage_value < 0:
-            taken_amount = self._current_hit_points 
+            taken_amount = self._current_hit_points
             self._current_hit_points = 0
             return taken_amount
         else:

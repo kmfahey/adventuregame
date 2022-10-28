@@ -2,10 +2,9 @@
 
 import math
 import re
-import operator
 
-from adventuregame.game_state_messages import *
 from adventuregame.game_elements import *
+from adventuregame.game_state_messages import *
 from adventuregame.utility import *
 
 __name__ = 'adventuregame.command_processor'
@@ -13,9 +12,11 @@ __name__ = 'adventuregame.command_processor'
 
 Spell_Damage = "3d8+5"
 
+Spell_Mana_Cost = 5
+
 
 class command_processor(object):
-    __slots__ = 'game_state', 'dispatch_table'
+    __slots__ = 'game_state', 'dispatch_table',
 
     # All return values from *_command methods in this class are tuples. Every *_command method returns one or more
     # *_command_* objects, reflecting a sequence of changes in game state. (For example, an ATTACK action that doesn't
@@ -29,11 +30,29 @@ class command_processor(object):
 
     valid_class_re = re.compile('^(Warrior|Thief|Mage|Priest)$')
 
+    pregame_commands = {'set_name', 'set_class', 'reroll', 'begin_game', 'quit'}
+
+    ingame_commands = {'attack', 'cast_spell', 'close', 'drink', 'drop', 'equip', 'exit', 'inventory', 'leave',
+                       'look_at', 'lock', 'inspect', 'open', 'pick_lock', 'pick_up', 'quit', 'put', 'quit', 'status',
+                       'take', 'unequip', 'unlock'}
+
     def __init__(self, game_state_obj):
-        self.dispatch_table = {
-                                  method_name.rsplit('_', maxsplit=1)[0]: getattr(self, method_name) for method_name in
-                                  filter(lambda name: name.endswith('_command'), dir(command_processor))
-                              }
+        self.dispatch_table = dict()
+        commands_set = self.pregame_commands | self.ingame_commands
+        for method_name in dir(type(self)):
+            if not method_name.endswith('_command') or method_name.startswith('_'):
+                continue
+            command = method_name.rsplit('_', maxsplit=1)[0]
+            self.dispatch_table[command] = getattr(self, method_name)
+            if command not in commands_set:
+                raise internal_exception("Inconsistency between set list of commands and command methods found by "
+                                         f"introspection: method {method_name}() does not correspond to a command in "
+                                         "pregame_commands or ingame_commands.")
+            commands_set.remove(command)
+        if len(commands_set):
+            raise internal_exception("Inconsistency between set list of commands and command methods found by "
+                                     f"introspection: command '{commands_set.pop()} does not correspond to a command "
+                                     "in pregame_commands or ingame_commands.")
         self.game_state = game_state_obj
 
     def process(self, natural_language_str):
@@ -43,12 +62,22 @@ class command_processor(object):
             command += '_' + tokens.pop(0).lower()
         elif command == 'exit' and len(tokens) and (tokens[0].lower() == 'using' or tokens[0].lower() == 'via'):
             tokens.pop(0)
-        elif command == "i'm" and len(tokens) and tokens[0].lower() == 'satisfied':
-            command = tokens.pop(0).lower()
+        elif command == "begin":
+            if len(tokens) >= 1 and tokens[0] == 'game' or len(tokens) >= 2 and tokens[0:2] == ['the', 'game']:
+                if tokens[0] == 'the':
+                    tokens.pop(0)
+                command += '_' + tokens.pop(0)
+            elif not len(tokens):
+                command = 'begin_game'
         elif command == 'look' and len(tokens) and tokens[0].lower() == 'at':
             command += '_' + tokens.pop(0).lower()
         elif command == 'pick' and len(tokens) and (tokens[0].lower() == 'up' or tokens[0].lower() == 'lock'):
             command += '_' + tokens.pop(0).lower()
+        elif command == "quit":
+            if len(tokens) >= 1 and tokens[0] == 'game' or len(tokens) >= 2 and tokens[0:2] == ['the', 'game']:
+                if tokens[0] == 'the':
+                    tokens.pop(0)
+                tokens.pop(0)
         elif command == 'set' and len(tokens) and (tokens[0].lower() == 'name' or tokens[0].lower() == 'class'):
             command += '_' + tokens.pop(0).lower()
             if len(tokens) and tokens[0] == 'to':
@@ -57,8 +86,14 @@ class command_processor(object):
             command = tokens.pop(0).lower()
         if command not in ('set_name', 'set_class'):
             tokens = tuple(map(str.lower, tokens))
-        if command not in self.dispatch_table:
-            return command_not_recognized(command),
+        if command not in self.dispatch_table and not self.game_state.game_has_begun:
+            return command_not_recognized(command, self.pregame_commands, self.game_state.game_has_begun),
+        elif command not in self.dispatch_table and self.game_state.game_has_begun:
+            return command_not_recognized(command, self.ingame_commands, self.game_state.game_has_begun),
+        elif not self.game_state.game_has_begun and command not in self.pregame_commands:
+            return command_not_allowed_now(command, self.pregame_commands, self.game_state.game_has_begun),
+        elif self.game_state.game_has_begun and command not in self.ingame_commands:
+            return command_not_allowed_now(command, self.ingame_commands, self.game_state.game_has_begun),
         return self.dispatch_table[command](*tokens)
 
     def attack_command(self, *tokens):
@@ -110,6 +145,9 @@ class command_processor(object):
             return command_class_restricted('CAST SPELL', 'mage', 'priest'),
         elif len(tokens):
             return command_bad_syntax('CAST SPELL', ''),
+        elif self.game_state.character.mana_points < Spell_Mana_Cost:
+            return cast_spell_command_insuffient_mana(self.game_state.character.mana_points,
+                                                      self.game_state.character.mana_point_total, Spell_Mana_Cost),
         elif self.game_state.character_class == 'Mage':
             if self.game_state.rooms_state.cursor.creature_here is None:
                 return cast_spell_command_no_creature_to_target(),
@@ -121,7 +159,7 @@ class command_processor(object):
                     return cast_spell_command_cast_damaging_spell(creature_obj.title, damage_dealt), various_commands_foe_death(creature_obj.title),
                 else:
                     be_attacked_by_result = self._be_attacked_by_command(creature_obj)
-                    return (cast_spell_command_cast_damaging_spell(creature_obj.title, damage_dealt),) + be_attacked_by_result 
+                    return (cast_spell_command_cast_damaging_spell(creature_obj.title, damage_dealt),) + be_attacked_by_result
         else:
             damage_rolled = roll_dice(Spell_Damage)
             healed_amt = self.game_state.character.heal_damage(damage_rolled)
@@ -408,7 +446,6 @@ class command_processor(object):
                     return inspect_command_found_nothing(target_title, location_title, 'chest' if item_in_chest else 'corpse'),
                 else:
                     return various_commands_container_not_found(location_title),
-            
         else:
             for item_name, (item_qty, item_obj) in self.game_state.rooms_state.cursor.items_here.items():
                 if item_obj.title != target_title:
@@ -651,9 +688,19 @@ class command_processor(object):
         container_obj.set(item_obj.internal_name, amount_in_container + put_amount, item_obj)
         return put_command_amount_put(item_title, container_title, container_obj.container_type, put_amount, amount_possessed),
 
+    def quit_command(self, *tokens):
+        if len(tokens):
+            return command_bad_syntax('QUIT', ''),
+        self.game_state.game_has_ended = True
+        return quit_command_have_quit_the_game(),
+
     def reroll_command(self, *tokens):
         if len(tokens):
-            return command_bad_syntax('REROLL', f''),
+            return command_bad_syntax('REROLL', ''),
+        character_name = getattr(self.game_state, 'character_name', None)
+        character_class = getattr(self.game_state, 'character_class', None)
+        if not character_name or not character_class:
+            return reroll_command_name_or_class_not_set(character_name, character_class),
         self.game_state.character.ability_scores.roll_stats()
         return set_name_or_class_command_display_rolled_stats(
                    strength=self.game_state.character.strength,
@@ -662,7 +709,6 @@ class command_processor(object):
                    intelligence=self.game_state.character.intelligence,
                    wisdom=self.game_state.character.wisdom,
                    charisma=self.game_state.character.charisma),
-        
 
     # Concerning both set_name_command() and set_class_command() below it:
     #
@@ -672,15 +718,19 @@ class command_processor(object):
     # character_class are now non-None>; if so, the character object was just instanced. That means the ability scores
     # were rolled and assigned. The player may choose to reroll, so the return tuple includes a prompt to do so.
 
-    def satisfied_command(self, *tokens):
+    def begin_game_command(self, *tokens):
         if len(tokens):
-            return command_bad_syntax('SATISFIED', f''),
+            return command_bad_syntax('BEGIN GAME', ''),
+        character_name = getattr(self.game_state, 'character_name', None)
+        character_class = getattr(self.game_state, 'character_class', None)
+        if not character_name or not character_class:
+            return begin_game_command_name_or_class_not_set(character_name, character_class),
         self.game_state.game_has_begun = True
-        return satisfied_command_game_begins(),
+        return begin_game_command_game_begins(),
 
     def set_name_command(self, *tokens):
         if len(tokens) == 0:
-            return command_bad_syntax('SET NAME', f'<character name>'),
+            return command_bad_syntax('SET NAME', '<character name>'),
         name_parts_tests = list(map(bool, map(self.valid_name_re.match, tokens)))
         name_was_none = self.game_state.character_name is None
         if False in name_parts_tests:
@@ -708,7 +758,7 @@ class command_processor(object):
 
     def set_class_command(self, *tokens):
         if len(tokens) == 0 or len(tokens) > 1:
-            return command_bad_syntax('SET CLASS', f'<Warrior, Thief, Mage or Priest>'),
+            return command_bad_syntax('SET CLASS', '<Warrior, Thief, Mage or Priest>'),
         elif not self.valid_class_re.match(tokens[0]):
             return set_class_command_invalid_class(tokens[0]),
         class_str = tokens[0]
@@ -732,7 +782,7 @@ class command_processor(object):
 
     def status_command(self, *tokens):
         if len(tokens):
-            return command_bad_syntax('STATUS', f''),
+            return command_bad_syntax('STATUS', ''),
         character_obj = self.game_state.character
         output_args = dict()
         output_args['hit_points'] = character_obj.hit_points
@@ -923,4 +973,3 @@ class command_processor(object):
         else:
             object_to_unlock.is_locked = False
             return unlock_command_object_has_been_unlocked(object_to_unlock.title),
-
