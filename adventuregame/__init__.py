@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
-from adventuregame.commandprocessor import *
-from adventuregame.commandreturns import *
-from adventuregame.gameelements import *
+from adventuregame.command_processor import *
+from adventuregame.game_state_messages import *
+from adventuregame.game_elements import *
 from adventuregame.utility import *
 
 __name__ = 'adventuregame.__init__'

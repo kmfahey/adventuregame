@@ -8,7 +8,7 @@ import sys
 from adventuregame import *
 from adventuregame.test.utility import *
 
-__name__ = 'adventuregame.test_commandprocessor_commandreturns_ex_to_l'
+__name__ = 'adventuregame.test_command_processor_game_state_messages_ex_to_l'
 
 
 class test_exit(unittest.TestCase):

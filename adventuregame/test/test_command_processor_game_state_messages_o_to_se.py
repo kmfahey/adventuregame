@@ -8,7 +8,7 @@ import sys
 from adventuregame import *
 from adventuregame.test.utility import *
 
-__name__ = 'adventuregame.test_commandprocessor_commandreturns_o_to_se'
+__name__ = 'adventuregame.test_command_processor_command_returns_o_to_se'
 
 
 class test_open_command(unittest.TestCase):

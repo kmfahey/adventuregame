@@ -3,10 +3,10 @@
 import abc
 import math
 
-from adventuregame.gameelements import *
+from adventuregame.game_elements import *
 from adventuregame.utility import *
 
-__name__ = 'adventuregame.commandreturns'
+__name__ = 'adventuregame.game_state_messages'
 
 
 class game_state_message(abc.ABC):

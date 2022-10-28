@@ -8,7 +8,7 @@ import sys
 from adventuregame import *
 from adventuregame.test.utility import *
 
-__name__ = 'adventuregame.test_commandprocessor_commandreturns_a_to_eq'
+__name__ = 'adventuregame.test_command_processor_game_state_messages_a_to_eq'
 
 
 class test_attack(unittest.TestCase):

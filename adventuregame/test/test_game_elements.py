@@ -7,7 +7,7 @@ import unittest
 from adventuregame import *
 from adventuregame.test.utility import *
 
-__name__ = 'adventuregame.test_gameelements'
+__name__ = 'adventuregame.test_game_elements'
 
 
 class test_container(unittest.TestCase):

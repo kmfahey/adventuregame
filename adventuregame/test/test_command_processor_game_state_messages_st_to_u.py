@@ -8,7 +8,7 @@ import sys
 from adventuregame import *
 from adventuregame.test.utility import *
 
-__name__ = 'adventuregame.test_commandprocessor_commandreturns_st_to_u'
+__name__ = 'adventuregame.test_command_processor_commandreturns_st_to_u'
 
 
 class test_status_command(unittest.TestCase):

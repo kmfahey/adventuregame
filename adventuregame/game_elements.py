@@ -9,7 +9,7 @@ import re
 
 from adventuregame.utility import *
 
-__name__ = 'adventuregame.gameelements'
+__name__ = 'adventuregame.game_elements'
 
 
 class ini_entry(object):

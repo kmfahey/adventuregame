@@ -4,11 +4,11 @@ import math
 import re
 import operator
 
-from adventuregame.commandreturns import *
-from adventuregame.gameelements import *
+from adventuregame.game_state_messages import *
+from adventuregame.game_elements import *
 from adventuregame.utility import *
 
-__name__ = 'adventuregame.commandprocessor'
+__name__ = 'adventuregame.command_processor'
 
 
 Spell_Damage = "3d8+5"
@@ -618,7 +618,7 @@ class command_processor(object):
         results = self._put_or_take_preproc('PUT', 'IN|ON', *tokens)
 
         # The workhorse private method returns either a game_state_message subclass object (see
-        # adventuregame.commandreturns) or a tuple of amount to put, parsed title of item, parsed title of container,
+        # adventuregame.game_state_messages) or a tuple of amount to put, parsed title of item, parsed title of container,
         # and the container object (as a matter of convenience, it's needed by the private method & why fetch it twice).
         if len(results) == 1 and isinstance(results[0], game_state_message):
             return results
@@ -761,7 +761,7 @@ class command_processor(object):
         results = self._put_or_take_preproc('TAKE', 'FROM', *tokens)
 
         # The workhorse private method returns either a game_state_message subclass object (see
-        # adventuregame.commandreturns) or a tuple of amount to take, parsed title of item, parsed title of container,
+        # adventuregame.game_state_messages) or a tuple of amount to take, parsed title of item, parsed title of container,
         # and the container object (as a matter of convenience, it's needed by the private method & why fetch it twice).
         if len(results) == 1 and isinstance(results[0], game_state_message):
             return results
