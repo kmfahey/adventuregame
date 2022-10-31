@@ -11,12 +11,22 @@ from adventuregame.utility import *
 __name__ = 'adventuregame.game_elements'
 
 
-class ini_entry(object):
+class Ini_Entry(object):
 
-    inventory_list_value_re = re.compile(r'^\[(([1-9][0-9]*x[A-Z][A-Za-z_]+)(,[1-9][0-9]*x[A-Z][A-Za-z_]+)*)\]$')
+    inventory_list_value_re = re.compile(r'''^\[(
+                                                    (
+                                                        [1-9][0-9]*
+                                                        x
+                                                        [A-Z][A-Za-z_]+
+                                                    )(,
+                                                        [1-9][0-9]*
+                                                        x
+                                                        [A-Z][A-Za-z_]+
+                                                    )*
+                                                )\]$''', re.X)
 
     def __init__(self, **argd):
-        for key, value in argd.items():
+        for Key, value in argd.items():
             if isinstance(value, str):
                 if value.lower() == 'false':
                     value = False
@@ -26,7 +36,7 @@ class ini_entry(object):
                     value = int(value)
                 elif isfloat(value):
                     value = float(value)
-            setattr(self, key, value)
+            setattr(self, Key, value)
 
     def __eq__(self, other):
         if not isinstance(other, type(self)):
@@ -35,9 +45,9 @@ class ini_entry(object):
             return all(getattr(self, attr, None) == getattr(other, attr, None) for attr in self.__slots__)
 
     def _post_init_slots_set_none(self, slots):
-        for key in slots:
-            if not hasattr(self, key):
-                setattr(self, key, None)
+        for Key in slots:
+            if not hasattr(self, Key):
+                setattr(self, Key, None)
 
     def _process_list_value(self, inventory_value):
         value_match = self.inventory_list_value_re.match(inventory_value)
@@ -48,20 +58,20 @@ class ini_entry(object):
         return qty_strval_pairs
 
 
-class state(abc.ABC):
+class State(abc.ABC):
     __slots__ = '_contents',
 
     __abstractmethods__ = frozenset(('__init__',))
 
     def contains(self, item_internal_name):  # check
-        return any(item_internal_name == contained_item_obj.internal_name
-                   for contained_item_obj in self._contents.values())
+        return any(item_internal_name == contained_item.internal_name
+                   for contained_item in self._contents.values())
 
     def get(self, item_internal_name):  # check
         return self._contents[item_internal_name]
 
-    def set(self, item_internal_name, item_obj):  # check
-        self._contents[item_internal_name] = item_obj
+    def set(self, item_internal_name, item):  # check
+        self._contents[item_internal_name] = item
 
     def delete(self, item_internal_name):  # check
         del self._contents[item_internal_name]
@@ -79,39 +89,39 @@ class state(abc.ABC):
         return len(self._contents)
 
 
-class items_state(state):  # has been tested
+class Items_State(State):  # has been tested
 
     def __init__(self, **dict_of_dicts):
         self._contents = dict()
         for item_internal_name, item_dict in dict_of_dicts.items():
-            item_obj = item.subclassing_factory(internal_name=item_internal_name, **item_dict)
-            self._contents[item_internal_name] = item_obj
+            item = Item.subclassing_factory(internal_name=item_internal_name, **item_dict)
+            self._contents[item_internal_name] = item
 
 
-class items_multi_state(items_state):
+class Items_Multi_State(Items_State):
 
     def __init__(self, **argd):
-        items_state.__init__(self, **argd)
+        Items_State.__init__(self, **argd)
 
         # I preload the dict's items() sequence outside of the loop because the loop alters the dict and I don't want a
         # concurrent update error.
         contents_items = tuple(self._contents.items())
-        for item_internal_name, item_obj in contents_items:
-            self._contents[item_internal_name] = (1, item_obj)
+        for item_internal_name, item in contents_items:
+            self._contents[item_internal_name] = (1, item)
 
     def contains(self, item_internal_name):
-        return(any(contained_item_obj.internal_name == item_internal_name
-                   for _, contained_item_obj in self._contents.values()))
+        return(any(contained_item.internal_name == item_internal_name
+                   for _, contained_item in self._contents.values()))
 
-    def set(self, item_internal_name, item_qty, item_obj):
-        self._contents[item_internal_name] = item_qty, item_obj
+    def set(self, item_internal_name, item_qty, item):
+        self._contents[item_internal_name] = item_qty, item
 
-    def add_one(self, item_internal_name, item_obj):
+    def add_one(self, item_internal_name, item):
         if self.contains(item_internal_name):
             self._contents[item_internal_name] = (self._contents[item_internal_name][0] + 1,
                                                   self._contents[item_internal_name][1])
         else:
-            self._contents[item_internal_name] = 1, item_obj
+            self._contents[item_internal_name] = 1, item
 
     def remove_one(self, item_internal_name):
         if item_internal_name not in self._contents:
@@ -123,16 +133,16 @@ class items_multi_state(items_state):
                                                   self._contents[item_internal_name][1])
 
 
-# This class doesn't subclass `state` because it re-implements every method.
+# This class doesn't subclass `State` because it re-implements every method.
 
-class doors_state(object):
+class Doors_State(object):
 
     def __init__(self, **dict_of_dicts):
         self._contents = collections.defaultdict(dict)
         for door_internal_name, door_argd in dict_of_dicts.items():
             first_room_internal_name, second_room_internal_name = door_internal_name.split('_x_')
             self._contents[first_room_internal_name][second_room_internal_name] = \
-                door.subclassing_factory(internal_name=door_internal_name, **door_argd)
+                Door.subclassing_factory(internal_name=door_internal_name, **door_argd)
             pass
 
     def contains(self, first_room_internal_name, second_room_internal_name):  # tested
@@ -142,8 +152,8 @@ class doors_state(object):
     def get(self, first_room_internal_name, second_room_internal_name):  # tested
         return self._contents[first_room_internal_name][second_room_internal_name]
 
-    def set(self, first_room_internal_name, second_room_internal_name, door_obj):
-        self._contents[first_room_internal_name][second_room_internal_name] = door_obj
+    def set(self, first_room_internal_name, second_room_internal_name, door):
+        self._contents[first_room_internal_name][second_room_internal_name] = door
 
     def delete(self, first_room_internal_name, second_room_internal_name):  # tested
         del self._contents[first_room_internal_name][second_room_internal_name]
@@ -164,38 +174,38 @@ class doors_state(object):
     def items(self):  # tested
         items_list = list()
         for first_room_name in self._contents.keys():
-            for second_room_name, door_obj in self._contents[first_room_name].items():
-                items_list.append((first_room_name, second_room_name, door_obj))
+            for second_room_name, door in self._contents[first_room_name].items():
+                items_list.append((first_room_name, second_room_name, door))
         return items_list
 
     def size(self):  # tested
         return len(self.keys())
 
 
-class inventory(items_multi_state):  # has been tested
+class Inventory(Items_Multi_State):  # has been tested
 
-    Light = 0
-    Medium = 1
-    Heavy = 2
-    Immobilizing = 3
+    LIGHT = 0
+    MEDIUM = 1
+    HEAVY = 2
+    IMMOBILIZING = 3
 
     _carry_weight = {
-        3:  {Light: (0, 10),    Medium: (11, 20),   Heavy: (21, 30)},
-        4:  {Light: (0, 13),    Medium: (14, 26),   Heavy: (27, 40)},
-        5:  {Light: (0, 16),    Medium: (17, 33),   Heavy: (34, 50)},
-        6:  {Light: (0, 20),    Medium: (21, 40),   Heavy: (41, 60)},
-        7:  {Light: (0, 23),    Medium: (24, 46),   Heavy: (47, 70)},
-        8:  {Light: (0, 26),    Medium: (27, 53),   Heavy: (54, 80)},
-        9:  {Light: (0, 30),    Medium: (31, 60),   Heavy: (61, 90)},
-        10: {Light: (0, 33),    Medium: (34, 66),   Heavy: (67, 100)},
-        11: {Light: (0, 38),    Medium: (39, 76),   Heavy: (77, 115)},
-        12: {Light: (0, 43),    Medium: (44, 86),   Heavy: (87, 130)},
-        13: {Light: (0, 50),    Medium: (51, 100),  Heavy: (101, 150)},
-        14: {Light: (0, 58),    Medium: (59, 116),  Heavy: (117, 175)},
-        15: {Light: (0, 66),    Medium: (67, 133),  Heavy: (134, 200)},
-        16: {Light: (0, 76),    Medium: (77, 153),  Heavy: (154, 230)},
-        17: {Light: (0, 86),    Medium: (87, 173),  Heavy: (174, 260)},
-        18: {Light: (0, 100),   Medium: (101, 200), Heavy: (201, 300)}
+        3:  {LIGHT: (0, 10),    MEDIUM: (11, 20),   HEAVY: (21, 30)},
+        4:  {LIGHT: (0, 13),    MEDIUM: (14, 26),   HEAVY: (27, 40)},
+        5:  {LIGHT: (0, 16),    MEDIUM: (17, 33),   HEAVY: (34, 50)},
+        6:  {LIGHT: (0, 20),    MEDIUM: (21, 40),   HEAVY: (41, 60)},
+        7:  {LIGHT: (0, 23),    MEDIUM: (24, 46),   HEAVY: (47, 70)},
+        8:  {LIGHT: (0, 26),    MEDIUM: (27, 53),   HEAVY: (54, 80)},
+        9:  {LIGHT: (0, 30),    MEDIUM: (31, 60),   HEAVY: (61, 90)},
+        10: {LIGHT: (0, 33),    MEDIUM: (34, 66),   HEAVY: (67, 100)},
+        11: {LIGHT: (0, 38),    MEDIUM: (39, 76),   HEAVY: (77, 115)},
+        12: {LIGHT: (0, 43),    MEDIUM: (44, 86),   HEAVY: (87, 130)},
+        13: {LIGHT: (0, 50),    MEDIUM: (51, 100),  HEAVY: (101, 150)},
+        14: {LIGHT: (0, 58),    MEDIUM: (59, 116),  HEAVY: (117, 175)},
+        15: {LIGHT: (0, 66),    MEDIUM: (67, 133),  HEAVY: (134, 200)},
+        16: {LIGHT: (0, 76),    MEDIUM: (77, 153),  HEAVY: (154, 230)},
+        17: {LIGHT: (0, 86),    MEDIUM: (87, 173),  HEAVY: (174, 260)},
+        18: {LIGHT: (0, 100),   MEDIUM: (101, 200), HEAVY: (201, 300)}
     }
 
     def __init__(self, **dict_of_dicts):
@@ -204,40 +214,40 @@ class inventory(items_multi_state):  # has been tested
     @property
     def total_weight(self):
         total_weight_val = 0
-        for item_name, (item_count, item_obj) in self._contents.items():
-            if item_obj.weight <= 0:
-                raise internal_exception('item ' + item_obj.internal_name
-                                         + ' has invalid weight ' + str(item_obj.weight) + ': is <= 0')
+        for item_name, (item_count, item) in self._contents.items():
+            if item.weight <= 0:
+                raise Internal_Exception('item ' + item.internal_name
+                                         + ' has invalid weight ' + str(item.weight) + ': is <= 0')
             elif item_count <= 0:
-                raise internal_exception('item ' + item_obj.internal_name + ' is stored with invalid count '
+                raise Internal_Exception('item ' + item.internal_name + ' is stored with invalid count '
                                          + str(item_count) + ': is <= 0')
-            total_weight_val += item_obj.weight * item_count
+            total_weight_val += item.weight * item_count
         return total_weight_val
 
     def burden_for_strength_score(self, strength_score):
         total_weight_val = self.total_weight
         if total_weight_val < 0:
-            raise internal_exception('the `total_weight` value for this inventory equals a negative number')
-        light_burden_lower_bound = self._carry_weight[strength_score][self.Light][0]
-        light_burden_upper_bound = self._carry_weight[strength_score][self.Light][1]
-        medium_burden_lower_bound = self._carry_weight[strength_score][self.Medium][0]
-        medium_burden_upper_bound = self._carry_weight[strength_score][self.Medium][1]
-        heavy_burden_lower_bound = self._carry_weight[strength_score][self.Heavy][0]
-        heavy_burden_upper_bound = self._carry_weight[strength_score][self.Heavy][1]
+            raise Internal_Exception('the `total_weight` value for this inventory equals a negative number')
+        light_burden_lower_bound = self._carry_weight[strength_score][self.LIGHT][0]
+        light_burden_upper_bound = self._carry_weight[strength_score][self.LIGHT][1]
+        medium_burden_lower_bound = self._carry_weight[strength_score][self.MEDIUM][0]
+        medium_burden_upper_bound = self._carry_weight[strength_score][self.MEDIUM][1]
+        heavy_burden_lower_bound = self._carry_weight[strength_score][self.HEAVY][0]
+        heavy_burden_upper_bound = self._carry_weight[strength_score][self.HEAVY][1]
         if light_burden_lower_bound <= total_weight_val <= light_burden_upper_bound:
-            return self.Light
+            return self.LIGHT
         elif medium_burden_lower_bound <= total_weight_val <= medium_burden_upper_bound:
-            return self.Medium
+            return self.MEDIUM
         elif heavy_burden_lower_bound <= total_weight_val <= heavy_burden_upper_bound:
-            return self.Heavy
+            return self.HEAVY
         else:
-            return self.Immobilizing
+            return self.IMMOBILIZING
 
 
-class character(object):  # has been tested
+class Character(object):  # has been tested
     __slots__ = ('character_name', 'character_class', 'magic_key_stat', '_hit_point_maximum', '_current_hit_points',
                  '_mana_point_maximum', '_current_mana_points', 'ability_scores', 'inventory',
-                 '_equipment_obj')
+                 '_equipment')
 
     _base_mana_points = {'Priest': 16, 'Mage': 19}
 
@@ -248,14 +258,14 @@ class character(object):  # has been tested
     def __init__(self, character_name_str, character_class_str, base_hit_points=0, base_mana_points=0,
                  magic_key_stat=None, strength=0, dexterity=0, constitution=0, intelligence=0, wisdom=0, charisma=0):
         if character_class_str not in {'Warrior', 'Thief', 'Priest', 'Mage'}:
-            raise internal_exception(f'character class argument {character_class_str} not one of '
+            raise Internal_Exception(f'character class argument {character_class_str} not one of '
                                      'Warrior, Thief, Priest or Mage')
         self.character_name = character_name_str
         self.character_class = character_class_str
-        self.ability_scores = ability_scores(character_class_str)
+        self.ability_scores = Ability_Scores(character_class_str)
         self._set_up_ability_scores(strength, dexterity, constitution, intelligence, wisdom, charisma)
-        self.inventory = inventory()
-        self._equipment_obj = equipment(character_class_str)
+        self.inventory = Inventory()
+        self._equipment = Equipment(character_class_str)
         self._set_up_hit_points_and_mana_points(base_hit_points, base_mana_points, magic_key_stat)
 
     def _set_up_ability_scores(self, strength=0, dexterity=0, constitution=0, intelligence=0, wisdom=0, charisma=0):
@@ -267,7 +277,7 @@ class character(object):  # has been tested
             self.ability_scores.wisdom = wisdom
             self.ability_scores.charisma = charisma
         elif any((strength, dexterity, constitution, intelligence, wisdom, charisma)):
-            raise internal_exception('The constructor for `character` must be supplied with either all of the arguments'
+            raise Internal_Exception('The constructor for `character` must be supplied with either all of the arguments'
                                      ' `strength`, `dexterity`, `constitution`, `intelligence`, `wisdom`, and '
                                      '`charisma` or none of them.')
         else:
@@ -282,7 +292,7 @@ class character(object):  # has been tested
                                                                   + self.ability_scores.constitution_mod * 3)
         if magic_key_stat:
             if magic_key_stat not in ('intelligence', 'wisdom', 'charisma'):
-                raise internal_exception("`magic_key_stat` argument '" + magic_key_stat + "' not recognized")
+                raise Internal_Exception("`magic_key_stat` argument '" + magic_key_stat + "' not recognized")
             self.magic_key_stat = magic_key_stat
         else:
             if self.character_class == 'Priest':
@@ -305,19 +315,19 @@ class character(object):  # has been tested
 
     def _attack_or_damage_stat_dependency(self):
         if self.character_class in ('Warrior', 'Priest') or (self.character_class == 'Mage'
-                                                             and self._equipment_obj.weapon_equipped):
+                                                             and self._equipment.weapon_equipped):
             return 'strength'
         elif self.character_class == 'Thief':
             return 'dexterity'
-        else:  # By exclusion, (`character_class` == 'Mage' and self._equipment_obj.wand_equipped)
+        else:  # By exclusion, (`character_class` == 'Mage' and self._equipment.wand_equipped)
             return 'intelligence'
 
     @property
     def _item_attacking_with(self):
-        if self._equipment_obj.wand_equipped:
-            return self._equipment_obj.wand
-        elif self._equipment_obj.weapon_equipped:
-            return self._equipment_obj.weapon
+        if self._equipment.wand_equipped:
+            return self._equipment.wand
+        elif self._equipment.weapon_equipped:
+            return self._equipment.weapon
         else:
             return None
 
@@ -368,16 +378,16 @@ class character(object):  # has been tested
     is_dead = property(fget=(lambda self: self._current_hit_points == 0))
 
     # These two properties are sneaky. When called, they return closures. The result is that the code
-    # `character_obj.attack_roll(12)` or `character_obj.damage_roll()` *appears* to be a method call but is actually a
+    # `character.attack_roll(12)` or `character.damage_roll()` *appears* to be a method call but is actually a
     # property access that returns a closure which is then immediately called and returns a result from the closure, not
-    # from method code in the `character` object.
+    # from method code in the `Character` object.
     #
     # The upside of doing it this way is, if the call is omitted, the return value can be introspected by the testing
     # code to confirm the calculation being done is correct.
 
     @property
     def attack_roll(self):
-        if not (self._equipment_obj.weapon_equipped or self._equipment_obj.wand_equipped):
+        if not (self._equipment.weapon_equipped or self._equipment.wand_equipped):
             return None
         stat_dependency = self._attack_or_damage_stat_dependency()
         item_attacking_with = self._item_attacking_with
@@ -388,7 +398,7 @@ class character(object):  # has been tested
 
     @property
     def damage_roll(self):
-        if not (self._equipment_obj.weapon_equipped or self._equipment_obj.wand_equipped):
+        if not (self._equipment.weapon_equipped or self._equipment.wand_equipped):
             return None
         stat_dependency = self._attack_or_damage_stat_dependency()
         item_attacking_with = self._item_attacking_with
@@ -403,11 +413,11 @@ class character(object):  # has been tested
                                          else '')
         return damage_str
 
-    # This class keeps its `ability_scores`, `equipment` and `inventory` objects in private attributes, just as a matter
-    # of good OOP design. In the cases of the `ability_scores` and `equipment` objects, these passthrough methods are
-    # necessary so the concealed objects' functionality can be accessed from code that only has the `character` object.
+    # This class keeps its `Ability_Scores`, `Equipment` and `Inventory` objects in private attributes, just as a matter
+    # of good OOP design. In the cases of the `Ability_Scores` and `Equipment` objects, these passthrough methods are
+    # necessary so the concealed objects' functionality can be accessed from code that only has the `Character` object.
     #
-    # The `inventory` object presents a customized mapping interface that character action management code doesn't need
+    # The `Inventory` object presents a customized mapping interface that Character action management code doesn't need
     # to access, so only a few methods are offered.
 
     total_weight = property(fget=(lambda self: self.inventory.total_weight))
@@ -416,36 +426,36 @@ class character(object):  # has been tested
                                              self.ability_scores.strength
                                          )))
 
-    def pick_up_item(self, item_obj, qty=1):
-        have_qty = self.item_have_qty(item_obj)
+    def pick_up_item(self, item, qty=1):
+        have_qty = self.item_have_qty(item)
         if qty == 1:
-            self.inventory.add_one(item_obj.internal_name, item_obj)
+            self.inventory.add_one(item.internal_name, item)
         else:
-            self.inventory.set(item_obj.internal_name, qty + have_qty, item_obj)
+            self.inventory.set(item.internal_name, qty + have_qty, item)
 
-    def drop_item(self, item_obj, qty=1):
-        have_qty = self.item_have_qty(item_obj)
+    def drop_item(self, item, qty=1):
+        have_qty = self.item_have_qty(item)
         if have_qty == 0:
-            raise KeyError(item_obj.internal_name)
+            raise KeyError(item.internal_name)
         if have_qty == qty:
-            self.inventory.delete(item_obj.internal_name)
+            self.inventory.delete(item.internal_name)
         else:
-            self.inventory.set(item_obj.internal_name, have_qty - qty, item_obj)
+            self.inventory.set(item.internal_name, have_qty - qty, item)
 
-    def item_have_qty(self, item_obj):
-        if not self.inventory.contains(item_obj.internal_name):
+    def item_have_qty(self, item):
+        if not self.inventory.contains(item.internal_name):
             return 0
         else:
-            have_qty, _ = self.inventory.get(item_obj.internal_name)
+            have_qty, _ = self.inventory.get(item.internal_name)
             return have_qty
 
-    def have_item(self, item_obj):
-        return self.inventory.contains(item_obj.internal_name)
+    def have_item(self, item):
+        return self.inventory.contains(item.internal_name)
 
     def list_items(self):
         return list(sorted(self.inventory.values(), key=lambda *argl: argl[0][1].title))
 
-    # BEGIN passthrough methods for private ability_scores
+    # BEGIN passthrough methods for private Ability_Scores
     strength = property(fget=(lambda self: getattr(self.ability_scores, 'strength')))
 
     dexterity = property(fget=(lambda self: getattr(self.ability_scores, 'dexterity')))
@@ -469,87 +479,87 @@ class character(object):  # has been tested
     wisdom_mod = property(fget=(lambda self: self.ability_scores._stat_mod('wisdom')))
 
     charisma_mod = property(fget=(lambda self: self.ability_scores._stat_mod('charisma')))
-    # END passthrough methods for private ability_scores
+    # END passthrough methods for private Ability_Scores
 
-    # BEGIN passthrough methods for private _equipment_obj
-    armor_equipped = property(fget=(lambda self: self._equipment_obj.armor_equipped))
+    # BEGIN passthrough methods for private _equipment
+    armor_equipped = property(fget=(lambda self: self._equipment.armor_equipped))
 
-    shield_equipped = property(fget=(lambda self: self._equipment_obj.shield_equipped))
+    shield_equipped = property(fget=(lambda self: self._equipment.shield_equipped))
 
-    weapon_equipped = property(fget=(lambda self: self._equipment_obj.weapon_equipped))
+    weapon_equipped = property(fget=(lambda self: self._equipment.weapon_equipped))
 
-    wand_equipped = property(fget=(lambda self: self._equipment_obj.wand_equipped))
+    wand_equipped = property(fget=(lambda self: self._equipment.wand_equipped))
 
-    armor = property(fget=(lambda self: self._equipment_obj.armor))
+    armor = property(fget=(lambda self: self._equipment.armor))
 
-    shield = property(fget=(lambda self: self._equipment_obj.shield))
+    shield = property(fget=(lambda self: self._equipment.shield))
 
-    weapon = property(fget=(lambda self: self._equipment_obj.weapon))
+    weapon = property(fget=(lambda self: self._equipment.weapon))
 
-    wand = property(fget=(lambda self: self._equipment_obj.wand))
+    wand = property(fget=(lambda self: self._equipment.wand))
 
-    def equip_armor(self, item_obj):
-        if not self.inventory.contains(item_obj.internal_name):
-            raise internal_exception("equipping an `item` object that is not in the character's `inventory` object is "
+    def equip_armor(self, item):
+        if not self.inventory.contains(item.internal_name):
+            raise Internal_Exception("equipping an `item` object that is not in the character's `inventory` object is "
                                      'not allowed')
-        return self._equipment_obj.equip_armor(item_obj)
+        return self._equipment.equip_armor(item)
 
-    def equip_shield(self, item_obj):
-        if not self.inventory.contains(item_obj.internal_name):
-            raise internal_exception("equipping an `item` object that is not in the character's `inventory` object is "
+    def equip_shield(self, item):
+        if not self.inventory.contains(item.internal_name):
+            raise Internal_Exception("equipping an `item` object that is not in the character's `inventory` object is "
                                      'not allowed')
-        return self._equipment_obj.equip_shield(item_obj)
+        return self._equipment.equip_shield(item)
 
-    def equip_weapon(self, item_obj):
-        if not self.inventory.contains(item_obj.internal_name):
-            raise internal_exception("equipping an `item` object that is not in the character's `inventory` object is "
+    def equip_weapon(self, item):
+        if not self.inventory.contains(item.internal_name):
+            raise Internal_Exception("equipping an `item` object that is not in the character's `inventory` object is "
                                      'not allowed')
-        return self._equipment_obj.equip_weapon(item_obj)
+        return self._equipment.equip_weapon(item)
 
-    def equip_wand(self, item_obj):
-        if not self.inventory.contains(item_obj.internal_name):
-            raise internal_exception("equipping an `item` object that is not in the character's `inventory` object is "
+    def equip_wand(self, item):
+        if not self.inventory.contains(item.internal_name):
+            raise Internal_Exception("equipping an `item` object that is not in the character's `inventory` object is "
                                      'not allowed')
-        return self._equipment_obj.equip_wand(item_obj)
+        return self._equipment.equip_wand(item)
 
     def unequip_armor(self):
-        return self._equipment_obj.unequip_armor()
+        return self._equipment.unequip_armor()
 
     def unequip_shield(self):
-        return self._equipment_obj.unequip_shield()
+        return self._equipment.unequip_shield()
 
     def unequip_weapon(self):
-        return self._equipment_obj.unequip_weapon()
+        return self._equipment.unequip_weapon()
 
     def unequip_wand(self):
-        return self._equipment_obj.unequip_wand()
-    # END passthrough methods for private _equipment_obj
+        return self._equipment.unequip_wand()
+    # END passthrough methods for private _equipment
 
-    # These aren't passthrough methods because the `_equipment_obj` returns values for these character parameters that
-    # are informed only by the equipment it stores. At the level of the `character` object, these values should also be
-    # informed by the character's ability scores stores in the `ability_scores`. A character's armor class is modified
+    # These aren't passthrough methods because the `_equipment` returns values for these Character parameters that
+    # are informed only by the Equipment it stores. At the level of the `Character` object, these values should also be
+    # informed by the character's ability scores stores in the `Ability_Scores`. A character's armor class is modified
     # by their dexterity modifier; and their attack & damage values are modified by either their strength score (for
-    # Warriors, Priests, and Mages using a weapon), or Dexterity (for Thieves), or Intelligence (for Mages using a
-    # wand).
+    # Warriors, Priests, and Mages using a Weapon), or Dexterity (for Thieves), or Intelligence (for Mages using a
+    # Wand).
     @property
     def armor_class(self):
-        armor_class = self._equipment_obj.armor_class
+        armor_class = self._equipment.armor_class
         dexterity_mod = self.ability_scores.dexterity_mod
         return armor_class + dexterity_mod
 
     @property
     def attack_bonus(self):
-        if (not (self._equipment_obj.weapon_equipped
-            or self.character_class == 'Mage' and self._equipment_obj.wand_equipped)):
-            raise internal_exception('The character does not have a weapon equipped; no valid value for '
+        if (not (self._equipment.weapon_equipped
+            or self.character_class == 'Mage' and self._equipment.wand_equipped)):
+            raise Internal_Exception('The character does not have a weapon equipped; no valid value for '
                                      '`attack_bonus` can be computed.')
         stat_dependency = self._attack_or_damage_stat_dependency()
-        base_attack_bonus = (self._equipment_obj.weapon.attack_bonus if self._equipment_obj.weapon_equipped
-                             else self._equipment_obj.wand.attack_bonus)
+        base_attack_bonus = (self._equipment.weapon.attack_bonus if self._equipment.weapon_equipped
+                             else self._equipment.wand.attack_bonus)
         return base_attack_bonus + getattr(self.ability_scores, stat_dependency + '_mod')
 
 
-class equipment(object):  # has been tested
+class Equipment(object):  # has been tested
     __slots__ = 'character_class', 'armor', 'shield', 'weapon', 'wand'
 
     armor_equipped = property(fget=(lambda self: getattr(self, 'armor', None)))
@@ -567,25 +577,25 @@ class equipment(object):  # has been tested
         self.wand = wand_item
         self.weapon = weapon_item
 
-    def equip_armor(self, item_obj):
-        if not isinstance(item_obj, armor):
-            raise internal_exception('the method `equip_armor()` only accepts `armor` objects for its argument')
-        self._equip('armor', item_obj)
+    def equip_armor(self, item):
+        if not isinstance(item, Armor):
+            raise Internal_Exception('the method `equip_armor()` only accepts `armor` objects for its argument')
+        self._equip('armor', item)
 
-    def equip_shield(self, item_obj):
-        if not isinstance(item_obj, shield):
-            raise internal_exception('the method `equip_shield()` only accepts `shield` objects for its argument')
-        self._equip('shield', item_obj)
+    def equip_shield(self, item):
+        if not isinstance(item, Shield):
+            raise Internal_Exception('the method `equip_shield()` only accepts `shield` objects for its argument')
+        self._equip('shield', item)
 
-    def equip_weapon(self, item_obj):
-        if not isinstance(item_obj, weapon):
-            raise internal_exception('the method `equip_weapon()` only accepts `weapon` objects for its argument')
-        self._equip('weapon', item_obj)
+    def equip_weapon(self, item):
+        if not isinstance(item, Weapon):
+            raise Internal_Exception('the method `equip_weapon()` only accepts `weapon` objects for its argument')
+        self._equip('weapon', item)
 
-    def equip_wand(self, item_obj):
-        if not isinstance(item_obj, wand):
-            raise internal_exception('the method `equip_wand()` only accepts `wand` objects for its argument')
-        self._equip('wand', item_obj)
+    def equip_wand(self, item):
+        if not isinstance(item, Wand):
+            raise Internal_Exception('the method `equip_wand()` only accepts `wand` objects for its argument')
+        self._equip('wand', item)
 
     def unequip_armor(self):
         self._unequip('armor')
@@ -599,21 +609,21 @@ class equipment(object):  # has been tested
     def unequip_wand(self):
         self._unequip('wand')
 
-    def _equip(self, equipment_slot, item_obj):
+    def _equip(self, equipment_slot, item):
         if equipment_slot not in ('armor', 'shield', 'weapon', 'wand'):
-            raise internal_exception(f'equipment slot {equipment_slot} not recognized')
+            raise Internal_Exception(f'equipment slot {equipment_slot} not recognized')
         if equipment_slot == 'armor':
-            self.armor = item_obj
+            self.armor = item
         elif equipment_slot == 'shield':
-            self.shield = item_obj
+            self.shield = item
         elif equipment_slot == 'weapon':
-            self.weapon = item_obj
+            self.weapon = item
         elif equipment_slot == 'wand':
-            self.wand = item_obj
+            self.wand = item
 
     def _unequip(self, equipment_slot):
         if equipment_slot not in ('armor', 'shield', 'weapon', 'wand'):
-            raise internal_exception(f'equipment slot {equipment_slot} not recognized')
+            raise Internal_Exception(f'equipment slot {equipment_slot} not recognized')
         if equipment_slot == 'armor':
             self.armor = None
         elif equipment_slot == 'shield':
@@ -649,7 +659,7 @@ class equipment(object):  # has been tested
             return None
 
 
-class ability_scores(object):  # has been tested
+class Ability_Scores(object):  # has been tested
     __slots__ = 'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma', 'character_class'
 
     weightings = {
@@ -676,12 +686,12 @@ class ability_scores(object):  # has been tested
     # That is implemented here.
     def _stat_mod(self, ability_score):
         if not hasattr(self, ability_score):
-            raise internal_exception(f'unrecognized ability {ability_score}')
+            raise Internal_Exception(f'unrecognized ability {ability_score}')
         return math.floor((getattr(self, ability_score) - 10) / 2)
 
     def __init__(self, character_class_str):
         if character_class_str not in self.weightings:
-            raise internal_exception(f'character class {character_class_str} not recognized, should be one of '
+            raise Internal_Exception(f'character class {character_class_str} not recognized, should be one of '
                                       "'Warrior', 'Thief', 'Priest' or 'Mage'")
         self.character_class = character_class_str
 
@@ -700,25 +710,25 @@ class ability_scores(object):  # has been tested
             setattr(self, self.weightings[self.character_class][index], results_list[index])
 
 
-class creature(ini_entry, character):
+class Creature(Ini_Entry, Character):
     __slots__ = ('internal_name', 'character_name', 'description', 'character_class', 'species', '_strength',
-                 '_dexterity', '_constitution', '_intelligence', '_wisdom', '_charisma', '_items_state_obj',
+                 '_dexterity', '_constitution', '_intelligence', '_wisdom', '_charisma', '_items_state',
                  '_base_hit_points', '_weapon_equipped', '_armor_equipped', '_shield_equipped')
 
-    def __init__(self, items_state_obj, internal_name, **argd):
+    def __init__(self, items_state, internal_name, **argd):
         character_init_argd, ini_entry_init_argd, equipment_argd, inventory_qty_name_pairs = \
-            self._separate_argd_into_different_arg_sets(items_state_obj, internal_name, **argd)
-        ini_entry.__init__(self, internal_name=internal_name, **ini_entry_init_argd)
+            self._separate_argd_into_different_arg_sets(items_state, internal_name, **argd)
+        Ini_Entry.__init__(self, internal_name=internal_name, **ini_entry_init_argd)
         self._post_init_slots_set_none(self.__slots__)
-        character.__init__(self, **character_init_argd)
-        self._init_inventory_and_equipment(items_state_obj, inventory_qty_name_pairs, equipment_argd)
-        self._items_state_obj = items_state_obj
+        Character.__init__(self, **character_init_argd)
+        self._init_inventory_and_equipment(items_state, inventory_qty_name_pairs, equipment_argd)
+        self._items_state = items_state
 
-    # Divides the argd passed to __init__ into arguments for character.__init__, arguments for ini_entry.__init__,
-    # arguments to character.equip_*, and arguments to character.pick_up_item.
+    # Divides the argd passed to __init__ into arguments for Character.__init__, arguments for Ini_Entry.__init__,
+    # arguments to Character.equip_*, and arguments to Character.pick_up_item.
     #
     # argd is accepted as a ** argument so it's passed by copy rather than by reference.
-    def _separate_argd_into_different_arg_sets(self, items_state_obj, internal_name, **argd):
+    def _separate_argd_into_different_arg_sets(self, items_state, internal_name, **argd):
         character_init_argd = dict(strength=int(argd.pop('strength')),
                                    dexterity=int(argd.pop('dexterity')),
                                    constitution=int(argd.pop('constitution')),
@@ -736,81 +746,81 @@ class creature(ini_entry, character):
                 continue
             equipment_argd[ini_key] = argd.pop(ini_key)
         inventory_qty_name_pairs = self._process_list_value(argd.pop('inventory_items'))
-        if any(not items_state_obj.contains(inventory_internal_name)
+        if any(not items_state.contains(inventory_internal_name)
                for _, inventory_internal_name in inventory_qty_name_pairs):
             missing_names = tuple(item_internal_name for _, item_internal_name in inventory_qty_name_pairs
-                                  if not items_state_obj.contains(item_internal_name))
+                                  if not items_state.contains(item_internal_name))
             pluralizer = 's' if len(missing_names) > 1 else ''
-            raise internal_exception(f'bad creatures.ini specification for creature {internal_name}: creature '
+            raise Internal_Exception(f'bad creatures.ini specification for creature {internal_name}: creature '
                                      f'ini config dict `inventory_items` value indicated item{pluralizer}'
-                                     ' not present in `items_state` argument: ' + (', '.join(missing_names)))
+                                     ' not present in `Items_State` argument: ' + (', '.join(missing_names)))
         ini_entry_init_argd = argd
         return character_init_argd, ini_entry_init_argd, equipment_argd, inventory_qty_name_pairs
 
-    def _init_inventory_and_equipment(self, items_state_obj, inventory_qty_name_pairs, equipment_argd):
+    def _init_inventory_and_equipment(self, items_state, inventory_qty_name_pairs, equipment_argd):
         for item_qty, item_internal_name in inventory_qty_name_pairs:
-            item_obj = items_state_obj.get(item_internal_name)
+            item = items_state.get(item_internal_name)
             for index in range(0, item_qty):
-                self.pick_up_item(item_obj)
+                self.pick_up_item(item)
         for equipment_key, item_internal_name in equipment_argd.items():
-            if not items_state_obj.contains(item_internal_name):
-                raise internal_exception(f'bad creatures.ini specification for creature {self.internal_name}: items '
+            if not items_state.contains(item_internal_name):
+                raise Internal_Exception(f'bad creatures.ini specification for creature {self.internal_name}: items '
                                          f'index object does not contain an item named {item_internal_name}')
-            item_obj = items_state_obj.get(item_internal_name)
+            item = items_state.get(item_internal_name)
             if equipment_key == 'weapon_equipped':
-                self.equip_weapon(item_obj)
+                self.equip_weapon(item)
             elif equipment_key == 'armor_equipped':
-                self.equip_armor(item_obj)
+                self.equip_armor(item)
             elif equipment_key == 'shield_equipped':
-                self.equip_shield(item_obj)
+                self.equip_shield(item)
             else:  # by exclusion, the value must be 'wand_equipped'
-                self.equip_wand(item_obj)
+                self.equip_wand(item)
 
     def convert_to_corpse(self):
         internal_name = self.internal_name
         description = self.description_dead
         title = f'{self.title} corpse'
-        corpse_obj = corpse(self._items_state_obj, internal_name, container_type='corpse',
+        corpse = Corpse(self._items_state, internal_name, container_type='corpse',
                             description=description, title=title)
-        for item_internal_name, (item_qty, item_obj) in self.inventory.items():
-            corpse_obj.set(item_internal_name, item_qty, item_obj)
-        return corpse_obj
+        for item_internal_name, (item_qty, item) in self.inventory.items():
+            corpse.set(item_internal_name, item_qty, item)
+        return corpse
 
 
-class container(ini_entry, items_multi_state):
+class Container(Ini_Entry, Items_Multi_State):
     __slots__ = 'internal_name', 'title', 'description', 'is_locked', 'is_closed', 'container_type'
 
-    def __init__(self, item_state_obj, internal_name, *item_objs, **ini_constr_argd):
+    def __init__(self, item_state, internal_name, *item_objs, **ini_constr_argd):
         contents_str = ini_constr_argd.pop('contents', None)
-        ini_entry.__init__(self, internal_name=internal_name, **ini_constr_argd)
+        Ini_Entry.__init__(self, internal_name=internal_name, **ini_constr_argd)
         if contents_str:
             contents_qtys_names = self._process_list_value(contents_str)
-            contents_qtys_item_objs = tuple((item_qty, item_state_obj.get(item_internal_name))
+            contents_qtys_item_objs = tuple((item_qty, item_state.get(item_internal_name))
                                              for item_qty, item_internal_name in contents_qtys_names)
-        items_multi_state.__init__(self)
+        Items_Multi_State.__init__(self)
         if contents_str:
-            for item_qty, item_obj in contents_qtys_item_objs:
-                self.set(item_obj.internal_name, item_qty, item_obj)
+            for item_qty, item in contents_qtys_item_objs:
+                self.set(item.internal_name, item_qty, item)
         self._post_init_slots_set_none(self.__slots__)
 
     @classmethod
-    def subclassing_factory(self, items_state_obj, **container_dict):
+    def subclassing_factory(self, items_state, **container_dict):
         if container_dict['container_type'] == 'chest':
-            container_obj = chest(items_state_obj, **container_dict)
+            container = Chest(items_state, **container_dict)
         elif container_dict['container_type'] == 'corpse':
-            container_obj = corpse(items_state_obj, **container_dict)
-        return container_obj
+            container = Corpse(items_state, **container_dict)
+        return container
 
 
-class chest(container):
+class Chest(Container):
     pass
 
 
-class corpse(container):
+class Corpse(Container):
     pass
 
 
-class door(ini_entry):
+class Door(Ini_Entry):
     __slots__ = ('internal_name', 'title', 'description', 'door_type', 'is_locked', 'is_closed', 'closeable', 
                  '_linked_rooms_internal_names', 'is_exit')
 
@@ -822,19 +832,19 @@ class door(ini_entry):
     @classmethod
     def subclassing_factory(self, **door_dict):
         if door_dict['door_type'] == 'doorway':
-            door_obj = doorway(**door_dict)
+            door = Doorway(**door_dict)
         elif door_dict['door_type'] == 'wooden_door':
-            door_obj = wooden_door(**door_dict)
+            door = Wooden_Door(**door_dict)
         elif door_dict['door_type'] == 'iron_door':
-            door_obj = iron_door(**door_dict)
+            door = Iron_Door(**door_dict)
         else:
-            raise internal_error(f'unrecognized door type: {door_dict["door_type"]}')
-        return door_obj
+            raise Internal_Error(f'unrecognized door type: {door_dict["door_type"]}')
+        return door
 
     def other_room_internal_name(self, room_internal_name):
 
         if room_internal_name not in self._linked_rooms_internal_names:
-            raise internal_exception(f'room internal name {room_internal_name} not one of the two rooms linked by this'
+            raise Internal_Exception(f'room internal name {room_internal_name} not one of the two rooms linked by this'
                                       ' door object')
 
         # The set _linked_rooms_internal_names is only 2 elements long and by the above one of those elements is the
@@ -845,22 +855,22 @@ class door(ini_entry):
             return found_internal_name
 
     def copy(self):
-        return door(**{attr: getattr(self, attr, None) for attr in self.__slots__})
+        return Door(**{attr: getattr(self, attr, None) for attr in self.__slots__})
 
 
-class doorway(door):
+class Doorway(Door):
     pass
 
 
-class wooden_door(door):
+class Wooden_Door(Door):
     pass
 
 
-class iron_door(door):
+class Iron_Door(Door):
     pass
 
 
-class item(ini_entry):  # has been tested
+class Item(Ini_Entry):  # has been tested
     __slots__ = ('internal_name', 'title', 'description', 'weight', 'value', 'damage', 'attack_bonus', 'armor_bonus', 
                  'item_type', 'warrior_can_use', 'thief_can_use', 'priest_can_use', 'mage_can_use', 
                  'hit_points_recovered', 'mana_points_recovered')
@@ -872,62 +882,62 @@ class item(ini_entry):  # has been tested
     @classmethod
     def subclassing_factory(self, **item_dict):
         if item_dict['item_type'] == 'armor':
-            item_obj = armor(**item_dict)
+            item = Armor(**item_dict)
         elif item_dict['item_type'] == 'coin':
-            item_obj = coin(**item_dict)
+            item = Coin(**item_dict)
         elif item_dict['item_type'] == 'consumable':
-            item_obj = consumable(**item_dict)
+            item = Consumable(**item_dict)
         elif item_dict['item_type'] == 'key':
-            item_obj = key(**item_dict)
+            item = Key(**item_dict)
         elif item_dict['item_type'] == 'shield':
-            item_obj = shield(**item_dict)
+            item = Shield(**item_dict)
         elif item_dict['item_type'] == 'wand':
-            item_obj = wand(**item_dict)
+            item = Wand(**item_dict)
         elif item_dict['item_type'] == 'weapon':
-            item_obj = weapon(**item_dict)
-        return item_obj
+            item = Weapon(**item_dict)
+        return item
 
     def usable_by(self, character_class):
         if character_class not in ('Warrior', 'Thief', 'Mage', 'Priest'):
-            raise internal_exception(f'character class {character_class} not recognized')
+            raise Internal_Exception(f'character class {character_class} not recognized')
         return bool(getattr(self, character_class.lower() + '_can_use', None))
 
 
-# The subclasses don't have much differing functionality but accurately typing each item allows classes that handle
-# items of specific types, like equipment(), to use type testing to determine if a valid item has been supplied as an
+# The subclasses don't have much differing functionality but accurately typing each Item allows classes that handle
+# items of specific types, like Equipment(), to use type testing to determine if a valid Item has been supplied as an
 # argument.
-class armor(item):
+class Armor(Item):
     pass
 
 
-class coin(item):
+class Coin(Item):
     pass
 
 
-class consumable(item):
+class Consumable(Item):
     pass
 
 
-class key(item):
+class Key(Item):
     pass
 
 
-class shield(item):
+class Shield(Item):
     pass
 
 
-class wand(item):
+class Wand(Item):
     pass
 
 
-class weapon(item):
+class Weapon(Item):
     pass
 
 
-class room(ini_entry):  # has been tested
+class Room(Ini_Entry):  # has been tested
     __slots__ = ('internal_name', 'title', 'description', 'north_door', 'west_door', 'south_door', 'east_door',
-                 'occupant', 'item', 'is_entrance', 'is_exit', '_containers_state_obj', '_creatures_state_obj',
-                 '_doors_state_obj', '_items_state_obj', 'creature_here', 'container_here', 'items_here')
+                 'occupant', 'item', 'is_entrance', 'is_exit', '_containers_state', '_creatures_state',
+                 '_doors_state', '_items_state', 'creature_here', 'container_here', 'items_here')
 
     @property
     def has_north_door(self):
@@ -945,70 +955,70 @@ class room(ini_entry):  # has been tested
     def has_east_door(self):
         return bool(getattr(self, 'east_door', False))
 
-    def __init__(self, creatures_state_obj, containers_state_obj, doors_state_obj, items_state_obj, **argd):
+    def __init__(self, creatures_state, containers_state, doors_state, items_state, **argd):
         super().__init__(**argd)
-        self._containers_state_obj = containers_state_obj
-        self._creatures_state_obj = creatures_state_obj
-        self._items_state_obj = items_state_obj
-        self._doors_state_obj = doors_state_obj
+        self._containers_state = containers_state
+        self._creatures_state = creatures_state
+        self._items_state = items_state
+        self._doors_state = doors_state
         self._post_init_slots_set_none(self.__slots__)
         if self.creature_here:
-            if not self._creatures_state_obj.contains(self.creature_here):
+            if not self._creatures_state.contains(self.creature_here):
                 raise internal_exception(f"room obj `{self.internal_name}` creature_here value '{self.creature_here}' "
                                          "doesn't correspond to any creatures in creatures_state store")
-            self.creature_here = self._creatures_state_obj.get(self.creature_here)
+            self.creature_here = self._creatures_state.get(self.creature_here)
         if self.container_here:
-            if not self._containers_state_obj.contains(self.container_here):
+            if not self._containers_state.contains(self.container_here):
                 raise internal_exception(f"room obj `{self.internal_name}` container_here value '{self.container_here}'"
                                          " doesn't correspond to any creatures in creatures_state store")
-            self.container_here = self._containers_state_obj.get(self.container_here)
+            self.container_here = self._containers_state.get(self.container_here)
         if self.items_here:
             items_here_names_list = self._process_list_value(self.items_here)
-            items_state_obj = items_multi_state()
+            items_state = Items_Multi_State()
             for item_qty, item_internal_name in items_here_names_list:
-                item_obj = self._items_state_obj.get(item_internal_name)
-                items_state_obj.set(item_internal_name, item_qty, item_obj)
-            self.items_here = items_state_obj
+                item = self._items_state.get(item_internal_name)
+                items_state.set(item_internal_name, item_qty, item)
+            self.items_here = items_state
         for compass_dir in ('north', 'east', 'south', 'west'):
             door_attr = f'{compass_dir}_door'
             if not getattr(self, door_attr, False):
                 continue
             sorted_pair = tuple(sorted((self.internal_name, getattr(self, door_attr))))
-            if sorted_pair[0] == 'Exit':
+            if sorted_pair[0].lower() == 'exit':
                 sorted_pair = tuple(reversed(sorted_pair))
 
-            # The door objects stored in each room object are not identical with the door objects in
-            # self._doors_state_obj because each door gets a new title based on its compass direction; the same door can
+            # The Door objects stored in each Room object are not identical with the Door objects in
+            # self._doors_state because each Door gets a new title based on its compass direction; the same Door can
             # be titled 'north door' in the southern of the two rooms it connects and 'south door' in the northern one.
-            door_obj = self._doors_state_obj.get(*sorted_pair).copy()
-            door_obj.title = f'{compass_dir} doorway' if door_obj.title == 'doorway' else f'{compass_dir} door'
-            setattr(self, door_attr, door_obj)
+            door = self._doors_state.get(*sorted_pair).copy()
+            door.title = f'{compass_dir} doorway' if door.title == 'doorway' else f'{compass_dir} door'
+            setattr(self, door_attr, door)
 
 
-class items_multi_state(items_state):
+class Items_Multi_State(Items_State):
 
     def __init__(self, **argd):
-        items_state.__init__(self, **argd)
+        Items_State.__init__(self, **argd)
 
         # I preload the dict's items() sequence outside of the loop because the loop alters the dict and I don't want a
         # concurrent update error.
         contents_items = tuple(self._contents.items())
-        for item_internal_name, item_obj in contents_items:
-            self._contents[item_internal_name] = (1, item_obj)
+        for item_internal_name, item in contents_items:
+            self._contents[item_internal_name] = (1, item)
 
     def contains(self, item_internal_name):
-        return(any(contained_item_obj.internal_name == item_internal_name
-                   for _, contained_item_obj in self._contents.values()))
+        return(any(contained_item.internal_name == item_internal_name
+                   for _, contained_item in self._contents.values()))
 
-    def set(self, item_internal_name, item_qty, item_obj):
-        self._contents[item_internal_name] = item_qty, item_obj
+    def set(self, item_internal_name, item_qty, item):
+        self._contents[item_internal_name] = item_qty, item
 
-    def add_one(self, item_internal_name, item_obj):
+    def add_one(self, item_internal_name, item):
         if self.contains(item_internal_name):
             self._contents[item_internal_name] = (self._contents[item_internal_name][0] + 1,
                                                   self._contents[item_internal_name][1])
         else:
-            self._contents[item_internal_name] = 1, item_obj
+            self._contents[item_internal_name] = 1, item
 
     def remove_one(self, item_internal_name):
         if item_internal_name not in self._contents:
@@ -1020,7 +1030,7 @@ class items_multi_state(items_state):
                                                   self._contents[item_internal_name][1])
 
 
-class game_state(object):
+class Game_State(object):
     __slots__ = ('_character_name', '_character_class', 'character', 'rooms_state', 'containers_state',
                  'doors_state', 'items_state', 'creatures_state', 'game_has_begun', 'game_has_ended')
 
@@ -1042,75 +1052,75 @@ class game_state(object):
         setattr(self, '_character_class', class_str)
         self._incept_character_obj_if_possible()
 
-    def __init__(self, rooms_state_obj, creatures_state_obj, containers_state_obj, doors_state_obj, items_state_obj):
-        self.items_state = items_state_obj
-        self.doors_state = doors_state_obj
-        self.containers_state = containers_state_obj
-        self.creatures_state = creatures_state_obj
-        self.rooms_state = rooms_state_obj
+    def __init__(self, rooms_state, creatures_state, containers_state, doors_state, items_state):
+        self.items_state = items_state
+        self.doors_state = doors_state
+        self.containers_state = containers_state
+        self.creatures_state = creatures_state
+        self.rooms_state = rooms_state
         self._character_name = None
         self._character_class = None
         self.game_has_begun = False
         self.game_has_ended = False
         self.character = None
 
-    # The character object can't be instantiated until the `character_name` and `character_class` attributes are set,
+    # The Character object can't be instantiated until the `character_name` and `character_class` attributes are set,
     # but that happens after initialization; so the `character_name` and `character_class` setters call this method
-    # prospectively each time either is called to check if both have been set and `character` object instantiation can
+    # prospectively each time either is called to check if both have been set and `Character` object instantiation can
     # proceed.
     def _incept_character_obj_if_possible(self):
         if self.character is None and getattr(self, 'character_name', None) and getattr(self, 'character_class', None):
-            self.character = character(self.character_name, self.character_class)
+            self.character = Character(self.character_name, self.character_class)
 
 
-class containers_state(items_state):
+class Containers_State(Items_State):
     __slots__ = '_contents',
 
-    def __init__(self, items_state_obj, **dict_of_dicts):
+    def __init__(self, items_state, **dict_of_dicts):
         self._contents = dict()
         for container_internal_name, container_dict in dict_of_dicts.items():
-            container_obj = container.subclassing_factory(items_state_obj, internal_name=container_internal_name,
+            container = Container.subclassing_factory(items_state, internal_name=container_internal_name,
                                                           **container_dict)
-            self._contents[container_internal_name] = container_obj
+            self._contents[container_internal_name] = container
 
 
-class creatures_state(state):
+class Creatures_State(State):
 
-    def __init__(self, items_state_obj, **dict_of_dicts):
+    def __init__(self, items_state, **dict_of_dicts):
         self._contents = dict()
         for creature_internal_name, creature_dict in dict_of_dicts.items():
-            creature_obj = creature(items_state_obj, internal_name=creature_internal_name, **creature_dict)
-            self.set(creature_obj.internal_name, creature_obj)
+            creature = Creature(items_state, internal_name=creature_internal_name, **creature_dict)
+            self.set(creature.internal_name, creature)
 
 
-class rooms_state(object):  # has been tested
-    __slots__ = ('_creatures_state_obj', '_containers_state_obj', '_items_state_obj', '_doors_state_obj',
+class Rooms_State(object):  # has been tested
+    __slots__ = ('_creatures_state', '_containers_state', '_items_state', '_doors_state',
                  '_rooms_objs', '_room_cursor')
 
     @property
     def cursor(self):
         return self._rooms_objs[self._room_cursor]
 
-    def __init__(self, creatures_state_obj, containers_state_obj, doors_state_obj, items_state_obj, **dict_of_dicts):
+    def __init__(self, creatures_state, containers_state, doors_state, items_state, **dict_of_dicts):
         self._rooms_objs = dict()
-        self._creatures_state_obj = creatures_state_obj
-        self._containers_state_obj = containers_state_obj
-        self._doors_state_obj = doors_state_obj
-        self._items_state_obj = items_state_obj
+        self._creatures_state = creatures_state
+        self._containers_state = containers_state
+        self._doors_state = doors_state
+        self._items_state = items_state
         for room_internal_name, room_dict in dict_of_dicts.items():
-            room_obj = room(creatures_state_obj, containers_state_obj, doors_state_obj, items_state_obj,
+            room = Room(creatures_state, containers_state, doors_state, items_state,
                             internal_name=room_internal_name, **room_dict)
-            if room_obj.is_entrance:
-                self._room_cursor = room_obj.internal_name
-            self._store_room(room_obj.internal_name, room_obj)
+            if room.is_entrance:
+                self._room_cursor = room.internal_name
+            self._store_room(room.internal_name, room)
 
-    def _store_room(self, room_internal_name, room_obj):
-        self._rooms_objs[room_internal_name] = room_obj
+    def _store_room(self, room_internal_name, room):
+        self._rooms_objs[room_internal_name] = room
 
     def move(self, north=False, west=False, south=False, east=False):
         if ((north and west) or (north and south) or (north and east) or (west and south)
             or (west and east) or (south and east)):
-            raise internal_exception('move() must receive only *one* True argument of the four keys `north`, `south`, '
+            raise Internal_Exception('move() must receive only *one* True argument of the four keys `north`, `south`, '
                                      '`east` and `west`')
         if north:
             exit_name = 'north_door'
@@ -1125,11 +1135,11 @@ class rooms_state(object):  # has been tested
             exit_name = 'east_door'
             exit_key = 'EAST'
         if not getattr(self.cursor, exit_name):
-            raise bad_command_exception('MOVE', f'This room has no <{exit_key}> exit.')
-        door_obj = getattr(self.cursor, exit_name)
-        if door_obj.is_locked:
-            raise internal_exception(f'exiting {self.cursor.internal_name} via the {exit_name.replace("_"," ")}: door '
+            raise Bad_Command_Exception('MOVE', f'This room has no <{exit_key}> exit.')
+        door = getattr(self.cursor, exit_name)
+        if door.is_locked:
+            raise Internal_Exception(f'exiting {self.cursor.internal_name} via the {exit_name.replace("_"," ")}: door '
                                       'is locked')
-        other_room_internal_name = door_obj.other_room_internal_name(self.cursor.internal_name)
+        other_room_internal_name = door.other_room_internal_name(self.cursor.internal_name)
         new_room_dest = self._rooms_objs[other_room_internal_name]
         self._room_cursor = new_room_dest.internal_name

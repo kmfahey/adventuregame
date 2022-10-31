@@ -34,7 +34,7 @@ lexical_number_in_1_99_re = re.compile("""^(
                                            (one|two|three|four|five|six|seven|eight|nine)
                                        )$""", re.X)
 
-# The player can use lexical numbers (ie. 'one', 'fourteen', 'thirty') in commands and the `command_processor` needs to
+# The player can use lexical numbers (ie. 'one', 'fourteen', 'thirty') in commands and the `Command_Processor` needs to
 # be able to interpret them, so I wrote this utility function.
 
 def lexical_number_to_digits(lexical_number):
@@ -48,11 +48,11 @@ def lexical_number_to_digits(lexical_number):
     return base_number + added_number
 
 
-class internal_exception(Exception):
+class Internal_Exception(Exception):
     pass
 
 
-class bad_command_exception(Exception):
+class Bad_Command_Exception(Exception):
     __slots__ = 'command', 'message'
 
     def __init__(self, command_str, message_str):
@@ -75,7 +75,7 @@ def usage_verb(item_type, gerund=True):
 # optional third number is a positive or negative value to add to the result of the roll to reach the final outcome. As
 # an example, 1d20+3 indicates a roll of one 20-sided die to which 3 should be added.
 #
-# I have used this notation in the items.ini file since it's the simplest way to compactly express weapon damage, and
+# I have used this notation in the items.ini file since it's the simplest way to compactly express Weapon damage, and
 # in the attack roll methods to call for a d20 roll (the standard D&D conflict resolution roll). This function parses
 # those expressions and returns a closure that executes random.randint appropriately to simulate dice rolls of the dice
 # indicated by the expression.
@@ -84,10 +84,10 @@ dice_expression_re = re.compile(r'([1-9]+)d([1-9][0-9]*)([-+][1-9][0-9]*)?')
 
 
 def roll_dice(dice_expr):
-    match_obj = dice_expression_re.match(dice_expr)
-    if not match_obj:
-        raise internal_exception('invalid dice expression: ' + dice_expr)
-    number_of_dice, sidedness_of_dice, modifier_to_roll = match_obj.groups()
+    match = dice_expression_re.match(dice_expr)
+    if not match:
+        raise Internal_Exception('invalid dice expression: ' + dice_expr)
+    number_of_dice, sidedness_of_dice, modifier_to_roll = match.groups()
     number_of_dice = int(number_of_dice)
     sidedness_of_dice = int(sidedness_of_dice)
     modifier_to_roll = int(modifier_to_roll) if modifier_to_roll is not None else 0
@@ -103,7 +103,7 @@ def iniconfig_obj_from_ini_text(ini_config_text):
     temp_ini_config_fh.write(ini_config_text)
     temp_ini_config_fh.close()
     del temp_ini_config_fh
-    ini_config_obj = iniconfig.IniConfig(temp_ini_config_file)
+    ini_config = iniconfig.IniConfig(temp_ini_config_file)
     os.remove(temp_ini_config_file)
-    memoize_iniconfig_objs[ini_config_text] = ini_config_obj
-    return ini_config_obj
+    memoize_iniconfig_objs[ini_config_text] = ini_config
+    return ini_config

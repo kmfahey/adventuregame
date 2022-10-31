@@ -257,7 +257,7 @@ description=Entrance room.
 east_door=Room_2,1
 is_entrance=true
 north_door=Room_1,2
-title=Southwest dungeon room
+title=southwest dungeon room
 creature_here=Kobold_Trysk
 container_here=Wooden_Chest_1
 items_here=[1xMana_Potion,2xHealth_Potion]
@@ -266,19 +266,19 @@ items_here=[1xMana_Potion,2xHealth_Potion]
 description=Nondescript room.
 east_door=Room_2,2
 south_door=Room_1,1
-title=Northwest dungeon room
+title=northwest dungeon room
 
 [Room_2,1]
 description=Nondescript room.
 north_door=Room_2,2
-title=Southeast dungeon room
+title=southeast dungeon room
 west_door=Room_1,1
 
 [Room_2,2]
 description=Exit room.
 is_exit=true
 south_door=Room_1,2
-title=Northeast dungeon room
+title=northeast dungeon room
 west_door=Room_2,1
 north_door=Exit
 """

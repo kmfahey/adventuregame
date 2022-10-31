@@ -9,7 +9,7 @@ from .testing_game_data import *
 __name__ = 'adventuregame.test_utility'
 
 
-class test_isfloat(unittest.TestCase):
+class Test_Isfloat(unittest.TestCase):
 
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
@@ -27,7 +27,7 @@ class test_isfloat(unittest.TestCase):
         self.assertFalse(isfloat('-'))
 
 
-class test_lexical_number_to_digits(unittest.TestCase):
+class Test_Lexical_Number_to_Digits(unittest.TestCase):
 
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
