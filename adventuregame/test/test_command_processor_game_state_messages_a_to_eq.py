@@ -3,8 +3,8 @@
 import operator
 import unittest
 
-from adventuregame import *
-from adventuregame.test.testing_game_data import *
+from .context import *
+from .testing_game_data import *
 
 __name__ = 'adventuregame.test_command_processor_game_state_messages_a_to_eq'
 
@@ -584,13 +584,13 @@ class test_drop_command(unittest.TestCase):
         self.game_state_obj = game_state(self.rooms_state_obj, self.creatures_state_obj, self.containers_state_obj,
                                          self.doors_state_obj, self.items_state_obj)
         self.command_processor_obj = command_processor(self.game_state_obj)
+
+    def test_drop_1(self):
         self.command_processor_obj.game_state.character_name = 'Niath'
         self.command_processor_obj.game_state.character_class = 'Warrior'
         self.game_state_obj.game_has_begun = True
         gold_coin_obj = self.items_state_obj.get('Gold_Coin')
         self.command_processor_obj.game_state.character.pick_up_item(gold_coin_obj, qty=30)
-
-    def test_drop_1(self):
         result = self.command_processor_obj.process('drop the')  # check
         self.assertIsInstance(result[0], command_bad_syntax)
         self.assertEqual(result[0].command, 'DROP')
@@ -598,11 +598,21 @@ class test_drop_command(unittest.TestCase):
                                             "<item name>'."),
 
     def test_drop_2(self):
+        self.command_processor_obj.game_state.character_name = 'Niath'
+        self.command_processor_obj.game_state.character_class = 'Warrior'
+        self.game_state_obj.game_has_begun = True
+        gold_coin_obj = self.items_state_obj.get('Gold_Coin')
+        self.command_processor_obj.game_state.character.pick_up_item(gold_coin_obj, qty=30)
         result = self.command_processor_obj.process('drop a gold coins')  # check
         self.assertIsInstance(result[0], drop_command_quantity_unclear)
         self.assertEqual(result[0].message, 'Amount to drop unclear. How many do you mean?')
 
     def test_drop_3(self):
+        self.command_processor_obj.game_state.character_name = 'Niath'
+        self.command_processor_obj.game_state.character_class = 'Warrior'
+        self.game_state_obj.game_has_begun = True
+        gold_coin_obj = self.items_state_obj.get('Gold_Coin')
+        self.command_processor_obj.game_state.character.pick_up_item(gold_coin_obj, qty=30)
         result = self.command_processor_obj.process('drop a mana potion')  # check
         self.assertIsInstance(result[0], drop_command_trying_to_drop_item_you_dont_have)
         self.assertEqual(result[0].item_title, 'mana potion')
@@ -610,6 +620,11 @@ class test_drop_command(unittest.TestCase):
         self.assertEqual(result[0].message, "You don't have a mana potion in your inventory.")
 
     def test_drop_4(self):
+        self.command_processor_obj.game_state.character_name = 'Niath'
+        self.command_processor_obj.game_state.character_class = 'Warrior'
+        self.game_state_obj.game_has_begun = True
+        gold_coin_obj = self.items_state_obj.get('Gold_Coin')
+        self.command_processor_obj.game_state.character.pick_up_item(gold_coin_obj, qty=30)
         result = self.command_processor_obj.process('drop 45 gold coins')  # check
         self.assertIsInstance(result[0], drop_command_trying_to_drop_more_than_you_have)
         self.assertEqual(result[0].item_title, 'gold coin')
@@ -619,6 +634,11 @@ class test_drop_command(unittest.TestCase):
                                             "inventory.")
 
     def test_drop_5(self):
+        self.command_processor_obj.game_state.character_name = 'Niath'
+        self.command_processor_obj.game_state.character_class = 'Warrior'
+        self.game_state_obj.game_has_begun = True
+        gold_coin_obj = self.items_state_obj.get('Gold_Coin')
+        self.command_processor_obj.game_state.character.pick_up_item(gold_coin_obj, qty=30)
         result = self.command_processor_obj.process('drop 15 gold coins')  # check
         self.assertIsInstance(result[0], drop_command_dropped_item)
         self.assertEqual(result[0].item_title, 'gold coin')
@@ -638,6 +658,11 @@ class test_drop_command(unittest.TestCase):
                                             'coin left.')
 
     def test_drop_6(self):
+        self.command_processor_obj.game_state.character_name = 'Niath'
+        self.command_processor_obj.game_state.character_class = 'Warrior'
+        self.game_state_obj.game_has_begun = True
+        gold_coin_obj = self.items_state_obj.get('Gold_Coin')
+        self.command_processor_obj.game_state.character.pick_up_item(gold_coin_obj, qty=30)
         self.command_processor_obj.process('pick up 29 gold coins')  # check
         result = self.command_processor_obj.process('drop 1 gold coin')  # check
         self.assertIsInstance(result[0], drop_command_dropped_item)
@@ -647,6 +672,127 @@ class test_drop_command(unittest.TestCase):
         self.assertEqual(result[0].amount_left, 29)
         self.assertEqual(result[0].message, 'You dropped a gold coin. You see a gold coin here. You have 29 gold '
                                             'coins left.')
+
+    def test_drop_7(self):
+        self.command_processor_obj.game_state.character_name = 'Niath'
+        self.command_processor_obj.game_state.character_class = 'Warrior'
+        self.game_state_obj.game_has_begun = True
+        gold_coin_obj = self.items_state_obj.get('Gold_Coin')
+        self.command_processor_obj.game_state.character.pick_up_item(gold_coin_obj, qty=30)
+        result = self.command_processor_obj.process('drop 30 gold coins')  # check
+        self.assertIsInstance(result[0], drop_command_dropped_item)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].amount_dropped, 30)
+        self.assertEqual(result[0].amount_on_floor, 30)
+        self.assertEqual(result[0].amount_left, 0)
+        self.assertEqual(result[0].message, 'You dropped 30 gold coins. You see 30 gold coins here. You have no '
+                                            'gold coins left.')
+
+    def test_drop_8(self):
+        self.command_processor_obj.game_state.character_name = 'Niath'
+        self.command_processor_obj.game_state.character_class = 'Warrior'
+        self.game_state_obj.game_has_begun = True
+        longsword_obj = self.items_state_obj.get('Longsword')
+        self.command_processor_obj.game_state.character.pick_up_item(longsword_obj)
+        self.command_processor_obj.game_state.character.equip_weapon(longsword_obj)
+        result = self.command_processor_obj.process('drop longsword')  # check
+        self.assertIsInstance(result[0], various_commands_item_unequipped)
+        self.assertEqual(result[0].item_title, 'longsword')
+        self.assertEqual(result[0].item_type, 'weapon')
+        self.assertEqual(result[0].message, "You're no longer wielding a longsword. You now can't attack.")
+        self.assertIsInstance(result[1], drop_command_dropped_item)
+        self.assertEqual(result[1].item_title, 'longsword')
+        self.assertEqual(result[1].amount_dropped, 1)
+        self.assertEqual(result[1].amount_on_floor, 1)
+        self.assertEqual(result[1].amount_left, 0)
+        self.assertEqual(result[1].message, 'You dropped a longsword. You see a longsword here. You have no longswords '
+                                            'left.')
+
+    def test_drop_9(self):
+        self.command_processor_obj.game_state.character_name = 'Niath'
+        self.command_processor_obj.game_state.character_class = 'Warrior'
+        self.game_state_obj.game_has_begun = True
+        steel_shield_obj = self.items_state_obj.get('Steel_Shield')
+        self.command_processor_obj.game_state.character.pick_up_item(steel_shield_obj)
+        self.command_processor_obj.game_state.character.equip_shield(steel_shield_obj)
+        result = self.command_processor_obj.process('drop steel shield')  # check
+        self.assertIsInstance(result[0], various_commands_item_unequipped)
+        self.assertEqual(result[0].item_title, 'steel shield')
+        self.assertEqual(result[0].item_type, 'shield')
+        self.assertRegex(result[0].message, r"You're no longer carrying a steel shield. Your armor class is \d+.")
+        self.assertIsInstance(result[1], drop_command_dropped_item)
+        self.assertEqual(result[1].item_title, 'steel shield')
+        self.assertEqual(result[1].amount_dropped, 1)
+        self.assertEqual(result[1].amount_on_floor, 1)
+        self.assertEqual(result[1].amount_left, 0)
+        self.assertEqual(result[1].message, 'You dropped a steel shield. You see a steel shield here. You have no steel'
+                                            ' shields left.')
+
+    def test_drop_10(self):
+        self.command_processor_obj.game_state.character_name = 'Mialee'
+        self.command_processor_obj.game_state.character_class = 'Mage'
+        self.game_state_obj.game_has_begun = True
+        magic_wand_obj = self.items_state_obj.get('Magic_Wand')
+        self.command_processor_obj.game_state.character.pick_up_item(magic_wand_obj)
+        self.command_processor_obj.game_state.character.equip_wand(magic_wand_obj)
+        result = self.command_processor_obj.process('drop magic wand')  # check
+        self.assertIsInstance(result[0], various_commands_item_unequipped)
+        self.assertEqual(result[0].item_title, 'magic wand')
+        self.assertEqual(result[0].item_type, 'wand')
+        self.assertRegex(result[0].message, r"You're no longer using a magic wand. You now can't attack.")
+        self.assertIsInstance(result[1], drop_command_dropped_item)
+        self.assertEqual(result[1].item_title, 'magic wand')
+        self.assertEqual(result[1].amount_dropped, 1)
+        self.assertEqual(result[1].amount_on_floor, 1)
+        self.assertEqual(result[1].amount_left, 0)
+        self.assertEqual(result[1].message, 'You dropped a magic wand. You see a magic wand here. You have no '
+                                            'magic wands left.')
+
+    def test_drop_10(self):
+        self.command_processor_obj.game_state.character_name = 'Mialee'
+        self.command_processor_obj.game_state.character_class = 'Mage'
+        self.game_state_obj.game_has_begun = True
+        staff_obj = self.items_state_obj.get('Staff')
+        self.command_processor_obj.game_state.character.pick_up_item(staff_obj)
+        self.command_processor_obj.game_state.character.equip_weapon(staff_obj)
+        magic_wand_obj = self.items_state_obj.get('Magic_Wand')
+        self.command_processor_obj.game_state.character.pick_up_item(magic_wand_obj)
+        self.command_processor_obj.game_state.character.equip_wand(magic_wand_obj)
+        result = self.command_processor_obj.process('drop magic wand')  # check
+        self.assertIsInstance(result[0], various_commands_item_unequipped)
+        self.assertEqual(result[0].item_title, 'magic wand')
+        self.assertEqual(result[0].item_type, 'wand')
+        self.assertRegex(result[0].message, r"You're no longer using a magic wand. You're now attacking with your staff.")
+        self.assertIsInstance(result[1], drop_command_dropped_item)
+        self.assertEqual(result[1].item_title, 'magic wand')
+        self.assertEqual(result[1].amount_dropped, 1)
+        self.assertEqual(result[1].amount_on_floor, 1)
+        self.assertEqual(result[1].amount_left, 0)
+        self.assertEqual(result[1].message, 'You dropped a magic wand. You see a magic wand here. You have no '
+                                            'magic wands left.')
+
+    def test_drop_11(self):
+        self.command_processor_obj.game_state.character_name = 'Mialee'
+        self.command_processor_obj.game_state.character_class = 'Mage'
+        self.game_state_obj.game_has_begun = True
+        staff_obj = self.items_state_obj.get('Staff')
+        self.command_processor_obj.game_state.character.pick_up_item(staff_obj)
+        self.command_processor_obj.game_state.character.equip_weapon(staff_obj)
+        magic_wand_obj = self.items_state_obj.get('Magic_Wand')
+        self.command_processor_obj.game_state.character.pick_up_item(magic_wand_obj)
+        self.command_processor_obj.game_state.character.equip_wand(magic_wand_obj)
+        result = self.command_processor_obj.process('drop staff')  # check
+        self.assertIsInstance(result[0], various_commands_item_unequipped)
+        self.assertEqual(result[0].item_title, 'staff')
+        self.assertEqual(result[0].item_type, 'weapon')
+        self.assertRegex(result[0].message, r"You're no longer wielding a staff. You're still attacking with your wand.")
+        self.assertIsInstance(result[1], drop_command_dropped_item)
+        self.assertEqual(result[1].item_title, 'staff')
+        self.assertEqual(result[1].amount_dropped, 1)
+        self.assertEqual(result[1].amount_on_floor, 1)
+        self.assertEqual(result[1].amount_left, 0)
+        self.assertEqual(result[1].message, 'You dropped a staff. You see a staff here. You have no '
+                                            'staffs left.')
 
 
 class test_equip_command_1(unittest.TestCase):
@@ -733,7 +879,7 @@ class test_equip_command_1(unittest.TestCase):
     def test_equip_6(self):
         self.command_processor_obj.process('equip magic wand')
         result = self.command_processor_obj.process('equip magic wand 2')
-        self.assertIsInstance(result[0], equip_or_unequip_command_item_unequipped)
+        self.assertIsInstance(result[0], various_commands_item_unequipped)
         self.assertEqual(result[0].item_title, 'magic wand')
         self.assertEqual(result[0].item_type, 'wand')
         self.assertEqual(result[0].message, "You're no longer using a magic wand. You now can't attack.")
@@ -791,7 +937,7 @@ class test_equip_command_2(unittest.TestCase):
         self.assertRegex(result[0].message, r"^You're now wielding a longsword. Your attack bonus is [\d+-]+, and "
                                             r"your damage is [\dd+-]+.$")
         result = self.command_processor_obj.process('equip mace')
-        self.assertIsInstance(result[0], equip_or_unequip_command_item_unequipped)
+        self.assertIsInstance(result[0], various_commands_item_unequipped)
         self.assertEqual(result[0].item_title, 'longsword')
         self.assertEqual(result[0].item_type, 'weapon')
         self.assertEqual(result[0].message, "You're no longer wielding a longsword. You now can't attack.")
@@ -807,7 +953,7 @@ class test_equip_command_2(unittest.TestCase):
         self.assertEqual(result[0].item_title, 'scale mail armor')
         self.assertRegex(result[0].message, r"^You're now wearing scale mail armor. Your armor class is \d+.$")
         result = self.command_processor_obj.process('equip studded leather armor')
-        self.assertIsInstance(result[0], equip_or_unequip_command_item_unequipped)
+        self.assertIsInstance(result[0], various_commands_item_unequipped)
         self.assertEqual(result[0].item_title, 'scale mail armor')
         self.assertEqual(result[0].item_type, 'armor')
         self.assertRegex(result[0].message, r"^You're no longer wearing scale mail armor. Your armor class is \d+.$")
@@ -822,7 +968,7 @@ class test_equip_command_2(unittest.TestCase):
         self.assertEqual(result[0].item_title, 'steel shield')
         self.assertRegex(result[0].message, r"^You're now carrying a steel shield. Your armor class is \d+.$")
         result = self.command_processor_obj.process('equip buckler')
-        self.assertIsInstance(result[0], equip_or_unequip_command_item_unequipped)
+        self.assertIsInstance(result[0], various_commands_item_unequipped)
         self.assertEqual(result[0].item_title, 'steel shield')
         self.assertEqual(result[0].item_type, 'shield')
         self.assertRegex(result[0].message, r"^You're no longer carrying a steel shield. Your armor class is \d+.$")

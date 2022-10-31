@@ -2,8 +2,8 @@
 
 import unittest
 
-from adventuregame import *
-from adventuregame.test.testing_game_data import *
+from .context import *
+from .testing_game_data import *
 
 __name__ = 'adventuregame.test_command_processor_command_returns_o_to_se'
 
@@ -257,7 +257,7 @@ class test_pick_up_command(unittest.TestCase):
         result = self.command_processor_obj.process('pick up the')  # check
         self.assertIsInstance(result[0], command_bad_syntax)
         self.assertEqual(result[0].command, 'PICK UP')
-        self.assertEqual(result[0].message, "PICK UP command: bad syntax. Should be 'PICK UP <item name>' or 'PICK UP"
+        self.assertEqual(result[0].message, "PICK UP command: bad syntax. Should be 'PICK UP <item name>' or 'PICK UP "
                                             "<number> <item name>'."),
 
     def test_pick_up_2(self):

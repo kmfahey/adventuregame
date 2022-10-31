@@ -4,8 +4,8 @@ import math
 import operator
 import unittest
 
-from adventuregame import *
-from adventuregame.test.testing_game_data import *
+from .context import *
+from .testing_game_data import *
 
 __name__ = 'adventuregame.test_game_elements'
 

@@ -3,8 +3,8 @@
 import math
 import unittest
 
-from adventuregame import *
-from adventuregame.test.testing_game_data import *
+from .context import *
+from .testing_game_data import *
 
 __name__ = 'adventuregame.test_command_processor_commandreturns_st_to_u'
 
@@ -594,21 +594,21 @@ class test_unequip_command(unittest.TestCase):
     def test_unequip_6(self):
         result = self.command_processor_obj.process('equip mace')
         result = self.command_processor_obj.process('unequip mace')
-        self.assertIsInstance(result[0], equip_or_unequip_command_item_unequipped)
+        self.assertIsInstance(result[0], various_commands_item_unequipped)
         self.assertEqual(result[0].item_title, 'mace')
         self.assertEqual(result[0].message, "You're no longer wielding a mace. You now can't attack.")
 
     def test_unequip_7(self):
         result = self.command_processor_obj.process('equip steel shield')
         result = self.command_processor_obj.process('unequip steel shield')
-        self.assertIsInstance(result[0], equip_or_unequip_command_item_unequipped)
+        self.assertIsInstance(result[0], various_commands_item_unequipped)
         self.assertEqual(result[0].item_title, 'steel shield')
         self.assertRegex(result[0].message, r"^You're no longer carrying a steel shield. Your armor class is \d+.$")
 
     def test_unequip_8(self):
         result = self.command_processor_obj.process('equip scale mail armor')
         result = self.command_processor_obj.process('unequip scale mail armor')
-        self.assertIsInstance(result[0], equip_or_unequip_command_item_unequipped)
+        self.assertIsInstance(result[0], various_commands_item_unequipped)
         self.assertEqual(result[0].item_title, 'scale mail armor')
         self.assertRegex(result[0].message, r"^You're no longer wearing scale mail armor. Your armor class is \d+.$")
 

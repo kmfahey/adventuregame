@@ -141,8 +141,8 @@ class command_processor(object):
                 return (be_attacked_by_command_attacked_and_hit(creature_obj.title, damage_done, 0),
                         be_attacked_by_command_character_death())
             else:
-                return be_attacked_by_command_attacked_and_hit(creature_obj.title, damage_done,
-                                                               self.game_state.character.hit_points)
+                return (be_attacked_by_command_attacked_and_hit(creature_obj.title, damage_done, 
+                                                                self.game_state.character.hit_points),)
 
     def cast_spell_command(self, *tokens):
         if self.game_state.character_class not in ('Mage', 'Priest'):
@@ -232,9 +232,7 @@ class command_processor(object):
             item_title = ' '.join(tokens[1:])
             if tokens[0] == 'a':
                 if tokens[-1].endswith('s'):
-                    return (drop_command_quantity_unclear(),)
-                            if command.lower() == 'drop'
-                            else (pick_up_command_quantity_unclear(),)
+                    return (drop_command_quantity_unclear(),) if command.lower() == 'drop' else (pick_up_command_quantity_unclear(),)
                 item_qty = 1
             elif tokens[0].isdigit():
                 item_qty = int(tokens[0])
@@ -278,14 +276,46 @@ class command_processor(object):
         if drop_amount > item_had_qty:
             return drop_command_trying_to_drop_more_than_you_have(item_title, drop_amount, item_had_qty),
         else:
+            unequip_return = ()
+            if drop_amount - item_had_qty == 0:
+                armor_equipped = self.game_state.character.armor_equipped
+                weapon_equipped = self.game_state.character.weapon_equipped
+                shield_equipped = self.game_state.character.shield_equipped
+                wand_equipped = self.game_state.character.wand_equipped
+                if item_obj.item_type == 'armor' and armor_equipped is not None and armor_equipped.internal_name == item_obj.internal_name:
+                    self.game_state.character.unequip_armor()
+                    unequip_return = various_commands_item_unequipped(item_obj.title, item_obj.item_type,
+                                                                      self.game_state.character.armor_class,
+                                                                      'armor class'),
+                elif item_obj.item_type == 'weapon' and weapon_equipped is not None and weapon_equipped.internal_name == item_obj.internal_name:
+                    self.game_state.character.unequip_weapon()
+                    if wand_equipped:
+                        unequip_return = various_commands_item_unequipped(item_title, 'weapon',
+                                                                          change_text="You're still attacking with your wand."),
+                    else:
+                        unequip_return = various_commands_item_unequipped(item_title, 'weapon',
+                                                                          change_text="You now can't attack."),
+                elif item_obj.item_type == 'shield' and shield_equipped is not None and shield_equipped.internal_name == item_obj.internal_name:
+                    self.game_state.character.unequip_shield()
+                    unequip_return = various_commands_item_unequipped(item_title, 'shield',
+                                                                      self.game_state.character.armor_class,
+                                                                      'armor class'),
+                elif item_obj.item_type == 'wand' and wand_equipped is not None and wand_equipped.internal_name == item_obj.internal_name:
+                    self.game_state.character.unequip_wand()
+                    if weapon_equipped:
+                        unequip_return = various_commands_item_unequipped(item_title, 'wand',
+                                                                          change_text=f"You're now attacking with your {weapon_equipped.title}."),
+                    else:
+                        unequip_return = various_commands_item_unequipped(item_title, 'wand',
+                                                                          change_text="You now can't attack."),
             self.game_state.character.drop_item(item_obj, qty=drop_amount)
             if self.game_state.rooms_state.cursor.items_here is None:
                 self.game_state.rooms_state.cursor.items_here = items_multi_state()
             self.game_state.rooms_state.cursor.items_here.set(item_obj.internal_name,
                                                               amount_already_here + drop_amount, item_obj)
             amount_had_now = item_had_qty - drop_amount
-            return drop_command_dropped_item(item_title, drop_amount,
-                                             amount_already_here + drop_amount, amount_had_now),
+            return unequip_return + (drop_command_dropped_item(item_title, item_obj.item_type, drop_amount,
+                                                               amount_already_here + drop_amount, amount_had_now),)
 
     def equip_command(self, *tokens):
         if not tokens:
@@ -302,20 +332,20 @@ class command_processor(object):
         retval = tuple()
         if item_obj.item_type == 'armor' and self.game_state.character.armor_equipped:
             old_equipped_obj = self.game_state.character.armor_equipped
-            retval = equip_or_unequip_command_item_unequipped(old_equipped_obj.title, old_equipped_obj.item_type,
-                                                              self.game_state.character.armor_class, 'armor class'),
+            retval = various_commands_item_unequipped(old_equipped_obj.title, old_equipped_obj.item_type,
+                                                      self.game_state.character.armor_class, 'armor class'),
         elif item_obj.item_type == 'shield' and self.game_state.character.shield_equipped:
             old_equipped_obj = self.game_state.character.shield_equipped
-            retval = equip_or_unequip_command_item_unequipped(old_equipped_obj.title, old_equipped_obj.item_type,
-                                                              self.game_state.character.armor_class, 'armor class'),
+            retval = various_commands_item_unequipped(old_equipped_obj.title, old_equipped_obj.item_type,
+                                                      self.game_state.character.armor_class, 'armor class'),
         elif item_obj.item_type == 'wand' and self.game_state.character.wand_equipped:
             old_equipped_obj = self.game_state.character.wand_equipped
-            retval = equip_or_unequip_command_item_unequipped(old_equipped_obj.title, old_equipped_obj.item_type,
-                                                              change_text="You now can't attack."),
+            retval = various_commands_item_unequipped(old_equipped_obj.title, old_equipped_obj.item_type,
+                                                      change_text="You now can't attack."),
         elif item_obj.item_type == 'weapon' and self.game_state.character.weapon_equipped:
             old_equipped_obj = self.game_state.character.weapon_equipped
-            retval = equip_or_unequip_command_item_unequipped(old_equipped_obj.title, old_equipped_obj.item_type,
-                                                              change_text="You now can't attack."),
+            retval = various_commands_item_unequipped(old_equipped_obj.title, old_equipped_obj.item_type,
+                                                      change_text="You now can't attack."),
         if item_obj.item_type == 'armor':
             self.game_state.character.equip_armor(item_obj)
             return retval + (equip_command_item_equipped(item_obj.title, 'armor',
@@ -952,9 +982,9 @@ class command_processor(object):
             if self.game_state.character.armor_equipped is not None:
                 if self.game_state.character.armor_equipped.title == item_title:
                     self.game_state.character.unequip_armor()
-                    return equip_or_unequip_command_item_unequipped(item_title, 'armor',
-                                                                    self.game_state.character.armor_class,
-                                                                    'armor class'),
+                    return various_commands_item_unequipped(item_title, 'armor',
+                                                            self.game_state.character.armor_class,
+                                                            'armor class'),
                 else:
                     return unequip_command_item_not_equipped(item_title, 'armor',
                                                              self.game_state.character.armor_equipped.title),
@@ -964,9 +994,9 @@ class command_processor(object):
             if self.game_state.character.shield_equipped is not None:
                 if self.game_state.character.shield_equipped.title == item_title:
                     self.game_state.character.unequip_shield()
-                    return equip_or_unequip_command_item_unequipped(item_title, 'shield',
-                                                                    self.game_state.character.armor_class,
-                                                                    'armor class'),
+                    return various_commands_item_unequipped(item_title, 'shield',
+                                                            self.game_state.character.armor_class,
+                                                            'armor class'),
                 else:
                     return unequip_command_item_not_equipped(item_title, 'shield',
                                                              self.game_state.character.shield_equipped.title),
@@ -976,8 +1006,14 @@ class command_processor(object):
             if self.game_state.character.wand_equipped is not None:
                 if self.game_state.character.wand_equipped.title == item_title:
                     self.game_state.character.unequip_wand()
-                    return equip_or_unequip_command_item_unequipped(item_title, 'wand',
-                                                                    change_text="You now can't attack."),
+                    weapon_equipped = self.game_state.character.weapon_equipped
+                    if weapon_equipped is not None:
+                        return various_commands_item_unequipped(item_title, 'wand',
+                                                                change_text=f"You're now attacking with your "
+                                                                            f"{weapon_equipped.title}"),
+                    else:
+                        return various_commands_item_unequipped(item_title, 'wand',
+                                                                change_text="You now can't attack."),
                 else:
                     return unequip_command_item_not_equipped(item_title, 'wand'),
             else:
@@ -986,8 +1022,12 @@ class command_processor(object):
             if self.game_state.character.weapon_equipped is not None:
                 if self.game_state.character.weapon_equipped.title == item_title:
                     self.game_state.character.unequip_weapon()
-                    return equip_or_unequip_command_item_unequipped(item_title, 'weapon',
-                                                                    change_text="You now can't attack."),
+                    if self.game_state.character.wand_equipped is not None:
+                        return various_commands_item_unequipped(item_title, 'weapon',
+                                                                change_text="You're attacking with your wand."),
+                    else:
+                        return various_commands_item_unequipped(item_title, 'weapon',
+                                                                change_text="You now can't attack."),
                 else:
                     return unequip_command_item_not_equipped(item_obj.title, 'weapon'),
             else:

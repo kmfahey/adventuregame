@@ -25,14 +25,14 @@ digit_lexical_number_map = {'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5
                             'twenty': 20, 'thirty': 30, 'fourty': 40, 'fifty': 50, 'sixty': 60, 'seventy': 70,
                             'eighty': 80, 'ninety': 90, }
 
-lexical_number_in_1_99_re = re.compile('^('
-                                           '(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)'
-                                       '|'
-                                           '(thir|four|fif|six|seven|eigh|nine)teen'
-                                       '|'
-                                           '(twen|thir|four|fif|six|seven|eigh|nine)ty-'
-                                           '(one|two|three|four|five|six|seven|eight|nine)'
-                                       ')$')
+lexical_number_in_1_99_re = re.compile("""^(
+                                           (one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)
+                                       |
+                                           (thir|four|fif|six|seven|eigh|nine)teen
+                                       |
+                                           (twen|thir|four|fif|six|seven|eigh|nine)ty-
+                                           (one|two|three|four|five|six|seven|eight|nine)
+                                       )$""", re.X)
 
 # The player can use lexical numbers (ie. 'one', 'fourteen', 'thirty') in commands and the `command_processor` needs to
 # be able to interpret them, so I wrote this utility function.
