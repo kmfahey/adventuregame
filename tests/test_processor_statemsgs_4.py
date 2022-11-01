@@ -4,9 +4,9 @@ import math
 import unittest
 
 from .context import *
-from .testing_game_data import *
+from .testing_data import *
 
-__name__ = 'adventuregame.test_command_processor_commandreturns_st_to_u'
+__name__ = 'tests.test_processor_statemsgs_4'
 
 
 class Test_Status_Command(unittest.TestCase):

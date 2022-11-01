@@ -3,9 +3,9 @@
 import unittest
 
 from .context import *
-from .testing_game_data import *
+from .testing_data import *
 
-__name__ = 'adventuregame.test_command_processor_command_returns_o_to_se'
+__name__ = 'tests.test_processor_statemsgs_3'
 
 
 class Test_Open_Command(unittest.TestCase):

@@ -3,7 +3,7 @@
 import unittest
 
 from adventuregame import *
-from adventuregame.test import *
+from tests import *
 
 
 unittest.main()

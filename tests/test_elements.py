@@ -5,9 +5,9 @@ import operator
 import unittest
 
 from .context import *
-from .testing_game_data import *
+from .testing_data import *
 
-__name__ = 'adventuregame.test_game_elements'
+__name__ = 'tests.test_game_elements'
 
 
 class Test_Container(unittest.TestCase):

@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 
-__name__ = 'adventuregame.test.testing_game_data'
+__name__ = 'tests.testing_data'
 
 
 # dungeon map

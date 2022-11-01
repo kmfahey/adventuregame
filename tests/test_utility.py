@@ -4,9 +4,9 @@ import math
 import unittest
 
 from .context import *
-from .testing_game_data import *
+from .testing_data import *
 
-__name__ = 'adventuregame.test_utility'
+__name__ = 'tests.test_utility'
 
 
 class Test_Isfloat(unittest.TestCase):

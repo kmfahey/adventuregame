@@ -4,11 +4,44 @@ import math
 import operator
 import re
 
-from adventuregame.game_elements import *
-from adventuregame.game_state_messages import *
-from adventuregame.utility import *
+from adventuregame.elements import Chest, Doorway, Corpse
+from adventuregame.statemsgs import Game_State_Message, Command_Bad_Syntax, Command_Class_Restricted, \
+    Command_Not_Allowed_Now, Command_Not_Recognized, Attack_Command_Attack_Hit, Attack_Command_Attack_Missed, \
+    Attack_Command_Opponent_Not_Found, Attack_Command_You_Have_No_Weapon_or_Wand_Equipped, \
+    Be_Attacked_by_Command_Attacked_and_Hit, Be_Attacked_by_Command_Attacked_and_Not_Hit, \
+    Be_Attacked_by_Command_Character_Death, Begin_Game_Command_Game_Begins, Begin_Game_Command_Name_or_Class_Not_Set, \
+    Cast_Spell_Command_Cast_Damaging_Spell, Cast_Spell_Command_Cast_Healing_Spell, Cast_Spell_Command_Insuffient_Mana, \
+    Cast_Spell_Command_No_Creature_to_Target, Close_Command_Object_Has_Been_Closed, \
+    Close_Command_Object_Is_Already_Closed, Close_Command_Object_to_Close_Not_Here, Drink_Command_Drank_Mana_Potion, \
+    Drink_Command_Drank_Mana_Potion_when_Not_A_Spellcaster, Drink_Command_Item_Not_Drinkable, \
+    Drink_Command_Item_Not_in_Inventory, Drink_Command_Tried_to_Drink_More_than_Possessed, \
+    Drop_Command_Dropped_Item, Drop_Command_Quantity_Unclear, Drop_Command_Trying_to_Drop_Item_You_Dont_Have, \
+    Drop_Command_Trying_to_Drop_More_than_You_Have, Equip_Command_Class_Cant_Use_Item, \
+    Equip_Command_No_Such_Item_in_Inventory, Inspect_Command_Found_Container_Here, Inspect_Command_Found_Creature_Here, \
+    Inspect_Command_Found_Door_or_Doorway, Inspect_Command_Found_Item_or_Items_Here, \
+    Inspect_Command_Found_Nothing, Inventory_Command_Display_Inventory, Leave_Command_Left_Room, \
+    Leave_Command_Won_The_Game, Lock_Command_Dont_Possess_Correct_Key, Lock_Command_Object_Has_Been_Locked, \
+    Lock_Command_Object_Is_Already_Locked, Lock_Command_Object_to_Lock_Not_Here, \
+    Open_Command_Object_Has_Been_Opened, Open_Command_Object_Is_Already_Open, Open_Command_Object_Is_Locked, \
+    Open_Command_Object_to_Open_Not_Here, Pick_Lock_Command_Target_Cant_Be_Unlocked_or_Not_Found, \
+    Pick_Lock_Command_Target_Has_Been_Unlocked, Pick_Lock_Command_Target_Not_Found, Pick_Lock_Command_Target_Not_Locked, \
+    Pick_up_Command_Item_Not_Found, Pick_up_Command_Item_Picked_up, Pick_up_Command_Quantity_Unclear, \
+    Pick_up_Command_Trying_to_Pick_up_More_than_Is_Present, Put_Command_Amount_Put, Put_Command_Item_Not_in_Inventory, \
+    Put_Command_Quantity_Unclear, Put_Command_Trying_to_Put_More_than_You_Have, Quit_Command_Have_Quit_The_Game, \
+    Reroll_Command_Name_or_Class_Not_Set, Set_Class_Command_Class_Set, Set_Class_Command_Invalid_Class, \
+    Set_Name_Command_Invalid_Part, Set_Name_Command_Name_Set, Set_Name_or_Class_Command_Display_Rolled_Stats, \
+    Status_Command_Output, Take_Command_Item_Not_Found_in_Container, Take_Command_Item_or_Items_Taken, \
+    Take_Command_Quantity_Unclear, Take_Command_Trying_to_Take_More_than_Is_Present, Unequip_Command_Item_Not_Equipped, \
+    Unlock_Command_Dont_Possess_Correct_Key, Unlock_Command_Object_Has_Been_Unlocked, \
+    Unlock_Command_Object_Is_Already_Unlocked, Unlock_Command_Object_to_Unlock_Not_Here, \
+    Various_Commands_Container_Is_Closed, Various_Commands_Container_Not_Found, Various_Commands_Door_Not_Present, \
+    Various_Commands_Entered_Room, Various_Commands_Foe_Death, Various_Commands_Item_Equipped, \
+    Various_Commands_Item_Unequipped, Various_Commands_Underwent_Healing_Effect
 
-__name__ = 'adventuregame.command_processor'
+
+from adventuregame.utility import digit_re, lexical_number_in_1_99_re, lexical_number_to_digits, roll_dice
+
+__name__ = 'adventuregame.commandprocessor'
 
 
 SPELL_DAMAGE = '3d8+5'

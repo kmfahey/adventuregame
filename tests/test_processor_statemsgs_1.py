@@ -4,9 +4,9 @@ import operator
 import unittest
 
 from .context import *
-from .testing_game_data import *
+from .testing_data import *
 
-__name__ = 'adventuregame.test_command_processor_game_state_messages_a_to_eq'
+__name__ = 'tests.test_processor_statemsgs_1'
 
 
 class Test_Attack_1(unittest.TestCase):
@@ -173,9 +173,9 @@ class Test_Attack_2(unittest.TestCase):
             if kobold.hit_points < kobold.hit_point_total:
                 kobold.heal_damage(kobold.hit_point_total - kobold.hit_points)
             results = self.command_processor.process('attack kobold')
-            while (not any(isinstance(result, Attack_Command_Attack_Missed) for result in results)
-                   and not any(isinstance(result, Attack_Command_Attack_Hit) for result in results))
-                   or (isinstance(results[-1], (Attack_Command_Attack_Hit, Be_Attacked_by_Command_Character_Death))):
+            while ((not any(isinstance(result, Attack_Command_Attack_Missed) for result in results)
+                    and not any(isinstance(result, Attack_Command_Attack_Hit) for result in results))
+                    or (isinstance(results[-1], (Attack_Command_Attack_Hit, Be_Attacked_by_Command_Character_Death)))):
                 results += self.command_processor.process('attack kobold')
             if isinstance(results[-1], (Attack_Command_Attack_Hit, Be_Attacked_by_Command_Character_Death)):
                 continue
@@ -262,7 +262,8 @@ class Test_Begin_Game_Command(unittest.TestCase):
         self.assertIsInstance(result[-1], Various_Commands_Entered_Room)
         self.assertIsInstance(result[-1].room, Room)
         self.assertEqual(result[-1].message, 'Entrance room. You see a wooden chest here. There is a kobold in the '
-                                            'room. You see a mana potion and 2 health potions on the floor.')
+                                            'room. You see a mana potion and 2 health potions on the floor. There '
+                                            'is a wooden door to the north and a iron door to the east.')
 
     def test_begin_game_6(self):
         self.command_processor.process('set class to Warrior')

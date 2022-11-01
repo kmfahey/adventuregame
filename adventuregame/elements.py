@@ -6,9 +6,9 @@ import math
 import random
 import re
 
-from adventuregame.utility import *
+from adventuregame.utility import isfloat, Bad_Command_Exception, Internal_Exception
 
-__name__ = 'adventuregame.game_elements'
+__name__ = 'adventuregame.elements'
 
 
 class Ini_Entry(object):

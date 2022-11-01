@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 
-__name__ = 'adventuregame.game_data'
+__name__ = 'adventuregame.data'
 
 containers_ini_config_text = """
 [Wooden_Chest_1]

@@ -4,10 +4,9 @@ import abc
 import math
 import operator
 
-from adventuregame.game_elements import *
-from adventuregame.utility import *
+from adventuregame.utility import usage_verb, Internal_Exception
 
-__name__ = 'adventuregame.game_state_messages'
+__name__ = 'adventuregame.gamestatemessages'
 
 
 class Game_State_Message(abc.ABC):
