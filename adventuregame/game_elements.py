@@ -13,7 +13,7 @@ __name__ = 'adventuregame.game_elements'
 
 class Ini_Entry(object):
 
-    inventory_list_value_re = re.compile(r'''^\[(
+    inventory_list_value_re = re.compile(r"""^\[(
                                                     (
                                                         [1-9][0-9]*
                                                         x
@@ -23,7 +23,7 @@ class Ini_Entry(object):
                                                         x
                                                         [A-Z][A-Za-z_]+
                                                     )*
-                                                )\]$''', re.X)
+                                                )\]$""", re.X)
 
     def __init__(self, **argd):
         for Key, value in argd.items():
@@ -285,7 +285,7 @@ class Character(object):  # has been tested
 
     def _set_up_hit_points_and_mana_points(self, base_hit_points, base_mana_points, magic_key_stat):
         if base_hit_points:
-            self._hit_point_maximum = self._current_hit_points = (base_hit_points + 
+            self._hit_point_maximum = self._current_hit_points = (base_hit_points +
                                                                   self.ability_scores.constitution_mod * 3)
         else:
             self._hit_point_maximum = self._current_hit_points = (self._hitpoint_base[self.character_class]
@@ -821,7 +821,7 @@ class Corpse(Container):
 
 
 class Door(Ini_Entry):
-    __slots__ = ('internal_name', 'title', 'description', 'door_type', 'is_locked', 'is_closed', 'closeable', 
+    __slots__ = ('internal_name', 'title', 'description', 'door_type', 'is_locked', 'is_closed', 'closeable',
                  '_linked_rooms_internal_names', 'is_exit')
 
     def __init__(self, **argd):
@@ -871,8 +871,8 @@ class Iron_Door(Door):
 
 
 class Item(Ini_Entry):  # has been tested
-    __slots__ = ('internal_name', 'title', 'description', 'weight', 'value', 'damage', 'attack_bonus', 'armor_bonus', 
-                 'item_type', 'warrior_can_use', 'thief_can_use', 'priest_can_use', 'mage_can_use', 
+    __slots__ = ('internal_name', 'title', 'description', 'weight', 'value', 'damage', 'attack_bonus', 'armor_bonus',
+                 'item_type', 'warrior_can_use', 'thief_can_use', 'priest_can_use', 'mage_can_use',
                  'hit_points_recovered', 'mana_points_recovered')
 
     def __init__(self, **argd):
@@ -885,8 +885,8 @@ class Item(Ini_Entry):  # has been tested
             item = Armor(**item_dict)
         elif item_dict['item_type'] == 'coin':
             item = Coin(**item_dict)
-        elif item_dict['item_type'] == 'consumable':
-            item = Consumable(**item_dict)
+        elif item_dict['item_type'] == 'potion':
+            item = Potion(**item_dict)
         elif item_dict['item_type'] == 'key':
             item = Key(**item_dict)
         elif item_dict['item_type'] == 'shield':
@@ -914,7 +914,7 @@ class Coin(Item):
     pass
 
 
-class Consumable(Item):
+class Potion(Item):
     pass
 
 

@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 
-__name__ = "adventuregame.game_data"
+__name__ = 'adventuregame.game_data'
 
 containers_ini_config_text = """
 [Wooden_Chest_1]
@@ -350,7 +350,7 @@ weight=4
 
 [Health_Potion]
 description=A small, stoppered bottle that contains a pungeant but drinkable red liquid with a discernable magic aura.
-item_type=consumable
+item_type=potion
 mage_can_use=true
 priest_can_use=true
 thief_can_use=true
@@ -362,7 +362,7 @@ weight=.1
 
 [Mana_Potion]
 description=A small, stoppered bottle that contains a pungeant but drinkable blue liquid with a discernable magic aura.
-item_type=consumable
+item_type=potion
 mage_can_use=true
 priest_can_use=true
 title=health potion

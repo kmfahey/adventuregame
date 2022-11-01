@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import math
+import operator
 import re
 
 from adventuregame.game_elements import *
@@ -10,9 +11,14 @@ from adventuregame.utility import *
 __name__ = 'adventuregame.command_processor'
 
 
-Spell_Damage = "3d8+5"
+SPELL_DAMAGE = '3d8+5'
 
-Spell_Mana_Cost = 5
+SPELL_MANA_COST = 5
+
+STARTER_GEAR = dict(Warrior=dict(weapon='Longsword', armor='Studded_Leather', shield='Buckler'),
+                    Thief=dict(weapon='Rapier', armor='Studded_Leather'),
+                    Mage=dict(weapon='Staff'),
+                    Priest=dict(weapon='Mace', armor='Studded_Leather', shield='Buckler'))
 
 
 class Command_Processor(object):
@@ -32,8 +38,8 @@ class Command_Processor(object):
 
     pregame_commands = {'set_name', 'set_class', 'reroll', 'begin_game', 'quit'}
 
-    ingame_commands = {'attack', 'cast_spell', 'close', 'drink', 'drop', 'equip', 'leave', 'inventory', 'look_at', 
-                       'lock', 'inspect', 'open', 'pick_lock', 'pick_up', 'quit', 'put', 'quit', 'status', 'take', 
+    ingame_commands = {'attack', 'cast_spell', 'close', 'drink', 'drop', 'equip', 'leave', 'inventory', 'look_at',
+                       'lock', 'inspect', 'open', 'pick_lock', 'pick_up', 'quit', 'put', 'quit', 'status', 'take',
                        'unequip', 'unlock'}
 
     def __init__(self, game_state):
@@ -45,14 +51,14 @@ class Command_Processor(object):
             command = method_name.rsplit('_', maxsplit=1)[0]
             self.dispatch_table[command] = getattr(self, method_name)
             if command not in commands_set:
-                raise Internal_Exception("Inconsistency between set list of commands and command methods found by "
-                                         f"introspection: method {method_name}() does not correspond to a command in "
-                                         "pregame_commands or ingame_commands.")
+                raise Internal_Exception('Inconsistency between set list of commands and command methods found by '
+                                         f'introspection: method {method_name}() does not correspond to a command in '
+                                         'pregame_commands or ingame_commands.')
             commands_set.remove(command)
         if len(commands_set):
-            raise Internal_Exception("Inconsistency between set list of commands and command methods found by "
+            raise Internal_Exception('Inconsistency between set list of commands and command methods found by '
                                      f"introspection: command '{commands_set.pop()} does not correspond to a command "
-                                     "in pregame_commands or ingame_commands.")
+                                     'in pregame_commands or ingame_commands.')
         self.game_state = game_state
 
     def process(self, natural_language_str):
@@ -62,7 +68,7 @@ class Command_Processor(object):
             command += '_' + tokens.pop(0).lower()
         elif command == 'leave' and len(tokens) and (tokens[0].lower() == 'using' or tokens[0].lower() == 'via'):
             tokens.pop(0)
-        elif command == "begin":
+        elif command == 'begin':
             if len(tokens) >= 1 and tokens[0] == 'game' or len(tokens) >= 2 and tokens[0:2] == ['the', 'game']:
                 if tokens[0] == 'the':
                     tokens.pop(0)
@@ -73,7 +79,7 @@ class Command_Processor(object):
             command += '_' + tokens.pop(0).lower()
         elif command == 'pick' and len(tokens) and (tokens[0].lower() == 'up' or tokens[0].lower() == 'lock'):
             command += '_' + tokens.pop(0).lower()
-        elif command == "quit":
+        elif command == 'quit':
             if len(tokens) >= 1 and tokens[0] == 'game' or len(tokens) >= 2 and tokens[0:2] == ['the', 'game']:
                 if tokens[0] == 'the':
                     tokens.pop(0)
@@ -98,8 +104,11 @@ class Command_Processor(object):
 
     def attack_command(self, *tokens):
         if (not self.game_state.character.weapon_equipped
-                and (self.game_state.character_class != "Mage" or not self.game_state.character.wand_equipped)):
+                and (self.game_state.character_class != 'Mage' or not self.game_state.character.wand_equipped)):
             return Attack_Command_You_Have_No_Weapon_or_Wand_Equipped(self.game_state.character_class),
+        elif not tokens:
+            return Command_Bad_Syntax('ATTACK', '<creature name>'),
+        weapon_type = 'wand' if self.game_state.character.wand_equipped else 'weapon'
         creature_title_token = ' '.join(tokens)
         if not self.game_state.rooms_state.cursor.creature_here:
             return Attack_Command_Opponent_Not_Found(creature_title_token),
@@ -111,7 +120,7 @@ class Command_Processor(object):
         damage_roll_dice_expr = self.game_state.character.damage_roll
         attack_result = roll_dice(attack_roll_dice_expr)
         if attack_result < creature.armor_class:
-            attack_missed_result = Attack_Command_Attack_Missed(creature.title)
+            attack_missed_result = Attack_Command_Attack_Missed(creature.title, weapon_type)
             be_attacked_by_result = self._be_attacked_by_command(creature)
             return (attack_missed_result,) + be_attacked_by_result
         else:
@@ -121,10 +130,10 @@ class Command_Processor(object):
                 corpse = creature.convert_to_corpse()
                 self.game_state.rooms_state.cursor.container_here = corpse
                 self.game_state.rooms_state.cursor.creature_here = None
-                return (Attack_Command_Attack_Hit(creature.title, damage_result, True),
+                return (Attack_Command_Attack_Hit(creature.title, damage_result, True, weapon_type),
                         Various_Commands_Foe_Death(creature.title))
             else:
-                attack_hit_result = Attack_Command_Attack_Hit(creature.title, damage_result, False)
+                attack_hit_result = Attack_Command_Attack_Hit(creature.title, damage_result, False, weapon_type)
                 be_attacked_by_result = self._be_attacked_by_command(creature)
                 return (attack_hit_result,) + be_attacked_by_result
 
@@ -141,7 +150,7 @@ class Command_Processor(object):
                 return (Be_Attacked_by_Command_Attacked_and_Hit(creature.title, damage_done, 0),
                         Be_Attacked_by_Command_Character_Death())
             else:
-                return (Be_Attacked_by_Command_Attacked_and_Hit(creature.title, damage_done, 
+                return (Be_Attacked_by_Command_Attacked_and_Hit(creature.title, damage_done,
                                                                 self.game_state.character.hit_points),)
 
     def cast_spell_command(self, *tokens):
@@ -149,14 +158,14 @@ class Command_Processor(object):
             return Command_Class_Restricted('CAST SPELL', 'mage', 'priest'),
         elif len(tokens):
             return Command_Bad_Syntax('CAST SPELL', ''),
-        elif self.game_state.character.mana_points < Spell_Mana_Cost:
+        elif self.game_state.character.mana_points < SPELL_MANA_COST:
             return Cast_Spell_Command_Insuffient_Mana(self.game_state.character.mana_points,
-                                                      self.game_state.character.mana_point_total, Spell_Mana_Cost),
+                                                      self.game_state.character.mana_point_total, SPELL_MANA_COST),
         elif self.game_state.character_class == 'Mage':
             if self.game_state.rooms_state.cursor.creature_here is None:
                 return Cast_Spell_Command_No_Creature_to_Target(),
             else:
-                damage_dealt = roll_dice(Spell_Damage)
+                damage_dealt = roll_dice(SPELL_DAMAGE)
                 creature = self.game_state.rooms_state.cursor.creature_here
                 creature.take_damage(damage_dealt)
                 if creature.is_dead:
@@ -164,10 +173,10 @@ class Command_Processor(object):
                             Various_Commands_Foe_Death(creature.title))
                 else:
                     be_attacked_by_result = self._be_attacked_by_command(creature)
-                    return ((Cast_Spell_Command_Cast_Damaging_Spell(creature.title, damage_dealt),) + 
+                    return ((Cast_Spell_Command_Cast_Damaging_Spell(creature.title, damage_dealt),) +
                                                                     be_attacked_by_result)
         else:
-            damage_rolled = roll_dice(Spell_Damage)
+            damage_rolled = roll_dice(SPELL_DAMAGE)
             healed_amt = self.game_state.character.heal_damage(damage_rolled)
             return (Cast_Spell_Command_Cast_Healing_Spell(),
                     Various_Commands_Underwent_Healing_Effect(healed_amt, self.game_state.character.hit_points,
@@ -348,22 +357,22 @@ class Command_Processor(object):
                                                       change_text="You now can't attack."),
         if item.item_type == 'armor':
             self.game_state.character.equip_armor(item)
-            return retval + (Equip_Command_Item_Equipped(item.title, 'armor',
-                                                         self.game_state.character.armor_class, 'armor class'),)
+            return retval + (Various_Commands_Item_Equipped(item.title, 'armor',
+                                                            self.game_state.character.armor_class, 'armor class'),)
         elif item.item_type == 'shield':
             self.game_state.character.equip_shield(item)
-            return retval + (Equip_Command_Item_Equipped(item.title, 'shield',
-                                                         self.game_state.character.armor_class, 'armor class'),)
+            return retval + (Various_Commands_Item_Equipped(item.title, 'shield',
+                                                            self.game_state.character.armor_class, 'armor class'),)
         elif item.item_type == 'wand':
             self.game_state.character.equip_wand(item)
-            return retval + (Equip_Command_Item_Equipped(item.title, 'wand',
-                                                         self.game_state.character.attack_bonus, 'attack bonus',
-                                                         self.game_state.character.damage_roll, 'damage'),)
+            return retval + (Various_Commands_Item_Equipped(item.title, 'wand',
+                                                            self.game_state.character.attack_bonus, 'attack bonus',
+                                                            self.game_state.character.damage_roll, 'damage'),)
         else:
             self.game_state.character.equip_weapon(item)
-            return retval + (Equip_Command_Item_Equipped(item.title, 'weapon',
-                                                         self.game_state.character.attack_bonus, 'attack bonus',
-                                                         self.game_state.character.damage_roll, 'damage'),)
+            return retval + (Various_Commands_Item_Equipped(item.title, 'weapon',
+                                                            self.game_state.character.attack_bonus, 'attack bonus',
+                                                            self.game_state.character.damage_roll, 'damage'),)
 
     def inventory_command(self, *tokens):
         if len(tokens):
@@ -406,23 +415,23 @@ class Command_Processor(object):
         descr_append_str = ''
         if getattr(item, 'item_type', '') in ('armor', 'shield', 'wand', 'weapon'):
             if item.item_type == 'wand' or item.item_type == 'weapon':
-                descr_append_str = (f" Its attack bonus is +{item.attack_bonus} and its damage is "
-                                    f"{item.damage}. ")
+                descr_append_str = (f' Its attack bonus is +{item.attack_bonus} and its damage is '
+                                    f'{item.damage}. ')
             else:  # item_type == 'armor' or item_type == 'shield'
-                descr_append_str = f" Its armor bonus is +{item.armor_bonus}. "
+                descr_append_str = f' Its armor bonus is +{item.armor_bonus}. '
             can_use_list = []
-            for character_class in ("warrior", "thief", "mage", "priest"):
-                if getattr(item, f"{character_class}_can_use", False):
+            for character_class in ('warrior', 'thief', 'mage', 'priest'):
+                if getattr(item, f'{character_class}_can_use', False):
                     can_use_list.append(f"{character_class}s" if character_class != 'thief' else 'thieves')
             can_use_list[0] = can_use_list[0].title()
             if len(can_use_list) == 1:
-                descr_append_str += f"{can_use_list[0]} can use this."
+                descr_append_str += f'{can_use_list[0]} can use this.'
             elif len(can_use_list) == 2:
-                descr_append_str += f"{can_use_list[0]} and {can_use_list[1]} can use this."
+                descr_append_str += f'{can_use_list[0]} and {can_use_list[1]} can use this.'
             else:
                 can_use_joined = ', '.join(can_use_list[:-1])
-                descr_append_str += f"{can_use_joined}, and {can_use_list[-1]} can use this."
-        elif getattr(item, 'item_type', '') == 'consumable':
+                descr_append_str += f'{can_use_joined}, and {can_use_list[-1]} can use this.'
+        elif getattr(item, 'item_type', '') == 'potion':
             if item.title == 'mana potion':
                 descr_append_str = f' It restores {item.mana_points_recovered} mana points.'
             elif item.title == 'health potion':
@@ -431,8 +440,8 @@ class Command_Processor(object):
 
     def inspect_command(self, *tokens):
         if (not tokens or tokens[0] in ('in', 'on') or tokens[-1] in ('in', 'on')
-            or (tokens[-1] in ('door', 'doorway') and (len(tokens) != 2
-            or tokens[0] not in ('north', 'south', 'east', 'west')))):
+                or (tokens[-1] in ('door', 'doorway') and (len(tokens) != 2
+                or tokens[0] not in ('north', 'south', 'east', 'west')))):
             return Command_Bad_Syntax('INSPECT', '<item name>', '<item name> IN <chest name>',
                                       '<item name> IN INVENTORY', '<item name> ON <corpse name>',
                                       '<compass direction> DOOR', '<compass direction> DOORWAY'),
@@ -452,7 +461,7 @@ class Command_Processor(object):
             location_title = ' '.join(tokens[joinword_index+1:])
         elif tokens[-1] == 'door' or tokens[-1] == 'doorway':
             compass_direction = tokens[0]
-            door_attr = f"{compass_direction}_door"
+            door_attr = f'{compass_direction}_door'
             door = getattr(self.game_state.rooms_state.cursor, door_attr, None)
             if door is None:
                 return Various_Commands_Door_Not_Present(compass_direction),
@@ -772,7 +781,26 @@ class Command_Processor(object):
         if not character_name or not character_class:
             return Begin_Game_Command_Name_or_Class_Not_Set(character_name, character_class),
         self.game_state.game_has_begun = True
-        return Begin_Game_Command_Game_Begins(), Various_Commands_Entered_Room(self.game_state.rooms_state.cursor)
+        result = Begin_Game_Command_Game_Begins(),      # v-- This is sorted just to make the tests deterministic.
+        for item_type, item_internal_name in sorted(STARTER_GEAR[character_class].items(), key=operator.itemgetter(0)):
+            item = self.game_state.items_state.get(item_internal_name)
+            self.game_state.character.pick_up_item(item)
+            getattr(self.game_state.character, 'equip_' + item_type)(item)
+            if item.item_type == 'armor':
+                result += (Various_Commands_Item_Equipped(item.title, 'armor', self.game_state.character.armor_class,
+                                                          'armor class'),)
+            elif item.item_type == 'shield':
+                result += (Various_Commands_Item_Equipped(item.title, 'shield', self.game_state.character.armor_class,
+                                                          'armor class'),)
+            elif item.item_type == 'wand':
+                result += (Various_Commands_Item_Equipped(item.title, 'wand', self.game_state.character.attack_bonus,
+                                                          'attack bonus', self.game_state.character.damage_roll,
+                                                          'damage'),)
+            else:
+                result += (Various_Commands_Item_Equipped(item.title, 'weapon', self.game_state.character.attack_bonus,
+                                                          'attack bonus', self.game_state.character.damage_roll,
+                                                          'damage'),)
+        return result + (Various_Commands_Entered_Room(self.game_state.rooms_state.cursor),)
 
     def set_name_command(self, *tokens):
         if len(tokens) == 0:
@@ -840,7 +868,7 @@ class Command_Processor(object):
             output_args['mana_points'] = None
             output_args['mana_point_total'] = None
         output_args['armor_class'] = character.armor_class
-        if character.weapon_equipped or (character.character_class == "Mage" and character.wand_equipped):
+        if character.weapon_equipped or (character.character_class == 'Mage' and character.wand_equipped):
             output_args['attack_bonus'] = character.attack_bonus
             output_args['damage'] = character.damage_roll
         else:
@@ -1010,7 +1038,7 @@ class Command_Processor(object):
                     if weapon_equipped is not None:
                         return Various_Commands_Item_Unequipped(item_title, 'wand',
                                                                 change_text=f"You're now attacking with your "
-                                                                            f"{weapon_equipped.title}"),
+                                                                            f'{weapon_equipped.title}'),
                     else:
                         return Various_Commands_Item_Unequipped(item_title, 'wand',
                                                                 change_text="You now can't attack."),

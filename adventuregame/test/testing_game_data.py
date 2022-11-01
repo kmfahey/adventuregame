@@ -212,7 +212,7 @@ weight=0.5
 [Mana_Potion]
 description=A small, stoppered bottle that contains a pungeant but drinkable blue liquid with a discernable magic aura.
 mana_points_recovered=20
-item_type=consumable
+item_type=potion
 mage_can_use=true
 priest_can_use=true
 title=mana potion
@@ -222,7 +222,7 @@ weight=.1
 [Health_Potion]
 description=A small, stoppered bottle that contains a pungeant but drinkable red liquid with a discernable magic aura.
 hit_points_recovered=20
-item_type=consumable
+item_type=potion
 mage_can_use=true
 priest_can_use=true
 thief_can_use=true

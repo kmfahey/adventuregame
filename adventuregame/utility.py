@@ -11,8 +11,7 @@ import iniconfig
 
 __name__ = 'adventuregame.utility'
 
-# Python3's str class doesn't offer a method to test if the string constitutes
-# a float value so I rolled my own.
+# Python3's str class doesn't offer a method to test if the string constitutes a float value so I rolled my own.
 _float_re = re.compile(r'^[+-]?([0-9]+\.|\.[0-9]+|[0-9]+\.[0-9]+|[0-9]+)$')
 
 isfloat = lambda strval: bool(_float_re.match(strval))
@@ -92,6 +91,11 @@ def roll_dice(dice_expr):
     sidedness_of_dice = int(sidedness_of_dice)
     modifier_to_roll = int(modifier_to_roll) if modifier_to_roll is not None else 0
     return sum(random.randint(1, sidedness_of_dice) for _ in range(0, number_of_dice)) + modifier_to_roll
+
+
+# Without memoization, during testing it's possible to open so many tempfiles with this function that the OS gives us a
+# `OSError: [Errno 24] Too many open files` error. Memoization saves on tempfiles by reusing IniConfig objects when the
+# text is the same. Using entire config file texts as keys to a dictionary is uncommon but it works.
 
 memoize_iniconfig_objs = dict()
 

@@ -523,7 +523,7 @@ class Test_Quit_Command(unittest.TestCase):
     def test_quit_2(self):
         result = self.command_processor.process('quit')  # check
         self.assertIsInstance(result[0], Quit_Command_Have_Quit_The_Game)
-        self.assertEqual(result[0].message, "You have quit the game.")
+        self.assertEqual(result[0].message, 'You have quit the game.')
         self.assertTrue(self.command_processor.game_state.game_has_ended)
 
 
@@ -563,8 +563,8 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Game_Commands(unittest.TestC
         self.assertEqual(result[0].character_name, None)
         self.assertEqual(result[0].character_class, None)
         self.assertEqual(result[0].message, "Your character's stats haven't been rolled yet, so there's nothing to "
-                                            "reroll. Use SET NAME <name> to set your name and SET CLASS <Warrior, "
-                                            "Thief, Mage or Priest> to select your class.")
+                                            'reroll. Use SET NAME <name> to set your name and SET CLASS <Warrior, '
+                                            'Thief, Mage or Priest> to select your class.')
 
     def test_begin_game_2(self):
         self.command_processor.process('set class to Warrior')
@@ -573,7 +573,7 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Game_Commands(unittest.TestC
         self.assertEqual(result[0].character_name, None)
         self.assertEqual(result[0].character_class, 'Warrior')
         self.assertEqual(result[0].message, "Your character's stats haven't been rolled yet, so there's nothing to "
-                                            "reroll. Use SET NAME <name> to set your name.")
+                                            'reroll. Use SET NAME <name> to set your name.')
 
     def test_begin_game_3(self):
         self.command_processor.process('set name to Kerne')
@@ -582,8 +582,8 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Game_Commands(unittest.TestC
         self.assertEqual(result[0].character_name, 'Kerne')
         self.assertEqual(result[0].character_class, None)
         self.assertEqual(result[0].message, "Your character's stats haven't been rolled yet, so there's nothing to "
-                                            "reroll. Use SET CLASS <Warrior, Thief, Mage or Priest> to select your "
-                                            "class.")
+                                            'reroll. Use SET CLASS <Warrior, Thief, Mage or Priest> to select your '
+                                            'class.')
 
     def test_begin_game_4(self):
         self.command_processor.process('set class to Warrior')
@@ -657,7 +657,7 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Game_Commands(unittest.TestC
     def test_set_name_vs_set_class_2(self):
         self.command_processor.process('set class to Warrior')
         self.command_processor.process('set name to Kerne')
-        result = self.command_processor.process("begin")
+        result = self.command_processor.process('begin')
         self.assertIsInstance(result[0], Begin_Game_Command_Game_Begins)
         self.assertEqual(result[0].message, 'The game has begun!')
         self.assertTrue(self.command_processor.game_state.game_has_begun)
@@ -666,7 +666,7 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Game_Commands(unittest.TestC
         self.assertFalse(self.command_processor.game_state.game_has_begun)
         self.command_processor.process('set class to Warrior')
         self.command_processor.process('set name to Kerne')
-        result = self.command_processor.process("begin the game now")
+        result = self.command_processor.process('begin the game now')
         self.assertIsInstance(result[0], Command_Bad_Syntax)
         self.assertEqual(result[0].command, 'BEGIN GAME')
         self.assertEqual(result[0].message, "BEGIN GAME command: bad syntax. Should be 'BEGIN GAME'.")
@@ -698,7 +698,7 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Game_Commands(unittest.TestC
         self.assertIsInstance(result[0], Set_Class_Command_Invalid_Class)
         self.assertEqual(result[0].bad_class, 'Ranger')
         self.assertEqual(result[0].message, "'Ranger' is not a valid class choice. Please choose Warrior, Thief, "
-                                            "Mage, or Priest.")
+                                            'Mage, or Priest.')
 
         result = self.command_processor.process('set class to Warrior')
         self.assertIsInstance(result[0], Set_Class_Command_Class_Set)
@@ -722,7 +722,7 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Game_Commands(unittest.TestC
         self.assertFalse(self.command_processor.game_state.game_has_begun)
         self.command_processor.process('set class to Warrior')
         self.command_processor.process('set name to Kerne')
-        result = self.command_processor.process("begin the game now")
+        result = self.command_processor.process('begin the game now')
         self.assertIsInstance(result[0], Command_Bad_Syntax)
         self.assertEqual(result[0].command, 'BEGIN GAME')
         self.assertEqual(result[0].message, "BEGIN GAME command: bad syntax. Should be 'BEGIN GAME'.")

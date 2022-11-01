@@ -33,7 +33,7 @@ class Test_Container(unittest.TestCase):
         self.assertTrue(container.contains('Warhammer'))
         self.assertTrue(container.contains('Mana_Potion'))
         potion_qty, mana_potion = container.get('Mana_Potion')
-        self.assertIsInstance(mana_potion, Consumable)
+        self.assertIsInstance(mana_potion, Potion)
         self.assertEqual(potion_qty, 1)
         container.delete('Mana_Potion')
         self.assertFalse(container.contains('Mana_Potion'))
@@ -745,9 +745,9 @@ class Test_Game_State(unittest.TestCase):
         self.doors_state = Doors_State(**self.doors_ini_config.sections)
         self.containers_state = Containers_State(self.items_state, **self.containers_ini_config.sections)
         self.creatures_state = Creatures_State(self.items_state, **self.creatures_ini_config.sections)
-        self.rooms_state = Rooms_State(self.creatures_state, self.containers_state, self.doors_state, 
+        self.rooms_state = Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
                                            self.items_state, **self.rooms_ini_config.sections)
-        self.game_state = Game_State(self.rooms_state, self.creatures_state, self.containers_state, 
+        self.game_state = Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
 
     def test_game_state(self):

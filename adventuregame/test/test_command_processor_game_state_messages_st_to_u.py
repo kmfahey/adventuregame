@@ -170,7 +170,7 @@ class Test_Take_Command(unittest.TestCase):
         self.assertEqual(result[0].amount_taken, 1)
         self.assertEqual(result[0].message, 'You took a health potion from the kobold corpse.')
         self.assertTrue(self.command_processor.game_state.character.inventory.contains('Health_Potion'))
-        self.assertFalse(self.command_processor.game_state.rooms_state.cursor.container_here\
+        self.assertFalse(self.command_processor.game_state.rooms_state.cursor.container_here
                          .contains('Health_Potion'))
         self.assertEqual(self.command_processor.game_state.character.inventory.get('Health_Potion'),
                          (1, health_potion))
@@ -276,7 +276,7 @@ class Test_Take_Command(unittest.TestCase):
         self.assertEqual(result[0].amount_attempted, 3)
         self.assertEqual(result[0].amount_present, 1)
         self.assertEqual(result[0].message, "You can't take 3 small leather armors from the kobold corpse. Only 1 is "
-                                            "there.")
+                                            'there.')
 
     def test_take_12(self):
         self.command_processor.game_state.rooms_state.cursor.container_here = \
@@ -358,7 +358,7 @@ class Test_Take_Command(unittest.TestCase):
         self.assertEqual(result[0].amount_put, 15)
         self.assertEqual(result[0].amount_left, 15)
         self.assertEqual(result[0].message, "You put 15 gold coins on the kobold corpse's person. You have 15 gold "
-                                            "coins left.")
+                                            'coins left.')
 
     def test_take_19(self):
         self.command_processor.game_state.rooms_state.cursor.container_here = \
@@ -373,7 +373,7 @@ class Test_Take_Command(unittest.TestCase):
         self.assertEqual(result[0].amount_put, 1)
         self.assertEqual(result[0].amount_left, 14)
         self.assertEqual(result[0].message, "You put 1 gold coin on the kobold corpse's person. You have 14 gold "
-                                            "coins left.")
+                                            'coins left.')
 
     def test_take_20(self):
         self.command_processor.game_state.rooms_state.cursor.container_here = \
@@ -388,7 +388,7 @@ class Test_Take_Command(unittest.TestCase):
         self.assertEqual(result[0].amount_put, 13)
         self.assertEqual(result[0].amount_left, 1)
         self.assertEqual(result[0].message, "You put 13 gold coins on the kobold corpse's person. You have 1 gold "
-                                            "coin left.")
+                                            'coin left.')
 
     def test_take_21(self):
         self.command_processor.game_state.rooms_state.cursor.container_here = \
@@ -403,7 +403,7 @@ class Test_Take_Command(unittest.TestCase):
         self.assertEqual(result[0].amount_put, 1)
         self.assertEqual(result[0].amount_left, 0)
         self.assertEqual(result[0].message, "You put 1 gold coin on the kobold corpse's person. You have no more gold "
-                                            "coins.")
+                                            'coins.')
 
     def test_take_22(self):
         self.command_processor.game_state.rooms_state.cursor.container_here = \
