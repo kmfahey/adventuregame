@@ -50,7 +50,7 @@ class Test_Attack_1(unittest.TestCase):
         result = self.command_processor.process('attack')
         self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
         self.assertEqual(result[0].command, 'ATTACK')
-        self.assertEqual(result[0].message, "ATTACK command: bad syntax. Should be 'ATTACK <creature name>'.")
+        self.assertEqual(result[0].message, "ATTACK command: bad syntax. Should be 'ATTACK\u00A0<creature\u00A0name>'.")
 
     def test_attack_2(self):
         self.command_processor.process('unequip longsword')
@@ -254,7 +254,7 @@ class Test_Begin_Game(unittest.TestCase):
         result = self.command_processor.process('begin game now')
         self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
         self.assertEqual(result[0].command, 'BEGIN GAME')
-        self.assertEqual(result[0].message, "BEGIN GAME command: bad syntax. Should be 'BEGIN GAME'.")
+        self.assertEqual(result[0].message, "BEGIN GAME command: bad syntax. Should be 'BEGIN\u00A0GAME'.")
 
     def test_begin_game_5(self):
         self.command_processor.process('set class to Warrior')
@@ -402,7 +402,7 @@ class Test_Cast_Spell(unittest.TestCase):
             result = self.command_processor.process(bad_argument_str)
             self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
             self.assertEqual(result[0].command, 'CAST SPELL')
-            self.assertEqual(result[0].message, "CAST SPELL command: bad syntax. Should be 'CAST SPELL'.")
+            self.assertEqual(result[0].message, "CAST SPELL command: bad syntax. Should be 'CAST\u00A0SPELL'.")
 
     def test_cast_spell3(self):
         self.command_processor.game_state.character_name = 'Mialee'
@@ -482,8 +482,8 @@ class Test_Close(unittest.TestCase):
         result = self.command_processor.process('close')
         self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
         self.assertEqual(result[0].command, 'CLOSE')
-        self.assertEqual(result[0].message, "CLOSE command: bad syntax. Should be 'CLOSE <door name>' or "
-                                            "'CLOSE <chest name>'."),
+        self.assertEqual(result[0].message, "CLOSE command: bad syntax. Should be 'CLOSE\u00A0<door\u00A0name>' or "
+                                            "'CLOSE\u00A0<chest\u00A0name>'."),
 
     def test_close_2(self):
         result = self.command_processor.process(f'close {self.chest_title}')
@@ -630,7 +630,8 @@ class Test_Drink(unittest.TestCase):
             result = self.command_processor.process(bad_argument_str)
             self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
             self.assertEqual(result[0].command, 'DRINK')
-            self.assertEqual(result[0].message, "DRINK command: bad syntax. Should be 'DRINK [THE] <potion name>'.")
+            self.assertEqual(result[0].message, "DRINK command: bad syntax. Should be "
+                                                "'DRINK\u00A0[THE]\u00A0<potion\u00A0name>'.")
 
     def test_drink2(self):
         self.command_processor.game_state.character_name = 'Niath'
@@ -748,6 +749,16 @@ class Test_Drink(unittest.TestCase):
         self.assertIsInstance(result[0], advg.Drink_Command_Tried_to_Drink_More_than_Possessed)
         self.assertEqual(result[0].message, "You can't drink 3 mana potions. You only have 1 of them.")
 
+    def test_drink12(self):
+        self.command_processor.game_state.character_name = 'Mialee'
+        self.command_processor.game_state.character_class = 'Mage'
+        self.game_state.game_has_begun = True
+        mana_potion = self.command_processor.game_state.items_state.get('Mana_Potion')
+        self.command_processor.game_state.character.pick_up_item(mana_potion)
+        result = self.command_processor.process('drink three mana potions')
+        self.assertIsInstance(result[0], advg.Drink_Command_Tried_to_Drink_More_than_Possessed)
+        self.assertEqual(result[0].message, "You can't drink 3 mana potions. You only have 1 of them.")
+
 
 class Test_Drop(unittest.TestCase):
 
@@ -780,8 +791,8 @@ class Test_Drop(unittest.TestCase):
         result = self.command_processor.process('drop the')  # check
         self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
         self.assertEqual(result[0].command, 'DROP')
-        self.assertEqual(result[0].message, "DROP command: bad syntax. Should be 'DROP <item name>' or 'DROP <number> "
-                                            "<item name>'."),
+        self.assertEqual(result[0].message, "DROP command: bad syntax. Should be 'DROP\u00A0<item\u00A0name>' or "
+                                            "'DROP\u00A0<number>\u00A0<item\u00A0name>'."),
 
     def test_drop_2(self):
         self.command_processor.game_state.character_name = 'Niath'
@@ -825,6 +836,20 @@ class Test_Drop(unittest.TestCase):
         self.game_state.game_has_begun = True
         gold_coin = self.items_state.get('Gold_Coin')
         self.command_processor.game_state.character.pick_up_item(gold_coin, qty=30)
+        result = self.command_processor.process('drop forty-five gold coins')  # check
+        self.assertIsInstance(result[0], advg.Drop_Command_Trying_to_Drop_More_than_You_Have)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].amount_attempted, 45)
+        self.assertEqual(result[0].amount_had, 30)
+        self.assertEqual(result[0].message, "You can't drop 45 gold coins. You only have 30 gold coins in your "
+                                            'inventory.')
+
+    def test_drop_6(self):
+        self.command_processor.game_state.character_name = 'Niath'
+        self.command_processor.game_state.character_class = 'Warrior'
+        self.game_state.game_has_begun = True
+        gold_coin = self.items_state.get('Gold_Coin')
+        self.command_processor.game_state.character.pick_up_item(gold_coin, qty=30)
         result = self.command_processor.process('drop 15 gold coins')  # check
         self.assertIsInstance(result[0], advg.Drop_Command_Dropped_Item)
         self.assertEqual(result[0].item_title, 'gold coin')
@@ -843,7 +868,7 @@ class Test_Drop(unittest.TestCase):
         self.assertEqual(result[0].message, 'You dropped 14 gold coins. You see 29 gold coins here. You have 1 gold '
                                             'coin left.')
 
-    def test_drop_6(self):
+    def test_drop_7(self):
         self.command_processor.game_state.character_name = 'Niath'
         self.command_processor.game_state.character_class = 'Warrior'
         self.game_state.game_has_begun = True
@@ -859,7 +884,7 @@ class Test_Drop(unittest.TestCase):
         self.assertEqual(result[0].message, 'You dropped a gold coin. You see a gold coin here. You have 29 gold '
                                             'coins left.')
 
-    def test_drop_7(self):
+    def test_drop_8(self):
         self.command_processor.game_state.character_name = 'Niath'
         self.command_processor.game_state.character_class = 'Warrior'
         self.game_state.game_has_begun = True
@@ -874,7 +899,7 @@ class Test_Drop(unittest.TestCase):
         self.assertEqual(result[0].message, 'You dropped 30 gold coins. You see 30 gold coins here. You have no '
                                             'gold coins left.')
 
-    def test_drop_8(self):
+    def test_drop_9(self):
         self.command_processor.game_state.character_name = 'Niath'
         self.command_processor.game_state.character_class = 'Warrior'
         self.game_state.game_has_begun = True
@@ -894,7 +919,7 @@ class Test_Drop(unittest.TestCase):
         self.assertEqual(result[1].message, 'You dropped a longsword. You see a longsword here. You have no longswords '
                                             'left.')
 
-    def test_drop_9(self):
+    def test_drop_10(self):
         self.command_processor.game_state.character_name = 'Niath'
         self.command_processor.game_state.character_class = 'Warrior'
         self.game_state.game_has_begun = True
@@ -914,7 +939,7 @@ class Test_Drop(unittest.TestCase):
         self.assertEqual(result[1].message, 'You dropped a steel shield. You see a steel shield here. You have no steel'
                                             ' shields left.')
 
-    def test_drop_10(self):
+    def test_drop_11(self):
         self.command_processor.game_state.character_name = 'Mialee'
         self.command_processor.game_state.character_class = 'Mage'
         self.game_state.game_has_begun = True
@@ -934,7 +959,7 @@ class Test_Drop(unittest.TestCase):
         self.assertEqual(result[1].message, 'You dropped a magic wand. You see a magic wand here. You have no '
                                             'magic wands left.')
 
-    def test_drop_11(self):
+    def test_drop_12(self):
         self.command_processor.game_state.character_name = 'Mialee'
         self.command_processor.game_state.character_class = 'Mage'
         self.game_state.game_has_begun = True
@@ -957,7 +982,7 @@ class Test_Drop(unittest.TestCase):
         self.assertEqual(result[1].message, 'You dropped a magic wand. You see a magic wand here. You have no '
                                             'magic wands left.')
 
-    def test_drop_12(self):
+    def test_drop_13(self):
         self.command_processor.game_state.character_name = 'Mialee'
         self.command_processor.game_state.character_class = 'Mage'
         self.game_state.game_has_begun = True
@@ -980,7 +1005,7 @@ class Test_Drop(unittest.TestCase):
         self.assertEqual(result[1].message, 'You dropped a staff. You see a staff here. You have no '
                                             'staffs left.')
 
-    def test_drop_13(self):
+    def test_drop_14(self):
         self.command_processor.game_state.character_name = 'Niath'
         self.command_processor.game_state.character_class = 'Warrior'
         self.game_state.game_has_begun = True
@@ -1040,8 +1065,9 @@ class Test_Equip_1(unittest.TestCase):
         result = self.command_processor.process('equip')
         self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
         self.assertEqual(result[0].command, 'EQUIP')
-        self.assertEqual(result[0].message, "EQUIP command: bad syntax. Should be 'EQUIP <armor name>', "
-                                            "'EQUIP <shield name>', 'EQUIP <wand name>', or 'EQUIP <weapon name>'.")
+        self.assertEqual(result[0].message, "EQUIP command: bad syntax. Should be 'EQUIP\u00A0<armor\u00A0name>', "
+                                            "'EQUIP\u00A0<shield\u00A0name>', 'EQUIP\u00A0<wand\u00A0name>', or "
+                                            "'EQUIP\u00A0<weapon\u00A0name>'.")
 
         result = self.command_processor.process('drop longsword')
         result = self.command_processor.process('equip longsword')
@@ -1247,10 +1273,10 @@ Which one do you want help with?
         result = self.command_processor.process('help attack')
         self.assertIsInstance(result[0], advg.Help_Command_Display_Help_for_Command)
         self.assertEqual(result[0].command, 'ATTACK')
-        self.assertEqual(result[0].syntax_tuple, ('<creature name>',))
+        self.assertEqual(result[0].syntax_tuple, ('<creature\u00A0name>',))
         self.assertEqual(result[0].message, """Help for the ATTACK command:
 
-Usage: 'ATTACK <creature name>'
+Usage: 'ATTACK\u00A0<creature\u00A0name>'
 
 The ATTACK command is used to attack creatures. Beware: if you attack a creature and don't kill it, it will attack you \
 in return! After you kill a creature, you can check its corpse for loot using the LOOK AT command and take loot with \
@@ -1261,10 +1287,10 @@ the TAKE command.
         result = self.command_processor.process('help close')
         self.assertIsInstance(result[0], advg.Help_Command_Display_Help_for_Command)
         self.assertEqual(result[0].command, 'CLOSE')
-        self.assertEqual(result[0].syntax_tuple, ('<door name>', '<chest name>'))
+        self.assertEqual(result[0].syntax_tuple, ('<door\u00A0name>', '<chest\u00A0name>'))
         self.assertEqual(result[0].message, """Help for the CLOSE command:
 
-Usage: 'CLOSE <door name>' or 'CLOSE <chest name>'
+Usage: 'CLOSE\u00A0<door\u00A0name>' or 'CLOSE\u00A0<chest\u00A0name>'
 
 The CLOSE command can be used to close doors and chests.
 """)
@@ -1273,14 +1299,16 @@ The CLOSE command can be used to close doors and chests.
         result = self.command_processor.process('help put')
         self.assertIsInstance(result[0], advg.Help_Command_Display_Help_for_Command)
         self.assertEqual(result[0].command, 'PUT')
-        self.assertEqual(result[0].syntax_tuple, ('<item name> IN <chest name>',
-                                                  '<number> <item name> IN <chest name>',
-                                                  '<item name> ON <corpse name>', 
-                                                  '<number> <item name> ON <corpse name>'))
+        self.assertEqual(result[0].syntax_tuple, ('<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>',
+                                                  '<number>\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>',
+                                                  '<item\u00A0name>\u00A0ON\u00A0<corpse\u00A0name>', 
+                                                  '<number>\u00A0<item\u00A0name>\u00A0ON\u00A0<corpse\u00A0name>'))
         self.assertEqual(result[0].message, """Help for the PUT command:
 
-Usage: 'PUT <item name> IN <chest name>', 'PUT <number> <item name> IN <chest name>', 'PUT <item name> ON <corpse \
-name>', or 'PUT <number> <item name> ON <corpse name>'
+Usage: 'PUT\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>', \
+'PUT\u00A0<number>\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>', \
+'PUT\u00A0<item\u00A0name>\u00A0ON\u00A0<corpse\u00A0name>', or \
+'PUT\u00A0<number>\u00A0<item\u00A0name>\u00A0ON\u00A0<corpse\u00A0name>'
 
 The PUT command can be used to remove items from your inventory and place them in a chest or on a corpse's person. To \
 leave items on the floor, use DROP.
@@ -1392,10 +1420,11 @@ class Test_Leave(unittest.TestCase):
             result = self.command_processor.process(bad_syntax_natlang_str)
             self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
             self.assertEqual(result[0].command, 'LEAVE')
-            self.assertEqual(result[0].message, "LEAVE command: bad syntax. Should be 'LEAVE [USING or VIA] <compass "
-                                                "direction> DOOR', 'LEAVE [USING or VIA] <compass direction> DOORWAY', "
-                                                "'LEAVE [USING or VIA] <door name>', or 'LEAVE [USING or VIA] <compass "
-                                                "direction> <door name>'.", bad_syntax_natlang_str)
+            self.assertEqual(result[0].message, "LEAVE command: bad syntax. Should be "
+                        "'LEAVE\u00A0[USING\u00A0or\u00A0VIA]\u00A0<compass\u00A0direction>\u00A0DOOR', "
+                        "'LEAVE\u00A0[USING\u00A0or\u00A0VIA]\u00A0<compass\u00A0direction>\u00A0DOORWAY', "
+                        "'LEAVE\u00A0[USING\u00A0or\u00A0VIA]\u00A0<door\u00A0name>', or "
+                        "'LEAVE\u00A0[USING\u00A0or\u00A0VIA]\u00A0<compass\u00A0direction>\u00A0<door\u00A0name>'.")
 
     def test_leave_2(self):
         result = self.command_processor.process('leave using west door')
@@ -1646,8 +1675,8 @@ class Test_Lock(unittest.TestCase):
         result = self.command_processor.process('lock')
         self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
         self.assertEqual(result[0].command, 'LOCK')
-        self.assertEqual(result[0].message, "LOCK command: bad syntax. Should be 'LOCK <door name>' or "
-                                            "'LOCK <chest name>'."),
+        self.assertEqual(result[0].message, "LOCK command: bad syntax. Should be 'LOCK\u00A0<door\u00A0name>' or "
+                                            "'LOCK\u00A0<chest\u00A0name>'."),
 
     def test_lock_2(self):
         result = self.command_processor.process('lock west door')
@@ -1749,12 +1778,13 @@ class Test_Look_At_2(unittest.TestCase):
             result = self.command_processor.process(bad_syntax_natlang_str)
             self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
             self.assertEqual(result[0].command, 'LOOK AT')
-            self.assertEqual(result[0].message, "LOOK AT command: bad syntax. Should be 'LOOK AT <item name>', "
-                                                "'LOOK AT <item name> IN <chest name>', "
-                                                "'LOOK AT <item name> IN INVENTORY', "
-                                                "'LOOK AT <item name> ON <corpse name>', "
-                                                "'LOOK AT <compass direction> DOOR', or "
-                                                "'LOOK AT <compass direction> DOORWAY'.", bad_syntax_natlang_str)
+            self.assertEqual(result[0].message, "LOOK AT command: bad syntax. "
+                                                "Should be 'LOOK\u00A0AT\u00A0<item\u00A0name>', "
+                                        "'LOOK\u00A0AT\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>', "
+                                        "'LOOK\u00A0AT\u00A0<item\u00A0name>\u00A0IN\u00A0INVENTORY', "
+                                        "'LOOK\u00A0AT\u00A0<item\u00A0name>\u00A0ON\u00A0<corpse\u00A0name>', "
+                                        "'LOOK\u00A0AT\u00A0<compass\u00A0direction>\u00A0DOOR', or "
+                                        "'LOOK\u00A0AT\u00A0<compass\u00A0direction>\u00A0DOORWAY'.")
 
     def test_look_at_2(self):
         self.command_processor.game_state.rooms_state.cursor.container_here = None
@@ -1934,8 +1964,8 @@ class Test_Open(unittest.TestCase):
         result = self.command_processor.process('open')
         self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
         self.assertEqual(result[0].command, 'OPEN')
-        self.assertEqual(result[0].message, "OPEN command: bad syntax. Should be 'OPEN <door name>' or "
-                                            "'OPEN <chest name>'."),
+        self.assertEqual(result[0].message, "OPEN command: bad syntax. Should be 'OPEN\u00A0<door\u00A0name>' or "
+                                            "'OPEN\u00A0<chest\u00A0name>'."),
 
     def test_open_2(self):
         self.chest.is_closed = True
@@ -2050,8 +2080,9 @@ class Test_Pick_Lock(unittest.TestCase):
             result = self.command_processor.process(bad_syntax_natlang_str)
             self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
             self.assertEqual(result[0].command, 'PICK LOCK')
-            self.assertEqual(result[0].message, "PICK LOCK command: bad syntax. Should be 'PICK LOCK ON [THE] "
-                                                "<chest name>' or 'PICK LOCK ON [THE] <door name>'.", bad_syntax_natlang_str)
+            self.assertEqual(result[0].message, "PICK LOCK command: bad syntax. Should be "
+                                                "'PICK\u00A0LOCK\u00A0ON\u00A0[THE]\u00A0<chest\u00A0name>' or "
+                                                "'PICK\u00A0LOCK\u00A0ON\u00A0[THE]\u00A0<door\u00A0name>'.")
 
     def test_pick_lock3(self):
         self.command_processor.game_state.character_name = 'Lidda'
@@ -2166,8 +2197,8 @@ class Test_Pick_Up(unittest.TestCase):
         result = self.command_processor.process('pick up the')  # check
         self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
         self.assertEqual(result[0].command, 'PICK UP')
-        self.assertEqual(result[0].message, "PICK UP command: bad syntax. Should be 'PICK UP <item name>' or 'PICK UP "
-                                            "<number> <item name>'."),
+        self.assertEqual(result[0].message, "PICK UP command: bad syntax. Should be 'PICK\u00A0UP\u00A0<item\u00A0name>"
+                                            "' or 'PICK\u00A0UP\u00A0<number>\u00A0<item\u00A0name>'."),
 
     def test_pick_up_2(self):
         result = self.command_processor.process('pick up a gold coins')  # check
@@ -2184,6 +2215,15 @@ class Test_Pick_Up(unittest.TestCase):
                                             'mana potion here.')
 
     def test_pick_up_4(self):
+        result = self.command_processor.process('pick up fifteen gold coins')  # check
+        self.assertIsInstance(result[0], advg.Pick_Up_Command_Item_Not_Found)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].amount_attempted, 15)
+        self.assertEqual(result[0].items_here, ((2, 'health potion'), (1, 'mana potion')))
+        self.assertEqual(result[0].message, 'You see no gold coins here. However, there is 2 health potions and a '
+                                            'mana potion here.')
+
+    def test_pick_up_5(self):
         result = self.command_processor.process('pick up a short sword')  # check
         self.assertIsInstance(result[0], advg.Pick_Up_Command_Item_Not_Found)
         self.assertEqual(result[0].item_title, 'short sword')
@@ -2192,7 +2232,7 @@ class Test_Pick_Up(unittest.TestCase):
         self.assertEqual(result[0].message, 'You see no short sword here. However, there is 2 health potions and a '
                                             'mana potion here.')
 
-    def test_pick_up_5(self):
+    def test_pick_up_6(self):
         self.command_processor.game_state.rooms_state.move(north=True)
         result = self.command_processor.process('pick up a short sword')  # check
         self.assertIsInstance(result[0], advg.Pick_Up_Command_Item_Not_Found)
@@ -2202,7 +2242,7 @@ class Test_Pick_Up(unittest.TestCase):
         self.assertEqual(result[0].message, 'You see no short sword here.')
         self.command_processor.game_state.rooms_state.move(south=True)
 
-    def test_pick_up_6(self):
+    def test_pick_up_7(self):
         result = self.command_processor.process('pick up 2 mana potions')  # check
         self.assertIsInstance(result[0], advg.Pick_Up_Command_Trying_to_Pick_Up_More_than_Is_Present)
         self.assertEqual(result[0].item_title, 'mana potion')
@@ -2210,7 +2250,7 @@ class Test_Pick_Up(unittest.TestCase):
         self.assertEqual(result[0].amount_present, 1)
         self.assertEqual(result[0].message, "You can't pick up 2 mana potions. Only 1 is here.")
 
-    def test_pick_up_7(self):
+    def test_pick_up_8(self):
         result = self.command_processor.process('pick up a mana potion')  # check
         self.assertIsInstance(result[0], advg.Pick_Up_Command_Item_Picked_Up)
         self.assertEqual(result[0].item_title, 'mana potion')
@@ -2218,7 +2258,7 @@ class Test_Pick_Up(unittest.TestCase):
         self.assertEqual(result[0].amount_had, 1)
         self.assertEqual(result[0].message, 'You picked up a mana potion. You have 1 mana potion.')
 
-    def test_pick_up_8(self):
+    def test_pick_up_9(self):
         result = self.command_processor.process('pick up a health potion')  # check
         result = self.command_processor.process('pick up health potion')  # check
         self.assertIsInstance(result[0], advg.Pick_Up_Command_Item_Picked_Up)
@@ -2227,7 +2267,7 @@ class Test_Pick_Up(unittest.TestCase):
         self.assertEqual(result[0].amount_had, 2)
         self.assertEqual(result[0].message, 'You picked up a health potion. You have 2 health potions.')
 
-    def test_pick_up_9(self):
+    def test_pick_up_10(self):
         gold_coin = self.items_state.get('Gold_Coin')
         self.command_processor.game_state.rooms_state.cursor.items_here.set('Gold_Coin', 30, gold_coin)
         result = self.command_processor.process('pick up 15 gold coins')  # check
@@ -2243,28 +2283,28 @@ class Test_Pick_Up(unittest.TestCase):
         self.assertEqual(result[0].amount_had, 30)
         self.assertEqual(result[0].message, 'You picked up 15 gold coins. You have 30 gold coins.')
 
-    def test_pick_up_10(self):
+    def test_pick_up_11(self):
         result = self.command_processor.process('pick up wooden chest')  # check
         self.assertIsInstance(result[0], advg.Pick_Up_Command_Cant_Pick_Up_Creature_Chest_or_Door)
         self.assertEqual(result[0].element_type, 'chest')
         self.assertEqual(result[0].element_title, 'wooden chest')
         self.assertEqual(result[0].message, "You can't pick up the wooden chest: can't pick up chests!")
 
-    def test_pick_up_11(self):
+    def test_pick_up_12(self):
         result = self.command_processor.process('pick up kobold')  # check
         self.assertIsInstance(result[0], advg.Pick_Up_Command_Cant_Pick_Up_Creature_Chest_or_Door)
         self.assertEqual(result[0].element_type, 'creature')
         self.assertEqual(result[0].element_title, 'kobold')
         self.assertEqual(result[0].message, "You can't pick up the kobold: can't pick up creatures!")
 
-    def test_pick_up_12(self):
+    def test_pick_up_13(self):
         result = self.command_processor.process('pick up wooden door')  # check
         self.assertIsInstance(result[0], advg.Pick_Up_Command_Cant_Pick_Up_Creature_Chest_or_Door)
         self.assertEqual(result[0].element_type, 'door')
         self.assertEqual(result[0].element_title, 'wooden door')
         self.assertEqual(result[0].message, "You can't pick up the wooden door: can't pick up doors!")
 
-    def test_pick_up_12(self):
+    def test_pick_up_13(self):
         self.command_processor.game_state.rooms_state.cursor.container_here = \
             self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         result = self.command_processor.process('pick up kobold corpse')  # check
@@ -2395,9 +2435,12 @@ class Test_Put(unittest.TestCase):
             result = self.command_processor.process(bad_syntax_natlang_str)
             self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
             self.assertEqual(result[0].command, 'PUT')
-            self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>', "
-                                             "'PUT <number> <item name> IN <chest name>', 'PUT <item name> ON "
-                                             "<corpse name>', or 'PUT <number> <item name> ON <corpse name>'.", bad_syntax_natlang_str),
+            self.assertEqual(result[0].message, "PUT command: bad syntax. Should be "
+                                                "'PUT\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>', "
+                                                "'PUT\u00A0<number>\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0"
+                                                "name>', 'PUT\u00A0<item\u00A0name>\u00A0ON\u00A0<corpse\u00A0name>', "
+                                                "or 'PUT\u00A0<number>\u00A0<item\u00A0name>\u00A0ON\u00A0<corpse\u00A0"
+                                                "name>'."),
 
 
 class Test_Quit(unittest.TestCase):
@@ -2513,8 +2556,9 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Games(unittest.TestCase):
             result = self.command_processor.process(bad_argument_str)
             self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
             self.assertEqual(result[0].command, 'SET CLASS')
-            self.assertEqual(result[0].message, "SET CLASS command: bad syntax. Should be 'SET CLASS [TO] <Warrior, Thief, "
-                                                "Mage or Priest>'.")
+            self.assertEqual(result[0].message, "SET CLASS command: bad syntax. Should be "
+                                                "'SET\u00A0CLASS\u00A0[TO]\u00A0<Warrior,\u00A0Thief,\u00A0Mage\u00A0"
+                                                "or\u00A0Priest>'.")
 
         result = self.command_processor.process('set class to Warrior')
         self.assertIsInstance(result[0], advg.Set_Class_Command_Class_Set)
@@ -2524,7 +2568,8 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Games(unittest.TestCase):
         result = self.command_processor.process('set name')  # check
         self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
         self.assertEqual(result[0].command, 'SET NAME')
-        self.assertEqual(result[0].message, "SET NAME command: bad syntax. Should be 'SET NAME [TO] <character name>'.")
+        self.assertEqual(result[0].message, "SET NAME command: bad syntax. Should be "
+                                            "'SET\u00A0NAME\u00A0[TO]\u00A0<character\u00A0name>'.")
 
         result = self.command_processor.process('set name to Kerne')
         self.assertIsInstance(result[0], advg.Set_Name_Command_Name_Set)
@@ -2577,7 +2622,7 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Games(unittest.TestCase):
         result = self.command_processor.process('begin the game now')
         self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
         self.assertEqual(result[0].command, 'BEGIN GAME')
-        self.assertEqual(result[0].message, "BEGIN GAME command: bad syntax. Should be 'BEGIN GAME'.")
+        self.assertEqual(result[0].message, "BEGIN GAME command: bad syntax. Should be 'BEGIN\u00A0GAME'.")
         self.assertFalse(self.command_processor.game_state.game_has_begun)
 
     def test_set_name_vs_set_class_4(self):
@@ -2633,7 +2678,7 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Games(unittest.TestCase):
         result = self.command_processor.process('begin the game now')
         self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
         self.assertEqual(result[0].command, 'BEGIN GAME')
-        self.assertEqual(result[0].message, "BEGIN GAME command: bad syntax. Should be 'BEGIN GAME'.")
+        self.assertEqual(result[0].message, "BEGIN GAME command: bad syntax. Should be 'BEGIN\u00A0GAME'.")
         self.assertFalse(self.command_processor.game_state.game_has_begun)
 
     def test_set_name_vs_set_class_vs_reroll(self):
@@ -2846,8 +2891,10 @@ class Test_Take(unittest.TestCase):
             result = self.command_processor.process(bad_syntax_natlang_str)
             self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
             self.assertEqual(result[0].command, 'TAKE')
-            self.assertEqual(result[0].message, "TAKE command: bad syntax. Should be 'TAKE <item name> FROM <container "
-                                                "name>' or 'TAKE <number> <item name> FROM <container name>'.", bad_syntax_natlang_str),
+            self.assertEqual(result[0].message, "TAKE command: bad syntax. Should be "
+                                                "'TAKE\u00A0<item\u00A0name>\u00A0FROM\u00A0<container\u00A0name>' or "
+                                                "'TAKE\u00A0<number>\u00A0<item\u00A0name>\u00A0FROM\u00A0<container"
+                                                "\u00A0name>'."),
 
     def test_take_5(self):
         self.command_processor.game_state.rooms_state.cursor.container_here = \
@@ -3000,6 +3047,21 @@ class Test_Take(unittest.TestCase):
         self.command_processor.game_state.rooms_state.cursor.container_here = \
             self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         self.command_processor.game_state.rooms_state.cursor.container_here.set('Gold_Coin', 15, self.gold_coin)
+        result = self.command_processor.process('take fourteen gold coins from the kobold corpse')
+        result = self.command_processor.process('put thirteen gold coins on the kobold corpse')
+        self.assertIsInstance(result[0], advg.Put_Command_Amount_Put)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].container_title, 'kobold corpse')
+        self.assertEqual(result[0].container_type, 'corpse')
+        self.assertEqual(result[0].amount_put, 13)
+        self.assertEqual(result[0].amount_left, 1)
+        self.assertEqual(result[0].message, "You put 13 gold coins on the kobold corpse's person. You have 1 gold "
+                                            'coin left.')
+
+    def test_take_18(self):
+        self.command_processor.game_state.rooms_state.cursor.container_here = \
+            self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
+        self.command_processor.game_state.rooms_state.cursor.container_here.set('Gold_Coin', 15, self.gold_coin)
         result = self.command_processor.process('take 1 gold coin from the kobold corpse')
         result = self.command_processor.process('put 1 gold coin on the kobold corpse')
         self.assertIsInstance(result[0], advg.Put_Command_Amount_Put)
@@ -3011,7 +3073,7 @@ class Test_Take(unittest.TestCase):
         self.assertEqual(result[0].message, "You put 1 gold coin on the kobold corpse's person. You have no more gold "
                                             'coins.')
 
-    def test_take_18(self):
+    def test_take_19(self):
         self.command_processor.game_state.rooms_state.cursor.container_here = \
             self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         self.command_processor.game_state.rooms_state.cursor.container_here.set('Gold_Coin', 15, self.gold_coin)
@@ -3021,7 +3083,7 @@ class Test_Take(unittest.TestCase):
         self.assertEqual(result[0].amount_attempted, 2)
         self.assertEqual(result[0].message, "You don't have any gold coins in your inventory.")
 
-    def test_take_19(self):
+    def test_take_20(self):
         self.command_processor.game_state.rooms_state.cursor.container_here = \
             self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         self.command_processor.game_state.rooms_state.cursor.container_here.set('Gold_Coin', 15, self.gold_coin)
@@ -3031,7 +3093,18 @@ class Test_Take(unittest.TestCase):
         self.assertEqual(result[0].amount_attempted, 1)
         self.assertEqual(result[0].message, "You don't have a gold coin in your inventory.")
 
-    def test_take_20(self):
+    def test_take_21(self):
+        self.command_processor.game_state.rooms_state.cursor.container_here = \
+            self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
+        self.command_processor.game_state.rooms_state.cursor.container_here.set('Gold_Coin', 15, self.gold_coin)
+        result = self.command_processor.process('take five gold coins from the kobold corpse')
+        result = self.command_processor.process('put ten gold coin on the kobold corpse')
+        self.assertIsInstance(result[0], advg.Put_Command_Trying_to_Put_More_than_You_Have)
+        self.assertEqual(result[0].item_title, 'gold coin')
+        self.assertEqual(result[0].amount_present, 5)
+        self.assertEqual(result[0].message, 'You only have 5 gold coins in your inventory.')
+
+    def test_take_22(self):
         self.command_processor.game_state.rooms_state.cursor.container_here = \
             self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         self.command_processor.game_state.rooms_state.cursor.container_here.set('Gold_Coin', 15, self.gold_coin)
@@ -3042,7 +3115,7 @@ class Test_Take(unittest.TestCase):
         self.assertEqual(result[0].amount_present, 5)
         self.assertEqual(result[0].message, 'You only have 5 gold coins in your inventory.')
 
-    def test_take_21(self):
+    def test_take_23(self):
         self.command_processor.game_state.rooms_state.cursor.container_here = \
             self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         self.command_processor.game_state.rooms_state.cursor.container_here.set('Gold_Coin', 15, self.gold_coin)
@@ -3054,7 +3127,7 @@ class Test_Take(unittest.TestCase):
         self.assertEqual(result[0].amount_present, 1)
         self.assertEqual(result[0].message, 'You only have 1 gold coin in your inventory.')
 
-    def test_take_22(self):
+    def test_take_24(self):
         self.command_processor.game_state.rooms_state.cursor.container_here = \
             self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         self.command_processor.game_state.rooms_state.cursor.container_here.set('Gold_Coin', 15, self.gold_coin)
@@ -3062,51 +3135,63 @@ class Test_Take(unittest.TestCase):
         self.assertIsInstance(result[0], advg.Put_Command_Quantity_Unclear)
         self.assertEqual(result[0].message, 'Amount to put unclear. How many do you mean?')
 
-    def test_take_23(self):
+    def test_take_25(self):
         self.command_processor.game_state.rooms_state.cursor.container_here = \
             self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         self.command_processor.game_state.rooms_state.cursor.container_here.set('Gold_Coin', 15, self.gold_coin)
         result = self.command_processor.process('put on the kobold corpse')
         self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
         self.assertEqual(result[0].command, 'PUT')
-        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>', "
-                                         "'PUT <number> <item name> IN <chest name>', 'PUT <item name> ON "
-                                         "<corpse name>', or 'PUT <number> <item name> ON <corpse name>'."),
+        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be "
+                                            "'PUT\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>', "
+                                            "'PUT\u00A0<number>\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>', "
+                                            "'PUT\u00A0<item\u00A0name>\u00A0ON\u00A0<corpse\u00A0name>', or "
+                                            "'PUT\u00A0<number>\u00A0<item\u00A0name>\u00A0ON\u00A0<corpse\u00A0name>'"
+                                            "."),
 
-    def test_take_24(self):
+    def test_take_26(self):
         self.command_processor.game_state.rooms_state.cursor.container_here = \
             self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         self.command_processor.game_state.rooms_state.cursor.container_here.set('Gold_Coin', 15, self.gold_coin)
         result = self.command_processor.process('put one small leather armor on')  # check
         self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
         self.assertEqual(result[0].command, 'PUT')
-        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>', "
-                                         "'PUT <number> <item name> IN <chest name>', 'PUT <item name> ON "
-                                         "<corpse name>', or 'PUT <number> <item name> ON <corpse name>'."),
+        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be "
+                                            "'PUT\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>', "
+                                            "'PUT\u00A0<number>\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>', "
+                                            "'PUT\u00A0<item\u00A0name>\u00A0ON\u00A0<corpse\u00A0name>', or "
+                                            "'PUT\u00A0<number>\u00A0<item\u00A0name>\u00A0ON\u00A0<corpse\u00A0name>"
+                                            "'."),
 
-    def test_take_25(self):
+    def test_take_27(self):
         self.command_processor.game_state.rooms_state.cursor.container_here = \
             self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         self.command_processor.game_state.rooms_state.cursor.container_here.set('Gold_Coin', 15, self.gold_coin)
         result = self.command_processor.process('put on')  # check
         self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
         self.assertEqual(result[0].command, 'PUT')
-        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>', "
-                                         "'PUT <number> <item name> IN <chest name>', 'PUT <item name> ON "
-                                         "<corpse name>', or 'PUT <number> <item name> ON <corpse name>'."),
+        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be "
+                                            "'PUT\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>', "
+                                            "'PUT\u00A0<number>\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>', "
+                                            "'PUT\u00A0<item\u00A0name>\u00A0ON\u00A0<corpse\u00A0name>', or "
+                                            "'PUT\u00A0<number>\u00A0<item\u00A0name>\u00A0ON\u00A0<corpse\u00A0name>'"
+                                            "."),
 
-    def test_take_26(self):
+    def test_take_28(self):
         self.command_processor.game_state.rooms_state.cursor.container_here = \
             self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         self.command_processor.game_state.rooms_state.cursor.container_here.set('Gold_Coin', 15, self.gold_coin)
         result = self.command_processor.process('put 1 gold coin in the kobold corpse')  # check
         self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
         self.assertEqual(result[0].command, 'PUT')
-        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be 'PUT <item name> IN <chest name>', "
-                                         "'PUT <number> <item name> IN <chest name>', 'PUT <item name> ON "
-                                         "<corpse name>', or 'PUT <number> <item name> ON <corpse name>'."),
+        self.assertEqual(result[0].message, "PUT command: bad syntax. Should be "
+                                            "'PUT\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>', "
+                                            "'PUT\u00A0<number>\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>', "
+                                            "'PUT\u00A0<item\u00A0name>\u00A0ON\u00A0<corpse\u00A0name>', or "
+                                            "'PUT\u00A0<number>\u00A0<item\u00A0name>\u00A0ON\u00A0<corpse\u00A0name>"
+                                            "'."),
 
-    def test_take_27(self):
+    def test_take_29(self):
         self.game_state.rooms_state.cursor.container_here.is_locked = None
         self.game_state.rooms_state.cursor.container_here.is_closed = False
         result = self.command_processor.process('take three short swords from the wooden chest')
@@ -3117,7 +3202,7 @@ class Test_Take(unittest.TestCase):
         self.assertEqual(result[0].item_title, 'short sword')
         self.assertEqual(result[0].message, "The wooden chest doesn't have any short swords in it.")
 
-    def test_take_28(self):
+    def test_take_30(self):
         self.game_state.rooms_state.cursor.container_here.is_closed = True
         result = self.command_processor.process('take gold coin from wooden chest')
         self.assertIsInstance(result[0], advg.Various_Commands_Container_Is_Closed)
@@ -3169,9 +3254,9 @@ class Test_Unequip(unittest.TestCase):
         result = self.command_processor.process('unequip')
         self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
         self.assertEqual(result[0].command, 'UNEQUIP')
-        self.assertEqual(result[0].message, "UNEQUIP command: bad syntax. Should be 'UNEQUIP <armor name>', "
-                                            "'UNEQUIP <shield name>', 'UNEQUIP <wand name>', or 'UNEQUIP <weapon "
-                                            "name>'.")
+        self.assertEqual(result[0].message, "UNEQUIP command: bad syntax. Should be 'UNEQUIP\u00A0<armor\u00A0name>', "
+                                            "'UNEQUIP\u00A0<shield\u00A0name>', 'UNEQUIP\u00A0<wand\u00A0name>', or "
+                                            "'UNEQUIP\u00A0<weapon\u00A0name>'.")
 
     def test_unequip_2(self):
         result = self.command_processor.process('unequip mace')
@@ -3255,8 +3340,8 @@ class Test_Unlock(unittest.TestCase):
         result = self.command_processor.process('unlock')
         self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
         self.assertEqual(result[0].command, 'UNLOCK')
-        self.assertEqual(result[0].message, "UNLOCK command: bad syntax. Should be 'UNLOCK <door name>' or "
-                                            "'UNLOCK <chest name>'."),
+        self.assertEqual(result[0].message, "UNLOCK command: bad syntax. Should be 'UNLOCK\u00A0<door\u00A0name>' or "
+                                            "'UNLOCK\u00A0<chest\u00A0name>'."),
 
     def test_unlock_2(self):
         result = self.command_processor.process('unlock west door')

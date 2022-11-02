@@ -45,9 +45,10 @@ class Command_Bad_Syntax(Game_State_Message):
 
     @property
     def message(self):
-        syntax_options = tuple(f"'{self.command.upper()} {syntax_option}'"
+        command = self.command.upper().replace(' ', '\u00A0')
+        syntax_options = tuple(f"'{command}\u00A0{syntax_option}'"
                                 if syntax_option
-                                else f"'{self.command.upper()}'"
+                                else f"'{command}'"
                                 for syntax_option in self.proper_syntax_options)
         if len(syntax_options) == 1:
             proper_syntax_options_str = syntax_options[0]
