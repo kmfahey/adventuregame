@@ -8,8 +8,6 @@ from .context import adventuregame as advg
 __name__ = 'tests.test_utility'
 
 
-
-
 LOREM_IPSUM_UNWRAPPED = """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas malesuada mi vel \
 elementum facilisis. Nulla ac felis in diam dictum dignissim in eget neque. Sed ultrices, mauris sed pellentesque \
 rutrum, dui augue elementum ante, vel ultricies diam metus nec risus. Cras finibus, orci ac pellentesque finibus, \

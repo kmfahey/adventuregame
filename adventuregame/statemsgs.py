@@ -1,10 +1,15 @@
 #!/usr/bin/python2
 
+"""
+This module contains Game_State_Message and its numerous subclasses. adventuregame.processor.Command_Processor.process() processes a natural language command from the player and tail calls a command method of the adventuregame.processor.Command_Processor object. It always returns a tuple of Game_State_Message subclass objects; each one represents a single possible outcome of a command. A non-abstract Game_State_Message subclass has an __init__ method that assigns keyword arguments to object attributes and a message property which contains the logic for rendering the semantic value of the message object in natural language.
+"""
+
 import abc
 import math
 import operator
 
-from adventuregame.utility import usage_verb, Internal_Exception
+from adventuregame.utility import usage_verb, join_str_seq_w_commas_and_conjunction
+from adventuregame.exceptions import Internal_Exception
 
 __name__ = 'adventuregame.gamestatemessages'
 
@@ -19,25 +24,6 @@ class Game_State_Message(abc.ABC):
     @abc.abstractmethod
     def __init__(self, *argl, **argd):
         pass
-
-
-class Game_State_Message_Listing_Commands(Game_State_Message):
-    __slots__ = 'command', 'allowed_commands', 'game_has_begun'
-
-    def _join_commands_list(self, commands_set):
-        commands_tuple = tuple(command.upper().replace('_', ' ') for command in sorted(commands_set))
-        if len(commands_tuple) == 1:
-            commands_str = commands_tuple[0]
-        elif len(commands_tuple) == 2:
-            commands_str = f'{commands_tuple[0]} and {commands_tuple[0]}.'
-        else:
-            commands_str = ', '.join(commands_tuple[:-1]) + ', and ' + commands_tuple[-1]
-        return commands_str
-
-    def __init__(self, command, allowed_commands, game_has_begun):
-        self.command = command
-        self.allowed_commands = allowed_commands
-        self.game_has_begun = game_has_begun
 
 
 class Command_Bad_Syntax(Game_State_Message):
@@ -89,26 +75,38 @@ class Command_Class_Restricted(Game_State_Message):
         self.classes = classes
 
 
-class Command_Not_Allowed_Now(Game_State_Message_Listing_Commands):
+class Command_Not_Allowed_Now(Game_State_Message):
+    __slots__ = 'command', 'allowed_commands', 'game_has_begun'
 
     @property
     def message(self):
         game_state_str = 'before game start' if not self.game_has_begun else 'during the game'
         message_str = f"Command '{self.command}' not allowed {game_state_str}. "
-        commands_str = self._join_commands_list(self.allowed_commands)
+        commands_str = join_str_seq_w_commas_and_conjunction(tuple(command.upper().replace('_', ' ') for command in sorted(self.allowed_commands)), 'and')
         message_str += f'Commands allowed {game_state_str} are {commands_str}.'
         return message_str
 
+    def __init__(self, command, allowed_commands, game_has_begun):
+        self.command = command
+        self.allowed_commands = allowed_commands
+        self.game_has_begun = game_has_begun
 
-class Command_Not_Recognized(Game_State_Message_Listing_Commands):
+
+class Command_Not_Recognized(Game_State_Message):
+    __slots__ = 'command', 'allowed_commands', 'game_has_begun'
 
     @property
     def message(self):
         message_str = f"Command '{self.command}' not recognized. "
         game_state_str = 'before game start' if not self.game_has_begun else 'during the game'
-        commands_str = self._join_commands_list(self.allowed_commands)
+        commands_str = join_str_seq_w_commas_and_conjunction(tuple(command.upper().replace('_', ' ') for command in sorted(self.allowed_commands)), 'and')
         message_str += f'Commands allowed {game_state_str} are {commands_str}.'
         return message_str
+
+    def __init__(self, command, allowed_commands, game_has_begun):
+        self.command = command
+        self.allowed_commands = allowed_commands
+        self.game_has_begun = game_has_begun
 
 
 class Attack_Command_Attack_Hit(Game_State_Message):
@@ -181,9 +179,10 @@ class Attack_Command_You_Have_No_Weapon_or_Wand_Equipped(Game_State_Message):
 class Be_Attacked_by_Command_Attacked_and_Hit(Game_State_Message):
     __slots__ = 'creature_title', 'damage_done', 'hit_points_left'
 
-    message = property(fget=(lambda self: (f'The {self.creature_title} attacks! Their attack hits. They did '
-                                           f'{self.damage_done} damage! You have {self.hit_points_left} hit points '
-                                            'left.')))
+    @property
+    def message(self):
+        return (f'The {self.creature_title} attacks! Their attack hits. They did {self.damage_done} damage! You have '
+                f'{self.hit_points_left} hit points left.')
 
     def __init__(self, creature_title, damage_done, hit_points_left):
         self.creature_title = creature_title
@@ -194,7 +193,9 @@ class Be_Attacked_by_Command_Attacked_and_Hit(Game_State_Message):
 class Be_Attacked_by_Command_Attacked_and_Not_Hit(Game_State_Message):
     __slots__ = 'creature_title',
 
-    message = property(fget=(lambda self: (f'The {self.creature_title} attacks! Their attack misses.')))
+    @property
+    def message(self):
+        return f'The {self.creature_title} attacks! Their attack misses.'
 
     def __init__(self, creature_title):
         self.creature_title = creature_title
@@ -202,7 +203,9 @@ class Be_Attacked_by_Command_Attacked_and_Not_Hit(Game_State_Message):
 
 class Be_Attacked_by_Command_Character_Death(Game_State_Message):
 
-    message = property(fget=lambda self: 'You have died!')
+    @property
+    def message(self):
+        return 'You have died!'
 
     def __init__(self):
         pass
@@ -210,7 +213,9 @@ class Be_Attacked_by_Command_Character_Death(Game_State_Message):
 
 class Begin_Game_Command_Game_Begins(Game_State_Message):
 
-    message = property(fget=lambda self: 'The game has begun!')
+    @property
+    def message(self):
+        return 'The game has begun!'
 
     def __init__(self):
         pass
@@ -239,9 +244,10 @@ class Begin_Game_Command_Name_or_Class_Not_Set(Game_State_Message):
 class Cast_Spell_Command_Cast_Damaging_Spell(Game_State_Message):
     __slots__ = 'creature_title', 'damage_dealt'
 
-    message = property(fget=lambda self: f'A magic missile springs from your gesturing hand and unerringly strikes '
-                                         f'the {self.creature_title}. You have done {self.damage_dealt} points of '
-                                          'damage.')
+    @property
+    def message(self):
+        return (f'A magic missile springs from your gesturing hand and unerringly strikes the {self.creature_title}. '
+                f'You have done {self.damage_dealt} points of damage.')
 
     def __init__(self, creature_title, damage_dealt):
         self.creature_title = creature_title
@@ -251,7 +257,9 @@ class Cast_Spell_Command_Cast_Damaging_Spell(Game_State_Message):
 class Cast_Spell_Command_Cast_Healing_Spell(Game_State_Message):
     __slots__ = ()
 
-    message = property(fget=lambda self: 'You cast a healing spell on yourself.')
+    @property
+    def message(self):
+        return 'You cast a healing spell on yourself.'
 
     def __init__(self):
         pass
@@ -260,9 +268,11 @@ class Cast_Spell_Command_Cast_Healing_Spell(Game_State_Message):
 class Cast_Spell_Command_Insuffient_Mana(Game_State_Message):
     __slots__ = 'current_mana_points', 'mana_point_total', 'spell_mana_cost'
 
-    message = property(fget=lambda self:  "You don't have enough mana points to cast a spell. Casting a spell costs "
-                                         f'{self.spell_mana_cost} mana points. Your mana points are '
-                                         f'{self.current_mana_points}/{self.mana_point_total}.')
+    @property
+    def message(self):
+        return ("You don't have enough mana points to cast a spell. Casting a spell costs "
+                f'{self.spell_mana_cost} mana points. Your mana points are '
+                f'{self.current_mana_points}/{self.mana_point_total}.')
 
     def __init__(self, current_mana_points, mana_point_total, spell_mana_cost):
         self.current_mana_points = current_mana_points
@@ -273,7 +283,9 @@ class Cast_Spell_Command_Insuffient_Mana(Game_State_Message):
 class Cast_Spell_Command_No_Creature_to_Target(Game_State_Message):
     __slots__ = ()
 
-    message = property(fget=lambda self: "You can't cast magic missile here; there is no creature here to target.")
+    @property
+    def message(self):
+        return "You can't cast magic missile here; there is no creature here to target."
 
     def __init__(self):
         pass
@@ -282,7 +294,9 @@ class Cast_Spell_Command_No_Creature_to_Target(Game_State_Message):
 class Close_Command_Object_Has_Been_Closed(Game_State_Message):
     __slots__ = 'target',
 
-    message = property(fget=lambda self: f'You have closed the {self.target}.')
+    @property
+    def message(self):
+        return f'You have closed the {self.target}.'
 
     def __init__(self, target):
         self.target = target
@@ -291,7 +305,9 @@ class Close_Command_Object_Has_Been_Closed(Game_State_Message):
 class Close_Command_Object_Is_Already_Closed(Game_State_Message):
     __slots__ = 'target',
 
-    message = property(fget=lambda self: f'The {self.target} is already closed.')
+    @property
+    def message(self):
+        return f'The {self.target} is already closed.'
 
     def __init__(self, target):
         self.target = target
@@ -300,7 +316,9 @@ class Close_Command_Object_Is_Already_Closed(Game_State_Message):
 class Close_Command_Object_to_Close_Not_Here(Game_State_Message):
     __slots__ = 'target_title',
 
-    message = property(fget=lambda self: f'You found no {self.target_title} here to close.')
+    @property
+    def message(self):
+        return f'You found no {self.target_title} here to close.'
 
     def __init__(self, target_title):
         self.target_title = target_title
@@ -330,7 +348,9 @@ class Drink_Command_Drank_Mana_Potion(Game_State_Message):
 class Drink_Command_Drank_Mana_Potion_when_Not_A_Spellcaster(Game_State_Message):
     __slots__ = ()
 
-    message = property(fget=lambda self: 'You feel a little strange, but otherwise nothing happens.')
+    @property
+    def message(self):
+        return 'You feel a little strange, but otherwise nothing happens.'
 
     def __init__(self):
         pass
@@ -339,7 +359,9 @@ class Drink_Command_Drank_Mana_Potion_when_Not_A_Spellcaster(Game_State_Message)
 class Drink_Command_Item_Not_Drinkable(Game_State_Message):
     __slots__ = 'item_title',
 
-    message = property(fget=lambda self: f'A {self.item_title} is not drinkable.')
+    @property
+    def message(self):
+        return f'A {self.item_title} is not drinkable.'
 
     def __init__(self, item_title):
         self.item_title = item_title
@@ -348,7 +370,9 @@ class Drink_Command_Item_Not_Drinkable(Game_State_Message):
 class Drink_Command_Item_Not_in_Inventory(Game_State_Message):
     __slots__ = 'item_title',
 
-    message = property(fget=lambda self: f"You don't have a {self.item_title} in your inventory.")
+    @property
+    def message(self):
+        return f"You don't have a {self.item_title} in your inventory."
 
     def __init__(self, item_title):
         self.item_title = item_title
@@ -357,8 +381,9 @@ class Drink_Command_Item_Not_in_Inventory(Game_State_Message):
 class Drink_Command_Tried_to_Drink_More_than_Possessed(Game_State_Message):
     __slots__ = 'item_title', 'attempted_qty', 'possessed_qty'
 
-    message = property(fget=lambda self: f"You can't drink {self.attempted_qty} {self.item_title}s. You only have "
-                                         f'{self.possessed_qty} of them.')
+    @property
+    def message(self):
+        return f"You can't drink {self.attempted_qty} {self.item_title}s. You only have {self.possessed_qty} of them."
 
     def __init__(self, item_title, attempted_qty, possessed_qty):
         self.item_title = item_title
@@ -398,7 +423,9 @@ class Drop_Command_Dropped_Item(Game_State_Message):
 
 class Drop_Command_Quantity_Unclear(Game_State_Message):
 
-    message = property(fget=lambda self: 'Amount to drop unclear. How many do you mean?')
+    @property
+    def message(self):
+        return 'Amount to drop unclear. How many do you mean?'
 
     def __init__(self):
         pass
@@ -455,7 +482,9 @@ class Equip_Command_Class_Cant_Use_Item(Game_State_Message):
 class Equip_Command_No_Such_Item_in_Inventory(Game_State_Message):
     __slots__ = 'item_title',
 
-    message = property(fget=lambda self: f"You don't have a {self.item_title} in your inventory.")
+    @property
+    def message(self):
+        return f"You don't have a {self.item_title} in your inventory."
 
     def __init__(self, item_title):
         self.item_title = item_title
@@ -468,7 +497,7 @@ class Help_Command_Command_Not_Recognized(Game_State_Message):
     def message(self):
         return_lines = [f"The command '{self.command_attempted.upper()}' is not recognized. "
                          'The full list of commands is:', '']
-        return_lines.extend((', '.join(self.commands_available[:-1]) + ', and ' + self.commands_available[-1], ''))
+        return_lines.extend((join_str_seq_w_commas_and_conjunction(self.commands_available, 'and'), ''))
         return_lines.extend(('Which one do you want help with?', ''))
         return "\n".join(return_lines)
 
@@ -483,7 +512,7 @@ class Help_Command_Display_Commands(Game_State_Message):
     @property
     def message(self):
         return_lines = [f'The full list of commands is:', '']
-        return_lines.extend((', '.join(self.commands_available[:-1]) + ', and ' + self.commands_available[-1], ''))
+        return_lines.extend((join_str_seq_w_commas_and_conjunction(self.commands_available, 'and'), ''))
         return_lines.extend(('Which one do you want help with?', ''))
         return "\n".join(return_lines)
 
@@ -499,12 +528,7 @@ class Help_Command_Display_Help_for_Command(Game_State_Message):
         syntax_str_list = [f"'{self.command}\u00A0{syntax_entry}'" if syntax_entry else f"'{self.command}'"
                                for syntax_entry in self.syntax_tuple]
         return_lines = [f'Help for the {self.command} command:', '']
-        if len(syntax_str_list) == 1:
-            return_lines.extend((f'Usage: ' + syntax_str_list[0], ''))
-        elif len(syntax_str_list) == 2:
-            return_lines.extend((f'Usage: ' + ' or '.join(syntax_str_list), ''))
-        else:
-            return_lines.extend((f'Usage: ' + ', '.join(syntax_str_list[:-1]) + ', or ' + syntax_str_list[-1], ''))
+        return_lines.extend((f'Usage: ' + join_str_seq_w_commas_and_conjunction(syntax_str_list, 'or'), ''))
         return_lines.extend((self.instructions, ''))
         return "\n".join(return_lines)
 
@@ -555,14 +579,14 @@ class Look_At_Command_Found_Container_Here(Game_State_Message):
             elif self.is_locked is False and self.is_closed is True:
                 return f'{self.container_description} It is closed but unlocked.'
             elif self.is_locked is False and self.is_closed is False:
-                return f'{self.container_description} It is unlocked and open. {self.contents}'
+                return f'{self.container_description} It is unlocked and open. {self._contents}'
             # `self.is_locked is True and self.is_closed is False` is not a possible outcome of these tests because
             # it's an invalid combination, and is checked for in __init__. If that is the combination of booleans, an
             # exception is raised.
             elif self.is_locked is None and self.is_closed is True:
                 return f'{self.container_description} It is closed.'
             elif self.is_locked is None and self.is_closed is False:
-                return f'{self.container_description} It is open. {self.contents}'
+                return f'{self.container_description} It is open. {self._contents}'
             elif self.is_locked is True and self.is_closed is None:
                 return f'{self.container_description} It is locked.'
             elif self.is_locked is False and self.is_closed is None:
@@ -570,10 +594,10 @@ class Look_At_Command_Found_Container_Here(Game_State_Message):
             else:  # None and None
                 return self.container_description
         elif self.container_type == 'corpse':
-            return f'{self.container_description} {self.contents}'
+            return f'{self.container_description} {self._contents}'
 
     @property
-    def contents(self):
+    def _contents(self):
         content_qty_obj_pairs = sorted(self.container.values(), key=lambda arg: arg[1].title)
         contents_str_tuple = tuple('a ' + item.title if qty == 1 else str(qty) + ' ' + item.title + 's'
                                        for qty, item in content_qty_obj_pairs)
@@ -610,7 +634,9 @@ class Look_At_Command_Found_Container_Here(Game_State_Message):
 class Look_At_Command_Found_Creature_Here(Game_State_Message):
     __slots__ = 'creature_description',
 
-    message = property(fget=lambda self: self.creature_description)
+    @property
+    def message(self):
+        return self.creature_description
 
     def __init__(self, creature_description):
         self.creature_description = creature_description
@@ -675,7 +701,9 @@ class Look_At_Command_Found_Nothing(Game_State_Message):
 class Leave_Command_Left_Room(Game_State_Message):
     __slots__ = 'compass_dir', 'portal_type'
 
-    message = property(fget=lambda self: f'You leave the room via the {self.compass_dir} {self.portal_type}.')
+    @property
+    def message(self):
+        return f'You leave the room via the {self.compass_dir} {self.portal_type}.'
 
     def __init__(self, compass_dir, portal_type):
         self.compass_dir = compass_dir
@@ -685,7 +713,9 @@ class Leave_Command_Left_Room(Game_State_Message):
 class Leave_Command_Won_The_Game(Game_State_Message):
     __slots__ = ()
 
-    message = property(fget=lambda self: 'You found the exit to the dungeon. You have won the game!')
+    @property
+    def message(self):
+        return 'You found the exit to the dungeon. You have won the game!'
 
     def __init__(self):
         pass
@@ -694,7 +724,9 @@ class Leave_Command_Won_The_Game(Game_State_Message):
 class Lock_Command_Dont_Possess_Correct_Key(Game_State_Message):
     __slots__ = 'object_to_lock_title', 'key_needed',
 
-    message = property(fget=lambda self: f'To lock the {self.object_to_lock_title} you need a {self.key_needed}.')
+    @property
+    def message(self):
+        return f'To lock the {self.object_to_lock_title} you need a {self.key_needed}.'
 
     def __init__(self, object_to_lock_title, key_needed):
         self.object_to_lock_title = object_to_lock_title
@@ -704,7 +736,9 @@ class Lock_Command_Dont_Possess_Correct_Key(Game_State_Message):
 class Lock_Command_Object_Has_Been_Locked(Game_State_Message):
     __slots__ = 'target',
 
-    message = property(fget=lambda self: f'You have locked the {self.target}.')
+    @property
+    def message(self):
+        return f'You have locked the {self.target}.'
 
     def __init__(self, target):
         self.target = target
@@ -713,7 +747,9 @@ class Lock_Command_Object_Has_Been_Locked(Game_State_Message):
 class Lock_Command_Object_Is_Already_Locked(Game_State_Message):
     __slots__ = 'target',
 
-    message = property(fget=lambda self: f'The {self.target} is already locked.')
+    @property
+    def message(self):
+        return f'The {self.target} is already locked.'
 
     def __init__(self, target):
         self.target = target
@@ -722,7 +758,9 @@ class Lock_Command_Object_Is_Already_Locked(Game_State_Message):
 class Lock_Command_Object_to_Lock_Not_Here(Game_State_Message):
     __slots__ = 'target_title',
 
-    message = property(fget=lambda self: f'You found no {self.target_title} here to lock.')
+    @property
+    def message(self):
+        return f'You found no {self.target_title} here to lock.'
 
     def __init__(self, target_title):
         self.target_title = target_title
@@ -731,7 +769,9 @@ class Lock_Command_Object_to_Lock_Not_Here(Game_State_Message):
 class Open_Command_Object_Has_Been_Opened(Game_State_Message):
     __slots__ = 'target',
 
-    message = property(fget=lambda self: f'You have opened the {self.target}.')
+    @property
+    def message(self):
+        return f'You have opened the {self.target}.'
 
     def __init__(self, target):
         self.target = target
@@ -740,7 +780,9 @@ class Open_Command_Object_Has_Been_Opened(Game_State_Message):
 class Open_Command_Object_Is_Already_Open(Game_State_Message):
     __slots__ = 'target',
 
-    message = property(fget=lambda self: f'The {self.target} is already open.')
+    @property
+    def message(self):
+        return f'The {self.target} is already open.'
 
     def __init__(self, target):
         self.target = target
@@ -749,7 +791,9 @@ class Open_Command_Object_Is_Already_Open(Game_State_Message):
 class Open_Command_Object_Is_Locked(Game_State_Message):
     __slots__ = 'target',
 
-    message = property(fget=lambda self: f'The {self.target} is locked.')
+    @property
+    def message(self):
+        return f'The {self.target} is locked.'
 
     def __init__(self, target):
         self.target = target
@@ -758,7 +802,9 @@ class Open_Command_Object_Is_Locked(Game_State_Message):
 class Open_Command_Object_to_Open_Not_Here(Game_State_Message):
     __slots__ = 'target_title',
 
-    message = property(fget=lambda self: f'You found no {self.target_title} here to open.')
+    @property
+    def message(self):
+        return f'You found no {self.target_title} here to open.'
 
     def __init__(self, target_title):
         self.target_title = target_title
@@ -767,7 +813,9 @@ class Open_Command_Object_to_Open_Not_Here(Game_State_Message):
 class Pick_Lock_Command_Target_Cant_Be_Unlocked_or_Not_Found(Game_State_Message):
     __slots__ = 'target_title',
 
-    message = property(fget=lambda self: f"The {self.target_title} is not found or can't be unlocked.")
+    @property
+    def message(self):
+        return f"The {self.target_title} is not found or can't be unlocked."
 
     def __init__(self, target_title):
         self.target_title = target_title
@@ -776,7 +824,9 @@ class Pick_Lock_Command_Target_Cant_Be_Unlocked_or_Not_Found(Game_State_Message)
 class Pick_Lock_Command_Target_Has_Been_Unlocked(Game_State_Message):
     __slots__ = 'target_title',
 
-    message = property(fget=lambda self: f'You have unlocked the {self.target_title}.')
+    @property
+    def message(self):
+        return f'You have unlocked the {self.target_title}.'
 
     def __init__(self, target_title):
         self.target_title = target_title
@@ -785,7 +835,9 @@ class Pick_Lock_Command_Target_Has_Been_Unlocked(Game_State_Message):
 class Pick_Lock_Command_Target_Not_Found(Game_State_Message):
     __slots__ = 'target_title',
 
-    message = property(fget=lambda self: f'This room has no {self.target_title}.')
+    @property
+    def message(self):
+        return f'This room has no {self.target_title}.'
 
     def __init__(self, target_title):
         self.target_title = target_title
@@ -794,7 +846,9 @@ class Pick_Lock_Command_Target_Not_Found(Game_State_Message):
 class Pick_Lock_Command_Target_Not_Locked(Game_State_Message):
     __slots__ = 'target_title',
 
-    message = property(fget=lambda self: f'The {self.target_title} is not locked.')
+    @property
+    def message(self):
+        return f'The {self.target_title} is not locked.'
 
     def __init__(self, target_title):
         self.target_title = target_title
@@ -809,12 +863,7 @@ class Pick_Up_Command_Item_Not_Found(Game_State_Message):
         if self.items_here:
             items_here_str_tuple = tuple(f'a {item_title}' if item_count == 1 else f'{item_count} {item_title}s'
                                          for item_count, item_title in self.items_here)
-            if len(items_here_str_tuple) == 1:
-                items_here_str = items_here_str_tuple[0]
-            elif len(items_here_str_tuple) == 2:
-                items_here_str = ' and '.join(items_here_str_tuple)
-            else:
-                items_here_str = ', '.join(items_here_str_tuple[:-1]) + ', and ' + items_here_str_tuple[-1]
+            items_here_str = join_str_seq_w_commas_and_conjunction(items_here_str_tuple, 'and')
             return f'You see no {self.item_title}{item_pluralizer} here. However, there is {items_here_str} here.'
         else:
             return f'You see no {self.item_title}{item_pluralizer} here.'
@@ -846,17 +895,20 @@ class Pick_Up_Command_Item_Picked_Up(Game_State_Message):
 
 class Pick_Up_Command_Quantity_Unclear(Game_State_Message):
 
-    message = property(fget=lambda self: 'Amount to pick up unclear. How many do you mean?')
+    @property
+    def message(self):
+        return 'Amount to pick up unclear. How many do you mean?'
 
     def __init__(self):
         pass
 
 
-class Pick_Up_Command_Cant_Pick_Up_Creature_Chest_or_Door(Game_State_Message):
+class Pick_Up_Command_Cant_Pick_Up_Chest_Corpse_Creature_or_Door(Game_State_Message):
     __slots__ = 'element_type', 'element_title'
 
-    message = property(fget=lambda self: f"You can't pick up the {self.element_title}: can't pick up "
-                                         f'{self.element_type}s!')
+    @property
+    def message(self):
+        return f"You can't pick up the {self.element_title}: can't pick up {self.element_type}s!"
 
     def __init__(self, element_type, element_title):
         self.element_type = element_type
@@ -866,8 +918,9 @@ class Pick_Up_Command_Cant_Pick_Up_Creature_Chest_or_Door(Game_State_Message):
 class Pick_Up_Command_Trying_to_Pick_Up_More_than_Is_Present(Game_State_Message):
     __slots__ = 'item_title', 'amount_attempted', 'amount_present'
 
-    message = property(fget=lambda self: f"You can't pick up {self.amount_attempted} {self.item_title}s. Only "
-                                         f'{self.amount_present} is here.')
+    @property
+    def message(self):
+        return f"You can't pick up {self.amount_attempted} {self.item_title}s. Only {self.amount_present} is here."
 
     def __init__(self, item_title, amount_attempted, amount_present):
         self.item_title = item_title
@@ -921,7 +974,9 @@ class Put_Command_Item_Not_in_Inventory(Game_State_Message):
 
 class Put_Command_Quantity_Unclear(Game_State_Message):
 
-    message = property(fget=lambda self: 'Amount to put unclear. How many do you mean?')
+    @property
+    def message(self):
+        return 'Amount to put unclear. How many do you mean?'
 
     def __init__(self):
         pass
@@ -943,7 +998,9 @@ class Put_Command_Trying_to_Put_More_than_You_Have(Game_State_Message):
 class Quit_Command_Have_Quit_The_Game(Game_State_Message):
     __slots__ = ()
 
-    message = property(fget=lambda self: 'You have quit the game.')
+    @property
+    def message(self):
+        return 'You have quit the game.'
 
     def __init__(self):
         pass
@@ -972,7 +1029,9 @@ class Reroll_Command_Name_or_Class_Not_Set(Game_State_Message):
 class Set_Class_Command_Class_Set(Game_State_Message):
     __slots__ = 'class_str',
 
-    message = property(fget=lambda self: f'Your class, {self.class_str}, has been set.')
+    @property
+    def message(self):
+        return f'Your class, {self.class_str}, has been set.'
 
     def __init__(self, class_str):
         self.class_str = class_str
@@ -981,8 +1040,9 @@ class Set_Class_Command_Class_Set(Game_State_Message):
 class Set_Class_Command_Invalid_Class(Game_State_Message):
     __slots__ = 'bad_class',
 
-    message = property(fget=lambda self: f"'{self.bad_class}' is not a valid class choice. Please choose Warrior, "
-                                          'Thief, Mage, or Priest.')
+    @property
+    def message(self):
+        return f"'{self.bad_class}' is not a valid class choice. Please choose Warrior, Thief, Mage, or Priest."
 
     def __init__(self, bad_class):
         self.bad_class = bad_class
@@ -991,8 +1051,9 @@ class Set_Class_Command_Invalid_Class(Game_State_Message):
 class Set_Name_Command_Invalid_Part(Game_State_Message):
     __slots__ = 'name_part',
 
-    message = property(fget=lambda self: f'The name {self.name_part} is invalid; must be a capital letter followed by'
-                                          ' lowercase letters.')
+    @property
+    def message(self):
+        return f'The name {self.name_part} is invalid; must be a capital letter followed by lowercase letters.'
 
     def __init__(self, name_part):
         self.name_part = name_part
@@ -1001,7 +1062,9 @@ class Set_Name_Command_Invalid_Part(Game_State_Message):
 class Set_Name_Command_Name_Set(Game_State_Message):
     __slots__ = 'name',
 
-    message = property(fget=lambda self: f"Your name, '{self.name}', has been set.")
+    @property
+    def message(self):
+        return f"Your name, '{self.name}', has been set."
 
     def __init__(self, name):
         self.name = name
@@ -1107,7 +1170,9 @@ class Take_Command_Item_or_Items_Taken(Game_State_Message):
 
 class Take_Command_Quantity_Unclear(Game_State_Message):
 
-    message = property(fget=lambda self: 'Amount to take unclear. How many do you want?')
+    @property
+    def message(self):
+        return 'Amount to take unclear. How many do you want?'
 
     def __init__(self):
         pass
@@ -1116,8 +1181,10 @@ class Take_Command_Quantity_Unclear(Game_State_Message):
 class Take_Command_Trying_to_Take_More_than_Is_Present(Game_State_Message):
     __slots__ = 'container_title', 'container_type', 'item_title', 'amount_attempted', 'amount_present'
 
-    message = property(fget=lambda self: f"You can't take {self.amount_attempted} {self.item_title}s from the "
-                                         f'{self.container_title}. Only {self.amount_present} is there.')
+    @property
+    def message(self):
+        return (f"You can't take {self.amount_attempted} {self.item_title}s from the {self.container_title}. Only "
+                f'{self.amount_present} is there.')
 
     def __init__(self, container_title, container_type, item_title, amount_attempted, amount_present):
         self.container_title = container_title
@@ -1151,7 +1218,9 @@ class Unequip_Command_Item_Not_Equipped(Game_State_Message):
 class Unlock_Command_Dont_Possess_Correct_Key(Game_State_Message):
     __slots__ = 'object_to_unlock_title', 'key_needed',
 
-    message = property(fget=lambda self: f'To unlock the {self.object_to_unlock_title} you need a {self.key_needed}.')
+    @property
+    def message(self):
+        return f'To unlock the {self.object_to_unlock_title} you need a {self.key_needed}.'
 
     def __init__(self, object_to_unlock_title, key_needed):
         self.object_to_unlock_title = object_to_unlock_title
@@ -1161,7 +1230,9 @@ class Unlock_Command_Dont_Possess_Correct_Key(Game_State_Message):
 class Unlock_Command_Object_Has_Been_Unlocked(Game_State_Message):
     __slots__ = 'target',
 
-    message = property(fget=lambda self: f'You have unlocked the {self.target}.')
+    @property
+    def message(self):
+        return f'You have unlocked the {self.target}.'
 
     def __init__(self, target):
         self.target = target
@@ -1170,7 +1241,9 @@ class Unlock_Command_Object_Has_Been_Unlocked(Game_State_Message):
 class Unlock_Command_Object_Is_Already_Unlocked(Game_State_Message):
     __slots__ = 'target',
 
-    message = property(fget=lambda self: f'The {self.target} is already unlocked.')
+    @property
+    def message(self):
+        return f'The {self.target} is already unlocked.'
 
     def __init__(self, target):
         self.target = target
@@ -1179,7 +1252,9 @@ class Unlock_Command_Object_Is_Already_Unlocked(Game_State_Message):
 class Unlock_Command_Object_to_Unlock_Not_Here(Game_State_Message):
     __slots__ = 'target_title',
 
-    message = property(fget=lambda self: f'You found no {self.target_title} here to unlock.')
+    @property
+    def message(self):
+        return f'You found no {self.target_title} here to unlock.'
 
     def __init__(self, target_title):
         self.target_title = target_title
@@ -1188,7 +1263,9 @@ class Unlock_Command_Object_to_Unlock_Not_Here(Game_State_Message):
 class Various_Commands_Container_Is_Closed(Game_State_Message):
     __slots__ = 'target',
 
-    message = property(fget=lambda self: f'The {self.target} is closed.')
+    @property
+    def message(self):
+        return f'The {self.target} is closed.'
 
     def __init__(self, target):
         self.target = target
@@ -1223,10 +1300,7 @@ class Various_Commands_Ambiguous_Door_Specifier(Game_State_Message):
                 door_str_list.append(f'the {compass_dir} {door_type}')
             else:
                 door_str_list.append(f'the {compass_dir} {self.door_or_doorway}')
-        if len(door_str_list) == 2:
-            message_str += ' or '.join(door_str_list) + '?'
-        else:
-            message_str += ', '.join(door_str_list[-1]) + ' or ' + door_str_list[-1] + '?'
+        message_str += join_str_seq_w_commas_and_conjunction(door_str_list, 'or') + '?'
         return message_str
 
     def __init__(self, compass_dirs, door_or_doorway, door_type):
@@ -1269,12 +1343,7 @@ class Various_Commands_Entered_Room(Game_State_Message):
                 quantifier = 'a' if item_qty == 1 else str(item_qty)
                 pluralizer = '' if item_qty == 1 else 's'
                 room_items.append(quantifier + ' ' + item.title + pluralizer)
-            if len(room_items) == 1:
-                items_here_str = room_items[0]
-            elif len(room_items) == 2:
-                items_here_str = ' and '.join(room_items)
-            else:
-                items_here_str = ', '.join(room_items[:-1]) + ' and ' + room_items[-1]
+            items_here_str = join_str_seq_w_commas_and_conjunction(room_items, 'and')
             message_list.append(f'You see {items_here_str} on the floor.')
         door_list = list()
         for compass_dir in ('north', 'east', 'south', 'west'):
@@ -1284,12 +1353,7 @@ class Various_Commands_Entered_Room(Game_State_Message):
                 continue
             door_ersatz_title = door.door_type.replace('_', ' ')
             door_list.append(f"a {door_ersatz_title} to the {compass_dir}")
-        if len(door_list) == 1:
-            door_str = f'There is {door_list[0]}.'
-        elif len(door_list) == 2:
-            door_str = f'There is {door_list[0]} and {door_list[1]}.'
-        else:
-            door_str = ', '.join(door_list[:-1]) + ', and ' + door_list[-1]
+        door_str = 'There is ' + join_str_seq_w_commas_and_conjunction(door_list, 'and') + '.'
         message_list.append(door_str)
         return ' '.join(message_list)
 

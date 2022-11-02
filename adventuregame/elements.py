@@ -6,7 +6,8 @@ import math
 import random
 import re
 
-from adventuregame.utility import isfloat, Bad_Command_Exception, Internal_Exception
+from adventuregame.utility import isfloat
+from adventuregame.exceptions import Bad_Command_Exception, Internal_Exception
 
 __name__ = 'adventuregame.elements'
 

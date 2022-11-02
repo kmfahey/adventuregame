@@ -3,14 +3,18 @@
 import operator
 import unittest
 import math
+import iniconfig
 
 from .context import adventuregame as advg
 
-from .testing_data import Chests_Ini_Config_Text, Creatures_Ini_Config_Text, Doors_Ini_Config_Text
-from .testing_data import Items_Ini_Config_Text, Rooms_Ini_Config_Text
-
 
 __name__ = 'tests.test_commands'
+
+containers_ini_config = iniconfig.IniConfig('./testing_data/containers.ini')
+items_ini_config = iniconfig.IniConfig('./testing_data/items.ini')
+doors_ini_config = iniconfig.IniConfig('./testing_data/doors.ini')
+creatures_ini_config = iniconfig.IniConfig('./testing_data/creatures.ini')
+rooms_ini_config = iniconfig.IniConfig('./testing_data/rooms.ini')
 
 
 class Test_Attack_1(unittest.TestCase):
@@ -18,19 +22,14 @@ class Test_Attack_1(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -142,19 +141,14 @@ class Test_Attack_2(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -204,19 +198,14 @@ class Test_Begin_Game(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -367,19 +356,14 @@ class Test_Cast_Spell(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -451,19 +435,14 @@ class Test_Close(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -534,19 +513,14 @@ class Test_Processor_Process(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -605,19 +579,14 @@ class Test_Drink(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -765,19 +734,14 @@ class Test_Drop(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -1027,19 +991,14 @@ class Test_Equip_1(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -1123,19 +1082,14 @@ class Test_Equip_2(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -1217,19 +1171,14 @@ class Test_Help(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -1332,23 +1281,18 @@ class Test_Inventory(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_ini_config.sections['Wooden_Chest_1']['contents'] = ('[20xGold_Coin,1xWarhammer,'
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        containers_ini_config.sections['Wooden_Chest_1']['contents'] = ('[20xGold_Coin,1xWarhammer,'
                                                                                  '1xMana_Potion,1xHealth_Potion,'
                                                                                  '1xSteel_Shield,1xScale_Mail,'
                                                                                  '1xMagic_Wand]')
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -1393,21 +1337,16 @@ class Test_Leave(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_ini_config.sections['Wooden_Chest_1']['contents'] = \
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        containers_ini_config.sections['Wooden_Chest_1']['contents'] = \
             '[20xGold_Coin,1xWarhammer,1xMana_Potion,1xHealth_Potion,1xSteel_Shield,1xScale_Mail,1xMagic_Wand]'
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -1472,19 +1411,14 @@ class Test_Look_At_1(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -1645,19 +1579,14 @@ class Test_Lock(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -1749,21 +1678,16 @@ class Test_Look_At_2(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_ini_config.sections['Wooden_Chest_1']['contents'] = \
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        containers_ini_config.sections['Wooden_Chest_1']['contents'] = \
             '[20xGold_Coin,1xWarhammer,1xMana_Potion,1xHealth_Potion,1xSteel_Shield,1xScale_Mail,1xMagic_Wand]'
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -1935,19 +1859,14 @@ class Test_Open(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -2045,19 +1964,14 @@ class Test_Pick_Lock(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -2173,19 +2087,14 @@ class Test_Pick_Up(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -2285,21 +2194,21 @@ class Test_Pick_Up(unittest.TestCase):
 
     def test_pick_up_11(self):
         result = self.command_processor.process('pick up wooden chest')  # check
-        self.assertIsInstance(result[0], advg.Pick_Up_Command_Cant_Pick_Up_Creature_Chest_or_Door)
+        self.assertIsInstance(result[0], advg.Pick_Up_Command_Cant_Pick_Up_Chest_Corpse_Creature_or_Door)
         self.assertEqual(result[0].element_type, 'chest')
         self.assertEqual(result[0].element_title, 'wooden chest')
         self.assertEqual(result[0].message, "You can't pick up the wooden chest: can't pick up chests!")
 
     def test_pick_up_12(self):
         result = self.command_processor.process('pick up kobold')  # check
-        self.assertIsInstance(result[0], advg.Pick_Up_Command_Cant_Pick_Up_Creature_Chest_or_Door)
+        self.assertIsInstance(result[0], advg.Pick_Up_Command_Cant_Pick_Up_Chest_Corpse_Creature_or_Door)
         self.assertEqual(result[0].element_type, 'creature')
         self.assertEqual(result[0].element_title, 'kobold')
         self.assertEqual(result[0].message, "You can't pick up the kobold: can't pick up creatures!")
 
     def test_pick_up_13(self):
         result = self.command_processor.process('pick up wooden door')  # check
-        self.assertIsInstance(result[0], advg.Pick_Up_Command_Cant_Pick_Up_Creature_Chest_or_Door)
+        self.assertIsInstance(result[0], advg.Pick_Up_Command_Cant_Pick_Up_Chest_Corpse_Creature_or_Door)
         self.assertEqual(result[0].element_type, 'door')
         self.assertEqual(result[0].element_title, 'wooden door')
         self.assertEqual(result[0].message, "You can't pick up the wooden door: can't pick up doors!")
@@ -2308,7 +2217,7 @@ class Test_Pick_Up(unittest.TestCase):
         self.command_processor.game_state.rooms_state.cursor.container_here = \
             self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         result = self.command_processor.process('pick up kobold corpse')  # check
-        self.assertIsInstance(result[0], advg.Pick_Up_Command_Cant_Pick_Up_Creature_Chest_or_Door)
+        self.assertIsInstance(result[0], advg.Pick_Up_Command_Cant_Pick_Up_Chest_Corpse_Creature_or_Door)
         self.assertEqual(result[0].element_type, 'corpse')
         self.assertEqual(result[0].element_title, 'kobold corpse')
         self.assertEqual(result[0].message, "You can't pick up the kobold corpse: can't pick up corpses!")
@@ -2319,19 +2228,14 @@ class Test_Put(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -2448,19 +2352,14 @@ class Test_Quit(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -2483,19 +2382,14 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Games(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -2697,19 +2591,14 @@ class Test_Status(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -2813,19 +2702,14 @@ class Test_Take(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -3215,19 +3099,14 @@ class Test_Unequip(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
@@ -3309,19 +3188,14 @@ class Test_Unlock(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = advg.Items_State(**self.items_ini_config.sections)
-        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
         self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
-                                           self.items_state, **self.rooms_ini_config.sections)
+                                           self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)

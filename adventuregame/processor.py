@@ -767,7 +767,7 @@ class Command_Processor(object):
         elif self.game_state.rooms_state.cursor.container_here is not None and self.game_state.rooms_state.cursor.container_here.title == element_title:
             unpickupable_item_type = self.game_state.rooms_state.cursor.container_here.container_type
         if unpickupable_item_type:
-            return stmsg.Pick_Up_Command_Cant_Pick_Up_Creature_Chest_or_Door(unpickupable_item_type, element_title),
+            return stmsg.Pick_Up_Command_Cant_Pick_Up_Chest_Corpse_Creature_or_Door(unpickupable_item_type, element_title),
         item_title = element_title
         if self.game_state.rooms_state.cursor.items_here is not None:
             items_here = tuple(self.game_state.rooms_state.cursor.items_here.values())

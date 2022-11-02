@@ -2,15 +2,16 @@
 
 import textwrap
 import functools
+import iniconfig
 
 import adventuregame as advg
 
 
-items_ini_config = advg.iniconfig_obj_from_ini_text(advg.items_ini_config_text)
-doors_ini_config = advg.iniconfig_obj_from_ini_text(advg.doors_ini_config_text)
-containers_ini_config = advg.iniconfig_obj_from_ini_text(advg.containers_ini_config_text)
-creatures_ini_config = advg.iniconfig_obj_from_ini_text(advg.creatures_ini_config_text)
-rooms_ini_config = advg.iniconfig_obj_from_ini_text(advg.rooms_ini_config_text)
+items_ini_config = iniconfig.IniConfig('./data/items.ini')
+doors_ini_config = iniconfig.IniConfig('./data/doors.ini')
+containers_ini_config = iniconfig.IniConfig('./data/containers.ini')
+creatures_ini_config = iniconfig.IniConfig('./data/creatures.ini')
+rooms_ini_config = iniconfig.IniConfig('./data/rooms.ini')
 
 items_state = advg.Items_State(**items_ini_config.sections)
 doors_state = advg.Doors_State(**doors_ini_config.sections)
@@ -24,11 +25,11 @@ command_processor = advg.Command_Processor(game_state)
 
 print("""Welcome to...
               _                 _                   _____                      
-     /\\      | |               | |                 / ____|                     
-    /  \\   __| |_   _____ _ __ | |_ _   _ _ __ ___| |  __  __ _ _ __ ___   ___ 
-   / /\\ \\ / _` \\ \\ / / _ \\ '_ \\| __| | | | '__/ _ \\ | |_ |/ _` | '_ ` _ \\ / _ \\
-  / ____ \\ (_| |\\ V /  __/ | | | |_| |_| | | |  __/ |__| | (_| | | | | | |  __/
- /_/    \\_\\__,_| \\_/ \\___|_| |_|\\__|\\__,_|_|  \\___|\\_____|\\__,_|_| |_| |_|\\___|
+    /\\      | |               | |                 / ____|                     
+   /  \\   __| |_   _____ _ __ | |_ _   _ _ __ ___| |  __  __ _ _ __ ___   ___ 
+  / /\\ \\ / _` \\ \\ / / _ \\ '_ \\| __| | | | '__/ _ \\ | |_ |/ _` | '_ ` _ \\ / _ \\
+ / ____ \\ (_| |\\ V /  __/ | | | |_| |_| | | |  __/ |__| | (_| | | | | | |  __/
+/_/    \\_\\__,_| \\_/ \\___|_| |_|\\__|\\__,_|_|  \\___|\\_____|\\__,_|_| |_| |_|\\___|
 
 This is a text adventure that was inspired by ADVENT but extended to implement
 basic Dungeons & Dragons rules. Pick a class, navigate the dungeon, kill people
