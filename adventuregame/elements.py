@@ -332,13 +332,21 @@ class Character(object):  # has been tested
         else:
             return None
 
-    hit_point_total = property(fget=(lambda self: self._hit_point_maximum))
+    @property
+    def hit_point_total(self):
+        return self._hit_point_maximum
 
-    hit_points = property(fget=(lambda self: self._current_hit_points))
+    @property
+    def hit_points(self):
+        return self._current_hit_points
 
-    mana_points = property(fget=(lambda self: self._current_mana_points))
+    @property
+    def mana_points(self):
+        return self._current_mana_points
 
-    mana_point_total = property(fget=(lambda self: self._mana_point_maximum))
+    @property
+    def mana_point_total(self):
+        return self._mana_point_maximum
 
     def take_damage(self, damage_value):
         if self._current_hit_points - damage_value < 0:
@@ -374,9 +382,13 @@ class Character(object):  # has been tested
             self._current_mana_points += regaining_value
             return regaining_value
 
-    is_alive = property(fget=(lambda self: self._current_hit_points > 0))
+    @property
+    def is_alive(self):
+        return self._current_hit_points > 0
 
-    is_dead = property(fget=(lambda self: self._current_hit_points == 0))
+    @property
+    def is_dead(self):
+        return self._current_hit_points == 0
 
     # These two properties are sneaky. When called, they return closures. The result is that the code
     # `character.attack_roll(12)` or `character.damage_roll()` *appears* to be a method call but is actually a
@@ -421,11 +433,13 @@ class Character(object):  # has been tested
     # The `Inventory` object presents a customized mapping interface that Character action management code doesn't need
     # to access, so only a few methods are offered.
 
-    total_weight = property(fget=(lambda self: self.inventory.total_weight))
+    @property
+    def total_weight(self):
+        return self.inventory.total_weight
 
-    burden = property(fget=(lambda self: self.inventory.burden_for_strength_score(
-                                             self.ability_scores.strength
-                                         )))
+    @property
+    def burden(self):
+        return self.inventory.burden_for_strength_score(self.ability_scores.strength)
 
     def pick_up_item(self, item, qty=1):
         have_qty = self.item_have_qty(item)
@@ -457,47 +471,87 @@ class Character(object):  # has been tested
         return list(sorted(self.inventory.values(), key=lambda *argl: argl[0][1].title))
 
     # BEGIN passthrough methods for private Ability_Scores
-    strength = property(fget=(lambda self: getattr(self.ability_scores, 'strength')))
+    @property
+    def strength(self):
+        return getattr(self.ability_scores, 'strength')
 
-    dexterity = property(fget=(lambda self: getattr(self.ability_scores, 'dexterity')))
+    @property
+    def dexterity(self):
+        return getattr(self.ability_scores, 'dexterity')
 
-    constitution = property(fget=(lambda self: getattr(self.ability_scores, 'constitution')))
+    @property
+    def constitution(self):
+        return getattr(self.ability_scores, 'constitution')
 
-    intelligence = property(fget=(lambda self: getattr(self.ability_scores, 'intelligence')))
+    @property
+    def intelligence(self):
+        return getattr(self.ability_scores, 'intelligence')
 
-    wisdom = property(fget=(lambda self: getattr(self.ability_scores, 'wisdom')))
+    @property
+    def wisdom(self):
+        return getattr(self.ability_scores, 'wisdom')
 
-    charisma = property(fget=(lambda self: getattr(self.ability_scores, 'charisma')))
+    @property
+    def charisma(self):
+        return getattr(self.ability_scores, 'charisma')
 
-    strength_mod = property(fget=(lambda self: self.ability_scores._stat_mod('strength')))
+    @property
+    def strength_mod(self):
+        return self.ability_scores._stat_mod('strength')
 
-    dexterity_mod = property(fget=(lambda self: self.ability_scores._stat_mod('dexterity')))
+    @property
+    def dexterity_mod(self):
+        return self.ability_scores._stat_mod('dexterity')
 
-    constitution_mod = property(fget=(lambda self: self.ability_scores._stat_mod('constitution')))
+    @property
+    def constitution_mod(self):
+        return self.ability_scores._stat_mod('constitution')
 
-    intelligence_mod = property(fget=(lambda self: self.ability_scores._stat_mod('intelligence')))
+    @property
+    def intelligence_mod(self):
+        return self.ability_scores._stat_mod('intelligence')
 
-    wisdom_mod = property(fget=(lambda self: self.ability_scores._stat_mod('wisdom')))
+    @property
+    def wisdom_mod(self):
+        return self.ability_scores._stat_mod('wisdom')
 
-    charisma_mod = property(fget=(lambda self: self.ability_scores._stat_mod('charisma')))
+    @property
+    def charisma_mod(self):
+        return self.ability_scores._stat_mod('charisma')
     # END passthrough methods for private Ability_Scores
 
     # BEGIN passthrough methods for private _equipment
-    armor_equipped = property(fget=(lambda self: self._equipment.armor_equipped))
+    @property
+    def armor_equipped(self):
+        return self._equipment.armor_equipped
 
-    shield_equipped = property(fget=(lambda self: self._equipment.shield_equipped))
+    @property
+    def shield_equipped(self):
+        return self._equipment.shield_equipped
 
-    weapon_equipped = property(fget=(lambda self: self._equipment.weapon_equipped))
+    @property
+    def weapon_equipped(self):
+        return self._equipment.weapon_equipped
 
-    wand_equipped = property(fget=(lambda self: self._equipment.wand_equipped))
+    @property
+    def wand_equipped(self):
+        return self._equipment.wand_equipped
 
-    armor = property(fget=(lambda self: self._equipment.armor))
+    @property
+    def armor(self):
+        return self._equipment.armor
 
-    shield = property(fget=(lambda self: self._equipment.shield))
+    @property
+    def shield(self):
+        return self._equipment.shield
 
-    weapon = property(fget=(lambda self: self._equipment.weapon))
+    @property
+    def weapon(self):
+        return self._equipment.weapon
 
-    wand = property(fget=(lambda self: self._equipment.wand))
+    @property
+    def wand(self):
+        return self._equipment.wand
 
     def equip_armor(self, item):
         if not self.inventory.contains(item.internal_name):
@@ -563,13 +617,21 @@ class Character(object):  # has been tested
 class Equipment(object):  # has been tested
     __slots__ = 'character_class', 'armor', 'shield', 'weapon', 'wand'
 
-    armor_equipped = property(fget=(lambda self: getattr(self, 'armor', None)))
+    @property
+    def armor_equipped(self):
+        return getattr(self, 'armor', None)
 
-    shield_equipped = property(fget=(lambda self: getattr(self, 'shield', None)))
+    @property
+    def shield_equipped(self):
+        return getattr(self, 'shield', None)
 
-    weapon_equipped = property(fget=(lambda self: getattr(self, 'weapon', None)))
+    @property
+    def weapon_equipped(self):
+        return getattr(self, 'weapon', None)
 
-    wand_equipped = property(fget=(lambda self: getattr(self, 'wand', None)))
+    @property
+    def wand_equipped(self):
+        return getattr(self, 'wand', None)
 
     def __init__(self, character_class, armor_item=None, shield_item=None, weapon_item=None, wand_item=None):
         self.character_class = character_class
@@ -670,17 +732,29 @@ class Ability_Scores(object):  # has been tested
         'Mage': ('intelligence', 'dexterity', 'constitution', 'strength', 'wisdom', 'charisma')
     }
 
-    strength_mod = property(fget=(lambda self: self._stat_mod('strength')))
+    @property
+    def strength_mod(self):
+        return self._stat_mod('strength')
 
-    dexterity_mod = property(fget=(lambda self: self._stat_mod('dexterity')))
+    @property
+    def dexterity_mod(self):
+        return self._stat_mod('dexterity')
 
-    constitution_mod = property(fget=(lambda self: self._stat_mod('constitution')))
+    @property
+    def constitution_mod(self):
+        return self._stat_mod('constitution')
 
-    intelligence_mod = property(fget=(lambda self: self._stat_mod('intelligence')))
+    @property
+    def intelligence_mod(self):
+        return self._stat_mod('intelligence')
 
-    wisdom_mod = property(fget=(lambda self: self._stat_mod('wisdom')))
+    @property
+    def wisdom_mod(self):
+        return self._stat_mod('wisdom')
 
-    charisma_mod = property(fget=(lambda self: self._stat_mod('charisma')))
+    @property
+    def charisma_mod(self):
+        return self._stat_mod('charisma')
 
     # In modern D&D, the derived value from an ability score that is relevant to determining outcomes is the 'stat mod'
     # (or 'stat modifier'), which is computed from the ability score by subtracting 10, dividing by 2 and rounding down.

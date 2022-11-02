@@ -415,10 +415,15 @@ class Test_Cast_Spell(unittest.TestCase):
         self.assertIsInstance(result[0].damage_dealt, int)
         self.assertRegex(result[0].message, r'A magic missile springs from your gesturing hand and unerringly strikes '
                                             r'the kobold. You have done \d+ points of damage.')
-        self.assertIsInstance(result[1], (advg.Various_Commands_Foe_Death, advg.Be_Attacked_by_Command_Attacked_and_Not_Hit,
+        self.assertIsInstance(result[1], (advg.Various_Commands_Foe_Death,
+                                          advg.Be_Attacked_by_Command_Attacked_and_Not_Hit,
                                           advg.Be_Attacked_by_Command_Attacked_and_Hit))
-        if isinstance(result[1], advg.Be_Attacked_by_Command_Attacked_and_Hit) and len(result) == 3:
-            self.assertIsInstance(result[2], advg.Be_Attacked_by_Command_Character_Death)
+        while result[0].damage_dealt >= 20:
+            self.command_processor.game_state.rooms_state.cursor.creature_here.heal_damage(20)
+            result = self.command_processor.process('cast spell')
+        self.assertRegex(result[0].message, 'A magic missile springs from your gesturing hand and unerringly strikes '
+                                            r'the kobold. You have done \d+ points of damage. The kobold turns to '
+                                            'attack!')
 
     def test_cast_spell5(self):
         self.command_processor.game_state.character_name = 'Kaeva'
@@ -2003,9 +2008,19 @@ class Test_Pick_Lock(unittest.TestCase):
         self.command_processor.game_state.character_class = 'Thief'
         self.game_state.game_has_begun = True
         result = self.command_processor.process('pick lock on west door')
-        self.assertIsInstance(result[0], advg.Pick_Lock_Command_Target_Not_Found)
-        self.assertEqual(result[0].target_title, 'west door')
-        self.assertEqual(result[0].message, 'This room has no west door.')
+        self.assertIsInstance(result[0], advg.Various_Commands_Door_Not_Present)
+        self.assertEqual(result[0].compass_dir, 'west')
+        self.assertEqual(result[0].portal_type, 'door')
+        self.assertEqual(result[0].message, 'This room does not have a west door.')
+
+    def test_pick_lock3(self):
+        self.command_processor.game_state.character_name = 'Lidda'
+        self.command_processor.game_state.character_class = 'Thief'
+        self.game_state.game_has_begun = True
+        result = self.command_processor.process('pick lock on wooden door')
+        self.assertIsInstance(result[0], advg.Pick_Lock_Command_Target_Not_Locked)
+        self.assertEqual(result[0].target_title, 'wooden door')
+        self.assertEqual(result[0].message, 'The wooden door is not locked.')
 
     def test_pick_lock4(self):
         self.command_processor.game_state.character_name = 'Lidda'
@@ -2442,7 +2457,7 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Games(unittest.TestCase):
         self.command_processor.process('set class to Warrior')
         self.command_processor.process('set name to Kerne')
         result = self.command_processor.process('reroll')
-        self.assertIsInstance(result[0], advg.Set_Name_or_Class_Command_Display_Rolled_Stats)
+        self.assertIsInstance(result[0], advg.Various_Commands_Display_Rolled_Stats)
 
     def test_set_name_vs_set_class_1(self):
         self.assertFalse(self.command_processor.game_state.game_has_begun)
@@ -2469,7 +2484,7 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Games(unittest.TestCase):
         self.assertIsInstance(result[0], advg.Set_Name_Command_Name_Set)
         self.assertEqual(result[0].name, 'Kerne')
         self.assertEqual(result[0].message, "Your name, 'Kerne', has been set.")
-        self.assertIsInstance(result[1], advg.Set_Name_or_Class_Command_Display_Rolled_Stats)
+        self.assertIsInstance(result[1], advg.Various_Commands_Display_Rolled_Stats)
         self.assertIsInstance(result[1].strength, int)
         self.assertTrue(3 <= result[1].strength <= 18)
         self.assertIsInstance(result[1].dexterity, int)
@@ -2493,7 +2508,7 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Games(unittest.TestCase):
         second_roll = {'strength': result[0].strength, 'dexterity': result[0].dexterity,
                       'constitution': result[0].constitution, 'intelligence': result[0].intelligence,
                       'wisdom': result[0].wisdom, 'charisma': result[0].charisma}
-        self.assertIsInstance(result[0], advg.Set_Name_or_Class_Command_Display_Rolled_Stats)
+        self.assertIsInstance(result[0], advg.Various_Commands_Display_Rolled_Stats)
         self.assertNotEqual(first_roll, second_roll)
 
         result = self.command_processor.process('begin game')
@@ -2551,7 +2566,7 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Games(unittest.TestCase):
         self.assertIsInstance(result[0], advg.Set_Class_Command_Class_Set)
         self.assertEqual(result[0].class_str, 'Warrior')
         self.assertEqual(result[0].message, 'Your class, Warrior, has been set.')
-        self.assertIsInstance(result[1], advg.Set_Name_or_Class_Command_Display_Rolled_Stats)
+        self.assertIsInstance(result[1], advg.Various_Commands_Display_Rolled_Stats)
         self.assertIsInstance(result[1].strength, int)
         self.assertTrue(3 <= result[1].strength <= 18)
         self.assertIsInstance(result[1].dexterity, int)
@@ -2644,7 +2659,7 @@ class Test_Status(unittest.TestCase):
         self.assertIsInstance(result[0], advg.Status_Command_Output)
         self.assertRegex(result[0].message, r'Hit Points: \d+/\d+ - Mana Points: \d+/\d+ \| Attack: [+-]\d+ '
                                             r'\(\d+d[\d+-]+ damage\) - Armor Class: \d+ \| Wand: [a-z ]+ - Weapon: '
-                                             '[a-z ]+ - Armor: [a-z ]+ - Shield: [a-z ]+')
+                                            r'[a-z ]+')
 
     def test_status4(self):
         self.command_processor.game_state.character_name = 'Mialee'
@@ -2653,8 +2668,7 @@ class Test_Status(unittest.TestCase):
         result = self.command_processor.process('status')
         self.assertIsInstance(result[0], advg.Status_Command_Output)
         self.assertRegex(result[0].message, r'Hit Points: \d+/\d+ - Mana Points: \d+/\d+ \| Attack: no wand or weapon '
-                                            r'equipped - Armor Class: \d+ \| Wand: none - Weapon: none - Armor: none - '
-                                             'Shield: none')
+                                            r'equipped - Armor Class: \d+ \| Wand: none - Weapon: none')
 
     def test_status5(self):
         self.command_processor.game_state.character_name = 'Niath'

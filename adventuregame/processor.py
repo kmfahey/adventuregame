@@ -78,7 +78,8 @@ COMMANDS_HELP = {
     'EQUIP': "The EQUIP command can be used to equip a weapon, armor, shield or wand from your inventory. You can't "
              "equip items from the floor.",
     'HELP': 'The HELP command can be used to get help about any game commands.',
-    'INVENTORY': 'The INVENTORY command can be used to get a listing of the items in your inventory.',
+    'INVENTORY': 'The INVENTORY command can be used to get a listing of the items in your inventory. If you want more '
+                  "information about an item, say 'LOOK\u00A0AT\u00A0<item\u00A0title>\u00A0IN\u00A0INVENTORY'.",
     'LOOK AT': 'The LOOK at command can be used to get more information about doors, items on the floor or in a chest '
                'or on a corpse, chests, creatures and corpses.',
     'LEAVE': "The LEAVE command is used to exit the room you're in using the door you specify. If the door is locked "
@@ -89,7 +90,8 @@ COMMANDS_HELP = {
     'PICK LOCK': 'Only Thieves can use the pick lock command. The pick lock command enables you to unlock a door or '
                  'chest without needing a key. This saves some searching!',
     'PICK UP': 'The PICK UP command can be used to acquire items from the floor and put them in your inventory. To '
-               'acquire items from a chest or corpse, use the take command.',
+               "acquire items from a chest, say '<item\u00A0name>\u00A0FROM\u00A0<chest\u00A0name>'. For a corpse, say "
+               "'<item\u00A0name>\u00A0FROM\u00A0<chest\u00A0name>'.",
     'PUT': "The PUT command can be used to remove items from your inventory and place them in a chest or on a corpse's "
            "person. To leave items on the floor, use DROP.",
     'REROLL': 'The REROLL command is used before game start to get a fresh selection of randomly generated ability '
@@ -287,12 +289,14 @@ class Command_Processor(object):
                 creature = self.game_state.rooms_state.cursor.creature_here
                 creature.take_damage(damage_dealt)
                 if creature.is_dead:
-                    return (stmsg.Cast_Spell_Command_Cast_Damaging_Spell(creature.title, damage_dealt),
+                    return (stmsg.Cast_Spell_Command_Cast_Damaging_Spell(creature.title, damage_dealt, creature_slain=True),
                             stmsg.Various_Commands_Foe_Death(creature.title))
                 else:
                     be_attacked_by_result = self._be_attacked_by_command(creature)
-                    return ((stmsg.Cast_Spell_Command_Cast_Damaging_Spell(creature.title, damage_dealt),) +
-                                                                    be_attacked_by_result)
+                    return operator.concat((stmsg.Cast_Spell_Command_Cast_Damaging_Spell(creature.title,
+                                                                                           damage_dealt,
+                                                                                           creature_slain=False),),
+                                           be_attacked_by_result)
         else:
             damage_rolled = util.roll_dice(SPELL_DAMAGE)
             healed_amt = self.game_state.character.heal_damage(damage_rolled)
@@ -518,7 +522,7 @@ class Command_Processor(object):
         if not len(tokens):
             return stmsg.Command_Bad_Syntax(command.upper(), *COMMANDS_SYNTAX[command.upper()]),
         if tokens[-1] in ('door', 'doorway'):
-            result = self._look_at_open_close_lock_unlock_door_selector(*tokens)
+            result = self._look_at_open_close_lock_unlock_pick_lock_door_selector(*tokens)
             if isinstance(result[0], stmsg.Game_State_Message):
                 return result
             else:
@@ -557,7 +561,7 @@ class Command_Processor(object):
         else:
             return stmsg.Close_Command_Object_to_Close_Not_Here(target_title),
 
-    def _look_at_open_close_lock_unlock_door_selector(self, *tokens):
+    def _look_at_open_close_lock_unlock_pick_lock_door_selector(self, *tokens):
         compass_dir = door_type = None
         if tokens[0] in ('north', 'east', 'south', 'west'):
             compass_dir = tokens[0]
@@ -621,7 +625,7 @@ class Command_Processor(object):
             target_title = ' '.join(tokens[:joinword_index])
             location_title = ' '.join(tokens[joinword_index+1:])
         elif tokens[-1] == 'door' or tokens[-1] == 'doorway':
-            result = self._look_at_open_close_lock_unlock_door_selector(*tokens)
+            result = self._look_at_open_close_lock_unlock_pick_lock_door_selector(*tokens)
             if isinstance(result, tuple) and isinstance(result[0], stmsg.Game_State_Message):
                 return result
             else:
@@ -719,29 +723,22 @@ class Command_Processor(object):
             tokens = tokens[1:]
         target_title = ' '.join(tokens)
         container = self.game_state.rooms_state.cursor.container_here
-        door_objs = []
-        for compass_dir in ('north', 'east', 'south', 'west'):
-            door = getattr(self.game_state.rooms_state.cursor, f'{compass_dir}_door', None)
-            if door is None:
-                continue
-            door_objs.append(door)
-        if container is not None and container.title == target_title:
+        if tokens[-1] in ('door', 'doorway'):
+            result = self._look_at_open_close_lock_unlock_pick_lock_door_selector(*tokens)
+            if isinstance(result[0], stmsg.Game_State_Message):
+                return result
+            door, = result
+            if not door.is_locked:
+                return stmsg.Pick_Lock_Command_Target_Not_Locked(target_title),
+            else:
+                door.is_locked = False
+                return stmsg.Pick_Lock_Command_Target_Has_Been_Unlocked(target_title),
+        elif container is not None and container.title == target_title:
             if not getattr(container, 'is_locked', False):
                 return stmsg.Pick_Lock_Command_Target_Not_Locked(target_title),
             else:
                 container.is_locked = False
                 return stmsg.Pick_Lock_Command_Target_Has_Been_Unlocked(target_title),
-        elif target_title.endswith('door'):
-            door_obj_match = tuple(filter(lambda door: door.title == target_title, door_objs))
-            if not door_obj_match:
-                return stmsg.Pick_Lock_Command_Target_Not_Found(target_title),
-            else:
-                door, = door_obj_match[0:1]
-                if not door.is_locked:
-                    return stmsg.Pick_Lock_Command_Target_Not_Locked(target_title),
-                else:
-                    door.is_locked = False
-                    return stmsg.Pick_Lock_Command_Target_Has_Been_Unlocked(target_title),
         else:
             return stmsg.Pick_Lock_Command_Target_Cant_Be_Unlocked_or_Not_Found(target_title),
 
@@ -753,7 +750,7 @@ class Command_Processor(object):
         elif tokens[-1] not in ('door', 'doorway'):
             pick_up_amount, element_title = result
         else:
-            result = _look_at_open_close_lock_unlock_door_selector(*tokens)
+            result = _look_at_open_close_lock_unlock_pick_lock_door_selector(*tokens)
             if isinstance(result[0], stmsg.Game_State_Message):
                 element_title = tokens[-1]
             else:
@@ -981,7 +978,7 @@ class Command_Processor(object):
         if not character_name or not character_class:
             return stmsg.Reroll_Command_Name_or_Class_Not_Set(character_name, character_class),
         self.game_state.character.ability_scores.roll_stats()
-        return stmsg.Set_Name_or_Class_Command_Display_Rolled_Stats(
+        return stmsg.Various_Commands_Display_Rolled_Stats(
                    strength=self.game_state.character.strength,
                    dexterity=self.game_state.character.dexterity,
                    constitution=self.game_state.character.constitution,
@@ -1007,7 +1004,7 @@ class Command_Processor(object):
         self.game_state.character_class = class_str
         if self.game_state.character_name is not None and class_was_none:
             return (stmsg.Set_Class_Command_Class_Set(class_str),
-                    stmsg.Set_Name_or_Class_Command_Display_Rolled_Stats(
+                    stmsg.Various_Commands_Display_Rolled_Stats(
                         strength=self.game_state.character.strength,
                         dexterity=self.game_state.character.dexterity,
                         constitution=self.game_state.character.constitution,
@@ -1038,7 +1035,7 @@ class Command_Processor(object):
             name_str = ' '.join(tokens)
             self.game_state.character_name = ' '.join(tokens)
             if self.game_state.character_class is not None and name_was_none:
-                return (stmsg.Set_Name_Command_Name_Set(name_str), stmsg.Set_Name_or_Class_Command_Display_Rolled_Stats(
+                return (stmsg.Set_Name_Command_Name_Set(name_str), stmsg.Various_Commands_Display_Rolled_Stats(
                             strength=self.game_state.character.strength,
                             dexterity=self.game_state.character.dexterity,
                             constitution=self.game_state.character.constitution,
@@ -1069,11 +1066,14 @@ class Command_Processor(object):
         else:
             output_args['attack_bonus'] = 0
             output_args['damage'] = ''
-        output_args['armor'] = character.armor.title if character.armor_equipped else None
-        output_args['shield'] = character.shield.title if character.shield_equipped else None
-        output_args['wand'] = character.wand.title if character.wand_equipped else None
+        if character.character_class != 'Mage':
+            output_args['armor'] = character.armor.title if character.armor_equipped else None
+        if character.character_class not in ('Thief', 'Mage'):
+            output_args['shield'] = character.shield.title if character.shield_equipped else None
+        if character.character_class == 'Mage':
+            output_args['wand'] = character.wand.title if character.wand_equipped else None
         output_args['weapon'] = character.weapon.title if character.weapon_equipped else None
-        output_args['is_mage'] = character.character_class == 'Mage'
+        output_args['character_class'] = character.character_class
         return stmsg.Status_Command_Output(**output_args),
 
     def take_command(self, *tokens):
