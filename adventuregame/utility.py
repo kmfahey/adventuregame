@@ -1,10 +1,12 @@
 #!/usr/bin/python
 
+import functools
 import math
 import os
 import random
 import re
 import tempfile
+import textwrap
 
 import iniconfig
 
@@ -111,3 +113,8 @@ def iniconfig_obj_from_ini_text(ini_config_text):
     os.remove(temp_ini_config_file)
     memoize_iniconfig_objs[ini_config_text] = ini_config
     return ini_config
+
+_wrapper=functools.partial(textwrap.wrap, width=80)
+
+textwrapper = lambda multiline_str: "\n".join("\n".join(paragraph) for paragraph in map(_wrapper, multiline_str.split("\n")))
+

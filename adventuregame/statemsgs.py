@@ -460,7 +460,90 @@ class Equip_Command_No_Such_Item_in_Inventory(Game_State_Message):
         self.item_title = item_title
 
 
-class Inspect_Command_Found_Container_Here(Game_State_Message):
+class Help_Command_Command_Not_Recognized(Game_State_Message):
+    __slots__ = 'command_attempted', 'commands_available',
+
+    @property
+    def message(self):
+        return_lines = [f"The command '{self.command_attempted.upper()}' is not recognized. "
+                         'The full list of commands is:', '']
+        return_lines.extend((', '.join(self.commands_available[:-1]) + ', and ' + self.commands_available[-1], ''))
+        return_lines.extend(('Which one do you want help with?', ''))
+        return "\n".join(return_lines)
+
+    def __init__(self, command_attempted, commands_available):
+        self.command_attempted = command_attempted
+        self.commands_available = commands_available
+
+
+class Help_Command_Display_Commands(Game_State_Message):
+    __slots__ = 'commands_available', 
+
+    @property
+    def message(self):
+        return_lines = [f'The full list of commands is:', '']
+        return_lines.extend((', '.join(self.commands_available[:-1]) + ', and ' + self.commands_available[-1], ''))
+        return_lines.extend(('Which one do you want help with?', ''))
+        return "\n".join(return_lines)
+
+    def __init__(self, commands_available):
+        self.commands_available = commands_available
+
+
+class Help_Command_Display_Help_for_Command(Game_State_Message):
+    __slots__ = 'command', 'syntax_tuple', 'instructions',
+
+    @property                   # \u00A0 is a nonbreaking space. It's used to prevent
+    def message(self):          # syntax examples from being broken across lines.
+        syntax_str_list = [f"'{self.command}\u00A0{syntax_entry}'" if syntax_entry else f"'{self.command}'"
+                               for syntax_entry in self.syntax_tuple]
+        return_lines = [f'Help for the {self.command} command:', '']
+        if len(syntax_str_list) == 1:
+            return_lines.extend((f'Usage: ' + syntax_str_list[0], ''))
+        elif len(syntax_str_list) == 2:
+            return_lines.extend((f'Usage: ' + ' or '.join(syntax_str_list), ''))
+        else:
+            return_lines.extend((f'Usage: ' + ', '.join(syntax_str_list[:-1]) + ', or ' + syntax_str_list[-1], ''))
+        return_lines.extend((self.instructions, ''))
+        return "\n".join(return_lines)
+
+    def __init__(self, command, syntax_tuple=None, instructions=None):
+        self.command = command
+        self.syntax_tuple = syntax_tuple
+        self.instructions = instructions
+
+
+class Inventory_Command_Display_Inventory(Game_State_Message):
+    __slots__ = 'inventory_contents',
+
+    @property
+    def message(self):
+        display_strs_list = list()
+        for item_qty, item in self.inventory_contents:
+            if item.item_type == 'armor' and item_qty == 1:
+                display_strs_list.append(f'a suit of {item.title}')
+            elif item.item_type == 'armor' and item_qty > 1:
+                display_strs_list.append(f'{item_qty} suits of {item.title}')
+            elif item_qty == 1 and item.title[0] in 'aeiou':
+                display_strs_list.append(f'an {item.title}')
+            elif item_qty == 1:
+                display_strs_list.append(f'a {item.title}')
+            else:
+                display_strs_list.append(f'{item_qty} {item.title}s')
+        if len(display_strs_list) == 1:
+            return f'You have {display_strs_list[0]} in your inventory.'
+        elif len(display_strs_list) == 2:
+            return f'You have {display_strs_list[0]} and {display_strs_list[1]} in your inventory.'
+        else:
+            inventory_str = ', '.join(display_strs_list[0:-1])
+            inventory_str += f', and {display_strs_list[-1]}'
+            return f'You have {inventory_str} in your inventory.'
+
+    def __init__(self, inventory_contents_list):
+        self.inventory_contents = inventory_contents_list
+
+
+class Look_At_Command_Found_Container_Here(Game_State_Message):
     __slots__ = 'container_description', 'container_type', 'container', 'is_locked', 'is_closed'
 
     @property
@@ -523,7 +606,7 @@ class Inspect_Command_Found_Container_Here(Game_State_Message):
                                       'False, invalid combination of parameters.')
 
 
-class Inspect_Command_Found_Creature_Here(Game_State_Message):
+class Look_At_Command_Found_Creature_Here(Game_State_Message):
     __slots__ = 'creature_description',
 
     message = property(fget=lambda self: self.creature_description)
@@ -532,7 +615,7 @@ class Inspect_Command_Found_Creature_Here(Game_State_Message):
         self.creature_description = creature_description
 
 
-class Inspect_Command_Found_Door_or_Doorway(Game_State_Message):
+class Look_At_Command_Found_Door_or_Doorway(Game_State_Message):
     __slots__ = 'compass_dir', 'door'
 
     @property
@@ -554,7 +637,7 @@ class Inspect_Command_Found_Door_or_Doorway(Game_State_Message):
         self.door = door
 
 
-class Inspect_Command_Found_Item_or_Items_Here(Game_State_Message):
+class Look_At_Command_Found_Item_or_Items_Here(Game_State_Message):
     __slots__ = 'item_description', 'item_qty'
 
     @property
@@ -569,7 +652,7 @@ class Inspect_Command_Found_Item_or_Items_Here(Game_State_Message):
         self.item_qty = item_qty
 
 
-class Inspect_Command_Found_Nothing(Game_State_Message):
+class Look_At_Command_Found_Nothing(Game_State_Message):
     __slots__ = 'item_title', 'item_container', 'container_type'
 
     @property
@@ -586,36 +669,6 @@ class Inspect_Command_Found_Nothing(Game_State_Message):
 
     def __init__(self, item_title, item_container=None, container_type=None):
         self.item_title = item_title
-
-
-class Inventory_Command_Display_Inventory(Game_State_Message):
-    __slots__ = 'inventory_contents',
-
-    @property
-    def message(self):
-        display_strs_list = list()
-        for item_qty, item in self.inventory_contents:
-            if item.item_type == 'armor' and item_qty == 1:
-                display_strs_list.append(f'a suit of {item.title}')
-            elif item.item_type == 'armor' and item_qty > 1:
-                display_strs_list.append(f'{item_qty} suits of {item.title}')
-            elif item_qty == 1 and item.title[0] in 'aeiou':
-                display_strs_list.append(f'an {item.title}')
-            elif item_qty == 1:
-                display_strs_list.append(f'a {item.title}')
-            else:
-                display_strs_list.append(f'{item_qty} {item.title}s')
-        if len(display_strs_list) == 1:
-            return f'You have {display_strs_list[0]} in your inventory.'
-        elif len(display_strs_list) == 2:
-            return f'You have {display_strs_list[0]} and {display_strs_list[1]} in your inventory.'
-        else:
-            inventory_str = ', '.join(display_strs_list[0:-1])
-            inventory_str += f', and {display_strs_list[-1]}'
-            return f'You have {inventory_str} in your inventory.'
-
-    def __init__(self, inventory_contents_list):
-        self.inventory_contents = inventory_contents_list
 
 
 class Leave_Command_Left_Room(Game_State_Message):
@@ -746,7 +799,7 @@ class Pick_Lock_Command_Target_Not_Locked(Game_State_Message):
         self.target_title = target_title
 
 
-class Pick_up_Command_Item_Not_Found(Game_State_Message):
+class Pick_Up_Command_Item_Not_Found(Game_State_Message):
     __slots__ = 'item_title', 'amount_attempted', 'items_here'
 
     @property
@@ -771,7 +824,7 @@ class Pick_up_Command_Item_Not_Found(Game_State_Message):
         self.items_here = tuple(sorted(items_here, key=operator.itemgetter(1)))
 
 
-class Pick_up_Command_Item_Picked_up(Game_State_Message):
+class Pick_Up_Command_Item_Picked_Up(Game_State_Message):
     __slots__ = 'item_title', 'pick_up_amount', 'amount_had'
 
     @property
@@ -790,7 +843,7 @@ class Pick_up_Command_Item_Picked_up(Game_State_Message):
         self.amount_had = amount_had
 
 
-class Pick_up_Command_Quantity_Unclear(Game_State_Message):
+class Pick_Up_Command_Quantity_Unclear(Game_State_Message):
 
     message = property(fget=lambda self: 'Amount to pick up unclear. How many do you mean?')
 
@@ -798,7 +851,18 @@ class Pick_up_Command_Quantity_Unclear(Game_State_Message):
         pass
 
 
-class Pick_up_Command_Trying_to_Pick_up_More_than_Is_Present(Game_State_Message):
+class Pick_Up_Command_Cant_Pick_Up_Creature_Chest_or_Door(Game_State_Message):
+    __slots__ = 'element_type', 'element_title'
+
+    message = property(fget=lambda self: f"You can't pick up the {self.element_title}: can't pick up "
+                                         f'{self.element_type}s!')
+
+    def __init__(self, element_type, element_title):
+        self.element_type = element_type
+        self.element_title = element_title
+
+
+class Pick_Up_Command_Trying_to_Pick_Up_More_than_Is_Present(Game_State_Message):
     __slots__ = 'item_title', 'amount_attempted', 'amount_present'
 
     message = property(fget=lambda self: f"You can't pick up {self.amount_attempted} {self.item_title}s. Only "
@@ -1145,15 +1209,42 @@ class Various_Commands_Container_Not_Found(Game_State_Message):
         self.container_present_title = container_present_title
 
 
+class Various_Commands_Ambiguous_Door_Specifier(Game_State_Message):
+    __slots__ = 'compass_dirs', 'door_or_doorway', 'door_type'
+
+    @property
+    def message(self):
+        door_type = self.door_type.replace('_', ' ') if self.door_type else None
+        message_str = "More than one door in this room matches your command. Do you mean "
+        door_str_list = list()
+        for compass_dir in self.compass_dirs:
+            if door_type is not None:
+                door_str_list.append(f'the {compass_dir} {door_type}')
+            else:
+                door_str_list.append(f'the {compass_dir} {self.door_or_doorway}')
+        if len(door_str_list) == 2:
+            message_str += ' or '.join(door_str_list) + '?'
+        else:
+            message_str += ', '.join(door_str_list[-1]) + ' or ' + door_str_list[-1] + '?'
+        return message_str
+
+    def __init__(self, compass_dirs, door_or_doorway, door_type):
+        self.compass_dirs = compass_dirs
+        self.door_or_doorway = door_or_doorway
+        self.door_type = door_type
+
+
 class Various_Commands_Door_Not_Present(Game_State_Message):
     __slots__ = 'compass_dir', 'portal_type'
 
     @property
     def message(self):
-        if self.portal_type is not None:
+        if self.compass_dir is not None and self.portal_type is not None:
             return f'This room does not have a {self.compass_dir} {self.portal_type}.'
-        else:
-            return f'This room does not have a {self.compass_dir} door.'
+        elif self.portal_type is not None:
+            return f'This room does not have a {self.portal_type}.'
+        elif self.compass_dir is not None:
+            return f'This room does not have a {compass_dir} door or doorway.'
 
     def __init__(self, compass_dir, portal_type=None):
         self.compass_dir = compass_dir

@@ -994,6 +994,15 @@ class Room(Ini_Entry):  # has been tested
             door.title = f'{compass_dir} doorway' if door.title == 'doorway' else f'{compass_dir} door'
             setattr(self, door_attr, door)
 
+    @property
+    def doors(self):
+        doors_tuple = ()
+        for compass_dir in ('north', 'east', 'south', 'west'):
+            has_door_property = f'has_{compass_dir}_door'
+            if not getattr(self, has_door_property):
+                continue
+            doors_tuple += getattr(self, f'{compass_dir}_door'),
+        return doors_tuple
 
 class Items_Multi_State(Items_State):
 

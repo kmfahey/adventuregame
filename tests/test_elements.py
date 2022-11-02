@@ -4,8 +4,10 @@ import math
 import operator
 import unittest
 
-from .context import *
-from .testing_data import *
+from .testing_data import Chests_Ini_Config_Text, Creatures_Ini_Config_Text, Doors_Ini_Config_Text
+from .testing_data import Items_Ini_Config_Text, Rooms_Ini_Config_Text
+
+from .context import adventuregame as advg
 
 __name__ = 'tests.test_game_elements'
 
@@ -15,12 +17,12 @@ class Test_Container(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
+        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
+        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = Items_State(**self.items_ini_config.sections)
-        self.containers_state = Containers_State(self.items_state, **self.containers_ini_config.sections)
+        self.items_state = advg.Items_State(**self.items_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
 
     def test_container(self):
         container = self.containers_state.get('Wooden_Chest_1')
@@ -33,7 +35,7 @@ class Test_Container(unittest.TestCase):
         self.assertTrue(container.contains('Warhammer'))
         self.assertTrue(container.contains('Mana_Potion'))
         potion_qty, mana_potion = container.get('Mana_Potion')
-        self.assertIsInstance(mana_potion, Potion)
+        self.assertIsInstance(mana_potion, advg.Potion)
         self.assertEqual(potion_qty, 1)
         container.delete('Mana_Potion')
         self.assertFalse(container.contains('Mana_Potion'))
@@ -46,19 +48,19 @@ class Test_Character(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.items_ini_config = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
+        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = Items_State(**self.items_ini_config.sections)
+        self.items_state = advg.Items_State(**self.items_ini_config.sections)
 
     def test_attack_and_damage_rolls_1(self):
-        character = Character('Regdar', 'Warrior')
+        character = advg.Character('Regdar', 'Warrior')
         self.assertEqual(character.character_name, 'Regdar')
         self.assertEqual(character.character_class, 'Warrior')
         longsword = self.items_state.get('Longsword')
         scale_mail = self.items_state.get('Scale_Mail')
         shield = self.items_state.get('Steel_Shield')
-        with self.assertRaises(Internal_Exception):
+        with self.assertRaises(advg.Internal_Exception):
             character.equip_weapon(longsword)
         character.pick_up_item(longsword)
         character.pick_up_item(scale_mail)
@@ -89,7 +91,7 @@ class Test_Character(unittest.TestCase):
         self.assertFalse(character.weapon_equipped)
 
     def test_attack_and_damage_rolls_2(self):
-        character = Character('Mialee', 'Mage')
+        character = advg.Character('Mialee', 'Mage')
         wand = self.items_state.get('Magic_Wand')
         character.pick_up_item(wand)
         character.equip_wand(wand)
@@ -113,7 +115,7 @@ class Test_Character(unittest.TestCase):
         self.assertFalse(character.wand_equipped)
 
     def test_pickup_vs_drop_vs_list(self):
-        character = Character('Regdar', 'Warrior')
+        character = advg.Character('Regdar', 'Warrior')
         longsword = self.items_state.get('Longsword')
         scale_mail = self.items_state.get('Scale_Mail')
         shield = self.items_state.get('Steel_Shield')
@@ -123,13 +125,13 @@ class Test_Character(unittest.TestCase):
         self.assertEqual(character.total_weight, longsword.weight + scale_mail.weight + shield.weight)
                                                      # The items' total weight is 54.
         if character.strength <= 5:
-            self.assertEqual(character.burden, Inventory.IMMOBILIZED)
+            self.assertEqual(character.burden, advg.Inventory.IMMOBILIZED)
         elif character.strength <= 8:
-            self.assertEqual(character.burden, Inventory.HEAVY)
+            self.assertEqual(character.burden, advg.Inventory.HEAVY)
         elif character.strength <= 13:
-            self.assertEqual(character.burden, Inventory.MEDIUM)
+            self.assertEqual(character.burden, advg.Inventory.MEDIUM)
         else:
-            self.assertEqual(character.burden, Inventory.LIGHT)
+            self.assertEqual(character.burden, advg.Inventory.LIGHT)
         testing_items_list = list(sorted((longsword, scale_mail, shield),
                                           key=operator.attrgetter('title')))
         given_items_list = list(sorted(map(operator.itemgetter(1), character.list_items()),
@@ -150,7 +152,7 @@ class Test_Character(unittest.TestCase):
         self.assertFalse(character.have_item(longsword))
 
     def test_character_ability_scores(self):
-        character = Character('Regdar', 'Warrior')
+        character = advg.Character('Regdar', 'Warrior')
         self.assertEqual(math.floor((character.strength - 10) / 2), character.strength_mod)
         self.assertEqual(math.floor((character.dexterity - 10) / 2), character.dexterity_mod)
         self.assertEqual(math.floor((character.constitution - 10) / 2), character.constitution_mod)
@@ -159,7 +161,7 @@ class Test_Character(unittest.TestCase):
         self.assertEqual(math.floor((character.charisma - 10) / 2), character.charisma_mod)
 
     def test_character_mana_points_and_spending_mana_and_regaining_it(self):
-        character = Character('Mialee', 'Mage')
+        character = advg.Character('Mialee', 'Mage')
         bonus_mana_points = {-4: 0, -3: 0, -2: 0, -1: 0, 0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
         self.assertEqual(character.mana_points, 19 + bonus_mana_points[character.intelligence_mod])
         self.assertEqual(character.mana_point_total, 19 + bonus_mana_points[character.intelligence_mod])
@@ -170,7 +172,7 @@ class Test_Character(unittest.TestCase):
         self.assertEqual(regained_amt, 10)
         self.assertEqual(character.mana_points, 19 + bonus_mana_points[character.intelligence_mod])
         self.assertEqual(character.mana_point_total, 19 + bonus_mana_points[character.intelligence_mod])
-        character = Character('Kaeva', 'Priest')
+        character = advg.Character('Kaeva', 'Priest')
         bonus_mana_points = {-4: 0, -3: 0, -2: 0, -1: 0, 0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
         self.assertEqual(character.mana_points, 16 + bonus_mana_points[character.wisdom_mod])
         self.assertEqual(character.mana_point_total, 16 + bonus_mana_points[character.wisdom_mod])
@@ -178,7 +180,7 @@ class Test_Character(unittest.TestCase):
         self.assertEqual(spent_amt, 0)
 
     def test_character_hitpoints_and_taking_damage_and_healing(self):
-        character = Character('Regdar', 'Warrior')
+        character = advg.Character('Regdar', 'Warrior')
         self.assertEqual(character.hit_points, 40 + 3 * character.constitution_mod)
         self.assertEqual(character.hit_point_total, 40 + 3 * character.constitution_mod)
         character.take_damage(10)
@@ -187,13 +189,13 @@ class Test_Character(unittest.TestCase):
         healed_amt = character.heal_damage(20)
         self.assertEqual(healed_amt, 10)
         self.assertEqual(character.hit_points, 40 + 3 * character.constitution_mod)
-        character = Character('Tordek', 'Priest')
+        character = advg.Character('Tordek', 'Priest')
         self.assertEqual(character.hit_points, 30 + 3 * character.constitution_mod)
         self.assertEqual(character.hit_point_total, 30 + 3 * character.constitution_mod)
-        character = Character('Lidda', 'Thief')
+        character = advg.Character('Lidda', 'Thief')
         self.assertEqual(character.hit_points, 30 + 3 * character.constitution_mod)
         self.assertEqual(character.hit_point_total, 30 + 3 * character.constitution_mod)
-        character = Character('Mialee', 'Mage')
+        character = advg.Character('Mialee', 'Mage')
         self.assertEqual(character.hit_points, 20 + 3 * character.constitution_mod)
         self.assertEqual(character.hit_point_total, 20 + 3 * character.constitution_mod)
         self.assertTrue(character.is_alive)
@@ -208,7 +210,7 @@ class Test_Character(unittest.TestCase):
         self.assertFalse(character.is_dead)
 
     def test_character_init_ability_score_and_hp_overrides(self):
-        character = Character('Regdar', 'Warrior', base_hit_points=50, strength=15, constitution=14,
+        character = advg.Character('Regdar', 'Warrior', base_hit_points=50, strength=15, constitution=14,
                                   dexterity=13, intelligence=12, wisdom=8, charisma=10)
         self.assertEqual(character.strength, 15)
         self.assertEqual(character.constitution, 14)
@@ -219,7 +221,7 @@ class Test_Character(unittest.TestCase):
         self.assertEqual(character.hit_points, 56)  # base_hit_points := 50 + 3 * floor((constitution - 10) / 2)
 
     def test_mana_points(self):
-        character = Character('Hennet', 'Mage', base_hit_points=30, strength=12, constitution=13, dexterity=14,
+        character = advg.Character('Hennet', 'Mage', base_hit_points=30, strength=12, constitution=13, dexterity=14,
                                   intelligence=15, wisdom=10, charisma=8)
         self.assertEqual(character.mana_points, 23)
         self.assertEqual(character.mana_point_total, 23)
@@ -237,12 +239,12 @@ class Test_Creature(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.items_ini_config = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.creatures_ini_config = iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
+        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
+        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = Items_State(**self.items_ini_config.sections)
-        self.creatures_state = Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.items_state = advg.Items_State(**self.items_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
 
     def test_creature_const_1(self):
         kobold = self.creatures_state.get('Kobold_Trysk')
@@ -284,13 +286,13 @@ class Test_Equipment(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.items_ini_config = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
+        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = Items_State(**self.items_ini_config.sections)
+        self.items_state = advg.Items_State(**self.items_ini_config.sections)
 
     def test_equipment_1(self):
-        equipment = Equipment('Warrior')
+        equipment = advg.Equipment('Warrior')
         self.assertFalse(equipment.weapon_equipped)
         self.assertFalse(equipment.armor_equipped)
         self.assertFalse(equipment.shield_equipped)
@@ -301,7 +303,7 @@ class Test_Equipment(unittest.TestCase):
         self.assertTrue(equipment.armor_equipped)
         self.assertTrue(equipment.shield_equipped)
         self.assertTrue(equipment.weapon_equipped)
-        with self.assertRaises(Internal_Exception):
+        with self.assertRaises(advg.Internal_Exception):
             equipment.equip_armor(self.items_state.get('Steel_Shield'))
         self.assertEqual(equipment.armor_class, 16)
         self.assertEqual(equipment.attack_bonus, 3)
@@ -314,7 +316,7 @@ class Test_Equipment(unittest.TestCase):
         self.assertFalse(equipment.weapon_equipped)
 
     def test_equipment_2(self):
-        equipment = Equipment('Mage')
+        equipment = advg.Equipment('Mage')
         self.assertFalse(equipment.wand_equipped)
         equipment.equip_wand(self.items_state.get('Magic_Wand'))
         self.assertTrue(equipment.wand_equipped)
@@ -329,32 +331,32 @@ class Test_Ability_Scores(unittest.TestCase):
         self.maxDiff = None
 
     def test_ability_scores_args_exception(self):
-        with self.assertRaises(Internal_Exception):
-            Ability_Scores('Ranger')
+        with self.assertRaises(advg.Internal_Exception):
+            advg.Ability_Scores('Ranger')
 
     def test_roll_stats(self):
-        ability_scores = Ability_Scores('Warrior')
+        ability_scores = advg.Ability_Scores('Warrior')
         ability_scores.roll_stats()
         self.assertTrue(ability_scores.strength >= ability_scores.constitution >= ability_scores.dexterity
                         >= ability_scores.intelligence >= ability_scores.charisma >= ability_scores.wisdom)
-        ability_scores = Ability_Scores('Thief')
+        ability_scores = advg.Ability_Scores('Thief')
         ability_scores.roll_stats()
         self.assertTrue(ability_scores.dexterity >= ability_scores.constitution
                         >= ability_scores.charisma >= ability_scores.strength
                         >= ability_scores.wisdom >= ability_scores.intelligence)
-        ability_scores = Ability_Scores('Priest')
+        ability_scores = advg.Ability_Scores('Priest')
         ability_scores.roll_stats()
         self.assertTrue(ability_scores.wisdom >= ability_scores.strength
                         >= ability_scores.constitution >= ability_scores.charisma
                         >= ability_scores.intelligence >= ability_scores.dexterity)
-        ability_scores = Ability_Scores('Mage')
+        ability_scores = advg.Ability_Scores('Mage')
         ability_scores.roll_stats()
         self.assertTrue(ability_scores.intelligence >= ability_scores.dexterity
                         >= ability_scores.constitution >= ability_scores.strength
                         >= ability_scores.wisdom >= ability_scores.charisma)
 
     def test_reroll_stats(self):
-        ability_scores = Ability_Scores('Warrior')
+        ability_scores = advg.Ability_Scores('Warrior')
         ability_scores.roll_stats()
         first_stat_roll = (ability_scores.strength, ability_scores.constitution, ability_scores.dexterity,
                            ability_scores.intelligence, ability_scores.charisma, ability_scores.wisdom)
@@ -378,10 +380,10 @@ class Test_Inventory(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.items_ini_config = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
+        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
 
     def setUp(self):
-        self.inventory = Inventory(**self.items_ini_config.sections)
+        self.inventory = advg.Inventory(**self.items_ini_config.sections)
 
     def test_inventory_collection_methods(self):
         sword_qty, longsword = self.inventory.get('Longsword')
@@ -450,13 +452,13 @@ class Test_Inventory(unittest.TestCase):
                                    'Short_Sword', 'Small_Leather_Armor', 'Studded_Leather', 'Warhammer'):
             self.inventory.remove_one(item_internal_name)
         self.assertEqual(self.inventory.total_weight, 13)
-        self.assertEqual(self.inventory.burden_for_strength_score(4), Inventory.LIGHT)
-        self.assertEqual(self.inventory.burden_for_strength_score(3), Inventory.MEDIUM)
+        self.assertEqual(self.inventory.burden_for_strength_score(4), advg.Inventory.LIGHT)
+        self.assertEqual(self.inventory.burden_for_strength_score(3), advg.Inventory.MEDIUM)
         for item_name, (_, item) in self.inventory.items():
             self.inventory.set(item_name, 4, item)
         self.assertEqual(self.inventory.total_weight, 52)
-        self.assertEqual(self.inventory.burden_for_strength_score(6), Inventory.HEAVY)
-        self.assertEqual(self.inventory.burden_for_strength_score(3), Inventory.IMMOBILIZING)
+        self.assertEqual(self.inventory.burden_for_strength_score(6), advg.Inventory.HEAVY)
+        self.assertEqual(self.inventory.burden_for_strength_score(3), advg.Inventory.IMMOBILIZING)
 
 
 class Test_Door_and_Doors_State(unittest.TestCase):
@@ -464,10 +466,10 @@ class Test_Door_and_Doors_State(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.doors_ini_config = iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
+        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
 
     def setUp(self):
-        self.doors_state = Doors_State(**self.doors_ini_config.sections)
+        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
 
     def test_doors_state(self):
         doors_state_keys = self.doors_state.keys()
@@ -475,7 +477,7 @@ class Test_Door_and_Doors_State(unittest.TestCase):
                                             ('Room_1,2', 'Room_2,2'), ('Room_2,1', 'Room_2,2'),
                                             ('Room_2,2', 'Exit')])
         doors_state_values = self.doors_state.values()
-        self.assertTrue(all(isinstance(door, Door) and isinstance(door, (Wooden_Door, Iron_Door, Doorway))
+        self.assertTrue(all(isinstance(door, advg.Door) and isinstance(door, (advg.Wooden_Door, advg.Iron_Door, advg.Doorway))
                             for door in doors_state_values))
         doors_state_items = self.doors_state.items()
         self.assertEqual(list(map(operator.itemgetter(0, 1), doors_state_items)), [('Room_1,1', 'Room_1,2'),
@@ -483,7 +485,7 @@ class Test_Door_and_Doors_State(unittest.TestCase):
                                                                                    ('Room_1,2', 'Room_2,2'),
                                                                                    ('Room_2,1', 'Room_2,2'),
                                                                                    ('Room_2,2', 'Exit')])
-        self.assertTrue(all(isinstance(door, Door) and isinstance(door, (Wooden_Door, Iron_Door, Doorway))
+        self.assertTrue(all(isinstance(door, advg.Door) and isinstance(door, (advg.Wooden_Door, advg.Iron_Door, advg.Doorway))
                             for door in doors_state_values))
         self.assertEqual(self.doors_state.size(), 5)
         self.assertTrue(self.doors_state.contains('Room_2,1', 'Room_2,2'))
@@ -531,14 +533,14 @@ class Test_Item_and_Items_State(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.items_ini_config = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
+        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = Items_State(**self.items_ini_config.sections)
+        self.items_state = advg.Items_State(**self.items_ini_config.sections)
 
     def test_items_values(self):
         self.assertEqual(self.items_state.get('Longsword').title, 'longsword')
-        self.assertIsInstance(self.items_state.get('Longsword'), Weapon)
+        self.assertIsInstance(self.items_state.get('Longsword'), advg.Weapon)
         self.assertEqual(self.items_state.get('Longsword').description,
                          'A hefty sword with a long blade, a broad hilt and a leathern grip.')
         self.assertEqual(self.items_state.get('Longsword').weight, 3)
@@ -566,7 +568,7 @@ class Test_Item_and_Items_State(unittest.TestCase):
         self.assertTrue(self.items_state.get('Staff').usable_by('Mage'))
 
     def test_state_collection_interface(self):
-        self.items_state = Items_State(**self.items_ini_config.sections)
+        self.items_state = advg.Items_State(**self.items_ini_config.sections)
         longsword = self.items_state.get('Longsword')
         self.assertTrue(self.items_state.contains(longsword.internal_name))
         self.items_state.delete('Longsword')
@@ -622,18 +624,18 @@ class Test_Rooms_State_Obj(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.items_ini_config = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.containers_ini_config = iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.creatures_ini_config = iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
+        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
+        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
+        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
+        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
+        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = Items_State(**self.items_ini_config.sections)
-        self.doors_state = Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = Creatures_State(self.items_state, **self.creatures_ini_config.sections)
-        self.rooms_state = Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
+        self.items_state = advg.Items_State(**self.items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
                                            self.items_state, **self.rooms_ini_config.sections)
 
     def test_rooms_state_init(self):
@@ -709,7 +711,7 @@ class Test_Rooms_State_Obj(unittest.TestCase):
         self.assertTrue(self.rooms_state.cursor.has_west_door)
 
     def test_rooms_state_invalid_move(self):
-        with self.assertRaises(Bad_Command_Exception):
+        with self.assertRaises(advg.Bad_Command_Exception):
             self.rooms_state.move(south=True)
 
     def test_rooms_state_room_items_container_creature_here(self):
@@ -724,9 +726,14 @@ class Test_Rooms_State_Obj(unittest.TestCase):
         self.assertEqual(room.items_here.get('Health_Potion'), (2, health_potion))
 
     def test_rooms_state_and_door(self):
-        self.assertIsInstance(self.rooms_state.cursor.north_door, Door)
+        self.assertIsInstance(self.rooms_state.cursor.north_door, advg.Door)
         self.assertEqual(self.rooms_state.cursor.north_door.internal_name, 'Room_1,1_x_Room_1,2')
         self.assertEqual(self.rooms_state.cursor.east_door.internal_name, 'Room_1,1_x_Room_2,1')
+
+    def test_room_doors(self):
+        doors_tuple = self.rooms_state.cursor.doors
+        self.assertEqual(doors_tuple[0].internal_name, 'Room_1,1_x_Room_1,2')
+        self.assertEqual(doors_tuple[1].internal_name, 'Room_1,1_x_Room_2,1')
 
 
 class Test_Game_State(unittest.TestCase):
@@ -734,20 +741,20 @@ class Test_Game_State(unittest.TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
-        self.containers_ini_config = iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
-        self.items_ini_config = iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
-        self.doors_ini_config = iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
-        self.creatures_ini_config = iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
-        self.rooms_ini_config = iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
+        self.containers_ini_config = advg.iniconfig_obj_from_ini_text(Chests_Ini_Config_Text)
+        self.items_ini_config = advg.iniconfig_obj_from_ini_text(Items_Ini_Config_Text)
+        self.doors_ini_config = advg.iniconfig_obj_from_ini_text(Doors_Ini_Config_Text)
+        self.creatures_ini_config = advg.iniconfig_obj_from_ini_text(Creatures_Ini_Config_Text)
+        self.rooms_ini_config = advg.iniconfig_obj_from_ini_text(Rooms_Ini_Config_Text)
 
     def setUp(self):
-        self.items_state = Items_State(**self.items_ini_config.sections)
-        self.doors_state = Doors_State(**self.doors_ini_config.sections)
-        self.containers_state = Containers_State(self.items_state, **self.containers_ini_config.sections)
-        self.creatures_state = Creatures_State(self.items_state, **self.creatures_ini_config.sections)
-        self.rooms_state = Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
+        self.items_state = advg.Items_State(**self.items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**self.doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **self.containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **self.creatures_ini_config.sections)
+        self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
                                            self.items_state, **self.rooms_ini_config.sections)
-        self.game_state = Game_State(self.rooms_state, self.creatures_state, self.containers_state,
+        self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
 
     def test_game_state(self):
