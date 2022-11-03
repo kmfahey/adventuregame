@@ -24,20 +24,19 @@ import iniconfig
 
 def join_str_seq_w_commas_and_conjunction(str_list, conjunction='and'):
     """
-    This function automates the task of joining a sequence of strings with
-    commas and a conjunction.
+This function automates the task of joining a sequence of strings with commas
+and a conjunction.
 
-    >>> join_str_seq_w_commas_and_conjunction(['foo'], 'and')
-    'foo'
-    >>> join_str_seq_w_commas_and_conjunction(['foo', 'bar'], 'and')
-    'foo and bar'
-    >>> join_str_seq_w_commas_and_conjunction(['foo', 'bar', 'baz'], 'and')
-    'foo, bar, and baz'
+>>> join_str_seq_w_commas_and_conjunction(['foo'], 'and')
+'foo'
+>>> join_str_seq_w_commas_and_conjunction(['foo', 'bar'], 'and')
+'foo and bar'
+>>> join_str_seq_w_commas_and_conjunction(['foo', 'bar', 'baz'], 'and')
+'foo, bar, and baz'
 
-    :str_list: The sequence of strings to join.
-    :conjunction: The conjunction to use with sequences longer than 1 element.
-                  Typical values include 'and' or 'or'.
-    :return: Returns a grammatical comma-separated list string.
+:str_list: The sequence of strings to join. :conjunction: The conjunction to
+use with sequences longer than 1 element. Typical values include 'and' or 'or'.
+:return: Returns a grammatical comma-separated list string.
     """
 
     if len(str_list) == 1:
@@ -57,17 +56,16 @@ _float_re = re.compile(r'^[+-]?([0-9]+\.|\.[0-9]+|[0-9]+\.[0-9]+|[0-9]+)$')
 
 def isfloat(strval):
     """
-    This function uses a regular expression to text whether a string represents a float value.
+This function uses a regular expression to text whether a string represents a
+float value.
+>>> isfloat("-0.5")
+True
+>>> isfloat("3.14159")
+True
+>>> isfloat("2+5i")
+False
 
-    >>> isfloat("-0.5")
-    True
-    >>> isfloat("3.14159")
-    True
-    >>> isfloat("2+5i")
-    False
-
-    :strval: The string to test.
-    :return: Returns a boolean.
+:strval: The string to test. return: Returns a boolean.
     """
     return bool(_float_re.match(strval))
 
@@ -103,20 +101,20 @@ _digit_lexical_number_map = {'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 
 
 def lexical_number_to_digits(lexical_number):
     """
-    This function parses a lexical representation of a number between one and
-    ninety-nine, and returns an int that is equivalent to that number. For
-    lexical numbers outside of one to ninety-nine, math.nan is returned.
+This function parses a lexical representation of a number between one and
+ninety-nine, and returns an int that is equivalent to that number. For lexical
+numbers outside of one to ninety-nine, math.nan is returned.
 
-    >>> lexical_number_to_digits("one")
-    1
-    >>> lexical_number_to_digits("ninety-nine")
-    99
-    >>> lexical_number_to_digits("one hundred and sixty")
-    nan
+>>> lexical_number_to_digits("one")
+1
+>>> lexical_number_to_digits("ninety-nine")
+99
+>>> lexical_number_to_digits("one hundred and sixty")
+nan
 
-    :lexical_number: The textual representation of a number to parse. Must be
-                     between one and ninety-nine inclusive.
-    :return: Returns an int, or math.nan (which is a float).
+:lexical_number: The textual representation of a number to parse. Must be
+between one and ninety-nine inclusive. :return: Returns an int, or math.nan
+(which is a float).
     """
     if not lexical_number_in_1_99_re.match(lexical_number):
         return math.nan
@@ -133,20 +131,19 @@ def lexical_number_to_digits(lexical_number):
 
 def usage_verb(item_type, gerund=True):
     """
-    This convenience function returns the appropriate verb to use when referring
-    to how a character is described as using an equippable type of item.
+This convenience function returns the appropriate verb to use when referring to
+how a character is described as using an equippable type of item.
 
-    >>> usage_verb('armor', gerund=True)
-    'wearing'
-    >>> usage_verb('shield', gerund=False)
-    'carry'
-    >>> usage_verb('weapon', gerund=True)
-    'weilding'
+>>> usage_verb('armor', gerund=True)
+'wearing'
+>>> usage_verb('shield', gerund=False)
+'carry'
+>>> usage_verb('weapon', gerund=True)
+'weilding'
 
-    :item_type: Either 'armor', 'shield', 'weapon', or 'wand'.
-    :gerund: Either True (to receive the gerund) or False (to receive the
-             present indicative).
-    :return: The verb string matching how the item is used.
+:item_type: Either 'armor', 'shield', 'weapon', or 'wand'. :gerund: Either True
+(to receive the gerund) or False (to receive the present indicative). :return:
+The verb string matching how the item is used.
     """
     if item_type == 'armor':
         return 'wearing' if gerund else 'wear'
@@ -174,12 +171,12 @@ _dice_expression_re = re.compile(r'([1-9]+)d([1-9][0-9]*)([-+][1-9][0-9]*)?')
 
 def roll_dice(dice_expr):
     """
-    This function accepts a standard Dungeons & Dragons dice expression (such as
-    1d20+5, 1d8+2, or 3d10-3), uses random.randint() to simulate a dice roll or
-    rolls with the given modifier, and returns the computed random value>
-    
-    :dice_expr: A dice expression of the form #d#[±#].
-    :return: A random number value, as an int.
+This function accepts a standard Dungeons & Dragons dice expression (such as
+1d20+5, 1d8+2, or 3d10-3), uses random.randint() to simulate a dice roll or
+rolls with the given modifier, and returns the computed random value>
+
+:dice_expr: A dice expression of the form #d#[±#]. return: A random number
+:value, as an int.
     """
     match = _dice_expression_re.match(dice_expr)
     if not match:
@@ -205,12 +202,12 @@ _wrapper = functools.partial(textwrap.wrap, width=80)
 
 def textwrapper(paragraphs):
     """
-    This function accepts a multiline string comprising paragraphs of unwrapped
-    text, separately wraps each one to 80 columns, and returns the wrapped
-    paragraphs as a string.
+This function accepts a multiline string comprising paragraphs of unwrapped
+text, separately wraps each one to 80 columns, and returns the wrapped
+paragraphs as a string.
 
-    :paragraphs: A multi-line string of text.
-    :return: The text input wrapped to 80 columns paragraph-by-paragraph.
+:paragraphs: A multi-line string of text. return: The text input wrapped to 80
+:columns paragraph-by-paragraph.
     """
     wrapped_lines = map(_wrapper, paragraphs.split("\n"))
     wrapped_paragraphs = ["\n".join(paragraph) for paragraph in wrapped_lines]

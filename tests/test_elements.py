@@ -123,16 +123,6 @@ class Test_Character(unittest.TestCase):
         character.pick_up_item(longsword)
         character.pick_up_item(scale_mail)
         character.pick_up_item(shield)
-        self.assertEqual(character.total_weight, longsword.weight + scale_mail.weight + shield.weight)
-                                                     # The items' total weight is 54.
-        if character.strength <= 5:
-            self.assertEqual(character.burden, advg.Inventory.IMMOBILIZED)
-        elif character.strength <= 8:
-            self.assertEqual(character.burden, advg.Inventory.HEAVY)
-        elif character.strength <= 13:
-            self.assertEqual(character.burden, advg.Inventory.MEDIUM)
-        else:
-            self.assertEqual(character.burden, advg.Inventory.LIGHT)
         testing_items_list = list(sorted((longsword, scale_mail, shield),
                                           key=operator.attrgetter('title')))
         given_items_list = list(sorted(map(operator.itemgetter(1), character.list_items()),
@@ -141,7 +131,6 @@ class Test_Character(unittest.TestCase):
         character.drop_item(longsword)
         character.drop_item(scale_mail)
         character.drop_item(shield)
-        self.assertEqual(character.total_weight, 0)
         self.assertFalse(character.have_item(longsword))
         character.pick_up_item(longsword, qty=5)
         self.assertTrue(character.have_item(longsword))

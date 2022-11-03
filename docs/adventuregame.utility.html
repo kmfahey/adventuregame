@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module adventuregame.utility</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="adventuregame.html"><font color="#ffffff">adventuregame</font></a>.utility</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/NuCampFolder/Python/1-Fundamentals/term_project/adventuregame/adventuregame/utility.py">/home/kmfahey/Workspace/NuCampFolder/Python/1-Fundamentals/term_project/adventuregame/adventuregame/utility.py</a></font></td></tr></table>
+    <p><tt>The&nbsp;adventuregame.utility&nbsp;module&nbsp;comprises&nbsp;a&nbsp;small&nbsp;collection&nbsp;of&nbsp;utility<br>
+functions&nbsp;used&nbsp;by&nbsp;other&nbsp;modules&nbsp;in&nbsp;the&nbsp;package&nbsp;to&nbsp;expedite&nbsp;common&nbsp;tasks&nbsp;in&nbsp;the<br>
+codebase.</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="functools.html">functools</a><br>
+<a href="iniconfig.html">iniconfig</a><br>
+</td><td width="25%" valign=top><a href="math.html">math</a><br>
+<a href="os.html">os</a><br>
+</td><td width="25%" valign=top><a href="random.html">random</a><br>
+<a href="re.html">re</a><br>
+</td><td width="25%" valign=top><a href="tempfile.html">tempfile</a><br>
+<a href="textwrap.html">textwrap</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-isfloat"><strong>isfloat</strong></a>(strval)</dt><dd><tt>This&nbsp;function&nbsp;uses&nbsp;a&nbsp;regular&nbsp;expression&nbsp;to&nbsp;text&nbsp;whether&nbsp;a&nbsp;string&nbsp;represents&nbsp;a<br>
+float&nbsp;value.<br>
+&gt;&gt;&gt;&nbsp;<a href="#-isfloat">isfloat</a>("-0.5")<br>
+True<br>
+&gt;&gt;&gt;&nbsp;<a href="#-isfloat">isfloat</a>("3.14159")<br>
+True<br>
+&gt;&gt;&gt;&nbsp;<a href="#-isfloat">isfloat</a>("2+5i")<br>
+False<br>
+&nbsp;<br>
+:strval:&nbsp;The&nbsp;string&nbsp;to&nbsp;test.&nbsp;return:&nbsp;Returns&nbsp;a&nbsp;boolean.</tt></dd></dl>
+ <dl><dt><a name="-join_str_seq_w_commas_and_conjunction"><strong>join_str_seq_w_commas_and_conjunction</strong></a>(str_list, conjunction='and')</dt><dd><tt>This&nbsp;function&nbsp;automates&nbsp;the&nbsp;task&nbsp;of&nbsp;joining&nbsp;a&nbsp;sequence&nbsp;of&nbsp;strings&nbsp;with&nbsp;commas<br>
+and&nbsp;a&nbsp;conjunction.<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;<a href="#-join_str_seq_w_commas_and_conjunction">join_str_seq_w_commas_and_conjunction</a>(['foo'],&nbsp;'and')<br>
+'foo'<br>
+&gt;&gt;&gt;&nbsp;<a href="#-join_str_seq_w_commas_and_conjunction">join_str_seq_w_commas_and_conjunction</a>(['foo',&nbsp;'bar'],&nbsp;'and')<br>
+'foo&nbsp;and&nbsp;bar'<br>
+&gt;&gt;&gt;&nbsp;<a href="#-join_str_seq_w_commas_and_conjunction">join_str_seq_w_commas_and_conjunction</a>(['foo',&nbsp;'bar',&nbsp;'baz'],&nbsp;'and')<br>
+'foo,&nbsp;bar,&nbsp;and&nbsp;baz'<br>
+&nbsp;<br>
+:str_list:&nbsp;The&nbsp;sequence&nbsp;of&nbsp;strings&nbsp;to&nbsp;join.&nbsp;:conjunction:&nbsp;The&nbsp;conjunction&nbsp;to<br>
+use&nbsp;with&nbsp;sequences&nbsp;longer&nbsp;than&nbsp;1&nbsp;element.&nbsp;Typical&nbsp;values&nbsp;include&nbsp;'and'&nbsp;or&nbsp;'or'.<br>
+:return:&nbsp;Returns&nbsp;a&nbsp;grammatical&nbsp;comma-separated&nbsp;list&nbsp;string.</tt></dd></dl>
+ <dl><dt><a name="-lexical_number_to_digits"><strong>lexical_number_to_digits</strong></a>(lexical_number)</dt><dd><tt>This&nbsp;function&nbsp;parses&nbsp;a&nbsp;lexical&nbsp;representation&nbsp;of&nbsp;a&nbsp;number&nbsp;between&nbsp;one&nbsp;and<br>
+ninety-nine,&nbsp;and&nbsp;returns&nbsp;an&nbsp;int&nbsp;that&nbsp;is&nbsp;equivalent&nbsp;to&nbsp;that&nbsp;number.&nbsp;For&nbsp;lexical<br>
+numbers&nbsp;outside&nbsp;of&nbsp;one&nbsp;to&nbsp;ninety-nine,&nbsp;math.nan&nbsp;is&nbsp;returned.<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;<a href="#-lexical_number_to_digits">lexical_number_to_digits</a>("one")<br>
+1<br>
+&gt;&gt;&gt;&nbsp;<a href="#-lexical_number_to_digits">lexical_number_to_digits</a>("ninety-nine")<br>
+99<br>
+&gt;&gt;&gt;&nbsp;<a href="#-lexical_number_to_digits">lexical_number_to_digits</a>("one&nbsp;hundred&nbsp;and&nbsp;sixty")<br>
+nan<br>
+&nbsp;<br>
+:lexical_number:&nbsp;The&nbsp;textual&nbsp;representation&nbsp;of&nbsp;a&nbsp;number&nbsp;to&nbsp;parse.&nbsp;Must&nbsp;be<br>
+between&nbsp;one&nbsp;and&nbsp;ninety-nine&nbsp;inclusive.&nbsp;:return:&nbsp;Returns&nbsp;an&nbsp;int,&nbsp;or&nbsp;math.nan<br>
+(which&nbsp;is&nbsp;a&nbsp;float).</tt></dd></dl>
+ <dl><dt><a name="-roll_dice"><strong>roll_dice</strong></a>(dice_expr)</dt><dd><tt>This&nbsp;function&nbsp;accepts&nbsp;a&nbsp;standard&nbsp;Dungeons&nbsp;&amp;&nbsp;Dragons&nbsp;dice&nbsp;expression&nbsp;(such&nbsp;as<br>
+1d20+5,&nbsp;1d8+2,&nbsp;or&nbsp;3d10-3),&nbsp;uses&nbsp;random.randint()&nbsp;to&nbsp;simulate&nbsp;a&nbsp;dice&nbsp;roll&nbsp;or<br>
+rolls&nbsp;with&nbsp;the&nbsp;given&nbsp;modifier,&nbsp;and&nbsp;returns&nbsp;the&nbsp;computed&nbsp;random&nbsp;value&gt;<br>
+&nbsp;<br>
+:dice_expr:&nbsp;A&nbsp;dice&nbsp;expression&nbsp;of&nbsp;the&nbsp;form&nbsp;#d#[±#].&nbsp;return:&nbsp;A&nbsp;random&nbsp;number<br>
+:value,&nbsp;as&nbsp;an&nbsp;int.</tt></dd></dl>
+ <dl><dt><a name="-textwrapper"><strong>textwrapper</strong></a>(paragraphs)</dt><dd><tt>This&nbsp;function&nbsp;accepts&nbsp;a&nbsp;multiline&nbsp;string&nbsp;comprising&nbsp;paragraphs&nbsp;of&nbsp;unwrapped<br>
+text,&nbsp;separately&nbsp;wraps&nbsp;each&nbsp;one&nbsp;to&nbsp;80&nbsp;columns,&nbsp;and&nbsp;returns&nbsp;the&nbsp;wrapped<br>
+paragraphs&nbsp;as&nbsp;a&nbsp;string.<br>
+&nbsp;<br>
+:paragraphs:&nbsp;A&nbsp;multi-line&nbsp;string&nbsp;of&nbsp;text.&nbsp;return:&nbsp;The&nbsp;text&nbsp;input&nbsp;wrapped&nbsp;to&nbsp;80<br>
+:columns&nbsp;paragraph-by-paragraph.</tt></dd></dl>
+ <dl><dt><a name="-usage_verb"><strong>usage_verb</strong></a>(item_type, gerund=True)</dt><dd><tt>This&nbsp;convenience&nbsp;function&nbsp;returns&nbsp;the&nbsp;appropriate&nbsp;verb&nbsp;to&nbsp;use&nbsp;when&nbsp;referring&nbsp;to<br>
+how&nbsp;a&nbsp;character&nbsp;is&nbsp;described&nbsp;as&nbsp;using&nbsp;an&nbsp;equippable&nbsp;type&nbsp;of&nbsp;item.<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;<a href="#-usage_verb">usage_verb</a>('armor',&nbsp;gerund=True)<br>
+'wearing'<br>
+&gt;&gt;&gt;&nbsp;<a href="#-usage_verb">usage_verb</a>('shield',&nbsp;gerund=False)<br>
+'carry'<br>
+&gt;&gt;&gt;&nbsp;<a href="#-usage_verb">usage_verb</a>('weapon',&nbsp;gerund=True)<br>
+'weilding'<br>
+&nbsp;<br>
+:item_type:&nbsp;Either&nbsp;'armor',&nbsp;'shield',&nbsp;'weapon',&nbsp;or&nbsp;'wand'.&nbsp;:gerund:&nbsp;Either&nbsp;True<br>
+(to&nbsp;receive&nbsp;the&nbsp;gerund)&nbsp;or&nbsp;False&nbsp;(to&nbsp;receive&nbsp;the&nbsp;present&nbsp;indicative).&nbsp;:return:<br>
+The&nbsp;verb&nbsp;string&nbsp;matching&nbsp;how&nbsp;the&nbsp;item&nbsp;is&nbsp;used.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>digit_re</strong> = re.compile('^[0-9]+$')<br>
+<strong>lexical_number_in_1_99_re</strong> = re.compile('^(\n                                ...                                   (, re.VERBOSE)</td></tr></table>
+</body></html>
