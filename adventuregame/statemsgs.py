@@ -24,27 +24,27 @@ __name__ = 'adventuregame.gamestatemessages'
 
 class Game_State_Message(abc.ABC):
     """
-    This class is the abstract base class for all the game state message classes
-    in this module. It defines an abstract property message and an abstract
-    method __init__.
+This class is the abstract base class for all the game state message classes
+in this module. It defines an abstract property message and an abstract method
+__init__.
     """
 
     @property
     @abc.abstractmethod
     def message(self):
         """
-        The message property of a Game_State_Message subclass renders the data
-        stored in the object attributes to a natural language string which
-        communicates the semantic content of the object to the player. The
-        message property is accessed and printed by advgame.py.
+The message property of a Game_State_Message subclass renders the data stored
+in the object attributes to a natural language string which communicates the
+semantic content of the object to the player. The message property is accessed
+and printed by advgame.py.
         """
         pass
 
     @abc.abstractmethod
     def __init__(self, *argl, **argd):
         """
-        The __init__ method of a Game_State_Message subclass stores its keyword
-        arguments to object attributes, and performs no other task.
+The __init__ method of a Game_State_Message subclass stores its keyword
+arguments to object attributes, and performs no other task.
         """
         pass
 
@@ -53,9 +53,9 @@ class Command_Bad_Syntax(Game_State_Message):
     __slots__ = 'command', 'proper_syntax_options'
 
     """
-    This class implements an error object that is returned by command methods
-    of adventuregame.processor.Command_Processor when incorrect syntax for a
-    command has been used.
+This class implements an error object that is returned by command methods of
+adventuregame.processor.Command_Processor when incorrect syntax for a command
+has been used.
     """
 
     @property
@@ -85,10 +85,10 @@ class Command_Bad_Syntax(Game_State_Message):
 
 class Command_Class_Restricted(Game_State_Message):
     """
-    This class implements an error object that is returned by
-    adventuregame.processor.Command_Processor.processor() when the player has
-    used a command that is restricted to a class other than their own. (For
-    example, only thieves can use PICK LOCK.)
+This class implements an error object that is returned by
+adventuregame.processor.Command_Processor.processor() when the player has used a
+command that is restricted to a class other than their own. (For example, only
+thieves can use PICK LOCK.)
     """
     __slots__ = 'command', 'classes',
 
@@ -112,14 +112,13 @@ class Command_Class_Restricted(Game_State_Message):
 
 class Command_Not_Allowed_Now(Game_State_Message):
     """
-    This class implements an error object that is returned by
-    adventuregame.processor.Command_Processor.processor() when the
-    player has used a command that is not allowed in the current game
-    mode. The game has two modes: pregame, when name and class are
-    chosen and ability scores are rolled, and in-game, when the player
-    plays the game. Different command sets are allowed in each mode.
-    See adventuregame.processor.Command_Processor.pregame_commands and
-    adventuregame.processor.Command_Processor.ingame_commands for the lists.
+This class implements an error object that is returned by
+adventuregame.processor.Command_Processor.processor() when the player has used
+a command that is not allowed in the current game mode. The game has two modes:
+pregame, when name and class are chosen and ability scores are rolled, and
+in-game, when the player plays the game. Different command sets are allowed in
+each mode. See adventuregame.processor.Command_Processor.pregame_commands and
+adventuregame.processor.Command_Processor.ingame_commands for the lists.
     """
     __slots__ = 'command', 'allowed_commands', 'game_has_begun'
 
@@ -139,9 +138,9 @@ class Command_Not_Allowed_Now(Game_State_Message):
 
 class Command_Not_Recognized(Game_State_Message):
     """
-    This class implements an error object that is returned by
-    adventuregame.processor.Command_Processor.processor() when a command was
-    entered that is not known to the command processor.
+This class implements an error object that is returned by
+adventuregame.processor.Command_Processor.processor() when a command was entered
+that is not known to the command processor.
     """
     __slots__ = 'command', 'allowed_commands', 'game_has_begun'
 
@@ -161,14 +160,13 @@ class Command_Not_Recognized(Game_State_Message):
 
 class Attack_Command_Attack_Hit(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.attack_command() when the
-    player's attack connected with their foe. Because attack_command()
-    always triggers the hidden _be_attacked_by_command() pseudo-command, an
-    Attack_Command_Attack_Hit object track if the foe was slain. If not, its
-    message includes a clause about the foe turning to attack. If not, nothing
-    relating to foe death is conveyed; describing foe death is handled by the
-    Various_Commands_Foe_Death class.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.attack_command() when the player's
+attack connected with their foe. Because attack_command() always triggers the
+hidden _be_attacked_by_command() pseudo-command, an Attack_Command_Attack_Hit
+object track if the foe was slain. If not, its message includes a clause about
+the foe turning to attack. If not, nothing relating to foe death is conveyed;
+describing foe death is handled by the Various_Commands_Foe_Death class.
     """
     __slots__ = 'creature_title', 'damage_done', 'creature_slain'
 
@@ -194,11 +192,10 @@ class Attack_Command_Attack_Hit(Game_State_Message):
 
 class Attack_Command_Attack_Missed(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.attack_command() when the player's
-    attack missed. Like Attack_Command_Attack_Hit, it mentions the foe turning
-    to attack, because an attack on a foe always leads to a counterattack if
-    they live.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.attack_command() when the player's
+attack missed. Like Attack_Command_Attack_Hit, it mentions the foe turning to
+attack, because an attack on a foe always leads to a counterattack if they live.
     """
     __slots__ = 'creature_title', 'weapon_type'
 
@@ -216,10 +213,10 @@ class Attack_Command_Attack_Missed(Game_State_Message):
 
 class Attack_Command_Opponent_Not_Found(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.attack_command() when the player
-    has used an attack command that refers to a foe that is not present in the
-    game's current room.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.attack_command() when the player has
+used an attack command that refers to a foe that is not present in the game's
+current room.
     """
     __slots__ = 'creature_title_given', 'opponent_present'
 
@@ -237,11 +234,11 @@ class Attack_Command_Opponent_Not_Found(Game_State_Message):
 
 class Attack_Command_You_Have_No_Weapon_or_Wand_Equipped(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.attack_method() when the player
-    has used the attack command while having no weapon (or, for Mages, no wand)
-    equipped. It tracks player class so it knows to display the wand option for
-    Mages.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.attack_method() when the player
+has used the attack command while having no weapon (or, for Mages, no wand)
+equipped. It tracks player class so it knows to display the wand option for
+Mages.
     """
     __slots__ = 'character_class',
 
@@ -258,10 +255,10 @@ class Attack_Command_You_Have_No_Weapon_or_Wand_Equipped(Game_State_Message):
 
 class Be_Attacked_by_Command_Attacked_and_Hit(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor._be_attacked_by_command() when the
-    foe's counterattack connects. It conveys the damage done and how many hit
-    points the player's character has left.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor._be_attacked_by_command() when the
+foe's counterattack connects. It conveys the damage done and how many hit points
+the player's character has left.
     """
     __slots__ = 'creature_title', 'damage_done', 'hit_points_left'
 
@@ -278,9 +275,9 @@ class Be_Attacked_by_Command_Attacked_and_Hit(Game_State_Message):
 
 class Be_Attacked_by_Command_Attacked_and_Not_Hit(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor._be_attacked_by_command() when the
-    foe's counterattack did not connect.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor._be_attacked_by_command() when the
+foe's counterattack did not connect.
     """
     __slots__ = 'creature_title',
 
@@ -294,11 +291,11 @@ class Be_Attacked_by_Command_Attacked_and_Not_Hit(Game_State_Message):
 
 class Be_Attacked_by_Command_Character_Death(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor._be_attacked_by_command() when the
-    foe's counter attack killed the player's character. The game is now over,
-    and advgame.py responds to receiving this object by printing its message and
-    then exiting the program.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor._be_attacked_by_command() when the
+foe's counter attack killed the player's character. The game is now over, and
+advgame.py responds to receiving this object by printing its message and then
+exiting the program.
     """
 
     @property
@@ -311,9 +308,9 @@ class Be_Attacked_by_Command_Character_Death(Game_State_Message):
 
 class Begin_Game_Command_Game_Begins(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.begin_game_command() when the
-    command executes successfully. The game has begun.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.begin_game_command() when the command
+executes successfully. The game has begun.
     """
 
     @property
@@ -326,11 +323,10 @@ class Begin_Game_Command_Game_Begins(Game_State_Message):
 
 class Begin_Game_Command_Name_or_Class_Not_Set(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.begin_game_command() when the
-    player has used the BEGIN GAME command prematurely. The player must set a
-    name and a class before the game can begin; this object is returned if they
-    fail to.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.begin_game_command() when the player
+has used the BEGIN GAME command prematurely. The player must set a name and a
+class before the game can begin; this object is returned if they fail to.
     """
     __slots__ = 'character_name', 'character_class'
 
@@ -353,11 +349,11 @@ class Begin_Game_Command_Name_or_Class_Not_Set(Game_State_Message):
 
 class Cast_Spell_Command_Cast_Damaging_Spell(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.cast_spell_command() when
-    the player, while playing a Mage, has cast a damaging spell. Like
-    Attack_Command_Attack_Hit, it tracks whether the foe was slain, and adds a
-    "they turn to attack" sentence if not.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.cast_spell_command() when the player,
+while playing a Mage, has cast a damaging spell. Like Attack_Command_Attack_Hit,
+it tracks whether the foe was slain, and adds a "they turn to attack" sentence
+if not.
     """
     __slots__ = 'creature_title', 'damage_dealt'
 
@@ -378,11 +374,10 @@ class Cast_Spell_Command_Cast_Damaging_Spell(Game_State_Message):
 
 class Cast_Spell_Command_Cast_Healing_Spell(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.cast_spell_command() when used by
-    a Priest. It doesn't need to mention how much damage was healed because it's
-    followed by a Various_Commands_Underwent_Healing_Effect instance that does
-    that.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.cast_spell_command() when used by
+a Priest. It doesn't need to mention how much damage was healed because it's
+followed by a Various_Commands_Underwent_Healing_Effect instance that does that.
     """
     __slots__ = ()
 
@@ -396,9 +391,9 @@ class Cast_Spell_Command_Cast_Healing_Spell(Game_State_Message):
 
 class Cast_Spell_Command_Insufficient_Mana(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.cast_spell_command() when the
-    player tries to cast a spell with insufficient mana points.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.cast_spell_command() when the player
+tries to cast a spell with insufficient mana points.
     """
     __slots__ = 'current_mana_points', 'mana_point_total', 'spell_mana_cost'
 
@@ -416,9 +411,9 @@ class Cast_Spell_Command_Insufficient_Mana(Game_State_Message):
 
 class Cast_Spell_Command_No_Creature_to_Target(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.cast_spell_command() when the
-    player uses the command in a room with no creature to attack.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.cast_spell_command() when the player
+uses the command in a room with no creature to attack.
     """
     __slots__ = ()
 
@@ -444,9 +439,9 @@ class Close_Command_Element_Not_Closable(Game_State_Message):
 
 class Close_Command_Object_Has_Been_Closed(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.close_command() when the player
-    succeeds in closing a door or chest.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.close_command() when the player
+succeeds in closing a door or chest.
     """
     __slots__ = 'target',
 
@@ -460,9 +455,9 @@ class Close_Command_Object_Has_Been_Closed(Game_State_Message):
 
 class Close_Command_Object_Is_Already_Closed(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.close_command() when the closable
-    object the player targeted is already closed.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.close_command() when the closable
+object the player targeted is already closed.
     """
     __slots__ = 'target',
 
@@ -476,10 +471,10 @@ class Close_Command_Object_Is_Already_Closed(Game_State_Message):
 
 class Close_Command_Object_to_Close_Not_Here(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.close_command() when the player
-    specifies a target to the command that is not present in the current room of
-    the game.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.close_command() when the player
+specifies a target to the command that is not present in the current room of the
+game.
     """
     __slots__ = 'target_title',
 
@@ -493,12 +488,12 @@ class Close_Command_Object_to_Close_Not_Here(Game_State_Message):
 
 class Drink_Command_Drank_Mana_Potion(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.drink_coomand() when the player
-    uses it to drink a mana potion. It is only returned if the player's
-    character is a Mage or Priest. If they're playing a Warrior or Thief, a
-    Drink_Command_Drank_Mana_Potion_when_Not_A_Spellcaster object is returned
-    instead.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.drink_coomand() when the player
+uses it to drink a mana potion. It is only returned if the player's
+character is a Mage or Priest. If they're playing a Warrior or Thief, a
+Drink_Command_Drank_Mana_Potion_when_Not_A_Spellcaster object is returned
+instead.
     """
     __slots__ = 'amount_regained', 'current_mana_points', 'mana_point_total',
 
@@ -522,10 +517,10 @@ class Drink_Command_Drank_Mana_Potion(Game_State_Message):
 
 class Drink_Command_Drank_Mana_Potion_when_Not_A_Spellcaster(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.drink_command() when the player
-    drinks a mana potion but they're playing a Warrior or Thief and have no mana
-    points to restore.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.drink_command() when the player drinks
+a mana potion but they're playing a Warrior or Thief and have no mana points to
+restore.
     """
     __slots__ = ()
 
@@ -539,9 +534,9 @@ class Drink_Command_Drank_Mana_Potion_when_Not_A_Spellcaster(Game_State_Message)
 
 class Drink_Command_Item_Not_Drinkable(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.drink_command() when the player
-    targets an item that is not a potion.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.drink_command() when the player
+targets an item that is not a potion.
     """
     __slots__ = 'item_title',
 
@@ -555,9 +550,9 @@ class Drink_Command_Item_Not_Drinkable(Game_State_Message):
 
 class Drink_Command_Item_Not_in_Inventory(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.drink_command() when the player
-    tries to drink a potion that isn't in their inventory.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.drink_command() when the player tries
+to drink a potion that isn't in their inventory.
     """
     __slots__ = 'item_title',
 
@@ -571,10 +566,10 @@ class Drink_Command_Item_Not_in_Inventory(Game_State_Message):
 
 class Drink_Command_Tried_to_Drink_More_than_Possessed(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.drink_command() when the player
-    specifies drinking a quantity of potions that is greater than the number
-    they have in their inventory.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.drink_command() when the player
+specifies drinking a quantity of potions that is greater than the number they
+have in their inventory.
     """
     __slots__ = 'item_title', 'attempted_qty', 'possessed_qty'
 
@@ -590,9 +585,9 @@ class Drink_Command_Tried_to_Drink_More_than_Possessed(Game_State_Message):
 
 class Drop_Command_Dropped_Item(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.drop_command() when the player
-    successfully drops an item on the floor.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.drop_command() when the player
+successfully drops an item on the floor.
     """
     __slots__ = 'item_title', 'item_type', 'amount_dropped', 'amount_on_floor', 'amount_left'
 
@@ -625,10 +620,10 @@ class Drop_Command_Dropped_Item(Game_State_Message):
 
 class Drop_Command_Quantity_Unclear(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.drop_command() when the player
-    writes an ungrammatical sentence that is ambiguous as to how many of the
-    item they intend to target.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.drop_command() when the player writes
+an ungrammatical sentence that is ambiguous as to how many of the item they
+intend to target.
     """
 
     @property
@@ -641,9 +636,9 @@ class Drop_Command_Quantity_Unclear(Game_State_Message):
 
 class Drop_Command_Trying_to_Drop_Item_You_Dont_Have(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.drop_command() when the player
-    specifies an item to drop that is not in their inventory.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.drop_command() when the player
+specifies an item to drop that is not in their inventory.
     """
     __slots__ = 'item_title', 'amount_attempted'
 
@@ -661,10 +656,10 @@ class Drop_Command_Trying_to_Drop_Item_You_Dont_Have(Game_State_Message):
 
 class Drop_Command_Trying_to_Drop_More_than_You_Have(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.drop_command() when the player
-    specifies a quantity of a certain item to drop that is more than the
-    quantity of that item that they actually possess.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.drop_command() when the player
+specifies a quantity of a certain item to drop that is more than the quantity of
+that item that they actually possess.
     """
     __slots__ = 'item_title', 'amount_attempted', 'amount_had'
 
@@ -685,12 +680,11 @@ class Drop_Command_Trying_to_Drop_More_than_You_Have(Game_State_Message):
 
 class Equip_Command_Class_Cant_Use_Item(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.equip_command() when the player
-    tries to equip an item that is not allowed for their class. As an example,
-    a Mage would get this result if they tried to equip a suit of armor or a
-    shield, and anyone besides a Mage would get this result if they tried to
-    equip a wand.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.equip_command() when the player tries
+to equip an item that is not allowed for their class. As an example, a Mage
+would get this result if they tried to equip a suit of armor or a shield, and
+anyone besides a Mage would get this result if they tried to equip a wand.
     """
     __slots__ = 'character_class', 'item_title', 'item_type'
 
@@ -708,9 +702,9 @@ class Equip_Command_Class_Cant_Use_Item(Game_State_Message):
 
 class Equip_Command_No_Such_Item_in_Inventory(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.equip_command() when the player
-    tries to equip an item that they don't have in their inventory.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.equip_command() when the player tries
+to equip an item that they don't have in their inventory.
     """
     __slots__ = 'item_title',
 
@@ -724,9 +718,9 @@ class Equip_Command_No_Such_Item_in_Inventory(Game_State_Message):
 
 class Help_Command_Command_Not_Recognized(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.help_command() when the player
-    tries to get help with a command that is not in the game.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.help_command() when the player tries
+to get help with a command that is not in the game.
     """
     __slots__ = 'command_attempted', 'commands_available',
 
@@ -745,10 +739,10 @@ class Help_Command_Command_Not_Recognized(Game_State_Message):
 
 class Help_Command_Display_Commands(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.help_command() when the player
-    calls it with no arguments; it displays all the commands in the game and
-    prompts the player to ask for help with one of them.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.help_command() when the player calls
+it with no arguments; it displays all the commands in the game and prompts the
+player to ask for help with one of them.
     """
     __slots__ = 'commands_available', 
 
@@ -765,10 +759,10 @@ class Help_Command_Display_Commands(Game_State_Message):
 
 class Help_Command_Display_Help_for_Command(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.help_command() when the player
-    asks for help with a specific command. It summarizes the syntax for them and
-    prints an informative blurb about the command.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.help_command() when the player asks
+for help with a specific command. It summarizes the syntax for them and prints
+an informative blurb about the command.
     """
     __slots__ = 'command', 'syntax_tuple', 'instructions',
 
@@ -789,10 +783,10 @@ class Help_Command_Display_Help_for_Command(Game_State_Message):
 
 class Inventory_Command_Display_Inventory(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.inventory_command(). It lists all
-    the items in the character's inventory by title and quantity. If they want
-    more information they need to say 'LOOK AT <item title> IN INVENTORY'.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.inventory_command(). It lists all the
+items in the character's inventory by title and quantity. If they want more
+information they need to say 'LOOK AT <item title> IN INVENTORY'.
     """
     __slots__ = 'inventory_contents',
 
@@ -818,9 +812,9 @@ class Inventory_Command_Display_Inventory(Game_State_Message):
 
 class Leave_Command_Left_Room(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.leave_command() when the player
-    uses it to leave the current dungeon room.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.leave_command() when the player uses
+it to leave the current dungeon room.
     """
     __slots__ = 'compass_dir', 'portal_type'
 
@@ -835,11 +829,11 @@ class Leave_Command_Left_Room(Game_State_Message):
 
 class Leave_Command_Won_The_Game(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.leave_command() when the player
-    chances upon the door that is the exit to the dungeon. They have won the
-    game; when advgame.py receives this game state message it prints its message
-    and then exits the program.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.leave_command() when the player
+chances upon the door that is the exit to the dungeon. They have won the game;
+when advgame.py receives this game state message it prints its message and then
+exits the program.
     """
     __slots__ = ()
 
@@ -853,10 +847,10 @@ class Leave_Command_Won_The_Game(Game_State_Message):
 
 class Lock_Command_Dont_Possess_Correct_Key(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.lock_command() when the player
-    tries to lock a chest while they don't possess the chest key, or a door
-    while they don't possess the door key.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.lock_command() when the player tries
+to lock a chest while they don't possess the chest key, or a door while they
+don't possess the door key.
     """
     __slots__ = 'object_to_lock_title', 'key_needed',
 
@@ -883,9 +877,9 @@ class Lock_Command_Element_Not_Lockable(Game_State_Message):
 
 class Lock_Command_Object_Has_Been_Locked(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.lock_command() when the player
-    successfully locks a chest or door.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.lock_command() when the player
+successfully locks a chest or door.
     """
     __slots__ = 'target',
 
@@ -899,9 +893,9 @@ class Lock_Command_Object_Has_Been_Locked(Game_State_Message):
 
 class Lock_Command_Object_Is_Already_Locked(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.lock_command() when the player
-    tries to lock a chest or door that is already locked.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.lock_command() when the player tries
+to lock a chest or door that is already locked.
     """
     __slots__ = 'target',
 
@@ -915,9 +909,9 @@ class Lock_Command_Object_Is_Already_Locked(Game_State_Message):
 
 class Lock_Command_Object_to_Lock_Not_Here(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.lock_command() when the player
-    specifies an object to lock that is not present in the current dungeon room.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.lock_command() when the player
+specifies an object to lock that is not present in the current dungeon room.
     """
     __slots__ = 'target_title',
 
@@ -931,11 +925,10 @@ class Lock_Command_Object_to_Lock_Not_Here(Game_State_Message):
 
 class Look_At_Command_Found_Container_Here(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.look_at_command() when the player
-    targets a chest or a corpse. If it's a chest and it's unlocked, the contents
-    of the chest are conveyed. If it's a corpse, the corpse's possessions are
-    conveyed.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.look_at_command() when the player
+targets a chest or a corpse. If it's a chest and it's unlocked, the contents of
+the chest are conveyed. If it's a corpse, the corpse's possessions are conveyed.
     """
     __slots__ = 'container_description', 'container_type', 'container', 'is_locked', 'is_closed'
 
@@ -998,9 +991,9 @@ class Look_At_Command_Found_Container_Here(Game_State_Message):
 
 class Look_At_Command_Found_Creature_Here(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.look_command() when the player
-    targets a creature in the dungeon's current room.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.look_command() when the player targets
+a creature in the dungeon's current room.
     """
     __slots__ = 'creature_description',
 
@@ -1014,9 +1007,9 @@ class Look_At_Command_Found_Creature_Here(Game_State_Message):
 
 class Look_At_Command_Found_Door_or_Doorway(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.look_at_command() when the player
-    targets a door or doorway in the current dungeon room.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.look_at_command() when the player
+targets a door or doorway in the current dungeon room.
     """
     __slots__ = 'compass_dir', 'door'
 
@@ -1041,12 +1034,11 @@ class Look_At_Command_Found_Door_or_Doorway(Game_State_Message):
 
 class Look_At_Command_Found_Item_or_Items_Here(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.look_at_command() when the player
-    targets an item that is present on the floor of current room or in their
-    inventory or in a chest or on a corpse's person as specified by the player.
-    It conveys the item's description attribute and specifies how many are
-    present.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.look_at_command() when the player
+targets an item that is present on the floor of current room or in their
+inventory or in a chest or on a corpse's person as specified by the player. It
+conveys the item's description attribute and specifies how many are present.
     """
     __slots__ = 'item_description', 'item_qty'
 
@@ -1064,9 +1056,9 @@ class Look_At_Command_Found_Item_or_Items_Here(Game_State_Message):
 
 class Look_At_Command_Found_Nothing(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.look_at_command() when the player
-    targets an item that can't be found where they said it was.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.look_at_command() when the player
+targets an item that can't be found where they said it was.
     """
     __slots__ = 'item_title', 'item_container', 'container_type'
 
@@ -1100,9 +1092,9 @@ class Open_Command_Element_Not_Openable(Game_State_Message):
 
 class Open_Command_Object_Has_Been_Opened(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.open_command() when the player
-    successfully opens a chest or door.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.open_command() when the player
+successfully opens a chest or door.
     """
     __slots__ = 'target',
 
@@ -1116,9 +1108,9 @@ class Open_Command_Object_Has_Been_Opened(Game_State_Message):
 
 class Open_Command_Object_Is_Already_Open(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.open_command() when the player
-    targets a door or chest that is already open.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.open_command() when the player targets
+a door or chest that is already open.
     """
     __slots__ = 'target',
 
@@ -1132,9 +1124,9 @@ class Open_Command_Object_Is_Already_Open(Game_State_Message):
 
 class Open_Command_Object_Is_Locked(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.open_command() when the player
-    targets a door or chest that is locked.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.open_command() when the player targets
+a door or chest that is locked.
     """
     __slots__ = 'target',
 
@@ -1148,9 +1140,9 @@ class Open_Command_Object_Is_Locked(Game_State_Message):
 
 class Open_Command_Object_to_Open_Not_Here(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.open_command() when the player
-    targets a door or chest that is not present in the current dungeon room.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.open_command() when the player targets
+a door or chest that is not present in the current dungeon room.
     """
     __slots__ = 'target_title',
 
@@ -1176,9 +1168,9 @@ class Pick_Lock_Command_Element_Not_Unlockable(Game_State_Message):
 
 class Pick_Lock_Command_Target_Has_Been_Unlocked(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.pick_lock_command() when the
-    player successfully unlocks the chest or door.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.pick_lock_command() when the player
+successfully unlocks the chest or door.
     """
     __slots__ = 'target_title',
 
@@ -1192,10 +1184,9 @@ class Pick_Lock_Command_Target_Has_Been_Unlocked(Game_State_Message):
 
 class Pick_Lock_Command_Target_Not_Found(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.pick_lock_command() when the
-    player targets a door or chest that is not present in the current dungeon
-    room.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.pick_lock_command() when the player
+targets a door or chest that is not present in the current dungeon room.
     """
     __slots__ = 'target_title',
 
@@ -1209,9 +1200,9 @@ class Pick_Lock_Command_Target_Not_Found(Game_State_Message):
 
 class Pick_Lock_Command_Target_Not_Locked(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.pick_lock_command() when the
-    player targets a door or chest that is not locked.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.pick_lock_command() when the player
+targets a door or chest that is not locked.
     """
     __slots__ = 'target_title',
 
@@ -1225,10 +1216,10 @@ class Pick_Lock_Command_Target_Not_Locked(Game_State_Message):
 
 class Pick_Up_Command_Cant_Pick_Up_Chest_Corpse_Creature_or_Door(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.pick_up_command() when the player
-    has specifies a game element that is a chest, corpse, creature or door and
-    can't be picked up.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.pick_up_command() when the player has
+specifies a game element that is a chest, corpse, creature or door and can't be
+picked up.
     """
     __slots__ = 'element_type', 'element_title'
 
@@ -1243,11 +1234,11 @@ class Pick_Up_Command_Cant_Pick_Up_Chest_Corpse_Creature_or_Door(Game_State_Mess
 
 class Pick_Up_Command_Item_Not_Found(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.pick_up_command() when the player
-    targets an item to pick up that is not present in the current dungeon room.
-    If they meant to acquire an item from a chest or corpse, they need to say
-    `TAKE <item name> FROM <corpse or chest name>`.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.pick_up_command() when the player
+targets an item to pick up that is not present in the current dungeon room. If
+they meant to acquire an item from a chest or corpse, they need to say `TAKE
+<item name> FROM <corpse or chest name>`.
     """
     __slots__ = 'item_title', 'amount_attempted', 'items_here'
 
@@ -1270,9 +1261,9 @@ class Pick_Up_Command_Item_Not_Found(Game_State_Message):
 
 class Pick_Up_Command_Item_Picked_Up(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.pick_up_command() when the player
-    successfully acquires an item from the floor of the current dungeon room.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.pick_up_command() when the player
+successfully acquires an item from the floor of the current dungeon room.
     """
     __slots__ = 'item_title', 'pick_up_amount', 'amount_had'
 
@@ -1294,10 +1285,10 @@ class Pick_Up_Command_Item_Picked_Up(Game_State_Message):
 
 class Pick_Up_Command_Quantity_Unclear(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.pick_up_command() when the player
-    has entered an ungrammatical sentence that is ambiguous as to how many it
-    means to specify.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.pick_up_command() when the player has
+entered an ungrammatical sentence that is ambiguous as to how many it means to
+specify.
     """
 
     @property
@@ -1310,11 +1301,11 @@ class Pick_Up_Command_Quantity_Unclear(Game_State_Message):
 
 class Pick_Up_Command_Trying_to_Pick_Up_More_than_Is_Present(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.pick_up_command() when the player
-    has targeted an item that is present, but has specified a quantity to pick
-    up that is greater than the number of that item that is present in the
-    current dungeon room.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.pick_up_command() when the player has
+targeted an item that is present, but has specified a quantity to pick up that
+is greater than the number of that item that is present in the current dungeon
+room.
     """
     __slots__ = 'item_title', 'amount_attempted', 'amount_present'
 
@@ -1330,9 +1321,9 @@ class Pick_Up_Command_Trying_to_Pick_Up_More_than_Is_Present(Game_State_Message)
 
 class Put_Command_Amount_Put(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.put_command() when the player
-    successfully places one or more items in a chest or on a corpse's person.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.put_command() when the player
+successfully places one or more items in a chest or on a corpse's person.
     """
     __slots__ = 'item_title', 'container_title', 'container_type', 'amount_put', 'amount_left'
 
@@ -1364,10 +1355,9 @@ class Put_Command_Amount_Put(Game_State_Message):
 
 class Put_Command_Item_Not_in_Inventory(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.put_command() when the player
-    attempts to put an item in a chest or on a corpse that is not in their
-    inventory.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.put_command() when the player attempts
+to put an item in a chest or on a corpse that is not in their inventory.
     """
     __slots__ = 'amount_attempted', 'item_title'
 
@@ -1385,10 +1375,10 @@ class Put_Command_Item_Not_in_Inventory(Game_State_Message):
 
 class Put_Command_Quantity_Unclear(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.put_command() when the player
-    writes an ungrammatical sentence that is ambiguous as to how many of the
-    item they mean to put in the chest or on the corpse.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.put_command() when the player writes
+an ungrammatical sentence that is ambiguous as to how many of the item they mean
+to put in the chest or on the corpse.
     """
 
     @property
@@ -1401,10 +1391,10 @@ class Put_Command_Quantity_Unclear(Game_State_Message):
 
 class Put_Command_Trying_to_Put_More_than_You_Have(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.put_command() when the player
-    tries to put a quantity of an item in a chest or on a corpse that that is
-    more than they have in their inventory.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.put_command() when the player tries to
+put a quantity of an item in a chest or on a corpse that that is more than they
+have in their inventory.
     """
     __slots__ = 'item_title', 'amount_present'
 
@@ -1420,10 +1410,10 @@ class Put_Command_Trying_to_Put_More_than_You_Have(Game_State_Message):
 
 class Quit_Command_Have_Quit_The_Game(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.quit_command() when the player
-    executes the command. When advgame.py receives this object, it prints the
-    message and then exits the program.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.quit_command() when the player
+executes the command. When advgame.py receives this object, it prints the
+message and then exits the program.
     """
     __slots__ = ()
 
@@ -1437,11 +1427,11 @@ class Quit_Command_Have_Quit_The_Game(Game_State_Message):
 
 class Reroll_Command_Name_or_Class_Not_Set(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.reroll_command() when the player
-    tries to use it before they have set their name and class. The player's
-    ability scores aren't rolled until they've chosen a name and class, and
-    therefore can't be rerolled yet.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.reroll_command() when the player tries
+to use it before they have set their name and class. The player's ability scores
+aren't rolled until they've chosen a name and class, and therefore can't be
+rerolled yet.
     """
     __slots__ = 'character_name', 'character_class'
 
@@ -1464,9 +1454,9 @@ class Reroll_Command_Name_or_Class_Not_Set(Game_State_Message):
 
 class Set_Class_Command_Class_Set(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.set_class_command() when the
-    player selects a class from the choices Warrior, Thief, Mage and Priest.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.set_class_command() when the player
+selects a class from the choices Warrior, Thief, Mage and Priest.
     """
     __slots__ = 'class_str',
 
@@ -1480,9 +1470,9 @@ class Set_Class_Command_Class_Set(Game_State_Message):
 
 class Set_Class_Command_Invalid_Class(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.set_class_command() when the
-    player specifies a class that is not one of Warrior, Thief, Mage or Priest.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.set_class_command() when the player
+specifies a class that is not one of Warrior, Thief, Mage or Priest.
     """
     __slots__ = 'bad_class',
 
@@ -1496,9 +1486,9 @@ class Set_Class_Command_Invalid_Class(Game_State_Message):
 
 class Set_Name_Command_Invalid_Part(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.set_name_command() when the player
-    tries to set a name that is not one or more alphabetic titelcased strings.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.set_name_command() when the player
+tries to set a name that is not one or more alphabetic titelcased strings.
     """
     __slots__ = 'name_part',
 
@@ -1512,9 +1502,9 @@ class Set_Name_Command_Invalid_Part(Game_State_Message):
 
 class Set_Name_Command_Name_Set(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.set_name_command() when the player
-    sets a name.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.set_name_command() when the player
+sets a name.
     """
     __slots__ = 'name',
 
@@ -1528,13 +1518,13 @@ class Set_Name_Command_Name_Set(Game_State_Message):
 
 class Status_Command_Output(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.status_command() when the player
-    executes it. The status line conveyed by the message property includes the
-    player's current and total hit points, current and total mana points if
-    they're a spellcaster, their attack and damage, their armor class, their
-    armor equipped if not a Mage, their shield equipped if a Warrior or Priest,
-    their Wand equipped if a Mage, and their Weapon equipped.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.status_command() when the player
+executes it. The status line conveyed by the message property includes the
+player's current and total hit points, current and total mana points if they're
+a spellcaster, their attack and damage, their armor class, their armor equipped
+if not a Mage, their shield equipped if a Warrior or Priest, their Wand equipped
+if a Mage, and their Weapon equipped.
     """
     __slots__ = ('hit_points', 'hit_point_total', 'armor_class', 'attack_bonus', 'damage', 'mana_points',
                  'mana_point_total', 'armor', 'shield', 'weapon', 'wand', 'character_class')
@@ -1582,10 +1572,10 @@ class Status_Command_Output(Game_State_Message):
 
 class Take_Command_Item_Not_Found_in_Container(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.take_command() if the player
-    specifies an item to take from a chest that is not in that chest or from a
-    corpse that is not on the corpse.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.take_command() if the player specifies
+an item to take from a chest that is not in that chest or from a corpse that is
+not on the corpse.
     """
     __slots__ = 'container_title', 'amount_attempted', 'container_type', 'item_title'
 
@@ -1609,9 +1599,9 @@ class Take_Command_Item_Not_Found_in_Container(Game_State_Message):
 
 class Take_Command_Item_or_Items_Taken(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.take_command() when the player
-    successfully acquires an item from a chest or corpse.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.take_command() when the player
+successfully acquires an item from a chest or corpse.
     """
     __slots__ = 'container_title', 'item_title', 'amount_taken'
 
@@ -1630,10 +1620,10 @@ class Take_Command_Item_or_Items_Taken(Game_State_Message):
 
 class Take_Command_Quantity_Unclear(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.take_command() when the player
-    writes an ungrammatical sentence that is ambiguous as to how many of the
-    item the player means to take.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.take_command() when the player writes
+an ungrammatical sentence that is ambiguous as to how many of the item the
+player means to take.
     """
 
     @property
@@ -1646,11 +1636,11 @@ class Take_Command_Quantity_Unclear(Game_State_Message):
 
 class Take_Command_Trying_to_Take_More_than_Is_Present(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.take_command() when the player
-    specifies a quantity of an item to take from a chest that is more than is
-    present in that chest, or from a corpse that is more than is present on that
-    corpse.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.take_command() when the player
+specifies a quantity of an item to take from a chest that is more than is
+present in that chest, or from a corpse that is more than is present on that
+corpse.
     """
     __slots__ = 'container_title', 'container_type', 'item_title', 'amount_attempted', 'amount_present'
 
@@ -1669,9 +1659,9 @@ class Take_Command_Trying_to_Take_More_than_Is_Present(Game_State_Message):
 
 class Unequip_Command_Item_Not_Equipped(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.unequip_command() when the player
-    tries to unequip an item that is not equipped.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.unequip_command() when the player
+tries to unequip an item that is not equipped.
     """
     __slots__ = 'item_asked_title', 'item_asked_type', 'item_present_title'
 
@@ -1695,10 +1685,10 @@ class Unequip_Command_Item_Not_Equipped(Game_State_Message):
 
 class Unlock_Command_Dont_Possess_Correct_Key(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.unlock_command() when the player
-    tries to unlock a door while not possessing the door key, or unlock a chest
-    while not possessing the chest key.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.unlock_command() when the player tries
+to unlock a door while not possessing the door key, or unlock a chest while not
+possessing the chest key.
     """
     __slots__ = 'object_to_unlock_title', 'key_needed',
 
@@ -1725,9 +1715,9 @@ class Unlock_Command_Element_Not_Unlockable(Game_State_Message):
 
 class Unlock_Command_Object_Has_Been_Unlocked(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.unlock_command() when the player
-    successfully unlocks a chest or door.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.unlock_command() when the player
+successfully unlocks a chest or door.
     """
     __slots__ = 'target',
 
@@ -1741,9 +1731,9 @@ class Unlock_Command_Object_Has_Been_Unlocked(Game_State_Message):
 
 class Unlock_Command_Object_Is_Already_Unlocked(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.unlock_command() when the player
-    tries to unlock a door or chest that is already unlocked.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.unlock_command() when the player tries
+to unlock a door or chest that is already unlocked.
     """
     __slots__ = 'target',
 
@@ -1757,10 +1747,9 @@ class Unlock_Command_Object_Is_Already_Unlocked(Game_State_Message):
 
 class Unlock_Command_Object_to_Unlock_Not_Here(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.unlock_command() when the player
-    tries to unlock a door or chest that is not present in the current dungeon
-    room.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.unlock_command() when the player tries
+to unlock a door or chest that is not present in the current dungeon room.
     """
     __slots__ = 'target_title',
 
@@ -1774,11 +1763,11 @@ class Unlock_Command_Object_to_Unlock_Not_Here(Game_State_Message):
 
 class Various_Commands_Ambiguous_Door_Specifier(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.lock_command(), .unlock_command(),
-    .open_command() and .close_command() when the player has used a specifier
-    for a door that matches more than one door in the current dungeon room; for
-    example, saying 'unlock wooden door' when there's two wooden doors.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.lock_command(), .unlock_command(),
+.open_command() and .close_command() when the player has used a specifier for a
+door that matches more than one door in the current dungeon room; for example,
+saying 'unlock wooden door' when there's two wooden doors.
     """
     __slots__ = 'compass_dirs', 'door_or_doorway', 'door_type'
 
@@ -1803,9 +1792,9 @@ class Various_Commands_Ambiguous_Door_Specifier(Game_State_Message):
 
 class Various_Commands_Container_Is_Closed(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.put_command() or .take_command()
-    when the player tries to access a chest that is closed.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.put_command() or .take_command() when
+the player tries to access a chest that is closed.
     """
     __slots__ = 'target',
 
@@ -1819,11 +1808,11 @@ class Various_Commands_Container_Is_Closed(Game_State_Message):
 
 class Various_Commands_Container_Not_Found(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.put_command(), .take_command(), or
-    .look_at_command() when trying to look in a chest that isn't present in the
-    current dungeon room, or check a corpse that isn't present in the current
-    dungeon room.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.put_command(), .take_command(), or
+.look_at_command() when trying to look in a chest that isn't present in the
+current dungeon room, or check a corpse that isn't present in the current
+dungeon room.
     """
     __slots__ = 'container_not_found_title', 'container_present_title'
 
@@ -1842,11 +1831,11 @@ class Various_Commands_Container_Not_Found(Game_State_Message):
 
 class Various_Commands_Display_Rolled_Stats(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.set_name_command() or
-    .set_class_command() when both name and class have been set, or by
-    .reroll_command(). It displays the character's randomly generated ability
-    scores.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.set_name_command() or
+.set_class_command() when both name and class have been set, or by
+.reroll_command(). It displays the character's randomly generated ability
+scores.
     """
     __slots__ = 'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'
 
@@ -1867,11 +1856,11 @@ class Various_Commands_Display_Rolled_Stats(Game_State_Message):
 
 class Various_Commands_Door_Not_Present(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.close_command(), .leave_command(),
-    .lock_command(), .look_at_command(), .open_command(), .pick_lock_command(),
-    or .unlock_command() when the player specifies a door that is not present in
-    the current dungeon room.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.close_command(), .leave_command(),
+.lock_command(), .look_at_command(), .open_command(), .pick_lock_command(), or
+.unlock_command() when the player specifies a door that is not present in the
+current dungeon room.
     """
     __slots__ = 'compass_dir', 'portal_type'
 
@@ -1891,12 +1880,12 @@ class Various_Commands_Door_Not_Present(Game_State_Message):
 
 class Various_Commands_Entered_Room(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.leave_command() when the player
-    leaves a room and enters a new one, or by .begin_command() when the player
-    starts the game in the first room. It prints the room description, lists the
-    items on the floor if any, mentions any chest or creature, and lists the
-    exits to the room by compass direction.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.leave_command() when the player leaves
+a room and enters a new one, or by .begin_command() when the player starts the
+game in the first room. It prints the room description, lists the items on the
+floor if any, mentions any chest or creature, and lists the exits to the room by
+compass direction.
     """
     __slots__ = 'room',
 
@@ -1945,10 +1934,10 @@ class Various_Commands_Foe_Death(Game_State_Message):
 
 class Various_Commands_Item_Equipped(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.begin_game() or .equip_command()
-    when the player equips an item. It lists the item equipped and mentions how
-    the relevant game parameters have changed as a result.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.begin_game() or .equip_command() when
+the player equips an item. It lists the item equipped and mentions how the
+relevant game parameters have changed as a result.
     """
     __slots__ = ('item_title', 'item_type', 'changed_value_1', 'value_type_1', 'changed_value_2', 'value_type_2',
                 'change_text')
@@ -1984,13 +1973,13 @@ class Various_Commands_Item_Equipped(Game_State_Message):
 
 class Various_Commands_Item_Unequipped(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.equip_command(),
-    .unequip_command(), or .drop_command(). It's returned by .unequip_command()
-    when the player unequips an item; .equip_command() returns it if the player
-    already had an item equipped in that slot to convey the previous item's
-    removal; and .drop_command() returns it if the item the character dropped
-    was equipped and they no longer have any of the item in their inventory.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.equip_command(), .unequip_command(),
+or .drop_command(). It's returned by .unequip_command() when the player unequips
+an item; .equip_command() returns it if the player already had an item equipped
+in that slot to convey the previous item's removal; and .drop_command() returns
+it if the item the character dropped was equipped and they no longer have any of
+the item in their inventory.
     """
     __slots__ = ('item_title', 'item_type', 'changed_value_1', 'value_type_1', 'changed_value_2', 'value_type_2',
                 'change_text')
@@ -2026,11 +2015,11 @@ class Various_Commands_Item_Unequipped(Game_State_Message):
 
 class Various_Commands_Underwent_Healing_Effect(Game_State_Message):
     """
-    This class implements an object that is returned by
-    adventuregame.processor.Command_Processor.drink_command() or
-    .cast_spell_command(). It's returned by .drink_command() if the player
-    drinks a health potion; and it's returned by the .cast_spell_command() if
-    the player is a Priest and they successfully cast a healing spell.
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.drink_command() or
+.cast_spell_command(). It's returned by .drink_command() if the player drinks a
+health potion; and it's returned by the .cast_spell_command() if the player is a
+Priest and they successfully cast a healing spell.
     """
     __slots__ = 'amount_healed', 'current_hit_points', 'hit_point_total',
 
