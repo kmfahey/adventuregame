@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 
 
-__name__ = "adventuregame.exceptions"
+__name__ = 'adventuregame.exceptions'
+
 
 class Internal_Exception(Exception):
     pass

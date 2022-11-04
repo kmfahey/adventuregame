@@ -19,8 +19,9 @@ import operator
 import re
 import itertools
 
-import adventuregame.statemsgs as stmsg
 import adventuregame.elements as elem
+import adventuregame.exceptions as excpt
+import adventuregame.statemsgs as stmsg
 import adventuregame.utility as util
 
 
@@ -51,11 +52,11 @@ COMMANDS_SYNTAX = {
     'HELP': ('', '<command\u00A0name>'),
     'INVENTORY': ('',),
     'LOOK AT': ('<item\u00A0name>', '<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>',
-                '<item\u00A0name>\u00A0IN\u00A0INVENTORY', 
+                '<item\u00A0name>\u00A0IN\u00A0INVENTORY',
                 '<item\u00A0name>\u00A0ON\u00A0<corpse\u00A0name>', '<compass\u00A0direction>\u00A0DOOR',
                 '<compass\u00A0direction>\u00A0DOORWAY'),
     'LEAVE': ('[USING\u00A0or\u00A0VIA]\u00A0<compass\u00A0direction>\u00A0DOOR',
-              '[USING\u00A0or\u00A0VIA]\u00A0<compass\u00A0direction>\u00A0DOORWAY', 
+              '[USING\u00A0or\u00A0VIA]\u00A0<compass\u00A0direction>\u00A0DOORWAY',
               '[USING\u00A0or\u00A0VIA]\u00A0<door\u00A0name>',
               '[USING\u00A0or\u00A0VIA]\u00A0<compass\u00A0direction>\u00A0<door\u00A0name>'),
     'LOCK': ('<door\u00A0name>', '<chest\u00A0name>'),
@@ -79,11 +80,11 @@ COMMANDS_SYNTAX = {
 
 COMMANDS_HELP = {
     'ATTACK': "The ATTACK command is used to attack creatures. Beware: if you attack a creature and don't kill it, it "
-              "will attack you in return! After you kill a creature, you can check its corpse for loot using the LOOK "
-              "AT command and take loot with the TAKE command.",
+              'will attack you in return! After you kill a creature, you can check its corpse for loot using the LOOK '
+              'AT command and take loot with the TAKE command.',
     'BEGIN GAME': "The BEGIN GAME command is used to start the game after you have set your name and class and approved"
-                  " your ability scores. When you enter this command, you will automatically be equiped with your "
-                  "starting gear and started in the antechamber of the dungeon.",
+                  ' your ability scores. When you enter this command, you will automatically be equiped with your '
+                  'starting gear and started in the antechamber of the dungeon.',
     'CAST SPELL': 'The CAST SPELL command can only be used by Mages and Priests. A Mage can cast an attack spell that '
                   'automatically hits creatures and does damage. A Priest can cast a healing spell on themselves.',
     'CLOSE': 'The CLOSE command can be used to close doors and chests.',
@@ -91,7 +92,7 @@ COMMANDS_HELP = {
     'DROP': 'The DROP command can be used to remove items from your inventory and leave them on the floor. If you drop '
             'an item you had equipped, it will automatically be unequipped unless you have another on you.',
     'EQUIP': "The EQUIP command can be used to equip a weapon, armor, shield or wand from your inventory. You can't "
-             "equip items from the floor.",
+             'equip items from the floor.',
     'HELP': 'The HELP command can be used to get help about any game commands.',
     'INVENTORY': 'The INVENTORY command can be used to get a listing of the items in your inventory. If you want more '
                   "information about an item, say 'LOOK\u00A0AT\u00A0<item\u00A0title>\u00A0IN\u00A0INVENTORY'.",
@@ -108,7 +109,7 @@ COMMANDS_HELP = {
                "acquire items from a chest, say '<item\u00A0name>\u00A0FROM\u00A0<chest\u00A0name>'. For a corpse, say "
                "'<item\u00A0name>\u00A0FROM\u00A0<chest\u00A0name>'.",
     'PUT': "The PUT command can be used to remove items from your inventory and place them in a chest or on a corpse's "
-           "person. To leave items on the floor, use DROP.",
+           'person. To leave items on the floor, use DROP.',
     'REROLL': 'The REROLL command is used before game start to get a fresh selection of randomly generated ability '
               'scores. You can reroll your ability scores as many times as you want.',
     'QUIT': 'The QUIT command is used to exit the game.',
@@ -122,7 +123,7 @@ COMMANDS_HELP = {
     'TAKE': "The TAKE command is used to remove items from a chest or a corpse and place them in your inventory.",
     'UNEQUIP': "The UNEQUIP command is used to unequip a weapon, armor, shield or wand from your inventory.",
     'UNLOCK': "The UNLOCK command is used to unlock a door or chest. You need a door key to unlock doors and a chest "
-              "key to unlock chests."
+              'key to unlock chests.'
 }
 
 
@@ -182,9 +183,9 @@ command method is stored associated with the command that it implements.
             command = method_name.rsplit('_', maxsplit=1)[0]
             self.dispatch_table[command] = getattr(self, method_name)
             if command not in commands_set:
-                raise Internal_Exception('Inconsistency between set list of commands and command methods found by '
-                                         f'introspection: method {method_name}() does not correspond to a command in '
-                                         'pregame_commands or ingame_commands.')
+                raise excpt.Internal_Exception('Inconsistency between set list of commands and command methods found by '
+                                               f'introspection: method {method_name}() does not correspond to a command in '
+                                               'pregame_commands or ingame_commands.')
             commands_set.remove(command)
         if len(commands_set):
             raise Internal_Exception('Inconsistency between set list of commands and command methods found by '
@@ -634,7 +635,7 @@ DROP <number> <item name>
                         unequip_return = stmsg.Various_Commands_Item_Unequipped(item_title, 'wand', now_cant_attack=True),
             self.game_state.character.drop_item(item, qty=drop_amount)
             if self.game_state.rooms_state.cursor.items_here is None:
-                self.game_state.rooms_state.cursor.items_here = Items_Multi_State()
+                self.game_state.rooms_state.cursor.items_here = elem.Items_Multi_State()
             self.game_state.rooms_state.cursor.items_here.set(item.internal_name,
                                                               amount_already_here + drop_amount, item)
             amount_had_now = item_had_qty - drop_amount
@@ -720,7 +721,6 @@ EQUIP <weapon name>
                 return retval + (stmsg.Various_Commands_Item_Equipped(item.title, 'weapon',
                                                                       attack_bonus=self.game_state.character.attack_bonus,
                                                                       damage=self.game_state.character.damage_roll),)
-
 
     def help_command(self, *tokens):
         """
@@ -907,7 +907,7 @@ LOCK <chest name>
                 if item.title != target_title:
                     continue
                 tried_to_operate_on_item = True
-                item_targetted = item 
+                item_targetted = item
                 break
 
         # Control flow fell off the end of the loop, which means none of the doors in the room had a title matching the
@@ -937,7 +937,6 @@ LOCK <chest name>
             else:
                 return stmsg.Close_Command_Object_to_Close_Not_Here(target_title),
 
-
     def _various_commands_door_selector(self, *tokens):
         compass_dir = door_type = None
         if tokens[0] in ('north', 'east', 'south', 'west'):
@@ -964,19 +963,19 @@ LOCK <chest name>
         else:
             return tuple(matching_doors)
 
-    look_at_door_re = re.compile("""(                                                                                   
-                                        (north|east|south|west) \s  # For example, this regex matches 'north iron door',
-                                    |                               # 'north door', 'iron door', and 'door'. But it won't 
-                                        (iron|wooden) \s            # match 'iron doorway'.
-                                    |
-                                        (
-                                            (north|east|south|west) \s (iron|wooden) \s
-                                        )
-                                    )?
-                                    (door|doorway)
-                                    (?<! iron \s doorway)           # Lookbehinds must be fixed-width so I use 2.
-                                    (?<! wooden \s doorway)
-                                    """, re.X)
+    look_at_door_re = re.compile(r"""(
+                                         (north|east|south|west) \s  # For example, this regex matches 'north iron door',
+                                     |                               # 'north door', 'iron door', and 'door'. But it won't
+                                         (iron|wooden) \s            # match 'iron doorway'.
+                                     |
+                                         (
+                                             (north|east|south|west) \s (iron|wooden) \s
+                                         )
+                                     )?
+                                     (door|doorway)
+                                     (?<! iron \s doorway)           # Lookbehinds must be fixed-width so I use 2.
+                                     (?<! wooden \s doorway)
+                                     """, re.X)
 
     def look_at_command(self, *tokens):
         """
@@ -1039,9 +1038,7 @@ LOOK AT <compass direction> DOORWAY
                     item_in_chest = True
             else:
                 joinword_index = tokens.index('on')
-                if tokens[-1] == 'floor':
-                    item_on_floor = True
-                else:
+                if tokens[-1] != 'floor':
                     item_contained = True
                     item_on_corpse = True
             target_title = ' '.join(tokens[:joinword_index])
@@ -1054,13 +1051,12 @@ LOOK AT <compass direction> DOORWAY
                 door, = result
                 return stmsg.Look_At_Command_Found_Door_or_Doorway(door.title.split(' ')[0], door),
         else:
-            item_on_floor = True
             target_title = ' '.join(tokens)
         creature_here = self.game_state.rooms_state.cursor.creature_here
         container_here = self.game_state.rooms_state.cursor.container_here
         if (item_in_chest and isinstance(container_here, elem.Corpse)
             or item_on_corpse and isinstance(container_here, elem.Chest)):
-            return stmsg.Command_Bad_Syntax('look at', *commands_syntax['look at']),
+            return stmsg.Command_Bad_Syntax('look at', *COMMANDS_SYNTAX['LOOK AT']),
         if creature_here is not None and creature_here.title == target_title.lower():
             return stmsg.Look_At_Command_Found_Creature_Here(creature_here.description),
         elif container_here is not None and container_here.title == target_title.lower():
@@ -1236,7 +1232,7 @@ Priest, a 1-tuple of a Command_Class_Restricted object is returned.
                 if item.title != target_title:
                     continue
                 tried_to_operate_on_item = True
-                item_targetted = item 
+                item_targetted = item
                 break
 
         if any((tried_to_operate_on_doorway, tried_to_operate_on_corpse, tried_to_operate_on_item,
@@ -1248,7 +1244,6 @@ Priest, a 1-tuple of a Command_Class_Restricted object is returned.
             return stmsg.Pick_Lock_Command_Element_Not_Unlockable(target_title, **argd),
         else:
             return stmsg.Pick_Lock_Command_Target_Not_Found(target_title),
-
 
     def pick_up_command(self, *tokens):
         """
@@ -1549,7 +1544,6 @@ takes no arguments.
         self.game_state.game_has_ended = True
         self.game_ending_state_msg = return_tuple[-1]
         return return_tuple
-
 
     def reroll_command(self, *tokens):
         """
@@ -1887,7 +1881,7 @@ UNEQUIP <weapon name>
                     weapon_equipped = self.game_state.character.weapon_equipped
                     if weapon_equipped is not None:
                         return stmsg.Various_Commands_Item_Unequipped(item_title, 'wand',
-                                                                      attack_bonus=self.game_state.character.\
+                                                                      attack_bonus=self.game_state.character.
                                                                           attack_bonus,
                                                                       damage=self.game_state.character.damage_roll,
                                                                       now_attacking_with=weapon_equipped),
@@ -1901,7 +1895,7 @@ UNEQUIP <weapon name>
             if self.game_state.character.weapon_equipped is not None:
                 if self.game_state.character.weapon_equipped.title == item_title:
                     self.game_state.character.unequip_weapon()
-                    wand_equipped = self.game_state.character.wand_equipped 
+                    wand_equipped = self.game_state.character.wand_equipped
                     if wand_equipped is not None:
                         return stmsg.Various_Commands_Item_Unequipped(item_title, 'weapon',
                                                                       attacking_with=wand_equipped),
@@ -1955,4 +1949,3 @@ UNLOCK <chest\u00A0name>
         else:
             object_to_unlock.is_locked = False
             return stmsg.Unlock_Command_Object_Has_Been_Unlocked(object_to_unlock.title),
-

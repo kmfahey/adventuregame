@@ -15,8 +15,9 @@ import math
 import random
 import re
 
-from adventuregame.utility import isfloat
-from adventuregame.exceptions import Bad_Command_Exception, Internal_Exception
+import adventuregame.exceptions as excpt
+import adventuregame.utility as util
+
 
 __name__ = 'adventuregame.elements'
 
@@ -54,7 +55,7 @@ entries in **argd are assigned to object attributes.
                     value = True
                 elif value.isdigit():
                     value = int(value)
-                elif isfloat(value):
+                elif util.isfloat(value):
                     value = float(value)
             setattr(self, Key, value)
 
@@ -86,7 +87,7 @@ that remained unset to None explicitly.
                 setattr(self, key, None)
 
     def _process_list_value(self, inventory_value):
-        """
+        r"""
 Some Ini_Entry subclasses that describe objects which can contain items--
 such as a chest-- have an .ini attribute that lists the items contained in
 the format \[\d+x[A-Z][A-Za-z_]+(,\d+x[A-Z][A-Za-z_]+)*\]. This private method
@@ -142,7 +143,7 @@ present, otherwise the internal dict raises a KeyError.
 This setter method adds an item to the internal dictionary using the given
 internal name as a key.
 
-:item_internal_name: The internal name of the Item subclass object to use as a 
+:item_internal_name: The internal name of the Item subclass object to use as a
                      key.
 :item: The Item subclass object to be set.
         """
@@ -225,7 +226,7 @@ The factory chooses between the subclasses Armor, Coin, Key, Potion, Shield,
 Wand, and Weapon. The subclasses don't offer any functionality; they exist
 solely so that an Item object can be type-tested to detect its category.
 
-:**item_dict: A dictionary of key-value pairs to instantiate the Item subclass 
+:**item_dict: A dictionary of key-value pairs to instantiate the Item subclass
               object with.
 :return: An Item subclass object.
         """
@@ -245,6 +246,7 @@ solely so that an Item object can be type-tested to detect its category.
             item = Weapon(**item_dict)
         return item
 
+
 class Equippable_Item(Item):
 
     def usable_by(self, character_class):
@@ -259,9 +261,8 @@ value, or False otherwise.
 :return: A boolean.
         """
         if character_class not in ('Warrior', 'Thief', 'Mage', 'Priest'):
-            raise Internal_Exception(f'character class {character_class} not recognized')
+            raise excpt.Internal_Exception(f'character class {character_class} not recognized')
         return bool(getattr(self, character_class.lower() + '_can_use', None))
-
 
 
 # The subclasses don't have much differing functionality but accurately typing each Item allows classes that handle
@@ -328,9 +329,6 @@ type testing.
     pass
 
 
-
-
-
 class Items_State(State):
     """
 This subclass of the abstract base class State represents a container object
@@ -346,7 +344,7 @@ Item subclass objects from the internal dicts. Each one has the attribute
 internal_name set to the corresponding key from the outer dict.
 
 :**dict_of_dicts: A structure of internal name keys corresponding to dict values
-                  which are key-value pairs to initialize an individual Item 
+                  which are key-value pairs to initialize an individual Item
                   subclass object with.
         """
         self._contents = dict()
@@ -474,7 +472,7 @@ door_type value.
         elif door_dict['door_type'] == 'iron_door':
             door = Iron_Door(**door_dict)
         else:
-            raise Internal_Error(f'unrecognized door type: {door_dict["door_type"]}')
+            raise excpt.Internal_Exception(f'unrecognized door type: {door_dict["door_type"]}')
         return door
 
     def other_room_internal_name(self, room_internal_name):
@@ -488,7 +486,7 @@ linkage.
         """
 
         if room_internal_name not in self._linked_rooms_internal_names:
-            raise Internal_Exception(f'room internal name {room_internal_name} not one of the two rooms linked by this'
+            raise excpt.Internal_Exception(f'room internal name {room_internal_name} not one of the two rooms linked by this'
                                       ' door object')
 
         # The set _linked_rooms_internal_names is only 2 elements long and by the above one of those elements is the
@@ -549,7 +547,7 @@ order is the outer dict's key, and the one that's later in the sort order is the
 inner dict's key.
 
 :**dict_of_dicts: A structure of internal name keys corresponding to dict values
-                  which are key-value pairs to initialize an individual Door 
+                  which are key-value pairs to initialize an individual Door
                   object with.
         """
         self._contents = collections.defaultdict(dict)
@@ -564,7 +562,7 @@ inner dict's key.
 This method tests whether a Door subclass object indexed by the given two Room
 subclass object's internal names is present in the internal **dict-of-dicts.
 
-:first_room_internal_name: The internal name of one of the two linked Room 
+:first_room_internal_name: The internal name of one of the two linked Room
                            objects.
 :first_room_internal_name: The internal name of the other of the two linked Room
                            objects.
@@ -578,7 +576,7 @@ subclass object's internal names is present in the internal **dict-of-dicts.
 This method returns the Door subclass object indexed by the two given Room
 subclass object internal names, or raises a KeyError if it's not present.
 
-:first_room_internal_name: The internal name of one of the two linked Room 
+:first_room_internal_name: The internal name of one of the two linked Room
                            objects.
 :first_room_internal_name: The internal name of the other of the two linked Room
                            objects.
@@ -593,7 +591,7 @@ using the first Room subclass object internal name as the key to the outer
 dictionary and the second Room subclass object internal name as the key to the
 inner dictionary.
 
-:first_room_internal_name: The internal name of one of the two linked Room 
+:first_room_internal_name: The internal name of one of the two linked Room
                            objects.
 :first_room_internal_name: The internal name of the other of the two linked Room
                            objects.
@@ -607,7 +605,7 @@ inner dictionary.
 This method deletes the Door subclass object found in the internal **dict-of-dicts
 under the given two Room subclass object internal name keys.
 
-:first_room_internal_name: The internal name of one of the two linked Room 
+:first_room_internal_name: The internal name of one of the two linked Room
                            objects.
 :first_room_internal_name: The internal name of the other of the two linked Room
                            objects.
@@ -648,7 +646,7 @@ This method returns a list of 3-tuples, each comprising a pair of Room subclass
 object internal names that are a key to the container, coupled with the Door
 subclass object that is the value to that key.
 
-:return: A list of 3-tuples, comprised of a string (the internal name), an int 
+:return: A list of 3-tuples, comprised of a string (the internal name), an int
          (the quantity) and an Item subclass object.
         """
         items_list = list()
@@ -676,7 +674,7 @@ items.ini, but also can contain Item subclass objects.
     __slots__ = 'internal_name', 'title', 'description', 'is_locked', 'is_closed', 'container_type'
 
     def __init__(self, item_state, internal_name, *item_objs, **ini_constr_argd):
-        """
+        r"""
 This __init__ method calls both parent class's __init__ methods in sequence.
 It draws on the contents attribute of the source ini data, which is in the
 \[\d+x[A-Z][A-Za-z_]+(,\d+x[A-Z][A-Za-z_]+)*\] format, and unpacks it. An
@@ -686,7 +684,7 @@ subclass objects' internal names and populate the container.
 :item_state: An Item_State object.
 :internal_name: The internal name of the container.
 :*item_objs: A tuple of the Item objects contained by the container.
-:**ini_constr_argd: The key-value pairs from containers.ini to instantiate the 
+:**ini_constr_argd: The key-value pairs from containers.ini to instantiate the
                     Container object with.
         """
         contents_str = ini_constr_argd.pop('contents', None)
@@ -709,7 +707,7 @@ an IniConfig object's section attribute, and determines which Container subclass
 is appropriate to instantiate from the data.
 
 :items_state: An Items_State object.
-:**container_dict: A dict of key-value pairs to instantiate the Container 
+:**container_dict: A dict of key-value pairs to instantiate the Container
                    subclass with.
         """
         if container_dict['container_type'] == 'chest':
@@ -752,7 +750,7 @@ is populated with.
 
 :items_state: An Items_State object.
 :**dict_of_dicts: A structure of internal name keys corresponding to dict values
-                  which are key-value pairs to initialize an individual 
+                  which are key-value pairs to initialize an individual
                   Container subclass object with.
         """
         self._contents = dict()
@@ -841,12 +839,12 @@ This property computes the Charisma modifier from the stored Charisma score.
 This private method implements the ability score modifier equation for an
 arbitrary ability score.
 
-:ability_score: A string, one of 'Strength', 'Dexterity', 'Constitution', 
+:ability_score: A string, one of 'Strength', 'Dexterity', 'Constitution',
                 'Intelligence', 'Wisdom' or 'Charisma'.
 :return: An int.
         """
         if not hasattr(self, ability_score):
-            raise Internal_Exception(f'unrecognized ability {ability_score}')
+            raise excpt.Internal_Exception(f'unrecognized ability {ability_score}')
         return math.floor((getattr(self, ability_score) - 10) / 2)
 
     def __init__(self, character_class_str):
@@ -859,7 +857,7 @@ different ability priority ordering.
 :character_class_str: One of 'Warrior', 'Thief', 'Priest' or 'Mage'.
         """
         if character_class_str not in self.weightings:
-            raise Internal_Exception(f'character class {character_class_str} not recognized, should be one of '
+            raise excpt.Internal_Exception(f'character class {character_class_str} not recognized, should be one of '
                                       "'Warrior', 'Thief', 'Priest' or 'Mage'")
         self.character_class = character_class_str
 
@@ -951,7 +949,7 @@ This method equips the given Armor object.
 :returns: None.
         """
         if not isinstance(item, Armor):
-            raise Internal_Exception('the method `equip_armor()` only accepts `armor` objects for its argument')
+            raise excpt.Internal_Exception('the method `equip_armor()` only accepts `armor` objects for its argument')
         self._equip('armor', item)
 
     def equip_shield(self, item):
@@ -962,7 +960,7 @@ This method equips the given Shield object.
 :returns: None.
         """
         if not isinstance(item, Shield):
-            raise Internal_Exception('the method `equip_shield()` only accepts `shield` objects for its argument')
+            raise excpt.Internal_Exception('the method `equip_shield()` only accepts `shield` objects for its argument')
         self._equip('shield', item)
 
     def equip_weapon(self, item):
@@ -973,7 +971,7 @@ This method equips the given Weapon object.
 :returns: None.
         """
         if not isinstance(item, Weapon):
-            raise Internal_Exception('the method `equip_weapon()` only accepts `weapon` objects for its argument')
+            raise excpt.Internal_Exception('the method `equip_weapon()` only accepts `weapon` objects for its argument')
         self._equip('weapon', item)
 
     def equip_wand(self, item):
@@ -984,7 +982,7 @@ This method equips the given Wand object.
 :returns: None.
         """
         if not isinstance(item, Wand):
-            raise Internal_Exception('the method `equip_wand()` only accepts `wand` objects for its argument')
+            raise excpt.Internal_Exception('the method `equip_wand()` only accepts `wand` objects for its argument')
         self._equip('wand', item)
 
     def unequip_armor(self):
@@ -1021,14 +1019,14 @@ This method unequips the wand that is equipped.
 
     def _equip(self, equipment_slot, item):
         """
-This private method equips the given Equippable_Item subclass object in the 
+This private method equips the given Equippable_Item subclass object in the
 given slot.
 
 :equipment_slot: A string, one of 'armor', 'shield', 'weapon', or 'wand'.
 :return: None.
         """
         if equipment_slot not in ('armor', 'shield', 'weapon', 'wand'):
-            raise Internal_Exception(f'equipment slot {equipment_slot} not recognized')
+            raise excpt.Internal_Exception(f'equipment slot {equipment_slot} not recognized')
         if equipment_slot == 'armor':
             self.armor = item
         elif equipment_slot == 'shield':
@@ -1046,7 +1044,7 @@ This private method unequips the given Equippable_Item subclass object.
 :return: None.
         """
         if equipment_slot not in ('armor', 'shield', 'weapon', 'wand'):
-            raise Internal_Exception(f'equipment slot {equipment_slot} not recognized')
+            raise excpt.Internal_Exception(f'equipment slot {equipment_slot} not recognized')
         if equipment_slot == 'armor':
             self.armor = None
         elif equipment_slot == 'shield':
@@ -1087,7 +1085,7 @@ This method returns the attack bonus associated with any equipped weapon or wand
 
     @property
     def damage(self):
-        """
+        r"""
 This method returns the damage associated with any equipped weapon or wand.
 
 :return: A string of the form '\d+d\d+([+-]\d+)?'.
@@ -1131,19 +1129,19 @@ It also sets the magic key stat if any.
 :character_class_str: A string one of 'Warrior', 'Thief', 'Priest', or 'Mage'.
 :base_hit_points: An int, the character's base hit points (optional).
 :base_mana_points: An int, the character's base mana points (optional).
-:magic_key_stat: A string, the character's magic key stat (one of 
+:magic_key_stat: A string, the character's magic key stat (one of
                  'Intelligence', 'Wisdom', or 'Charisma'.
 :strength: An int, the set value for the character's Strength score (optional).
 :dexterity An int, the set value for the character's Dexterity score (optional).
-:constitution: An int, the set value for the character's Constitution score 
+:constitution: An int, the set value for the character's Constitution score
                (optional).
-:intelligence: An int, the set value for the character's Intelligence score 
+:intelligence: An int, the set value for the character's Intelligence score
                (optional).
 :wisdom: An int, the set value for the character's Wisdom score (optional).
 :charisma: An int, the set value for the character's Charisma score (optional).
         """
         if character_class_str not in {'Warrior', 'Thief', 'Priest', 'Mage'}:
-            raise Internal_Exception(f'character class argument {character_class_str} not one of '
+            raise excpt.Internal_Exception(f'character class argument {character_class_str} not one of '
                                      'Warrior, Thief, Priest or Mage')
         self.character_name = character_name_str
         self.character_class = character_class_str
@@ -1161,9 +1159,9 @@ furnished.
 
 :strength: An int, the set value for the character's Strength score (optional).
 :dexterity An int, the set value for the character's Dexterity score (optional).
-:constitution: An int, the set value for the character's Constitution score 
+:constitution: An int, the set value for the character's Constitution score
                (optional).
-:intelligence: An int, the set value for the character's Intelligence score 
+:intelligence: An int, the set value for the character's Intelligence score
                (optional).
 :wisdom: An int, the set value for the character's Wisdom score (optional).
 :charisma: An int, the set value for the character's Charisma score (optional).
@@ -1176,7 +1174,7 @@ furnished.
             self.ability_scores.wisdom = wisdom
             self.ability_scores.charisma = charisma
         elif any((strength, dexterity, constitution, intelligence, wisdom, charisma)):
-            raise Internal_Exception('The constructor for `character` must be supplied with either all of the arguments'
+            raise excpt.Internal_Exception('The constructor for `character` must be supplied with either all of the arguments'
                                      ' `strength`, `dexterity`, `constitution`, `intelligence`, `wisdom`, and '
                                      '`charisma` or none of them.')
         else:
@@ -1192,7 +1190,7 @@ Priests).
 
 :base_hit_points: An int, the character's base hit points.
 :base_mana_points: An int, the character's base mana points.
-:magic_key_stat: A string, the character's magic key stat (one of 
+:magic_key_stat: A string, the character's magic key stat (one of
                  'Intelligence', 'Wisdom', or 'Charisma'.
 :return: None.
         """
@@ -1204,7 +1202,7 @@ Priests).
                                                                   + self.ability_scores.constitution_mod * 3)
         if magic_key_stat:
             if magic_key_stat not in ('intelligence', 'wisdom', 'charisma'):
-                raise Internal_Exception("`magic_key_stat` argument '" + magic_key_stat + "' not recognized")
+                raise excpt.Internal_Exception("`magic_key_stat` argument '" + magic_key_stat + "' not recognized")
             self.magic_key_stat = magic_key_stat
         else:
             if self.character_class == 'Priest':
@@ -1382,7 +1380,7 @@ This property returns True if the character's hit point total equals 0.
 
     @property
     def attack_roll(self):
-        """
+        r"""
 This property returns a dice expression usable by
 adventuregame.utilities.roll_dice() to execute an attack roll during an ATTACK
 command. It calculates the attack bonus from the equipped item and the relevant
@@ -1401,7 +1399,7 @@ ability score modifier.
 
     @property
     def damage_roll(self):
-        """
+        r"""
 This property returns a dice expression usable by
 adventuregame.utilities.roll_dice() to execute a damage roll during an ATTACK
 command. It calculates the damage dice value from the equipped wand or weapon,
@@ -1710,7 +1708,7 @@ with the given argument.
 :return: None.
         """
         if not self.inventory.contains(item.internal_name):
-            raise Internal_Exception("equipping an `item` object that is not in the character's `inventory` object is "
+            raise excpt.Internal_Exception("equipping an `item` object that is not in the character's `inventory` object is "
                                      'not allowed')
         return self._equipment.equip_armor(item)
 
@@ -1723,7 +1721,7 @@ with the given argument.
 :return: None.
         """
         if not self.inventory.contains(item.internal_name):
-            raise Internal_Exception("equipping an `item` object that is not in the character's `inventory` object is "
+            raise excpt.Internal_Exception("equipping an `item` object that is not in the character's `inventory` object is "
                                      'not allowed')
         return self._equipment.equip_shield(item)
 
@@ -1736,7 +1734,7 @@ with the given argument.
 :return: None.
         """
         if not self.inventory.contains(item.internal_name):
-            raise Internal_Exception("equipping an `item` object that is not in the character's `inventory` object is "
+            raise excpt.Internal_Exception("equipping an `item` object that is not in the character's `inventory` object is "
                                      'not allowed')
         return self._equipment.equip_weapon(item)
 
@@ -1749,7 +1747,7 @@ the given argument.
 :return: None.
         """
         if not self.inventory.contains(item.internal_name):
-            raise Internal_Exception("equipping an `item` object that is not in the character's `inventory` object is "
+            raise excpt.Internal_Exception("equipping an `item` object that is not in the character's `inventory` object is "
                                      'not allowed')
         return self._equipment.equip_wand(item)
 
@@ -1819,7 +1817,7 @@ Intelligence for Mages wielding a wand).
         """
         if (not (self._equipment.weapon_equipped
             or self.character_class == 'Mage' and self._equipment.wand_equipped)):
-            raise Internal_Exception('The character does not have a weapon equipped; no valid value for '
+            raise excpt.Internal_Exception('The character does not have a weapon equipped; no valid value for '
                                      '`attack_bonus` can be computed.')
         stat_dependency = self._attack_or_damage_stat_dependency()
         base_attack_bonus = (self._equipment.weapon.attack_bonus if self._equipment.weapon_equipped
@@ -1891,7 +1889,7 @@ quantity-internal name pairs, and an equipment dict.
             missing_names = tuple(item_internal_name for _, item_internal_name in inventory_qty_name_pairs
                                   if not items_state.contains(item_internal_name))
             pluralizer = 's' if len(missing_names) > 1 else ''
-            raise Internal_Exception(f'bad creatures.ini specification for creature {internal_name}: creature '
+            raise excpt.Internal_Exception(f'bad creatures.ini specification for creature {internal_name}: creature '
                                      f'ini config dict `inventory_items` value indicated item{pluralizer}'
                                      ' not present in `Items_State` argument: ' + (', '.join(missing_names)))
         ini_entry_init_argd = argd
@@ -1904,7 +1902,7 @@ pairs, and the equipment dict, and uses them to initialize the creature's
 inventory and equipped items.
 
 :items_state: An Items_State object.
-:inventory_qty_name_pairs: A tuple of 2-tuples of item quantity ints and 
+:inventory_qty_name_pairs: A tuple of 2-tuples of item quantity ints and
                            internal name strings.
 :equipment_argd: A dictionary of equipment assignments.
         """
@@ -1914,7 +1912,7 @@ inventory and equipped items.
                 self.pick_up_item(item)
         for equipment_key, item_internal_name in equipment_argd.items():
             if not items_state.contains(item_internal_name):
-                raise Internal_Exception(f'bad creatures.ini specification for creature {self.internal_name}: items '
+                raise excpt.Internal_Exception(f'bad creatures.ini specification for creature {self.internal_name}: items '
                                          f'index object does not contain an item named {item_internal_name}')
             item = items_state.get(item_internal_name)
             if equipment_key == 'weapon_equipped':
@@ -1960,7 +1958,7 @@ subclassed to delineate different types of creature.
 
 :items_state: An Items_State object.
 :**dict_of_dicts: A structure of internal name keys corresponding to dict values
-                  which are key-value pairs to initialize an individual 
+                  which are key-value pairs to initialize an individual
                   Creature object with.
         """
         self._contents = dict()
@@ -2113,7 +2111,7 @@ IniConfig's sections attribute.
 :doors_state: A Doors_State object.
 :items_state: A Items_State object.
 :**dict_of_dicts: A structure of internal name keys corresponding to dict values
-                  which are key-value pairs to initialize an individual 
+                  which are key-value pairs to initialize an individual
                   Creature object with.
         """
         self._rooms_objs = dict()
@@ -2152,7 +2150,7 @@ room to an adjacent room by the given compass direction.
         """
         if ((north and west) or (north and south) or (north and east) or (west and south)
             or (west and east) or (south and east)):
-            raise Internal_Exception('move() must receive only *one* True argument of the four keys `north`, `south`, '
+            raise excpt.Internal_Exception('move() must receive only *one* True argument of the four keys `north`, `south`, '
                                      '`east` and `west`')
         if north:
             exit_name = 'north_door'
@@ -2167,10 +2165,10 @@ room to an adjacent room by the given compass direction.
             exit_name = 'east_door'
             exit_key = 'EAST'
         if not getattr(self.cursor, exit_name):
-            raise Bad_Command_Exception('MOVE', f'This room has no <{exit_key}> exit.')
+            raise excpt.Bad_Command_Exception('MOVE', f'This room has no <{exit_key}> exit.')
         door = getattr(self.cursor, exit_name)
         if door.is_locked:
-            raise Internal_Exception(f'exiting {self.cursor.internal_name} via the {exit_name.replace("_"," ")}: door '
+            raise excpt.Internal_Exception(f'exiting {self.cursor.internal_name} via the {exit_name.replace("_"," ")}: door '
                                       'is locked')
         other_room_internal_name = door.other_room_internal_name(self.cursor.internal_name)
         new_room_dest = self._rooms_objs[other_room_internal_name]
@@ -2266,5 +2264,3 @@ the character class have been set.
         """
         if self.character is None and getattr(self, 'character_name', None) and getattr(self, 'character_class', None):
             self.character = Character(self.character_name, self.character_class)
-
-

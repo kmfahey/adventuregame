@@ -13,11 +13,10 @@ natural language.
 """
 
 import abc
-import math
 import operator
 
-from adventuregame.utility import usage_verb, join_str_seq_w_commas_and_conjunction
-from adventuregame.exceptions import Internal_Exception
+import adventuregame.exceptions as excpt
+import adventuregame.utility as util
 
 __name__ = 'adventuregame.gamestatemessages'
 
@@ -67,7 +66,7 @@ has been used.
         # ensure that a syntax line is never broken across a newline by
         # adventuregame.utilities.textwrapper(). (They become kindof unreadable
         # if they're word-wrapped.)
-        # 
+        #
         # This message property joins the command with each line of the
         # proper_syntax_options tuple, and presents a corrective outlining valid
         # syntax for this command.
@@ -76,7 +75,7 @@ has been used.
                                 if syntax_option
                                 else f"'{command}'"
                                 for syntax_option in self.proper_syntax_options)
-        proper_syntax_options_str = join_str_seq_w_commas_and_conjunction(syntax_options, 'or')
+        proper_syntax_options_str = util.join_str_seq_w_commas_and_conjunction(syntax_options, 'or')
         return f'{self.command.upper()} command: bad syntax. Should be {proper_syntax_options_str}.'
 
     def __init__(self, command, *proper_syntax_options):
@@ -98,7 +97,7 @@ thieves can use PICK LOCK.)
         # This message property assembles a list of classes (in self.classes) which are
         # authorized to use the given command (in self.command).
         classes_plural = [class_str + 's' if class_str != 'thief' else 'thieves' for class_str in self.classes]
-        class_str = join_str_seq_w_commas_and_conjunction(classes_plural, 'and')
+        class_str = util.join_str_seq_w_commas_and_conjunction(classes_plural, 'and')
         return f'Only {class_str} can use the {self.command.upper()} command.'
 
     def __init__(self, command, *classes):
@@ -128,7 +127,7 @@ adventuregame.processor.Command_Processor.ingame_commands for the lists.
         # (game_state_str), but commands in this list (commands_str) can.
         game_state_str = 'before game start' if not self.game_has_begun else 'during the game'
         message_str = f"Command '{self.command}' not allowed {game_state_str}. "
-        commands_str = join_str_seq_w_commas_and_conjunction(
+        commands_str = util.join_str_seq_w_commas_and_conjunction(
                             tuple(command.upper().replace('_', ' ')
                                   for command in sorted(self.allowed_commands)),
                             'and')
@@ -158,7 +157,7 @@ that is not known to the command processor.
         # mode (game_state_str) commands in this list (commands_str) can.
         message_str = f"Command '{self.command}' not recognized. "
         game_state_str = 'before game start' if not self.game_has_begun else 'during the game'
-        commands_str = join_str_seq_w_commas_and_conjunction(tuple(command.upper().replace('_', ' ') for command in sorted(self.allowed_commands)), 'and')
+        commands_str = util.join_str_seq_w_commas_and_conjunction(tuple(command.upper().replace('_', ' ') for command in sorted(self.allowed_commands)), 'and')
         message_str += f'Commands allowed {game_state_str} are {commands_str}.'
         return message_str
 
@@ -198,7 +197,7 @@ class. If not, its message includes a clause about the foe turning to attack.
             return f'Your attack on the {self.creature_title} hit! You did {self.damage_done} damage.'
         # The attack was with a wand, the creature didn't die, and they're
         # counterattacking.
-        else:  
+        else:
             return (f'A bolt of energy from your wand hits the {self.creature_title}! You did {self.damage_done} '
                     f'damage. The {self.creature_title} turns to attack!')
 
@@ -247,7 +246,7 @@ current room.
     @property
     def message(self):
         # This message property handles two cases:
-        # 
+        #
         # There is a creature in the room by a different title and they can be
         # suggested as a better target.
         if self.opponent_present:
@@ -274,7 +273,7 @@ Mages.
     @property
     def message(self):
         # This message property handles two cases:
-        # 
+        #
         # The player's character is a Mage and has neither a wand or a weapon
         # equipped.
         if self.character_class == 'Mage':
@@ -370,7 +369,7 @@ class before the game can begin; this object is returned if they fail to.
     @property
     def message(self):
         # This message property covers three cases:
-        # 
+        #
         # The player needs to use both the SET NAME and the SET CLASS commands
         # before proceeding.
         if not self.character_name and not self.character_class:
@@ -395,7 +394,7 @@ class Cast_Spell_Command_Cast_Damaging_Spell(Game_State_Message):
 This class implements an object that is returned by
 adventuregame.processor.Command_Processor.cast_spell_command() when the player,
 while playing a Mage, has cast a damaging spell. Like Attack_Command_Attack_Hit,
-it tracks whether the foe was slain, and adds a "they turn to attack" sentence
+it tracks whether the foe was slain, and adds a 'they turn to attack' sentence
 if not.
     """
     __slots__ = 'creature_title', 'damage_dealt'
@@ -403,7 +402,7 @@ if not.
     @property
     def message(self):
         # This message property handles two cases:
-        # 
+        #
         # The player character's spell killed their foe.
         if self.creature_slain:
             return (f'A magic missile springs from your gesturing hand and unerringly strikes the {self.creature_title}. '
@@ -558,13 +557,13 @@ instead.
         # This message property handles three cases:
         # * The player regained mana points and now has their maximum hit points.
         # * The player regained mana points but are still short of their maximum.
-        # * The player didn't regain any mana points because their mana points were 
+        # * The player didn't regain any mana points because their mana points were
         #   already at maximum.
-        return_str = (f"You regained {self.amount_regained} mana points." if self.amount_regained != 0
-                      else f"You didn't regain any mana points.")
+        return_str = (f'You regained {self.amount_regained} mana points.' if self.amount_regained != 0
+                      else "You didn't regain any mana points.")
         if self.current_mana_points == self.mana_point_total:
             return_str += ' You have full mana points!'
-        return_str += f" Your mana points are {self.current_mana_points}/{self.mana_point_total}."
+        return_str += f' Your mana points are {self.current_mana_points}/{self.mana_point_total}.'
         return return_str
 
     def __init__(self, amount_regained, current_mana_points, mana_point_total):
@@ -655,10 +654,10 @@ successfully drops an item on the floor.
         # player how many of the item they dropped (always nonzero), how many
         # are on the floor now (always nonzero), and how many of the item they
         # have left (may be zero).
-        # 
+        #
         # Armor is handled specially because the proper way to refer to a
         # singular armor piece isn't "a studded leather armor" but "a suit of
-        # studded leather armor".
+        # studded leather armor'.
         drop_qty_or_ind_artcl = (f'{self.amount_dropped} ' if self.amount_on_floor > 1
                                  else 'a suit of ' if self.item_type == 'armor'
                                  else 'an ' if self.item_title[0] in 'aeiou'
@@ -773,7 +772,7 @@ anyone besides a Mage would get this result if they tried to equip a wand.
         # that they can't equip an item due to class restrictions. Like
         # Drop_Command_Dropped_Item.message, it omits the indirect article if
         # the item is a suit of armor.
-        item_usage_verb = usage_verb(self.item_type, gerund=False)
+        item_usage_verb = util.usage_verb(self.item_type, gerund=False)
         pluralizer = 's' if self.item_type != 'armor' else ''
         return f"{self.character_class}s can't {item_usage_verb} {self.item_title}{pluralizer}."
 
@@ -811,9 +810,9 @@ to get help with a command that is not in the game.
     def message(self):
         return_lines = [f"The command '{self.command_attempted.upper()}' is not recognized. "
                          'The full list of commands is:', '']
-        return_lines.extend((join_str_seq_w_commas_and_conjunction(self.commands_available, 'and'), ''))
+        return_lines.extend((util.join_str_seq_w_commas_and_conjunction(self.commands_available, 'and'), ''))
         return_lines.extend(('Which one do you want help with?', ''))
-        return "\n".join(return_lines)
+        return '\n'.join(return_lines)
 
     def __init__(self, command_attempted, commands_available):
         self.command_attempted = command_attempted
@@ -827,14 +826,14 @@ adventuregame.processor.Command_Processor.help_command() when the player calls
 it with no arguments; it displays all the commands in the game and prompts the
 player to ask for help with one of them.
     """
-    __slots__ = 'commands_available', 
+    __slots__ = 'commands_available',
 
     @property
     def message(self):
         return_lines = [f'The full list of commands is:', '']
-        return_lines.extend((join_str_seq_w_commas_and_conjunction(self.commands_available, 'and'), ''))
+        return_lines.extend((util.join_str_seq_w_commas_and_conjunction(self.commands_available, 'and'), ''))
         return_lines.extend(('Which one do you want help with?', ''))
-        return "\n".join(return_lines)
+        return '\n'.join(return_lines)
 
     def __init__(self, commands_available):
         self.commands_available = commands_available
@@ -849,8 +848,8 @@ an informative blurb about the command.
     """
     __slots__ = 'command', 'syntax_tuple', 'instructions',
 
-    @property                   # 
-    def message(self):          # 
+    @property                   #
+    def message(self):          #
         # Like Command_Bad_Syntax, this message property accepts syntax
         # outlines from adventuregame.processor.COMMANDS_SYNTAX and assembles
         # them into a list of valid usages, using unicode nonbreaking
@@ -859,9 +858,9 @@ an informative blurb about the command.
         syntax_str_list = [f"'{self.command}\u00A0{syntax_entry}'" if syntax_entry else f"'{self.command}'"
                                for syntax_entry in self.syntax_tuple]
         return_lines = [f'Help for the {self.command} command:', '']
-        return_lines.extend((f'Usage: ' + join_str_seq_w_commas_and_conjunction(syntax_str_list, 'or'), ''))
+        return_lines.extend(('Usage: ' + util.join_str_seq_w_commas_and_conjunction(syntax_str_list, 'or'), ''))
         return_lines.extend((self.instructions, ''))
-        return "\n".join(return_lines)
+        return '\n'.join(return_lines)
 
     def __init__(self, command, syntax_tuple=None, instructions=None):
         self.command = command
@@ -888,7 +887,7 @@ information they need to say 'LOOK AT <item title> IN INVENTORY'.
                                   else 'a')
             pluralizer = 's' if item_qty > 1 else ''
             display_strs_list.append(f'{indir_artcl_or_qty} {item.title}{pluralizer}')
-        return 'You have ' + join_str_seq_w_commas_and_conjunction(display_strs_list, 'and') + ' in your inventory.'
+        return 'You have ' + util.join_str_seq_w_commas_and_conjunction(display_strs_list, 'and') + ' in your inventory.'
 
     def __init__(self, inventory_contents_list):
         self.inventory_contents = inventory_contents_list
@@ -1039,8 +1038,8 @@ the chest are conveyed. If it's a corpse, the corpse's possessions are conveyed.
             elif self.is_locked is False and self.is_closed is False:
                 return f'{self.container_description} It is unlocked and open. {self._contents}'
             elif self.is_locked is True and self.is_closed is False:
-                raise Internal_Exception("Look_At_Command_Found_Container_Here.message accessed to describe a chest "
-                                         "with the impossible combination of is_locked = True and is_closed = False.")
+                raise excpt.Internal_Exception('Look_At_Command_Found_Container_Here.message accessed to describe a chest '
+                                         'with the impossible combination of is_locked = True and is_closed = False.')
             elif self.is_locked is None and self.is_closed is True:
                 return f'{self.container_description} It is closed.'
             elif self.is_locked is None and self.is_closed is False:
@@ -1067,7 +1066,7 @@ the chest are conveyed. If it's a corpse, the corpse's possessions are conveyed.
                                    else f'a {item.title}'
                                    for qty, item in sorted(self.container.values(), key=lambda arg: arg[1].title))
         # The list is condensed to a comma-separated string using a utility function.
-        contents_str = join_str_seq_w_commas_and_conjunction(contents_strs_tuple, 'and')
+        contents_str = util.join_str_seq_w_commas_and_conjunction(contents_strs_tuple, 'and')
         # If the list is zero-length, the message conveys that the container is empty.
         if len(contents_strs_tuple) == 0:
             return 'It is empty.' if self.container_type == 'chest' else 'They have nothing on them.'
@@ -1084,7 +1083,7 @@ the chest are conveyed. If it's a corpse, the corpse's possessions are conveyed.
         self.is_closed = container.is_closed
         self.container_type = container.container_type
         if self.is_locked is True and self.is_closed is False:
-            raise Internal_Exception(f'Container {container.internal_name} has is_locked = True and is_open = '
+            raise excpt.Internal_Exception(f'Container {container.internal_name} has is_locked = True and is_open = '
                                       'False, invalid combination of parameters.')
 
 
@@ -1181,7 +1180,7 @@ targets an item that can't be found where they said it was.
             elif self.item_location == 'inventory':
                 return f'You have no {self.item_title} in your inventory.'
             else:
-                raise Internal_Exception(f"Location type {self.location_type} not recognized.")
+                raise excpt.Internal_Exception(f'Location type {self.location_type} not recognized.')
         else:
             return f'You see no {self.item_title} here.'
 
@@ -1389,7 +1388,7 @@ they meant to acquire an item from a chest or corpse, they need to say `TAKE
                                          else f'an {item_title}' if item_title[0] in 'aeiou'
                                          else f'a {item_title}'
                                              for item_count, item_title in self.items_here)
-            items_here_str = join_str_seq_w_commas_and_conjunction(items_here_str_tuple, 'and')
+            items_here_str = util.join_str_seq_w_commas_and_conjunction(items_here_str_tuple, 'and')
             return f'You see no {self.item_title}{item_pluralizer} here. However, there is {items_here_str} here.'
         else:
             return f'You see no {self.item_title}{item_pluralizer} here.'
@@ -1485,7 +1484,7 @@ successfully places one or more items in a chest or on a corpse's person.
         container_placed_location_clause = (f'in the {self.container_title}' if self.container_type == 'chest'
                               else f"on the {self.container_title}'s person")
         amount_left_clause = (f'{self.amount_left} {self.item_title}{amount_left_pluralizer} left' if self.amount_left != 0
-                        else f"no more {self.item_title}{amount_left_pluralizer}")
+                        else f'no more {self.item_title}{amount_left_pluralizer}')
         return (f'You put {self.amount_put} {self.item_title}{amount_put_pluralizer} {container_placed_location_clause}. '
                 f'You have {amount_left_clause}.')
 
@@ -1585,14 +1584,14 @@ rerolled yet.
         # two commands, SET NAME and SET CLASS, the player needs to use before
         # REROLL can be used.
         reroll_str = "Your character's stats haven't been rolled yet, so there's nothing to reroll."
-        set_name_str = "SET NAME <name> to set your name"
-        set_class_str = "SET CLASS <Warrior, Thief, Mage or Priest> to select your class"
+        set_name_str = 'SET NAME <name> to set your name'
+        set_class_str = 'SET CLASS <Warrior, Thief, Mage or Priest> to select your class'
         if self.character_name is None and self.character_class is None:
-            return reroll_str + f" Use {set_name_str} and {set_class_str}."
+            return reroll_str + f' Use {set_name_str} and {set_class_str}.'
         elif self.character_class is None:
-            return reroll_str + f" Use {set_class_str}."
+            return reroll_str + f' Use {set_class_str}.'
         else:
-            return reroll_str + f" Use {set_name_str}."
+            return reroll_str + f' Use {set_name_str}.'
 
     def __init__(self, character_name, character_class):
         self.character_name = character_name
@@ -1766,7 +1765,7 @@ not on the corpse.
                                else 'a')
         container_clause = 'in it' if self.container_type == 'chest' else 'on them'
         pluralizer = 's' if self.amount_attempted > 1 else ''
-        return f"{base_str} {indirect_article_or_determiner} {self.item_title}{pluralizer} {container_clause}."
+        return f'{base_str} {indirect_article_or_determiner} {self.item_title}{pluralizer} {container_clause}.'
 
     def __init__(self, container_title, amount_attempted, container_type, item_title):
         self.container_title = container_title
@@ -1862,7 +1861,7 @@ tries to unequip an item that is not equipped.
 
             # This convenience function returns the correct verb to use to refer
             # to using an item of the given type.
-            item_usage_verb = usage_verb(self.item_specified_type, gerund=True)
+            item_usage_verb = util.usage_verb(self.item_specified_type, gerund=True)
             article_or_suit = ('a suit of' if self.item_specified_type == 'armor'
                                else 'an' if self.item_specified_title[0] in 'aeiou'
                                else 'a')
@@ -1986,12 +1985,12 @@ saying 'unlock wooden door' when there's two wooden doors.
         # every door in the room that matches the user's ambiguous command and
         # asks them which one they mean.
         door_type = self.door_type.replace('_', ' ') if self.door_type else None
-        message_str = "More than one door in this room matches your command. Do you mean "
+        message_str = 'More than one door in this room matches your command. Do you mean '
         if door_type is not None:
             door_str_list = [f'the {compass_dir} {door_type}' for compass_dir in self.compass_dirs]
         else:
             door_str_list = [f'the {compass_dir} {self.door_or_doorway}' for compass_dir in self.compass_dirs]
-        message_str += join_str_seq_w_commas_and_conjunction(door_str_list, 'or') + '?'
+        message_str += util.join_str_seq_w_commas_and_conjunction(door_str_list, 'or') + '?'
         return message_str
 
     def __init__(self, compass_dirs, door_or_doorway, door_type):
@@ -2083,7 +2082,7 @@ current dungeon room.
         # This message property assembles a sentence which informs the player
         # that the door they specified in their command is not present in this
         # room.
-        return_str = f'This room does not have a'
+        return_str = 'This room does not have a'
         if self.compass_dir is not None and self.portal_type is not None:
             # This concatenation varies slightly to turn 'a' into 'an' if the
             # word after it is 'east'.
@@ -2094,8 +2093,8 @@ current dungeon room.
         elif self.compass_dir is not None:
             # This concatenation varies slightly to turn 'a' into 'an' if the
             # word after it is 'east'.
-            return_str += (f'n {compass_dir} door or doorway.' if self.compass_dir == 'east'
-                           else f' {compass_dir} door or doorway.')
+            return_str += (f'n {self.compass_dir} door or doorway.' if self.compass_dir == 'east'
+                           else f' {self.compass_dir} door or doorway.')
         return return_str
 
     def __init__(self, compass_dir, portal_type=None):
@@ -2142,7 +2141,7 @@ compass direction.
                 quantifier = str(item_qty) if item_qty > 1 else 'an' if item.title[0] in 'aeiou' else 'a'
                 pluralizer = 's' if item_qty > 1 else ''
                 room_items.append(f'{quantifier} {item.title}{pluralizer}')
-            items_here_str = join_str_seq_w_commas_and_conjunction(room_items, 'and')
+            items_here_str = util.join_str_seq_w_commas_and_conjunction(room_items, 'and')
             message_list.append(f'You see {items_here_str} on the floor.')
 
         # A list of door titles and directions is assembled, joined into a
@@ -2154,8 +2153,8 @@ compass direction.
             if door is None:
                 continue
             door_ersatz_title = door.door_type.replace('_', ' ')
-            door_list.append(f"a {door_ersatz_title} to the {compass_dir}")
-        door_str = 'There is ' + join_str_seq_w_commas_and_conjunction(door_list, 'and') + '.'
+            door_list.append(f'a {door_ersatz_title} to the {compass_dir}')
+        door_str = 'There is ' + util.join_str_seq_w_commas_and_conjunction(door_list, 'and') + '.'
         message_list.append(door_str)
 
         # The list of sentences is joined into a string and returned.
@@ -2192,7 +2191,7 @@ relevant game parameters have changed as a result.
         # the new wand, weapon, armor or shield they've equipped. If it's a suit
         # of armor or shield, their new armor class is mentioned. If it's a
         # weapon or wand, their new attack bonus and damage is mentioned.
-        item_usage_verb = usage_verb(self.item_type, gerund=True)
+        item_usage_verb = util.usage_verb(self.item_type, gerund=True)
         referent = ('a suit of' if self.item_type == 'armor'
                     else 'an' if self.item_title[0] in 'aeiou'
                     else 'a')
@@ -2235,14 +2234,14 @@ the item in their inventory.
         # unequips their wand their attack and damage won't change; and if they
         # unequip their wand their new attack and damage are from the weapon
         # they still have equipped.
-        item_usage_verb = usage_verb(self.item_type, gerund=True)
+        item_usage_verb = util.usage_verb(self.item_type, gerund=True)
         referent = 'a suit of' if self.item_type == 'armor' else 'an' if self.item_title[0] in 'aeiou' else 'a'
         return_str = f"You're no longer {item_usage_verb} {referent} {self.item_title}."
         if self.armor_class is not None:
 
             # If the player just unequipped armor or a weapon, their armor class
             # has changed.
-            return_str += (f" Your armor class is now {self.armor_class}.")
+            return_str += (f' Your armor class is now {self.armor_class}.')
         elif self.attack_bonus is not None and self.damage is not None:
 
             # Only a mage can still have an attack bonus and damage after
@@ -2256,14 +2255,13 @@ the item in their inventory.
                 implement = self.attacking_with
                 return_str += f" You're attacking with your {implement.title}."
                 tense = ''
-            return_str += (f" Your attack bonus is {tense}{plussign}{self.attack_bonus} and your "
-                           f"{implement.title} damage is {tense}{self.damage}.")
+            return_str += (f' Your attack bonus is {tense}{plussign}{self.attack_bonus} and your '
+                           f'{implement.title} damage is {tense}{self.damage}.')
         elif self.now_cant_attack:
 
             # Any other class that just unequipped a weapon gets this message.
             return_str += " You now can't attack."
         return return_str
-
 
     def __init__(self, item_title, item_type, attack_bonus=None, damage=None, armor_class=None, attacking_with=None,
                        now_attacking_with=None, now_cant_attack=False):
@@ -2292,17 +2290,16 @@ Priest and they successfully cast a healing spell.
         # This message property handles three cases:
         # * The player regained hit points and now has their maximum hit points.
         # * The player regained hit points but are still short of their maximum.
-        # * The player didn't regain any hit points because their hit points were 
+        # * The player didn't regain any hit points because their hit points were
         #   already at maximum.
-        return_str = (f"You regained {self.amount_healed} hit points." if self.amount_healed != 0
-                      else f"You didn't regain any hit points.")
+        return_str = (f'You regained {self.amount_healed} hit points.' if self.amount_healed != 0
+                      else "You didn't regain any hit points.")
         if self.current_hit_points == self.hit_point_total:
-            return_str += f" You're fully healed!"
-        return_str += f" Your hit points are {self.current_hit_points}/{self.hit_point_total}."
+            return_str += " You're fully healed!"
+        return_str += f' Your hit points are {self.current_hit_points}/{self.hit_point_total}.'
         return return_str
 
     def __init__(self, amount_healed, current_hit_points, hit_point_total):
         self.amount_healed = amount_healed
         self.current_hit_points = current_hit_points
         self.hit_point_total = hit_point_total
-
