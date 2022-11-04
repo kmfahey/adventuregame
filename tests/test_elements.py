@@ -30,8 +30,8 @@ class Test_Container(unittest.TestCase):
         container = self.containers_state.get('Wooden_Chest_1')
         self.assertEqual(container.internal_name, 'Wooden_Chest_1')
         self.assertEqual(container.title, 'wooden chest')
-        self.assertEqual(container.description, 'This small, serviceable chest is made of wooden slat bounds '
-                                                    'within an iron framing, and features a sturdy-looking lock.')
+        self.assertEqual(container.description, 'This small, serviceable chest is made of wooden slat bound '
+                                                    'within an iron frame, and features a sturdy-looking lock.')
         self.assertEqual(container.is_locked, True)
         self.assertTrue(container.contains('Gold_Coin'))
         self.assertTrue(container.contains('Warhammer'))

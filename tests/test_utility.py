@@ -105,3 +105,41 @@ class Test_Lexical_Number_to_Digits(unittest.TestCase):
         self.assertEqual(advg.lexical_number_to_digits('six'), 6)
         self.assertIs(advg.lexical_number_to_digits('zero'), math.nan)
         self.assertIs(advg.lexical_number_to_digits('one hundred'), math.nan)
+
+class Test_Lexical_Number_to_Digits(unittest.TestCase):
+
+    def __init__(self, *argl, **argd):
+        super().__init__(*argl, **argd)
+        self.maxDiff = None
+
+    def test_join_str_seq_w_commas_and_conjunction_1(self):
+        joined_str = advg.join_str_seq_w_commas_and_conjunction((), 'and')
+        self.assertEqual(joined_str, '')
+        
+    def test_join_str_seq_w_commas_and_conjunction_2(self):
+        joined_str = advg.join_str_seq_w_commas_and_conjunction(('foo',), 'and')
+        self.assertEqual(joined_str, 'foo')
+        
+    def test_join_str_seq_w_commas_and_conjunction_3(self):
+        joined_str = advg.join_str_seq_w_commas_and_conjunction(('foo', 'bar'), 'and')
+        self.assertEqual(joined_str, 'foo and bar')
+        
+    def test_join_str_seq_w_commas_and_conjunction_4(self):
+        joined_str = advg.join_str_seq_w_commas_and_conjunction(('foo', 'bar', 'baz'), 'and')
+        self.assertEqual(joined_str, 'foo, bar, and baz')
+
+    def test_join_str_seq_w_commas_and_conjunction_1(self):
+        joined_str = advg.join_str_seq_w_commas_and_conjunction((), 'or')
+        self.assertEqual(joined_str, '')
+        
+    def test_join_str_seq_w_commas_and_conjunction_2(self):
+        joined_str = advg.join_str_seq_w_commas_and_conjunction(('foo',), 'or')
+        self.assertEqual(joined_str, 'foo')
+        
+    def test_join_str_seq_w_commas_and_conjunction_3(self):
+        joined_str = advg.join_str_seq_w_commas_and_conjunction(('foo', 'bar'), 'or')
+        self.assertEqual(joined_str, 'foo or bar')
+        
+    def test_join_str_seq_w_commas_and_conjunction_4(self):
+        joined_str = advg.join_str_seq_w_commas_and_conjunction(('foo', 'bar', 'baz'), 'or')
+        self.assertEqual(joined_str, 'foo, bar, or baz')

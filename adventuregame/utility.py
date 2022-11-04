@@ -6,7 +6,6 @@ functions used by other modules in the package to expedite common tasks in the
 codebase.
 """
 
-import functools
 import math
 import os
 import random
@@ -40,8 +39,9 @@ and a conjunction.
               Typical values include 'and' or 'or'.
 :return:      Returns a grammatical comma-separated list string.
     """
-
-    if len(str_list) == 1:
+    if len(str_list) == 0:
+        return ''
+    elif len(str_list) == 1:
         return str_list[0]
     elif len(str_list) == 2:
         return f'{str_list[0]} {conjunction} {str_list[1]}'
@@ -59,6 +59,7 @@ def isfloat(strval):
     """
 This function uses a regular expression to text whether a string represents a
 float value.
+
 >>> isfloat("-0.5")
 True
 >>> isfloat("3.14159")
@@ -78,6 +79,8 @@ False
 
 digit_re = re.compile('^[0-9]+$')
 
+# This regular expression matches any lexical number from one to ninety-nine.
+
 lexical_number_in_1_99_re = re.compile("""^(
                                            (one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)
                                        |
@@ -87,18 +90,14 @@ lexical_number_in_1_99_re = re.compile("""^(
                                            (one|two|three|four|five|six|seven|eight|nine)
                                        )$""", re.X)
 
+# This dictionary is a lookup table that's used to interpret the ones place and
+# (optionally) tens place of a lexical number.
+
 _digit_lexical_number_map = {'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 'seven': 7, 'eight': 8,
                             'nine': 9, 'ten': 10, 'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14,
                             'fifteen': 15, 'sixteen': 16, 'seventeen': 17, 'eighteen': 18, 'nineteen': 19,
                             'twenty': 20, 'thirty': 30, 'forty': 40, 'fifty': 50, 'sixty': 60, 'seventy': 70,
                             'eighty': 80, 'ninety': 90, }
-
-# This argument uses a regex to verify the argument is between one and
-# ninety-nine. If not, math.nan is returned as a signal value. If the string is
-# found in _digit_lexical_number_map, the digit value for that key is returned.
-# Otherwise, it's a hyphenate lexical number above twenty. It's broken at the
-# hyphen and the two components are looked up in _digit_lexical_number_map and
-# the values summed to arrive at the digital equivelant of the lexical number.
 
 def lexical_number_to_digits(lexical_number):
     """
@@ -117,10 +116,20 @@ nan
 between one and ninety-nine inclusive. :return: Returns an int, or math.nan
 (which is a float).
     """
+
+    # The lexical number is not in the range this function can parse, so
+    # math.nan is returned as a signal value.
     if not lexical_number_in_1_99_re.match(lexical_number):
         return math.nan
+
+    # The lexical number is not hyphenate, so I can use
+    # _digit_lexical_number_map and return the matching int value.
     if lexical_number in _digit_lexical_number_map:
         return _digit_lexical_number_map[lexical_number]
+
+    # The lexical number is hyphenate, so I break it into a tens place and a
+    # ones place, look them up separately in _digit_lexical_number_map, and
+    # return the sum of the int values.
     tens_place, ones_place = lexical_number.split('-')
     base_number = _digit_lexical_number_map[tens_place]
     added_number = _digit_lexical_number_map[ones_place]
@@ -155,6 +164,7 @@ The verb string matching how the item is used.
     else:
         return 'using' if gerund else 'use'
 
+
 # In D&D, the standard notation for dice rolling is of the form
 # [1-9][0-9]*d[1-9]+[0-9]*([+-][1-9][0-9]*)?, where the first number indicates
 # how many dice to roll, the second number is the number of sides of the die to
@@ -164,9 +174,7 @@ The verb string matching how the item is used.
 #
 # I have used this notation in the items.ini file since it's the simplest way
 # to compactly express Weapon damage, and in the attack roll methods to call
-# for a d20 roll (the standard D&D conflict resolution roll). This function
-# parses those expressions and returns a closure that executes random.randint
-# appropriately to simulate dice rolls of the dice indicated by the expression.
+# for a d20 roll (the standard D&D conflict resolution roll).
 
 _dice_expression_re = re.compile(r'([1-9]+)d([1-9][0-9]*)([-+][1-9][0-9]*)?')
 
@@ -193,13 +201,7 @@ rolls with the given modifier, and returns the computed random value>
 # not wrapped; the wrapping is done at the UI level in advgame.py. Python comes
 # with a text wrapping library, textwrap, but it has a limitation: if it's fed a
 # multi-paragraph string, the paragraphs are run together and a single wrapped
-# paragraph is returned.
-#
-# This function breaks the multi-paragraph st4ring into separate strings, maps a
-# curried textwrap.wrap() over them, joins wrap()'s list results with newlines,
-# and joins the wrapped paragraphs with newlines to a multi-paragraph string.
-
-_wrapper = functools.partial(textwrap.wrap, width=80)
+# paragraph is returned. This function extends it to handle multiple paragraphs.
 
 def textwrapper(paragraphs):
     """
@@ -210,8 +212,16 @@ paragraphs as a string.
 :paragraphs: A multi-line string of text. return: The text input wrapped to 80
 :columns paragraph-by-paragraph.
     """
-    wrapped_lines = map(_wrapper, paragraphs.split("\n"))
+    # The text is broken into separate paragraph strings and applies
+    # textwrap.wrap to each one.
+    wrapped_lines = map(lambda para: textwrap.wrap(para, width=80), paragraphs.split("\n"))
+
+    # textwrap.wrap returns a list of lines, so I reassemble the paragraphs with
+    # "\n".join()
     wrapped_paragraphs = ["\n".join(paragraph) for paragraph in wrapped_lines]
+
+    # The full multi-paragraph text is reassembled with a second use of
+    # "\n".join() and returned.
     wrapped = "\n".join(wrapped_paragraphs)
     return wrapped
 

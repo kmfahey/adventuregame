@@ -17,6 +17,7 @@ the command can't complete.
 import math
 import operator
 import re
+import itertools
 
 import adventuregame.statemsgs as stmsg
 import adventuregame.elements as elem
@@ -370,19 +371,19 @@ command takes no arguments.
             self.game_state.character.pick_up_item(item)
             getattr(self.game_state.character, 'equip_' + item_type)(item)
             if item.item_type == 'armor':
-                result += (stmsg.Various_Commands_Item_Equipped(item.title, 'armor', self.game_state.character.armor_class,
-                                                                'armor class'),)
+                result += (stmsg.Various_Commands_Item_Equipped(item.title, 'armor',
+                                                                armor_class=self.game_state.character.armor_class),)
             elif item.item_type == 'shield':
-                result += (stmsg.Various_Commands_Item_Equipped(item.title, 'shield', self.game_state.character.armor_class,
-                                                                'armor class'),)
+                result += (stmsg.Various_Commands_Item_Equipped(item.title, 'shield',
+                                                                armor_class=self.game_state.character.armor_class),)
             elif item.item_type == 'wand':
-                result += (stmsg.Various_Commands_Item_Equipped(item.title, 'wand', self.game_state.character.attack_bonus,
-                                                                'attack bonus', self.game_state.character.damage_roll,
-                                                                'damage'),)
+                result += (stmsg.Various_Commands_Item_Equipped(item.title, 'wand',
+                                                                attack_bonus=self.game_state.character.attack_bonus,
+                                                                damage=self.game_state.character.damage_roll),)
             else:
-                result += (stmsg.Various_Commands_Item_Equipped(item.title, 'weapon', self.game_state.character.attack_bonus,
-                                                                'attack bonus', self.game_state.character.damage_roll,
-                                                                'damage'),)
+                result += (stmsg.Various_Commands_Item_Equipped(item.title, 'weapon',
+                                                                attack_bonus=self.game_state.character.attack_bonus,
+                                                                damage=self.game_state.character.damage_roll),)
         return result + (stmsg.Various_Commands_Entered_Room(self.game_state.rooms_state.cursor),)
 
     def cast_spell_command(self, *tokens):
@@ -608,29 +609,29 @@ DROP <number> <item name>
                 if item.item_type == 'armor' and armor_equipped is not None and armor_equipped.internal_name == item.internal_name:
                     self.game_state.character.unequip_armor()
                     unequip_return = stmsg.Various_Commands_Item_Unequipped(item.title, item.item_type,
-                                                                            self.game_state.character.armor_class,
-                                                                      'armor class'),
+                                                                            armor_class=self.game_state.character.armor_class),
                 elif item.item_type == 'weapon' and weapon_equipped is not None and weapon_equipped.internal_name == item.internal_name:
                     self.game_state.character.unequip_weapon()
                     if wand_equipped:
                         unequip_return = stmsg.Various_Commands_Item_Unequipped(item_title, 'weapon',
-                                                                                change_text="You're still attacking with your wand."),
+                                                                                attack_bonus=self.game_state.character.attack_bonus,
+                                                                                damage=self.game_state.character.damage_roll,
+                                                                                attacking_with=wand_equipped),
                     else:
-                        unequip_return = stmsg.Various_Commands_Item_Unequipped(item_title, 'weapon',
-                                                                                change_text="You now can't attack."),
+                        unequip_return = stmsg.Various_Commands_Item_Unequipped(item_title, 'weapon', now_cant_attack=True),
                 elif item.item_type == 'shield' and shield_equipped is not None and shield_equipped.internal_name == item.internal_name:
                     self.game_state.character.unequip_shield()
                     unequip_return = stmsg.Various_Commands_Item_Unequipped(item_title, 'shield',
-                                                                            self.game_state.character.armor_class,
-                                                                            'armor class'),
+                                                                            armor_class=self.game_state.character.armor_class),
                 elif item.item_type == 'wand' and wand_equipped is not None and wand_equipped.internal_name == item.internal_name:
                     self.game_state.character.unequip_wand()
                     if weapon_equipped:
                         unequip_return = stmsg.Various_Commands_Item_Unequipped(item_title, 'wand',
-                                                                                change_text=f"You're now attacking with your {weapon_equipped.title}."),
+                                                                                attack_bonus=self.game_state.character.attack_bonus,
+                                                                                damage=self.game_state.character.damage_roll,
+                                                                                now_attacking_with=weapon_equipped),
                     else:
-                        unequip_return = stmsg.Various_Commands_Item_Unequipped(item_title, 'wand',
-                                                                                change_text="You now can't attack."),
+                        unequip_return = stmsg.Various_Commands_Item_Unequipped(item_title, 'wand', now_cant_attack=True),
             self.game_state.character.drop_item(item, qty=drop_amount)
             if self.game_state.rooms_state.cursor.items_here is None:
                 self.game_state.rooms_state.cursor.items_here = Items_Multi_State()
@@ -682,37 +683,43 @@ EQUIP <weapon name>
         if item.item_type == 'armor' and self.game_state.character.armor_equipped:
             old_equipped = self.game_state.character.armor_equipped
             retval = stmsg.Various_Commands_Item_Unequipped(old_equipped.title, old_equipped.item_type,
-                                                            self.game_state.character.armor_class, 'armor class'),
+                                                            armor_class=self.game_state.character.armor_class),
         elif item.item_type == 'shield' and self.game_state.character.shield_equipped:
             old_equipped = self.game_state.character.shield_equipped
             retval = stmsg.Various_Commands_Item_Unequipped(old_equipped.title, old_equipped.item_type,
-                                                            self.game_state.character.armor_class, 'armor class'),
+                                                            armor_class=self.game_state.character.armor_class),
         elif item.item_type == 'wand' and self.game_state.character.wand_equipped:
             old_equipped = self.game_state.character.wand_equipped
             retval = stmsg.Various_Commands_Item_Unequipped(old_equipped.title, old_equipped.item_type,
-                                                            change_text="You now can't attack."),
+                                                            now_cant_attack=True),
         elif item.item_type == 'weapon' and self.game_state.character.weapon_equipped:
             old_equipped = self.game_state.character.weapon_equipped
             retval = stmsg.Various_Commands_Item_Unequipped(old_equipped.title, old_equipped.item_type,
-                                                            change_text="You now can't attack."),
+                                                            now_cant_attack=True),
         if item.item_type == 'armor':
             self.game_state.character.equip_armor(item)
             return retval + (stmsg.Various_Commands_Item_Equipped(item.title, 'armor',
-                                                                  self.game_state.character.armor_class, 'armor class'),)
+                                                                  armor_class=self.game_state.character.armor_class),)
         elif item.item_type == 'shield':
             self.game_state.character.equip_shield(item)
             return retval + (stmsg.Various_Commands_Item_Equipped(item.title, 'shield',
-                                                                  self.game_state.character.armor_class, 'armor class'),)
+                                                                  armor_class=self.game_state.character.armor_class),)
         elif item.item_type == 'wand':
             self.game_state.character.equip_wand(item)
             return retval + (stmsg.Various_Commands_Item_Equipped(item.title, 'wand',
-                                                                  self.game_state.character.attack_bonus, 'attack bonus',
-                                                                  self.game_state.character.damage_roll, 'damage'),)
+                                                                  attack_bonus=self.game_state.character.attack_bonus,
+                                                                  damage=self.game_state.character.damage_roll),)
         else:
             self.game_state.character.equip_weapon(item)
-            return retval + (stmsg.Various_Commands_Item_Equipped(item.title, 'weapon',
-                                                                  self.game_state.character.attack_bonus, 'attack bonus',
-                                                                  self.game_state.character.damage_roll, 'damage'),)
+            if self.game_state.character.wand_equipped:
+                return retval + (stmsg.Various_Commands_Item_Equipped(item.title, 'weapon',
+                                                                      attack_bonus=self.game_state.character.attack_bonus,
+                                                                      damage=self.game_state.character.damage_roll,
+                                                                      attacking_with='wand'),)
+            else:
+                return retval + (stmsg.Various_Commands_Item_Equipped(item.title, 'weapon',
+                                                                      attack_bonus=self.game_state.character.attack_bonus,
+                                                                      damage=self.game_state.character.damage_roll),)
 
 
     def help_command(self, *tokens):
@@ -895,7 +902,8 @@ LOCK <chest name>
 
         if (not any((tried_to_operate_on_doorway, tried_to_operate_on_corpse, tried_to_operate_on_corpse))
                 and self.game_state.rooms_state.cursor.items_here is not None):
-            for _, item in self.game_state.rooms_state.cursor.items_here.values():
+            for _, item in itertools.chain(self.game_state.rooms_state.cursor.items_here.values(),
+                                           self.game_state.character.list_items()):
                 if item.title != target_title:
                     continue
                 tried_to_operate_on_item = True
@@ -1022,8 +1030,8 @@ LOOK AT <compass direction> DOORWAY
             return stmsg.Command_Bad_Syntax('LOOK AT', *COMMANDS_SYNTAX['LOOK AT']),
         item_contained = item_in_inventory = item_in_chest = item_on_corpse = False
         if 'in' in tokens or 'on' in tokens:
-            item_contained = True
             if 'in' in tokens:
+                item_contained = True
                 joinword_index = tokens.index('in')
                 if tokens[joinword_index+1:] == ('inventory',):
                     item_in_inventory = True
@@ -1031,7 +1039,11 @@ LOOK AT <compass direction> DOORWAY
                     item_in_chest = True
             else:
                 joinword_index = tokens.index('on')
-                item_on_corpse = True
+                if tokens[-1] == 'floor':
+                    item_on_floor = True
+                else:
+                    item_contained = True
+                    item_on_corpse = True
             target_title = ' '.join(tokens[:joinword_index])
             location_title = ' '.join(tokens[joinword_index+1:])
         elif tokens[-1] == 'door' or tokens[-1] == 'doorway':
@@ -1042,6 +1054,7 @@ LOOK AT <compass direction> DOORWAY
                 door, = result
                 return stmsg.Look_At_Command_Found_Door_or_Doorway(door.title.split(' ')[0], door),
         else:
+            item_on_floor = True
             target_title = ' '.join(tokens)
         creature_here = self.game_state.rooms_state.cursor.creature_here
         container_here = self.game_state.rooms_state.cursor.container_here
@@ -1057,8 +1070,9 @@ LOOK AT <compass direction> DOORWAY
                 for item_qty, item in self.game_state.character.list_items():
                     if item.title != target_title:
                         continue
-                    return stmsg.Look_At_Command_Found_Item_or_Items_Here(self._look_at_item_detail(item), item_qty),
-                return stmsg.Look_At_Command_Found_Nothing(target_title, 'inventory', 'inventory'),
+                    return stmsg.Look_At_Command_Found_Item_or_Items_Here(self._look_at_item_detail(item),
+                                                                          item_qty, 'inventory'),
+                return stmsg.Look_At_Command_Found_Nothing(target_title, 'inventory'),
             else:
                 if container_here is None or container_here.title != location_title:
                     return stmsg.Various_Commands_Container_Not_Found(location_title),
@@ -1066,7 +1080,9 @@ LOOK AT <compass direction> DOORWAY
                     for item_qty, item in container_here.values():
                         if item.title != target_title:
                             continue
-                        return stmsg.Look_At_Command_Found_Item_or_Items_Here(self._look_at_item_detail(item), item_qty),
+                        return stmsg.Look_At_Command_Found_Item_or_Items_Here(self._look_at_item_detail(item),
+                                                                              item_qty, container_here.title,
+                                                                              container_here.container_type),
                     return stmsg.Look_At_Command_Found_Nothing(target_title, location_title,
                                                                'chest' if item_in_chest else 'corpse'),
                 else:
@@ -1075,8 +1091,9 @@ LOOK AT <compass direction> DOORWAY
             for item_name, (item_qty, item) in self.game_state.rooms_state.cursor.items_here.items():
                 if item.title != target_title:
                     continue
-                return stmsg.Look_At_Command_Found_Item_or_Items_Here(self._look_at_item_detail(item), item_qty),
-            return stmsg.Look_At_Command_Found_Nothing(target_title),
+                return stmsg.Look_At_Command_Found_Item_or_Items_Here(self._look_at_item_detail(item),
+                                                                      item_qty, 'floor'),
+            return stmsg.Look_At_Command_Found_Nothing(target_title, 'floor'),
 
     def _look_at_item_detail(self, element):
         descr_append_str = ''
@@ -1214,7 +1231,8 @@ Priest, a 1-tuple of a Command_Class_Restricted object is returned.
         elif creature is not None and creature.title == target_title:
             tried_to_operate_on_creature = True
         else:
-            for _, item in self.game_state.rooms_state.cursor.items_here.values():
+            for _, item in itertools.chain(self.game_state.rooms_state.cursor.items_here.values(),
+                                           self.game_state.character.list_items()):
                 if item.title != target_title:
                     continue
                 tried_to_operate_on_item = True
@@ -1771,7 +1789,8 @@ TAKE <number> <item name> FROM <container name>
 
                 # The amount specified is more than how much is in the Container, so I return an error.
                 return stmsg.Take_Command_Trying_to_Take_More_than_Is_Present(container_title, container.container_type,
-                                                                              item_title, take_amount, item_qty),  # tested
+                                                                              item_title, item.item_type, take_amount,
+                                                                              item_qty),
             elif take_amount == 1:
 
                 # We have a match. One Item is remove from the Container and added to the Character's Inventory; and a
@@ -1844,8 +1863,7 @@ UNEQUIP <weapon name>
                 if self.game_state.character.armor_equipped.title == item_title:
                     self.game_state.character.unequip_armor()
                     return stmsg.Various_Commands_Item_Unequipped(item_title, 'armor',
-                                                                  self.game_state.character.armor_class,
-                                                                  'armor class'),
+                                                                  armor_class=self.game_state.character.armor_class),
                 else:
                     return stmsg.Unequip_Command_Item_Not_Equipped(item_title, 'armor',
                                                                    self.game_state.character.armor_equipped.title),
@@ -1856,8 +1874,7 @@ UNEQUIP <weapon name>
                 if self.game_state.character.shield_equipped.title == item_title:
                     self.game_state.character.unequip_shield()
                     return stmsg.Various_Commands_Item_Unequipped(item_title, 'shield',
-                                                                  self.game_state.character.armor_class,
-                                                                  'armor class'),
+                                                                  armor_class=self.game_state.character.armor_class),
                 else:
                     return stmsg.Unequip_Command_Item_Not_Equipped(item_title, 'shield',
                                                                    self.game_state.character.shield_equipped.title),
@@ -1870,11 +1887,12 @@ UNEQUIP <weapon name>
                     weapon_equipped = self.game_state.character.weapon_equipped
                     if weapon_equipped is not None:
                         return stmsg.Various_Commands_Item_Unequipped(item_title, 'wand',
-                                                                      change_text=f"You're now attacking with your "
-                                                                            f'{weapon_equipped.title}'),
+                                                                      attack_bonus=self.game_state.character.\
+                                                                          attack_bonus,
+                                                                      damage=self.game_state.character.damage_roll,
+                                                                      now_attacking_with=weapon_equipped),
                     else:
-                        return stmsg.Various_Commands_Item_Unequipped(item_title, 'wand',
-                                                                      change_text="You now can't attack."),
+                        return stmsg.Various_Commands_Item_Unequipped(item_title, 'wand', cant_attack=True),
                 else:
                     return stmsg.Unequip_Command_Item_Not_Equipped(item_title, 'wand'),
             else:
@@ -1883,12 +1901,12 @@ UNEQUIP <weapon name>
             if self.game_state.character.weapon_equipped is not None:
                 if self.game_state.character.weapon_equipped.title == item_title:
                     self.game_state.character.unequip_weapon()
-                    if self.game_state.character.wand_equipped is not None:
+                    wand_equipped = self.game_state.character.wand_equipped 
+                    if wand_equipped is not None:
                         return stmsg.Various_Commands_Item_Unequipped(item_title, 'weapon',
-                                                                      change_text="You're attacking with your wand."),
+                                                                      attacking_with=wand_equipped),
                     else:
-                        return stmsg.Various_Commands_Item_Unequipped(item_title, 'weapon',
-                                                                      change_text="You now can't attack."),
+                        return stmsg.Various_Commands_Item_Unequipped(item_title, 'weapon', now_cant_attack=True),
                 else:
                     return stmsg.Unequip_Command_Item_Not_Equipped(item.title, 'weapon'),
             else:
