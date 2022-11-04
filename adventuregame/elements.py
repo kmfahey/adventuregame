@@ -53,7 +53,7 @@ entries in **argd are assigned to object attributes.
         """
 This method enables two Ini_Entry objects or Ini_Entry subclass objects to be
 tested for equality. It draws on __slots__ and checks each attribute's value in
-self and other for equality. Only if all atributes match is True returned.
+self and other for equality. Only if all attributes match is True returned.
 
 :other: The other object to compare against.
 :return: True or False.
@@ -175,7 +175,7 @@ This method returns the internal dictionary's items iterator.
 
     def size(self):  # check
         """
-This method returns the value for the len() builting applies to the internal
+This method returns the value for the len() builtin applies to the internal
 dictionary.
 
 :return: An int.
@@ -433,7 +433,7 @@ The Item subclass of Ini_Entry represents a single door. It is instantiated
 from a single section of a doors.ini file as returned by an IniConfig's
 dict-of-dicts sections attribute.
     """
-    __slots__ = ('internal_name', 'title', 'description', 'door_type', 'is_locked', 'is_closed', 'closeable',
+    __slots__ = ('internal_name', 'title', 'description', 'door_type', 'is_locked', 'is_closed', 'closable',
                  '_linked_rooms_internal_names', 'is_exit')
 
     def __init__(self, **argd):
@@ -495,7 +495,7 @@ This method returns a shallow copy of the object.
 
 :return: A Door object.
         """
-        return Door(**{attr: getattr(self, attr, None) for attr in self.__slots__})
+        return self.__class__(**{attr: getattr(self, attr, None) for attr in self.__slots__})
 
 
 class Doorway(Door):
@@ -696,8 +696,8 @@ subclass objects' internal names and populate the container.
     def subclassing_factory(self, items_state, **container_dict):
         """
 This factory accepts an items_state object and a **dict-of-dicts as featured in
-an IniConfig's section attribute, and determines which Container subclass is
-appropriate to instantiate from the data.
+an IniConfig object's section attribute, and determines which Container subclass
+is appropriate to instantiate from the data.
 
 :items_state: An Items_State object.
 :**container_dict: A dict of key-value pairs to instantiate the Container 
@@ -1290,6 +1290,7 @@ This method applies the given damage to the character's hit points. If the hit
 points would be reduced to less than 0, they are set to 0 instead. The method
 returns the amount of damage assessed.
 
+:damage_value: An int, the number of hit points to lose.
 :return: An int.
         """
         if self._current_hit_points - damage_value < 0:
@@ -1307,6 +1308,7 @@ healing would increase the hit points to more than the character's maximum hit
 points, their hit point value is set to their hit point maximum instead. The
 method returns the amount of healing done.
 
+:healing_value: An int, the number of hit points to recover.
 :return: An int.
         """
         if self._current_hit_points + healing_value > self._hit_point_maximum:
@@ -1324,6 +1326,7 @@ points, returning the amount spent if successful. If the amount spent would
 reduce the character's mana points to less than zero, no spending takes place,
 and 0 is returned to indicate failure.
 
+:spent_amount: An int, the number of mana points to spend.
 :return: An int.
         """
         if self._current_mana_points < spent_amount:
@@ -1339,6 +1342,7 @@ increase the character's mana points to greater than their maximum mana point
 total, their current mana point value is set equal to their maximum mana point
 value instead. The method returns the amount of mana points regained.
 
+:regaining_value: An int, the number of mana points to regain.
 :return: An int.
         """
         if self._current_mana_points + regaining_value > self._mana_point_maximum:
@@ -1372,7 +1376,7 @@ This property returns True if the character's hit point total equals 0.
         """
 This property returns a dice expression usable by
 adventuregame.utilities.roll_dice() to execute an attack roll during an ATTACK
-command. It calculates the attack bonus from the equipped item and the revelant
+command. It calculates the attack bonus from the equipped item and the relevant
 ability score modifier.
 
 :return: A string of the form '\d+d\d+([+-]\d+)?'.

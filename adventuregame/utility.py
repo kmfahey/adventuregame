@@ -139,7 +139,7 @@ how a character is described as using an equippable type of item.
 >>> usage_verb('shield', gerund=False)
 'carry'
 >>> usage_verb('weapon', gerund=True)
-'weilding'
+'wielding'
 
 :item_type: Either 'armor', 'shield', 'weapon', or 'wand'. :gerund: Either True
 (to receive the gerund) or False (to receive the present indicative). :return:

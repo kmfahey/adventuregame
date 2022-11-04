@@ -35,7 +35,7 @@ The CLOSE command can be used to close doors and chests.
 
 #### The DRINK command
 
-Usage: 'DRINK [THE] \<potion name\>'
+Usage: 'DRINK [THE] \<potion name\>' or 'DRINK \<number\> \<potion name\>s'
 
 The DRINK command can be used to drink health or mana potions.
 

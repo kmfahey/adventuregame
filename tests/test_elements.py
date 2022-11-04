@@ -480,20 +480,20 @@ class Test_Door_and_Doors_State(unittest.TestCase):
         self.assertEqual(door.door_type, 'doorway')
         self.assertFalse(door.is_locked, False)
         self.assertFalse(door.is_closed, False)
-        self.assertFalse(door.closeable, False)
+        self.assertFalse(door.closable, False)
         self.doors_state.delete('Room_1,2', 'Room_2,2')
         self.assertFalse(self.doors_state.contains('Room_1,2', 'Room_2,2'))
         self.doors_state.set('Room_1,2', 'Room_2,2', door)
         self.assertTrue(self.doors_state.contains('Room_1,2', 'Room_2,2'))
 
-    def test_doors_state_and_door(self):
+    def test_doors_state_and_door_1(self):
         door = self.doors_state.get('Room_1,1', 'Room_1,2')
         self.assertEqual(door.title, 'wooden door')
         self.assertEqual(door.description, 'This door is made of wooden planks secured together with iron divots.')
         self.assertEqual(door.door_type, 'wooden_door')
         self.assertEqual(door.is_locked, False)
         self.assertEqual(door.is_closed, True)
-        self.assertEqual(door.closeable, True)
+        self.assertEqual(door.closable, True)
 
         door = self.doors_state.get('Room_1,1', 'Room_2,1')
         self.assertEqual(door.title, 'iron door')
@@ -502,7 +502,7 @@ class Test_Door_and_Doors_State(unittest.TestCase):
         self.assertEqual(door.door_type, 'iron_door')
         self.assertEqual(door.is_locked, True)
         self.assertEqual(door.is_closed, True)
-        self.assertEqual(door.closeable, True)
+        self.assertEqual(door.closable, True)
 
         door = self.doors_state.get('Room_1,2', 'Room_2,2')
         self.assertEqual(door.title, 'doorway')
@@ -510,7 +510,13 @@ class Test_Door_and_Doors_State(unittest.TestCase):
         self.assertEqual(door.door_type, 'doorway')
         self.assertEqual(door.is_locked, False)
         self.assertEqual(door.is_closed, False)
-        self.assertEqual(door.closeable, False)
+        self.assertEqual(door.closable, False)
+
+    def test_doors_state_and_door_2(self):
+        door = self.doors_state.get('Room_1,1', 'Room_1,2')
+        self.assertIsInstance(door, advg.Wooden_Door)
+        door_copy = door.copy()
+        self.assertIsInstance(door_copy, advg.Wooden_Door)
 
 
 class Test_Item_and_Items_State(unittest.TestCase):
@@ -630,7 +636,7 @@ class Test_Rooms_State_Obj(unittest.TestCase):
         self.assertEqual(self.rooms_state.cursor.north_door.door_type, 'wooden_door')
         self.assertEqual(self.rooms_state.cursor.north_door.is_locked, False)
         self.assertEqual(self.rooms_state.cursor.north_door.is_closed, True)
-        self.assertEqual(self.rooms_state.cursor.north_door.closeable, True)
+        self.assertEqual(self.rooms_state.cursor.north_door.closable, True)
         self.assertTrue(self.rooms_state.cursor.has_east_door)
         self.assertTrue(self.rooms_state.cursor.east_door.title, 'east door')
         self.assertTrue(self.rooms_state.cursor.east_door.description, 'This door is bound in iron plates with a '
@@ -638,7 +644,7 @@ class Test_Rooms_State_Obj(unittest.TestCase):
         self.assertTrue(self.rooms_state.cursor.east_door.door_type, 'iron_door')
         self.assertTrue(self.rooms_state.cursor.east_door.is_locked, True)
         self.assertTrue(self.rooms_state.cursor.east_door.is_closed, True)
-        self.assertTrue(self.rooms_state.cursor.east_door.closeable, True)
+        self.assertTrue(self.rooms_state.cursor.east_door.closable, True)
         self.assertFalse(self.rooms_state.cursor.has_south_door)
         self.assertFalse(self.rooms_state.cursor.has_west_door)
         self.rooms_state.move(north=True)
@@ -678,7 +684,7 @@ class Test_Rooms_State_Obj(unittest.TestCase):
         self.assertTrue(self.rooms_state.cursor.west_door.door_type, 'doorway')
         self.assertTrue(self.rooms_state.cursor.west_door.is_locked, False)
         self.assertTrue(self.rooms_state.cursor.west_door.is_closed, False)
-        self.assertTrue(self.rooms_state.cursor.west_door.closeable, False)
+        self.assertTrue(self.rooms_state.cursor.west_door.closable, False)
         self.assertEqual(self.rooms_state.cursor.internal_name, 'Room_2,2')
         self.assertTrue(self.rooms_state.cursor.is_exit)
         self.assertFalse(self.rooms_state.cursor.is_entrance)

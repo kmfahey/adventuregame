@@ -397,7 +397,7 @@ class Test_Cast_Spell(unittest.TestCase):
         current_mana_points = 4
         self.assertTrue(mana_spending_outcome)
         result = self.command_processor.process('cast spell')
-        self.assertIsInstance(result[0], advg.Cast_Spell_Command_Insuffient_Mana)
+        self.assertIsInstance(result[0], advg.Cast_Spell_Command_Insufficient_Mana)
         self.assertEqual(result[0].current_mana_points, self.command_processor.game_state.character.mana_points)
         self.assertEqual(result[0].mana_point_total, self.command_processor.game_state.character.mana_point_total)
         self.assertEqual(result[0].spell_mana_cost, advg.SPELL_MANA_COST)
@@ -512,6 +512,37 @@ class Test_Close(unittest.TestCase):
         self.assertEqual(result[0].target, 'north door')
         self.assertEqual(result[0].message, 'The north door is already closed.'),
 
+    def test_close_9(self):
+        result = self.command_processor.process('close mana potion')
+        self.assertIsInstance(result[0], advg.Close_Command_Element_Not_Closable)
+        self.assertEqual(result[0].target_title, 'mana potion')
+        self.assertEqual(result[0].target_type, 'potion')
+        self.assertEqual(result[0].message, "You can't close the mana potion; potions are not closable."),
+
+    def test_close_10(self):
+        result = self.command_processor.process('close kobold')
+        self.assertIsInstance(result[0], advg.Close_Command_Element_Not_Closable)
+        self.assertEqual(result[0].target_title, 'kobold')
+        self.assertEqual(result[0].target_type, 'creature')
+        self.assertEqual(result[0].message, "You can't close the kobold; creatures are not closable."),
+
+    def test_close_11(self):
+        self.command_processor.game_state.rooms_state.cursor.container_here = \
+            self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
+        result = self.command_processor.process('close kobold corpse')
+        self.assertIsInstance(result[0], advg.Close_Command_Element_Not_Closable)
+        self.assertEqual(result[0].target_title, 'kobold corpse')
+        self.assertEqual(result[0].target_type, 'corpse')
+        self.assertEqual(result[0].message, "You can't close the kobold corpse; corpses are not closable."),
+
+    def test_close_12(self):
+        self.command_processor.game_state.rooms_state.move(north=True)
+        result = self.command_processor.process('close east doorway')
+        self.assertIsInstance(result[0], advg.Close_Command_Element_Not_Closable)
+        self.assertEqual(result[0].target_title, 'east doorway')
+        self.assertEqual(result[0].target_type, 'doorway')
+        self.assertEqual(result[0].message, "You can't close the east doorway; doorways are not closable.")
+
 
 class Test_Processor_Process(unittest.TestCase):
 
@@ -605,7 +636,8 @@ class Test_Drink(unittest.TestCase):
             self.assertIsInstance(result[0], advg.Command_Bad_Syntax)
             self.assertEqual(result[0].command, 'DRINK')
             self.assertEqual(result[0].message, "DRINK command: bad syntax. Should be "
-                                                "'DRINK\u00A0[THE]\u00A0<potion\u00A0name>'.")
+                                                "'DRINK\u00A0[THE]\u00A0<potion\u00A0name>' or "
+                                                "'DRINK\u00A0<number>\u00A0<potion\u00A0name>(s)'.")
 
     def test_drink2(self):
         self.command_processor.game_state.character_name = 'Niath'
@@ -1396,13 +1428,25 @@ class Test_Leave(unittest.TestCase):
                                             'is a wooden door to the north and a iron door to the east.')
 
     def test_leave_4(self):
+        result = self.command_processor.process('leave using wooden door')
+        self.assertIsInstance(result[0], advg.Leave_Command_Left_Room)
+        self.assertEqual(result[0].compass_dir, 'north')
+        self.assertEqual(result[0].message, 'You leave the room via the north door.')
+        self.assertIsInstance(result[1], advg.Various_Commands_Entered_Room)
+        self.assertIsInstance(result[1].room, advg.Room)
+        self.assertEqual(result[1].message, 'Nondescript room. There is a doorway to the east and a wooden door to the '
+                                            'south.')
+
+    def test_leave_5(self):
         self.command_processor = advg.Command_Processor(self.game_state)
         self.command_processor.game_state.character_name = 'Lidda'
         self.command_processor.game_state.character_class = 'Thief'
         self.game_state.game_has_begun = True
+        self.assertEqual(self.command_processor.game_state.rooms_state.cursor.title, "southwest dungeon room")
         self.command_processor.process('leave using north door')
-        self.command_processor.process('pick lock on east door')
-        self.command_processor.process('leave using east door')
+        self.assertEqual(self.command_processor.game_state.rooms_state.cursor.title, "northwest dungeon room")
+        self.command_processor.process('leave using east doorway')
+        self.assertEqual(self.command_processor.game_state.rooms_state.cursor.title, "northeast dungeon room")
         result = self.command_processor.process('leave using north door')
         self.assertIsInstance(result[0], advg.Leave_Command_Left_Room)
         self.assertEqual(result[0].compass_dir, 'north')
@@ -1595,8 +1639,8 @@ class Test_Lock(unittest.TestCase):
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
-        self.command_processor.game_state.character_name = 'Niath'
-        self.command_processor.game_state.character_class = 'Warrior'
+        self.command_processor.game_state.character_name = 'Lidda'
+        self.command_processor.game_state.character_class = 'Thief'
         self.game_state.game_has_begun = True
         self.door = self.command_processor.game_state.rooms_state.cursor.north_door
         self.door.is_locked = True
@@ -1670,12 +1714,45 @@ class Test_Lock(unittest.TestCase):
         self.assertEqual(result[0].message, f'You have locked the {self.chest_title}.')
         self.assertTrue(self.chest.is_locked)
 
-    def test_lock_2(self):
+    def test_lock_7(self):
         result = self.command_processor.process('lock wooden door')
         self.assertIsInstance(result[0], advg.Lock_Command_Dont_Possess_Correct_Key)
         self.assertEqual(result[0].object_to_lock_title, 'north door')
         self.assertEqual(result[0].key_needed, 'door key')
         self.assertEqual(result[0].message, f'To lock the north door you need a door key.')
+
+    def test_lock_8(self):
+        result = self.command_processor.process('lock mana potion')
+        self.assertIsInstance(result[0], advg.Lock_Command_Element_Not_Lockable)
+        self.assertEqual(result[0].target_title, 'mana potion')
+        self.assertEqual(result[0].target_type, 'potion')
+        self.assertEqual(result[0].message, "You can't lock the mana potion; potions are not lockable."),
+
+    def test_lock_9(self):
+        result = self.command_processor.process('lock kobold')
+        self.assertIsInstance(result[0], advg.Lock_Command_Element_Not_Lockable)
+        self.assertEqual(result[0].target_title, 'kobold')
+        self.assertEqual(result[0].target_type, 'creature')
+        self.assertEqual(result[0].message, "You can't lock the kobold; creatures are not lockable."),
+
+    def test_lock_10(self):
+        self.command_processor.game_state.rooms_state.cursor.container_here = \
+            self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
+        result = self.command_processor.process('lock kobold corpse')
+        self.assertIsInstance(result[0], advg.Lock_Command_Element_Not_Lockable)
+        self.assertEqual(result[0].target_title, 'kobold corpse')
+        self.assertEqual(result[0].target_type, 'corpse')
+        self.assertEqual(result[0].message, "You can't lock the kobold corpse; corpses are not lockable."),
+
+    def test_lock_11(self):
+        result = self.command_processor.process('pick lock on north door')
+        self.command_processor.game_state.rooms_state.move(north=True)
+        result = self.command_processor.process('lock east doorway')
+        self.assertIsInstance(result[0], advg.Lock_Command_Element_Not_Lockable)
+        self.assertEqual(result[0].target_title, 'east doorway')
+        self.assertEqual(result[0].target_type, 'doorway')
+        self.assertEqual(result[0].message, "You can't lock the east doorway; doorways are not lockable.")
+
 
 
 class Test_Look_At_2(unittest.TestCase):
@@ -1963,6 +2040,38 @@ class Test_Open(unittest.TestCase):
         self.assertEqual(result[0].target, 'north door')
         self.assertEqual(result[0].message, 'The north door is already open.'),
 
+    def test_open_9(self):
+        result = self.command_processor.process('open mana potion')
+        self.assertIsInstance(result[0], advg.Open_Command_Element_Not_Openable)
+        self.assertEqual(result[0].target_title, 'mana potion')
+        self.assertEqual(result[0].target_type, 'potion')
+        self.assertEqual(result[0].message, "You can't open the mana potion; potions are not openable."),
+
+    def test_open_10(self):
+        result = self.command_processor.process('open kobold')
+        self.assertIsInstance(result[0], advg.Open_Command_Element_Not_Openable)
+        self.assertEqual(result[0].target_title, 'kobold')
+        self.assertEqual(result[0].target_type, 'creature')
+        self.assertEqual(result[0].message, "You can't open the kobold; creatures are not openable."),
+
+    def test_open_11(self):
+        self.command_processor.game_state.rooms_state.cursor.container_here = \
+            self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
+        result = self.command_processor.process('open kobold corpse')
+        self.assertIsInstance(result[0], advg.Open_Command_Element_Not_Openable)
+        self.assertEqual(result[0].target_title, 'kobold corpse')
+        self.assertEqual(result[0].target_type, 'corpse')
+        self.assertEqual(result[0].message, "You can't open the kobold corpse; corpses are not openable."),
+
+    def test_open_12(self):
+        self.command_processor.game_state.rooms_state.move(north=True)
+        result = self.command_processor.process('open east doorway')
+        self.assertIsInstance(result[0], advg.Open_Command_Element_Not_Openable)
+        self.assertEqual(result[0].target_title, 'east doorway')
+        self.assertEqual(result[0].target_type, 'doorway')
+        self.assertEqual(result[0].message, "You can't open the east doorway; doorways are not openable.")
+
+
 
 class Test_Pick_Lock(unittest.TestCase):
 
@@ -1981,7 +2090,7 @@ class Test_Pick_Lock(unittest.TestCase):
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
 
-    def test_pick_lock1(self):
+    def test_pick_lock_1(self):
         self.command_processor.game_state.character_name = 'Niath'
         self.command_processor.game_state.character_class = 'Warrior'
         self.game_state.game_has_begun = True
@@ -1991,7 +2100,7 @@ class Test_Pick_Lock(unittest.TestCase):
         self.assertEqual(result[0].classes, ('thief',))
         self.assertEqual(result[0].message, 'Only thieves can use the PICK LOCK command.')
 
-    def test_pick_lock2(self):
+    def test_pick_lock_2(self):
         self.command_processor.game_state.character_name = 'Lidda'
         self.command_processor.game_state.character_class = 'Thief'
         self.game_state.game_has_begun = True
@@ -2003,7 +2112,7 @@ class Test_Pick_Lock(unittest.TestCase):
                                                 "'PICK\u00A0LOCK\u00A0ON\u00A0[THE]\u00A0<chest\u00A0name>' or "
                                                 "'PICK\u00A0LOCK\u00A0ON\u00A0[THE]\u00A0<door\u00A0name>'.")
 
-    def test_pick_lock3(self):
+    def test_pick_lock_3(self):
         self.command_processor.game_state.character_name = 'Lidda'
         self.command_processor.game_state.character_class = 'Thief'
         self.game_state.game_has_begun = True
@@ -2013,7 +2122,7 @@ class Test_Pick_Lock(unittest.TestCase):
         self.assertEqual(result[0].portal_type, 'door')
         self.assertEqual(result[0].message, 'This room does not have a west door.')
 
-    def test_pick_lock3(self):
+    def test_pick_lock_3(self):
         self.command_processor.game_state.character_name = 'Lidda'
         self.command_processor.game_state.character_class = 'Thief'
         self.game_state.game_has_begun = True
@@ -2022,7 +2131,7 @@ class Test_Pick_Lock(unittest.TestCase):
         self.assertEqual(result[0].target_title, 'wooden door')
         self.assertEqual(result[0].message, 'The wooden door is not locked.')
 
-    def test_pick_lock4(self):
+    def test_pick_lock_4(self):
         self.command_processor.game_state.character_name = 'Lidda'
         self.command_processor.game_state.character_class = 'Thief'
         self.game_state.game_has_begun = True
@@ -2031,17 +2140,17 @@ class Test_Pick_Lock(unittest.TestCase):
         self.assertEqual(result[0].target_title, 'north door')
         self.assertEqual(result[0].message, 'The north door is not locked.')
 
-    def test_pick_lock5(self):
+    def test_pick_lock_5(self):
         self.command_processor.game_state.character_name = 'Lidda'
         self.command_processor.game_state.character_class = 'Thief'
         self.game_state.game_has_begun = True
         self.command_processor.game_state.rooms_state.cursor.container_here = None
         result = self.command_processor.process('pick lock on wooden chest')
-        self.assertIsInstance(result[0], advg.Pick_Lock_Command_Target_Cant_Be_Unlocked_or_Not_Found)
+        self.assertIsInstance(result[0], advg.Pick_Lock_Command_Target_Not_Found)
         self.assertEqual(result[0].target_title, 'wooden chest')
-        self.assertEqual(result[0].message, "The wooden chest is not found or can't be unlocked.")
+        self.assertEqual(result[0].message, "This room has no wooden chest.")
 
-    def test_pick_lock6(self):
+    def test_pick_lock_6(self):
         self.command_processor.game_state.character_name = 'Lidda'
         self.command_processor.game_state.character_class = 'Thief'
         self.game_state.game_has_begun = True
@@ -2052,7 +2161,7 @@ class Test_Pick_Lock(unittest.TestCase):
         self.assertEqual(result[0].message, 'The wooden chest is not locked.')
         self.assertFalse(self.command_processor.game_state.rooms_state.cursor.container_here.is_locked)
 
-    def test_pick_lock7(self):
+    def test_pick_lock_7(self):
         self.command_processor.game_state.character_name = 'Lidda'
         self.command_processor.game_state.character_class = 'Thief'
         self.game_state.game_has_begun = True
@@ -2063,7 +2172,7 @@ class Test_Pick_Lock(unittest.TestCase):
         self.assertEqual(result[0].message, 'You have unlocked the east door.')
         self.assertFalse(self.command_processor.game_state.rooms_state.cursor.east_door.is_locked)
 
-    def test_pick_lock8(self):
+    def test_pick_lock_8(self):
         self.command_processor.game_state.character_name = 'Lidda'
         self.command_processor.game_state.character_class = 'Thief'
         self.game_state.game_has_begun = True
@@ -2074,7 +2183,7 @@ class Test_Pick_Lock(unittest.TestCase):
         self.assertEqual(result[0].message, 'You have unlocked the east door.')
         self.assertFalse(self.command_processor.game_state.rooms_state.cursor.east_door.is_locked)
 
-    def test_pick_lock9(self):
+    def test_pick_lock_9(self):
         self.command_processor.game_state.character_name = 'Lidda'
         self.command_processor.game_state.character_class = 'Thief'
         self.game_state.game_has_begun = True
@@ -2085,7 +2194,7 @@ class Test_Pick_Lock(unittest.TestCase):
         self.assertEqual(result[0].message, 'You have unlocked the east door.')
         self.assertFalse(self.command_processor.game_state.rooms_state.cursor.east_door.is_locked)
 
-    def test_pick_lock10(self):
+    def test_pick_lock_10(self):
         self.command_processor.game_state.character_name = 'Lidda'
         self.command_processor.game_state.character_class = 'Thief'
         self.game_state.game_has_begun = True
@@ -2095,6 +2204,49 @@ class Test_Pick_Lock(unittest.TestCase):
         self.assertEqual(result[0].target_title, 'wooden chest')
         self.assertEqual(result[0].message, 'You have unlocked the wooden chest.')
         self.assertFalse(self.command_processor.game_state.rooms_state.cursor.container_here.is_locked)
+
+    def test_pick_lock_11(self):
+        self.command_processor.game_state.character_name = 'Lidda'
+        self.command_processor.game_state.character_class = 'Thief'
+        self.game_state.game_has_begun = True
+        result = self.command_processor.process('pick lock on mana potion')
+        self.assertIsInstance(result[0], advg.Pick_Lock_Command_Element_Not_Unlockable)
+        self.assertEqual(result[0].target_title, 'mana potion')
+        self.assertEqual(result[0].target_type, 'potion')
+        self.assertEqual(result[0].message, "You can't pick a lock on the mana potion; potions are not unlockable."),
+
+    def test_pick_lock_12(self):
+        self.command_processor.game_state.character_name = 'Lidda'
+        self.command_processor.game_state.character_class = 'Thief'
+        self.game_state.game_has_begun = True
+        result = self.command_processor.process('pick lock on kobold')
+        self.assertIsInstance(result[0], advg.Pick_Lock_Command_Element_Not_Unlockable)
+        self.assertEqual(result[0].target_title, 'kobold')
+        self.assertEqual(result[0].target_type, 'creature')
+        self.assertEqual(result[0].message, "You can't pick a lock on the kobold; creatures are not unlockable."),
+
+    def test_pick_lock_13(self):
+        self.command_processor.game_state.character_name = 'Lidda'
+        self.command_processor.game_state.character_class = 'Thief'
+        self.game_state.game_has_begun = True
+        self.command_processor.game_state.rooms_state.cursor.container_here = \
+            self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
+        result = self.command_processor.process('pick lock on the kobold corpse')
+        self.assertIsInstance(result[0], advg.Pick_Lock_Command_Element_Not_Unlockable)
+        self.assertEqual(result[0].target_title, 'kobold corpse')
+        self.assertEqual(result[0].target_type, 'corpse')
+        self.assertEqual(result[0].message, "You can't pick a lock on the kobold corpse; corpses are not unlockable."),
+
+    def test_pick_lock_14(self):
+        self.command_processor.game_state.character_name = 'Lidda'
+        self.command_processor.game_state.character_class = 'Thief'
+        self.game_state.game_has_begun = True
+        self.command_processor.game_state.rooms_state.move(north=True)
+        result = self.command_processor.process('pick lock on east doorway')
+        self.assertIsInstance(result[0], advg.Pick_Lock_Command_Element_Not_Unlockable)
+        self.assertEqual(result[0].target_title, 'east doorway')
+        self.assertEqual(result[0].target_type, 'doorway')
+        self.assertEqual(result[0].message, "You can't pick a lock on the east doorway; doorways are not unlockable.")
 
 
 class Test_Pick_Up(unittest.TestCase):
@@ -3213,8 +3365,8 @@ class Test_Unlock(unittest.TestCase):
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
-        self.command_processor.game_state.character_name = 'Niath'
-        self.command_processor.game_state.character_class = 'Warrior'
+        self.command_processor.game_state.character_name = 'Lidda'
+        self.command_processor.game_state.character_class = 'Thief'
         self.game_state.game_has_begun = True
 
         self.door = self.command_processor.game_state.rooms_state.cursor.north_door
@@ -3296,5 +3448,37 @@ class Test_Unlock(unittest.TestCase):
         self.assertEqual(result[0].object_to_unlock_title, 'north door')
         self.assertEqual(result[0].key_needed, 'door key')
         self.assertEqual(result[0].message, f'To unlock the north door you need a door key.')
+
+    def test_ununlock_8(self):
+        result = self.command_processor.process('unlock mana potion')
+        self.assertIsInstance(result[0], advg.Unlock_Command_Element_Not_Unlockable)
+        self.assertEqual(result[0].target_title, 'mana potion')
+        self.assertEqual(result[0].target_type, 'potion')
+        self.assertEqual(result[0].message, "You can't unlock the mana potion; potions are not unlockable."),
+
+    def test_ununlock_9(self):
+        result = self.command_processor.process('unlock kobold')
+        self.assertIsInstance(result[0], advg.Unlock_Command_Element_Not_Unlockable)
+        self.assertEqual(result[0].target_title, 'kobold')
+        self.assertEqual(result[0].target_type, 'creature')
+        self.assertEqual(result[0].message, "You can't unlock the kobold; creatures are not unlockable."),
+
+    def test_ununlock_10(self):
+        self.command_processor.game_state.rooms_state.cursor.container_here = \
+            self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
+        result = self.command_processor.process('unlock kobold corpse')
+        self.assertIsInstance(result[0], advg.Unlock_Command_Element_Not_Unlockable)
+        self.assertEqual(result[0].target_title, 'kobold corpse')
+        self.assertEqual(result[0].target_type, 'corpse')
+        self.assertEqual(result[0].message, "You can't unlock the kobold corpse; corpses are not unlockable."),
+
+    def test_ununlock_11(self):
+        result = self.command_processor.process('pick lock on north door')
+        self.command_processor.game_state.rooms_state.move(north=True)
+        result = self.command_processor.process('unlock east doorway')
+        self.assertIsInstance(result[0], advg.Unlock_Command_Element_Not_Unlockable)
+        self.assertEqual(result[0].target_title, 'east doorway')
+        self.assertEqual(result[0].target_type, 'doorway')
+        self.assertEqual(result[0].message, "You can't unlock the east doorway; doorways are not unlockable.")
 
 

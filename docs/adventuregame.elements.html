@@ -367,6 +367,7 @@ healing&nbsp;would&nbsp;increase&nbsp;the&nbsp;hit&nbsp;points&nbsp;to&nbsp;more
 points,&nbsp;their&nbsp;hit&nbsp;point&nbsp;value&nbsp;is&nbsp;set&nbsp;to&nbsp;their&nbsp;hit&nbsp;point&nbsp;maximum&nbsp;instead.&nbsp;The<br>
 method&nbsp;returns&nbsp;the&nbsp;amount&nbsp;of&nbsp;healing&nbsp;done.<br>
 &nbsp;<br>
+:healing_value:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;hit&nbsp;points&nbsp;to&nbsp;recover.<br>
 :return:&nbsp;An&nbsp;int.</tt></dd></dl>
 
 <dl><dt><a name="Character-item_have_qty"><strong>item_have_qty</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;checks&nbsp;whether&nbsp;the&nbsp;given&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;is&nbsp;present&nbsp;in&nbsp;the<br>
@@ -394,6 +395,7 @@ increase&nbsp;the&nbsp;character's&nbsp;mana&nbsp;points&nbsp;to&nbsp;greater&nb
 total,&nbsp;their&nbsp;current&nbsp;mana&nbsp;point&nbsp;value&nbsp;is&nbsp;set&nbsp;equal&nbsp;to&nbsp;their&nbsp;maximum&nbsp;mana&nbsp;point<br>
 value&nbsp;instead.&nbsp;The&nbsp;method&nbsp;returns&nbsp;the&nbsp;amount&nbsp;of&nbsp;mana&nbsp;points&nbsp;regained.<br>
 &nbsp;<br>
+:regaining_value:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;mana&nbsp;points&nbsp;to&nbsp;regain.<br>
 :return:&nbsp;An&nbsp;int.</tt></dd></dl>
 
 <dl><dt><a name="Character-spend_mana"><strong>spend_mana</strong></a>(self, spent_amount)</dt><dd><tt>This&nbsp;method&nbsp;attempts&nbsp;to&nbsp;spend&nbsp;an&nbsp;amount&nbsp;of&nbsp;mana&nbsp;points&nbsp;from&nbsp;the&nbsp;character's&nbsp;mana<br>
@@ -401,12 +403,14 @@ points,&nbsp;returning&nbsp;the&nbsp;amount&nbsp;spent&nbsp;if&nbsp;successful.&
 reduce&nbsp;the&nbsp;character's&nbsp;mana&nbsp;points&nbsp;to&nbsp;less&nbsp;than&nbsp;zero,&nbsp;no&nbsp;spending&nbsp;takes&nbsp;place,<br>
 and&nbsp;0&nbsp;is&nbsp;returned&nbsp;to&nbsp;indicate&nbsp;failure.<br>
 &nbsp;<br>
+:spent_amount:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;mana&nbsp;points&nbsp;to&nbsp;spend.<br>
 :return:&nbsp;An&nbsp;int.</tt></dd></dl>
 
 <dl><dt><a name="Character-take_damage"><strong>take_damage</strong></a>(self, damage_value)</dt><dd><tt>This&nbsp;method&nbsp;applies&nbsp;the&nbsp;given&nbsp;damage&nbsp;to&nbsp;the&nbsp;character's&nbsp;hit&nbsp;points.&nbsp;If&nbsp;the&nbsp;hit<br>
 points&nbsp;would&nbsp;be&nbsp;reduced&nbsp;to&nbsp;less&nbsp;than&nbsp;0,&nbsp;they&nbsp;are&nbsp;set&nbsp;to&nbsp;0&nbsp;instead.&nbsp;The&nbsp;method<br>
 returns&nbsp;the&nbsp;amount&nbsp;of&nbsp;damage&nbsp;assessed.<br>
 &nbsp;<br>
+:damage_value:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;hit&nbsp;points&nbsp;to&nbsp;lose.<br>
 :return:&nbsp;An&nbsp;int.</tt></dd></dl>
 
 <dl><dt><a name="Character-unequip_armor"><strong>unequip_armor</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;unequip_armor&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;<a href="#Equipment">Equipment</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
@@ -659,8 +663,8 @@ subclass&nbsp;objects'&nbsp;internal&nbsp;names&nbsp;and&nbsp;populate&nbsp;the&
 <hr>
 Class methods inherited from <a href="adventuregame.elements.html#Container">Container</a>:<br>
 <dl><dt><a name="Chest-subclassing_factory"><strong>subclassing_factory</strong></a>(items_state, **container_dict)<font color="#909090"><font face="helvetica, arial"> from <a href="abc.html#ABCMeta">abc.ABCMeta</a></font></font></dt><dd><tt>This&nbsp;factory&nbsp;accepts&nbsp;an&nbsp;items_state&nbsp;<a href="builtins.html#object">object</a>&nbsp;and&nbsp;a&nbsp;**dict-of-dicts&nbsp;as&nbsp;featured&nbsp;in<br>
-an&nbsp;IniConfig's&nbsp;section&nbsp;attribute,&nbsp;and&nbsp;determines&nbsp;which&nbsp;<a href="#Container">Container</a>&nbsp;subclass&nbsp;is<br>
-appropriate&nbsp;to&nbsp;instantiate&nbsp;from&nbsp;the&nbsp;data.<br>
+an&nbsp;IniConfig&nbsp;<a href="builtins.html#object">object</a>'s&nbsp;section&nbsp;attribute,&nbsp;and&nbsp;determines&nbsp;which&nbsp;<a href="#Container">Container</a>&nbsp;subclass<br>
+is&nbsp;appropriate&nbsp;to&nbsp;instantiate&nbsp;from&nbsp;the&nbsp;data.<br>
 &nbsp;<br>
 :items_state:&nbsp;An&nbsp;<a href="#Items_State">Items_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 :**container_dict:&nbsp;A&nbsp;dict&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Container">Container</a>&nbsp;<br>
@@ -902,8 +906,8 @@ subclass&nbsp;objects'&nbsp;internal&nbsp;names&nbsp;and&nbsp;populate&nbsp;the&
 <hr>
 Class methods defined here:<br>
 <dl><dt><a name="Container-subclassing_factory"><strong>subclassing_factory</strong></a>(items_state, **container_dict)<font color="#909090"><font face="helvetica, arial"> from <a href="abc.html#ABCMeta">abc.ABCMeta</a></font></font></dt><dd><tt>This&nbsp;factory&nbsp;accepts&nbsp;an&nbsp;items_state&nbsp;<a href="builtins.html#object">object</a>&nbsp;and&nbsp;a&nbsp;**dict-of-dicts&nbsp;as&nbsp;featured&nbsp;in<br>
-an&nbsp;IniConfig's&nbsp;section&nbsp;attribute,&nbsp;and&nbsp;determines&nbsp;which&nbsp;<a href="#Container">Container</a>&nbsp;subclass&nbsp;is<br>
-appropriate&nbsp;to&nbsp;instantiate&nbsp;from&nbsp;the&nbsp;data.<br>
+an&nbsp;IniConfig&nbsp;<a href="builtins.html#object">object</a>'s&nbsp;section&nbsp;attribute,&nbsp;and&nbsp;determines&nbsp;which&nbsp;<a href="#Container">Container</a>&nbsp;subclass<br>
+is&nbsp;appropriate&nbsp;to&nbsp;instantiate&nbsp;from&nbsp;the&nbsp;data.<br>
 &nbsp;<br>
 :items_state:&nbsp;An&nbsp;<a href="#Items_State">Items_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 :**container_dict:&nbsp;A&nbsp;dict&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Container">Container</a>&nbsp;<br>
@@ -1144,8 +1148,8 @@ subclass&nbsp;objects'&nbsp;internal&nbsp;names&nbsp;and&nbsp;populate&nbsp;the&
 <hr>
 Class methods inherited from <a href="adventuregame.elements.html#Container">Container</a>:<br>
 <dl><dt><a name="Corpse-subclassing_factory"><strong>subclassing_factory</strong></a>(items_state, **container_dict)<font color="#909090"><font face="helvetica, arial"> from <a href="abc.html#ABCMeta">abc.ABCMeta</a></font></font></dt><dd><tt>This&nbsp;factory&nbsp;accepts&nbsp;an&nbsp;items_state&nbsp;<a href="builtins.html#object">object</a>&nbsp;and&nbsp;a&nbsp;**dict-of-dicts&nbsp;as&nbsp;featured&nbsp;in<br>
-an&nbsp;IniConfig's&nbsp;section&nbsp;attribute,&nbsp;and&nbsp;determines&nbsp;which&nbsp;<a href="#Container">Container</a>&nbsp;subclass&nbsp;is<br>
-appropriate&nbsp;to&nbsp;instantiate&nbsp;from&nbsp;the&nbsp;data.<br>
+an&nbsp;IniConfig&nbsp;<a href="builtins.html#object">object</a>'s&nbsp;section&nbsp;attribute,&nbsp;and&nbsp;determines&nbsp;which&nbsp;<a href="#Container">Container</a>&nbsp;subclass<br>
+is&nbsp;appropriate&nbsp;to&nbsp;instantiate&nbsp;from&nbsp;the&nbsp;data.<br>
 &nbsp;<br>
 :items_state:&nbsp;An&nbsp;<a href="#Items_State">Items_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 :**container_dict:&nbsp;A&nbsp;dict&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Container">Container</a>&nbsp;<br>
@@ -1364,6 +1368,7 @@ healing&nbsp;would&nbsp;increase&nbsp;the&nbsp;hit&nbsp;points&nbsp;to&nbsp;more
 points,&nbsp;their&nbsp;hit&nbsp;point&nbsp;value&nbsp;is&nbsp;set&nbsp;to&nbsp;their&nbsp;hit&nbsp;point&nbsp;maximum&nbsp;instead.&nbsp;The<br>
 method&nbsp;returns&nbsp;the&nbsp;amount&nbsp;of&nbsp;healing&nbsp;done.<br>
 &nbsp;<br>
+:healing_value:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;hit&nbsp;points&nbsp;to&nbsp;recover.<br>
 :return:&nbsp;An&nbsp;int.</tt></dd></dl>
 
 <dl><dt><a name="Creature-item_have_qty"><strong>item_have_qty</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;checks&nbsp;whether&nbsp;the&nbsp;given&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;is&nbsp;present&nbsp;in&nbsp;the<br>
@@ -1391,6 +1396,7 @@ increase&nbsp;the&nbsp;character's&nbsp;mana&nbsp;points&nbsp;to&nbsp;greater&nb
 total,&nbsp;their&nbsp;current&nbsp;mana&nbsp;point&nbsp;value&nbsp;is&nbsp;set&nbsp;equal&nbsp;to&nbsp;their&nbsp;maximum&nbsp;mana&nbsp;point<br>
 value&nbsp;instead.&nbsp;The&nbsp;method&nbsp;returns&nbsp;the&nbsp;amount&nbsp;of&nbsp;mana&nbsp;points&nbsp;regained.<br>
 &nbsp;<br>
+:regaining_value:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;mana&nbsp;points&nbsp;to&nbsp;regain.<br>
 :return:&nbsp;An&nbsp;int.</tt></dd></dl>
 
 <dl><dt><a name="Creature-spend_mana"><strong>spend_mana</strong></a>(self, spent_amount)</dt><dd><tt>This&nbsp;method&nbsp;attempts&nbsp;to&nbsp;spend&nbsp;an&nbsp;amount&nbsp;of&nbsp;mana&nbsp;points&nbsp;from&nbsp;the&nbsp;character's&nbsp;mana<br>
@@ -1398,12 +1404,14 @@ points,&nbsp;returning&nbsp;the&nbsp;amount&nbsp;spent&nbsp;if&nbsp;successful.&
 reduce&nbsp;the&nbsp;character's&nbsp;mana&nbsp;points&nbsp;to&nbsp;less&nbsp;than&nbsp;zero,&nbsp;no&nbsp;spending&nbsp;takes&nbsp;place,<br>
 and&nbsp;0&nbsp;is&nbsp;returned&nbsp;to&nbsp;indicate&nbsp;failure.<br>
 &nbsp;<br>
+:spent_amount:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;mana&nbsp;points&nbsp;to&nbsp;spend.<br>
 :return:&nbsp;An&nbsp;int.</tt></dd></dl>
 
 <dl><dt><a name="Creature-take_damage"><strong>take_damage</strong></a>(self, damage_value)</dt><dd><tt>This&nbsp;method&nbsp;applies&nbsp;the&nbsp;given&nbsp;damage&nbsp;to&nbsp;the&nbsp;character's&nbsp;hit&nbsp;points.&nbsp;If&nbsp;the&nbsp;hit<br>
 points&nbsp;would&nbsp;be&nbsp;reduced&nbsp;to&nbsp;less&nbsp;than&nbsp;0,&nbsp;they&nbsp;are&nbsp;set&nbsp;to&nbsp;0&nbsp;instead.&nbsp;The&nbsp;method<br>
 returns&nbsp;the&nbsp;amount&nbsp;of&nbsp;damage&nbsp;assessed.<br>
 &nbsp;<br>
+:damage_value:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;hit&nbsp;points&nbsp;to&nbsp;lose.<br>
 :return:&nbsp;An&nbsp;int.</tt></dd></dl>
 
 <dl><dt><a name="Creature-unequip_armor"><strong>unequip_armor</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;unequip_armor&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;<a href="#Equipment">Equipment</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
