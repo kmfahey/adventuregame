@@ -8,8 +8,13 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="adventuregame.html"><font color="#ffffff">adventuregame</font></a>.elements</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/NuCampFolder/Python/1-Fundamentals/term_project/adventuregame/adventuregame/elements.py">/home/kmfahey/Workspace/NuCampFolder/Python/1-Fundamentals/term_project/adventuregame/adventuregame/elements.py</a></font></td></tr></table>
-    <p></p>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br></font></td></tr></table>
+    <p><tt>This&nbsp;module&nbsp;contains&nbsp;all&nbsp;the&nbsp;classes&nbsp;needed&nbsp;to&nbsp;interpret&nbsp;the&nbsp;game&nbsp;data&nbsp;stored<br>
+in&nbsp;.ini&nbsp;files&nbsp;in&nbsp;data/&nbsp;into&nbsp;a&nbsp;fully&nbsp;<a href="builtins.html#object">object</a>-oriented&nbsp;environment&nbsp;of&nbsp;game&nbsp;element<br>
+objects,&nbsp;state&nbsp;objects&nbsp;which&nbsp;track&nbsp;game&nbsp;element&nbsp;<a href="builtins.html#object">object</a>&nbsp;collections,&nbsp;and&nbsp;the<br>
+<a href="#Character">Character</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;&amp;&nbsp;its&nbsp;subordinate&nbsp;objects&nbsp;which&nbsp;manage&nbsp;the&nbsp;character&nbsp;data<br>
+and&nbsp;model&nbsp;the&nbsp;limited&nbsp;subset&nbsp;of&nbsp;Dungeons&nbsp;&amp;&nbsp;Dragons&nbsp;rules&nbsp;that&nbsp;this&nbsp;library<br>
+implements.</tt></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#aa55cc">
@@ -269,7 +274,7 @@ Data descriptors inherited from <a href="adventuregame.elements.html#Item">Item<
 Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry</a>:<br>
 <dl><dt><a name="Armor-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>This&nbsp;method&nbsp;enables&nbsp;two&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;objects&nbsp;or&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;subclass&nbsp;objects&nbsp;to&nbsp;be<br>
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
-self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;atributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
+self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
 :other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
@@ -459,7 +464,7 @@ Intelligence&nbsp;for&nbsp;Mages&nbsp;wielding&nbsp;a&nbsp;wand).<br>
 <dl><dt><strong>attack_roll</strong></dt>
 <dd><tt>This&nbsp;property&nbsp;returns&nbsp;a&nbsp;dice&nbsp;expression&nbsp;usable&nbsp;by<br>
 adventuregame.utilities.roll_dice()&nbsp;to&nbsp;execute&nbsp;an&nbsp;attack&nbsp;roll&nbsp;during&nbsp;an&nbsp;ATTACK<br>
-command.&nbsp;It&nbsp;calculates&nbsp;the&nbsp;attack&nbsp;bonus&nbsp;from&nbsp;the&nbsp;equipped&nbsp;item&nbsp;and&nbsp;the&nbsp;revelant<br>
+command.&nbsp;It&nbsp;calculates&nbsp;the&nbsp;attack&nbsp;bonus&nbsp;from&nbsp;the&nbsp;equipped&nbsp;item&nbsp;and&nbsp;the&nbsp;relevant<br>
 ability&nbsp;score&nbsp;modifier.<br>
 &nbsp;<br>
 :return:&nbsp;A&nbsp;string&nbsp;of&nbsp;the&nbsp;form&nbsp;'\d+d\d+([+-]\d+)?'.</tt></dd>
@@ -688,7 +693,7 @@ Data descriptors inherited from <a href="adventuregame.elements.html#Container">
 Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry</a>:<br>
 <dl><dt><a name="Chest-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>This&nbsp;method&nbsp;enables&nbsp;two&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;objects&nbsp;or&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;subclass&nbsp;objects&nbsp;to&nbsp;be<br>
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
-self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;atributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
+self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
 :other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
@@ -762,7 +767,7 @@ present,&nbsp;otherwise&nbsp;the&nbsp;internal&nbsp;dict&nbsp;raises&nbsp;a&nbsp
 &nbsp;<br>
 :return:&nbsp;A&nbsp;dict_keys&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
-<dl><dt><a name="Chest-size"><strong>size</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;len()&nbsp;builting&nbsp;applies&nbsp;to&nbsp;the&nbsp;internal<br>
+<dl><dt><a name="Chest-size"><strong>size</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;len()&nbsp;builtin&nbsp;applies&nbsp;to&nbsp;the&nbsp;internal<br>
 dictionary.<br>
 &nbsp;<br>
 :return:&nbsp;An&nbsp;int.</tt></dd></dl>
@@ -848,7 +853,7 @@ Data descriptors inherited from <a href="adventuregame.elements.html#Item">Item<
 Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry</a>:<br>
 <dl><dt><a name="Coin-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>This&nbsp;method&nbsp;enables&nbsp;two&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;objects&nbsp;or&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;subclass&nbsp;objects&nbsp;to&nbsp;be<br>
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
-self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;atributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
+self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
 :other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
@@ -935,7 +940,7 @@ Data and other attributes defined here:<br>
 Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry</a>:<br>
 <dl><dt><a name="Container-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>This&nbsp;method&nbsp;enables&nbsp;two&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;objects&nbsp;or&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;subclass&nbsp;objects&nbsp;to&nbsp;be<br>
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
-self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;atributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
+self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
 :other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
@@ -1009,7 +1014,7 @@ present,&nbsp;otherwise&nbsp;the&nbsp;internal&nbsp;dict&nbsp;raises&nbsp;a&nbsp
 &nbsp;<br>
 :return:&nbsp;A&nbsp;dict_keys&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
-<dl><dt><a name="Container-size"><strong>size</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;len()&nbsp;builting&nbsp;applies&nbsp;to&nbsp;the&nbsp;internal<br>
+<dl><dt><a name="Container-size"><strong>size</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;len()&nbsp;builtin&nbsp;applies&nbsp;to&nbsp;the&nbsp;internal<br>
 dictionary.<br>
 &nbsp;<br>
 :return:&nbsp;An&nbsp;int.</tt></dd></dl>
@@ -1095,7 +1100,7 @@ internal&nbsp;name&nbsp;as&nbsp;a&nbsp;key.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;key.<br>
 :item:&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;be&nbsp;set.</tt></dd></dl>
 
-<dl><dt><a name="Containers_State-size"><strong>size</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;len()&nbsp;builting&nbsp;applies&nbsp;to&nbsp;the&nbsp;internal<br>
+<dl><dt><a name="Containers_State-size"><strong>size</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;len()&nbsp;builtin&nbsp;applies&nbsp;to&nbsp;the&nbsp;internal<br>
 dictionary.<br>
 &nbsp;<br>
 :return:&nbsp;An&nbsp;int.</tt></dd></dl>
@@ -1173,7 +1178,7 @@ Data descriptors inherited from <a href="adventuregame.elements.html#Container">
 Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry</a>:<br>
 <dl><dt><a name="Corpse-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>This&nbsp;method&nbsp;enables&nbsp;two&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;objects&nbsp;or&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;subclass&nbsp;objects&nbsp;to&nbsp;be<br>
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
-self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;atributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
+self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
 :other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
@@ -1247,7 +1252,7 @@ present,&nbsp;otherwise&nbsp;the&nbsp;internal&nbsp;dict&nbsp;raises&nbsp;a&nbsp
 &nbsp;<br>
 :return:&nbsp;A&nbsp;dict_keys&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
-<dl><dt><a name="Corpse-size"><strong>size</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;len()&nbsp;builting&nbsp;applies&nbsp;to&nbsp;the&nbsp;internal<br>
+<dl><dt><a name="Corpse-size"><strong>size</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;len()&nbsp;builtin&nbsp;applies&nbsp;to&nbsp;the&nbsp;internal<br>
 dictionary.<br>
 &nbsp;<br>
 :return:&nbsp;An&nbsp;int.</tt></dd></dl>
@@ -1313,7 +1318,7 @@ Data descriptors defined here:<br>
 Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry</a>:<br>
 <dl><dt><a name="Creature-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>This&nbsp;method&nbsp;enables&nbsp;two&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;objects&nbsp;or&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;subclass&nbsp;objects&nbsp;to&nbsp;be<br>
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
-self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;atributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
+self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
 :other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
@@ -1460,7 +1465,7 @@ Intelligence&nbsp;for&nbsp;Mages&nbsp;wielding&nbsp;a&nbsp;wand).<br>
 <dl><dt><strong>attack_roll</strong></dt>
 <dd><tt>This&nbsp;property&nbsp;returns&nbsp;a&nbsp;dice&nbsp;expression&nbsp;usable&nbsp;by<br>
 adventuregame.utilities.roll_dice()&nbsp;to&nbsp;execute&nbsp;an&nbsp;attack&nbsp;roll&nbsp;during&nbsp;an&nbsp;ATTACK<br>
-command.&nbsp;It&nbsp;calculates&nbsp;the&nbsp;attack&nbsp;bonus&nbsp;from&nbsp;the&nbsp;equipped&nbsp;item&nbsp;and&nbsp;the&nbsp;revelant<br>
+command.&nbsp;It&nbsp;calculates&nbsp;the&nbsp;attack&nbsp;bonus&nbsp;from&nbsp;the&nbsp;equipped&nbsp;item&nbsp;and&nbsp;the&nbsp;relevant<br>
 ability&nbsp;score&nbsp;modifier.<br>
 &nbsp;<br>
 :return:&nbsp;A&nbsp;string&nbsp;of&nbsp;the&nbsp;form&nbsp;'\d+d\d+([+-]\d+)?'.</tt></dd>
@@ -1694,7 +1699,7 @@ internal&nbsp;name&nbsp;as&nbsp;a&nbsp;key.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;key.<br>
 :item:&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;be&nbsp;set.</tt></dd></dl>
 
-<dl><dt><a name="Creatures_State-size"><strong>size</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;len()&nbsp;builting&nbsp;applies&nbsp;to&nbsp;the&nbsp;internal<br>
+<dl><dt><a name="Creatures_State-size"><strong>size</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;len()&nbsp;builtin&nbsp;applies&nbsp;to&nbsp;the&nbsp;internal<br>
 dictionary.<br>
 &nbsp;<br>
 :return:&nbsp;An&nbsp;int.</tt></dd></dl>
@@ -1751,7 +1756,7 @@ door_type&nbsp;value.<br>
 
 <hr>
 Data descriptors defined here:<br>
-<dl><dt><strong>closeable</strong></dt>
+<dl><dt><strong>closable</strong></dt>
 </dl>
 <dl><dt><strong>description</strong></dt>
 </dl>
@@ -1771,7 +1776,7 @@ Data descriptors defined here:<br>
 Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry</a>:<br>
 <dl><dt><a name="Door-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>This&nbsp;method&nbsp;enables&nbsp;two&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;objects&nbsp;or&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;subclass&nbsp;objects&nbsp;to&nbsp;be<br>
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
-self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;atributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
+self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
 :other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
@@ -1933,7 +1938,7 @@ door_type&nbsp;value.<br>
 
 <hr>
 Data descriptors inherited from <a href="adventuregame.elements.html#Door">Door</a>:<br>
-<dl><dt><strong>closeable</strong></dt>
+<dl><dt><strong>closable</strong></dt>
 </dl>
 <dl><dt><strong>description</strong></dt>
 </dl>
@@ -1953,7 +1958,7 @@ Data descriptors inherited from <a href="adventuregame.elements.html#Door">Door<
 Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry</a>:<br>
 <dl><dt><a name="Doorway-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>This&nbsp;method&nbsp;enables&nbsp;two&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;objects&nbsp;or&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;subclass&nbsp;objects&nbsp;to&nbsp;be<br>
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
-self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;atributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
+self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
 :other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
@@ -2162,7 +2167,7 @@ Data descriptors inherited from <a href="adventuregame.elements.html#Item">Item<
 Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry</a>:<br>
 <dl><dt><a name="Equippable_Item-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>This&nbsp;method&nbsp;enables&nbsp;two&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;objects&nbsp;or&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;subclass&nbsp;objects&nbsp;to&nbsp;be<br>
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
-self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;atributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
+self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
 :other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
@@ -2249,7 +2254,7 @@ instantiated&nbsp;from&nbsp;.ini&nbsp;file&nbsp;entries.<br>&nbsp;</tt></td></tr
 <td width="100%">Methods defined here:<br>
 <dl><dt><a name="Ini_Entry-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>This&nbsp;method&nbsp;enables&nbsp;two&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;objects&nbsp;or&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;subclass&nbsp;objects&nbsp;to&nbsp;be<br>
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
-self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;atributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
+self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
 :other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
@@ -2321,7 +2326,7 @@ door_type&nbsp;value.<br>
 
 <hr>
 Data descriptors inherited from <a href="adventuregame.elements.html#Door">Door</a>:<br>
-<dl><dt><strong>closeable</strong></dt>
+<dl><dt><strong>closable</strong></dt>
 </dl>
 <dl><dt><strong>description</strong></dt>
 </dl>
@@ -2341,7 +2346,7 @@ Data descriptors inherited from <a href="adventuregame.elements.html#Door">Door<
 Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry</a>:<br>
 <dl><dt><a name="Iron_Door-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>This&nbsp;method&nbsp;enables&nbsp;two&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;objects&nbsp;or&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;subclass&nbsp;objects&nbsp;to&nbsp;be<br>
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
-self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;atributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
+self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
 :other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
@@ -2437,7 +2442,7 @@ Data descriptors defined here:<br>
 Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry</a>:<br>
 <dl><dt><a name="Item-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>This&nbsp;method&nbsp;enables&nbsp;two&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;objects&nbsp;or&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;subclass&nbsp;objects&nbsp;to&nbsp;be<br>
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
-self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;atributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
+self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
 :other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
@@ -2548,7 +2553,7 @@ present,&nbsp;otherwise&nbsp;the&nbsp;internal&nbsp;dict&nbsp;raises&nbsp;a&nbsp
 &nbsp;<br>
 :return:&nbsp;A&nbsp;dict_keys&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
-<dl><dt><a name="Items_Multi_State-size"><strong>size</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;len()&nbsp;builting&nbsp;applies&nbsp;to&nbsp;the&nbsp;internal<br>
+<dl><dt><a name="Items_Multi_State-size"><strong>size</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;len()&nbsp;builtin&nbsp;applies&nbsp;to&nbsp;the&nbsp;internal<br>
 dictionary.<br>
 &nbsp;<br>
 :return:&nbsp;An&nbsp;int.</tt></dd></dl>
@@ -2634,7 +2639,7 @@ internal&nbsp;name&nbsp;as&nbsp;a&nbsp;key.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;key.<br>
 :item:&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;be&nbsp;set.</tt></dd></dl>
 
-<dl><dt><a name="Items_State-size"><strong>size</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;len()&nbsp;builting&nbsp;applies&nbsp;to&nbsp;the&nbsp;internal<br>
+<dl><dt><a name="Items_State-size"><strong>size</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;len()&nbsp;builtin&nbsp;applies&nbsp;to&nbsp;the&nbsp;internal<br>
 dictionary.<br>
 &nbsp;<br>
 :return:&nbsp;An&nbsp;int.</tt></dd></dl>
@@ -2720,7 +2725,7 @@ Data descriptors inherited from <a href="adventuregame.elements.html#Item">Item<
 Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry</a>:<br>
 <dl><dt><a name="Key-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>This&nbsp;method&nbsp;enables&nbsp;two&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;objects&nbsp;or&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;subclass&nbsp;objects&nbsp;to&nbsp;be<br>
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
-self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;atributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
+self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
 :other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
@@ -2817,7 +2822,7 @@ Data descriptors inherited from <a href="adventuregame.elements.html#Item">Item<
 Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry</a>:<br>
 <dl><dt><a name="Potion-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>This&nbsp;method&nbsp;enables&nbsp;two&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;objects&nbsp;or&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;subclass&nbsp;objects&nbsp;to&nbsp;be<br>
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
-self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;atributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
+self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
 :other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
@@ -2930,7 +2935,7 @@ Data descriptors defined here:<br>
 Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry</a>:<br>
 <dl><dt><a name="Room-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>This&nbsp;method&nbsp;enables&nbsp;two&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;objects&nbsp;or&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;subclass&nbsp;objects&nbsp;to&nbsp;be<br>
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
-self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;atributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
+self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
 :other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
@@ -3081,7 +3086,7 @@ Data descriptors inherited from <a href="adventuregame.elements.html#Item">Item<
 Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry</a>:<br>
 <dl><dt><a name="Shield-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>This&nbsp;method&nbsp;enables&nbsp;two&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;objects&nbsp;or&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;subclass&nbsp;objects&nbsp;to&nbsp;be<br>
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
-self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;atributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
+self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
 :other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
@@ -3151,7 +3156,7 @@ internal&nbsp;name&nbsp;as&nbsp;a&nbsp;key.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;key.<br>
 :item:&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;be&nbsp;set.</tt></dd></dl>
 
-<dl><dt><a name="State-size"><strong>size</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;len()&nbsp;builting&nbsp;applies&nbsp;to&nbsp;the&nbsp;internal<br>
+<dl><dt><a name="State-size"><strong>size</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;len()&nbsp;builtin&nbsp;applies&nbsp;to&nbsp;the&nbsp;internal<br>
 dictionary.<br>
 &nbsp;<br>
 :return:&nbsp;An&nbsp;int.</tt></dd></dl>
@@ -3254,7 +3259,7 @@ Data descriptors inherited from <a href="adventuregame.elements.html#Item">Item<
 Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry</a>:<br>
 <dl><dt><a name="Wand-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>This&nbsp;method&nbsp;enables&nbsp;two&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;objects&nbsp;or&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;subclass&nbsp;objects&nbsp;to&nbsp;be<br>
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
-self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;atributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
+self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
 :other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
@@ -3363,7 +3368,7 @@ Data descriptors inherited from <a href="adventuregame.elements.html#Item">Item<
 Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry</a>:<br>
 <dl><dt><a name="Weapon-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>This&nbsp;method&nbsp;enables&nbsp;two&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;objects&nbsp;or&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;subclass&nbsp;objects&nbsp;to&nbsp;be<br>
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
-self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;atributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
+self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
 :other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
@@ -3430,7 +3435,7 @@ door_type&nbsp;value.<br>
 
 <hr>
 Data descriptors inherited from <a href="adventuregame.elements.html#Door">Door</a>:<br>
-<dl><dt><strong>closeable</strong></dt>
+<dl><dt><strong>closable</strong></dt>
 </dl>
 <dl><dt><strong>description</strong></dt>
 </dl>
@@ -3450,7 +3455,7 @@ Data descriptors inherited from <a href="adventuregame.elements.html#Door">Door<
 Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry</a>:<br>
 <dl><dt><a name="Wooden_Door-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>This&nbsp;method&nbsp;enables&nbsp;two&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;objects&nbsp;or&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;subclass&nbsp;objects&nbsp;to&nbsp;be<br>
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
-self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;atributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
+self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
 :other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>

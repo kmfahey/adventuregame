@@ -1,5 +1,19 @@
 #!/usr/bin/python
 
+"""
+This module consists solely of the Command_Processor class and its supporting
+data structures. Command_Processor is a monolithic class that has a process()
+method which accepts a natural language command and dispatches it to the
+appropriate command method. Every command in the game corresponds to a method of
+the Command_Processor class, and each method always returns a tuple of one or
+more adventuregame.statemsgs.Game_State_Message subclass objects. Typically, the
+bulk of the logic in a given command method is devoted to detecting player error
+and handling each error discretely. The logic that completes the command task is
+often a brief coda to a sophisticated conditional handling all the cases where
+the command can't complete.
+"""
+
+
 import math
 import operator
 import re

@@ -17,6 +17,7 @@ import textwrap
 import iniconfig
 
 
+__name__ = 'adventuregame.utility'
 
 # The task of joining a list that may be 1, 2, or more elements with commas and
 # a conjunction is a common one in adventuregame.statemsgs, so I wrote this
@@ -34,9 +35,10 @@ and a conjunction.
 >>> join_str_seq_w_commas_and_conjunction(['foo', 'bar', 'baz'], 'and')
 'foo, bar, and baz'
 
-:str_list: The sequence of strings to join. :conjunction: The conjunction to
-use with sequences longer than 1 element. Typical values include 'and' or 'or'.
-:return: Returns a grammatical comma-separated list string.
+:str_list:    The sequence of strings to join.
+:conjunction: The conjunction to use with sequences longer than 1 element.
+              Typical values include 'and' or 'or'.
+:return:      Returns a grammatical comma-separated list string.
     """
 
     if len(str_list) == 1:
@@ -48,10 +50,9 @@ use with sequences longer than 1 element. Typical values include 'and' or 'or'.
 
 
 
-__name__ = 'adventuregame.utility'
-
 # This regular expression matches a string representation of a floating-point
-# values.
+# value.
+
 _float_re = re.compile(r'^[+-]?([0-9]+\.|\.[0-9]+|[0-9]+\.[0-9]+|[0-9]+)$')
 
 def isfloat(strval):

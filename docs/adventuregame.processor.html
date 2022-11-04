@@ -8,8 +8,17 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="adventuregame.html"><font color="#ffffff">adventuregame</font></a>.commandprocessor</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/NuCampFolder/Python/1-Fundamentals/term_project/adventuregame/adventuregame/processor.py">/home/kmfahey/Workspace/NuCampFolder/Python/1-Fundamentals/term_project/adventuregame/adventuregame/processor.py</a></font></td></tr></table>
-    <p></p>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br></font></td></tr></table>
+    <p><tt>This&nbsp;module&nbsp;consists&nbsp;solely&nbsp;of&nbsp;the&nbsp;<a href="#Command_Processor">Command_Processor</a>&nbsp;class&nbsp;and&nbsp;its&nbsp;supporting<br>
+data&nbsp;structures.&nbsp;<a href="#Command_Processor">Command_Processor</a>&nbsp;is&nbsp;a&nbsp;monolithic&nbsp;class&nbsp;that&nbsp;has&nbsp;a&nbsp;process()<br>
+method&nbsp;which&nbsp;accepts&nbsp;a&nbsp;natural&nbsp;language&nbsp;command&nbsp;and&nbsp;dispatches&nbsp;it&nbsp;to&nbsp;the<br>
+appropriate&nbsp;command&nbsp;method.&nbsp;Every&nbsp;command&nbsp;in&nbsp;the&nbsp;game&nbsp;corresponds&nbsp;to&nbsp;a&nbsp;method&nbsp;of<br>
+the&nbsp;<a href="#Command_Processor">Command_Processor</a>&nbsp;class,&nbsp;and&nbsp;each&nbsp;method&nbsp;always&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or<br>
+more&nbsp;adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;Typically,&nbsp;the<br>
+bulk&nbsp;of&nbsp;the&nbsp;logic&nbsp;in&nbsp;a&nbsp;given&nbsp;command&nbsp;method&nbsp;is&nbsp;devoted&nbsp;to&nbsp;detecting&nbsp;player&nbsp;error<br>
+and&nbsp;handling&nbsp;each&nbsp;error&nbsp;discretely.&nbsp;The&nbsp;logic&nbsp;that&nbsp;completes&nbsp;the&nbsp;command&nbsp;task&nbsp;is<br>
+often&nbsp;a&nbsp;brief&nbsp;coda&nbsp;to&nbsp;a&nbsp;sophisticated&nbsp;conditional&nbsp;handling&nbsp;all&nbsp;the&nbsp;cases&nbsp;where<br>
+the&nbsp;command&nbsp;can't&nbsp;complete.</tt></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#aa55cc">
@@ -120,13 +129,13 @@ command&nbsp;takes&nbsp;no&nbsp;arguments.<br>
 &nbsp;&nbsp;'Thief',&nbsp;a&nbsp;1-tuple&nbsp;of&nbsp;a&nbsp;Command_Class_Restricted&nbsp;<a href="builtins.html#object">object</a>&nbsp;is&nbsp;returned.<br>
 *&nbsp;Casting&nbsp;a&nbsp;spell&nbsp;takes&nbsp;SPELL_MANA_COST&nbsp;mana&nbsp;points.&nbsp;If&nbsp;the&nbsp;self.<strong>character</strong><br>
 &nbsp;&nbsp;<a href="builtins.html#object">object</a>&nbsp;has&nbsp;less&nbsp;than&nbsp;SPELL_MANA_COST&nbsp;mana&nbsp;points,&nbsp;a&nbsp;1-tuple&nbsp;of&nbsp;a<br>
-&nbsp;&nbsp;Cast_Spell_Command_Insuffient_Mana&nbsp;<a href="builtins.html#object">object</a>&nbsp;is&nbsp;returned.<br>
+&nbsp;&nbsp;Cast_Spell_Command_Insufficient_Mana&nbsp;<a href="builtins.html#object">object</a>&nbsp;is&nbsp;returned.<br>
 *&nbsp;If&nbsp;self.<strong>character</strong>.character_class&nbsp;equals&nbsp;'Mage'&nbsp;and<br>
 &nbsp;&nbsp;self.<strong>game_state</strong>.rooms_state.cursor.creature_here&nbsp;is&nbsp;None,&nbsp;a&nbsp;1-tuple&nbsp;of&nbsp;a<br>
 &nbsp;&nbsp;Cast_Spell_Command_No_Creature_to_Target&nbsp;<a href="builtins.html#object">object</a>&nbsp;is&nbsp;returned.<br>
 *&nbsp;Otherwise,&nbsp;a&nbsp;damaging&nbsp;spell&nbsp;is&nbsp;cast&nbsp;and&nbsp;SPELL_DAMAGE&nbsp;damage&nbsp;is&nbsp;inflicted&nbsp;on<br>
 &nbsp;&nbsp;the&nbsp;.creature_here&nbsp;Creature&nbsp;<a href="builtins.html#object">object</a>.&nbsp;If&nbsp;its&nbsp;hit&nbsp;points&nbsp;are&nbsp;not&nbsp;reduced&nbsp;to<br>
-&nbsp;&nbsp;zero,&nbsp;a&nbsp;tuple&nbsp;conprising&nbsp;a&nbsp;Cast_Spell_Command_Cast_Damaging_Spell&nbsp;<a href="builtins.html#object">object</a><br>
+&nbsp;&nbsp;zero,&nbsp;a&nbsp;tuple&nbsp;comprising&nbsp;a&nbsp;Cast_Spell_Command_Cast_Damaging_Spell&nbsp;<a href="builtins.html#object">object</a><br>
 &nbsp;&nbsp;concatenated&nbsp;with&nbsp;the&nbsp;return&nbsp;value&nbsp;of&nbsp;a&nbsp;self._be_attacked_by_command()&nbsp;is<br>
 &nbsp;&nbsp;returned.<br>
 *&nbsp;If&nbsp;the&nbsp;Creature&nbsp;<a href="builtins.html#object">object</a>'s&nbsp;hit&nbsp;points&nbsp;are&nbsp;reduced&nbsp;to&nbsp;0,&nbsp;a&nbsp;2-tuple&nbsp;of&nbsp;a<br>
@@ -452,11 +461,11 @@ PICK&nbsp;UP&nbsp;&lt;number&gt;&nbsp;&lt;item&nbsp;name&gt;),<br>
 &nbsp;&nbsp;Leave_Command_Won_The_Game,&nbsp;or&nbsp;Quit_Command_Have_Quit_The_Game&nbsp;<a href="builtins.html#object">object</a>&nbsp;that&nbsp;was<br>
 &nbsp;&nbsp;returned&nbsp;when&nbsp;the&nbsp;game&nbsp;ended&nbsp;is&nbsp;returned&nbsp;in&nbsp;a&nbsp;1-tuple&nbsp;again.<br>
 &nbsp;<br>
-Otherwise,&nbsp;the&nbsp;natural&nbsp;language&nbsp;command&nbsp;is&nbsp;tokenized,&nbsp;the&nbsp;appropappropriate<br>
-command&nbsp;method&nbsp;is&nbsp;determined&nbsp;from&nbsp;the&nbsp;initial&nbsp;tokens,&nbsp;a&nbsp;shorter&nbsp;tokens&nbsp;tuple&nbsp;is<br>
-formed&nbsp;from&nbsp;the&nbsp;remaining&nbsp;tokens,&nbsp;if&nbsp;the&nbsp;command&nbsp;is&nbsp;other&nbsp;than&nbsp;SET&nbsp;NAME&nbsp;or&nbsp;SET<br>
-CLASS&nbsp;the&nbsp;tokens&nbsp;are&nbsp;lowercased,&nbsp;and&nbsp;the&nbsp;command&nbsp;method&nbsp;is&nbsp;tail&nbsp;called&nbsp;with&nbsp;the<br>
-tokens&nbsp;as&nbsp;a&nbsp;*&nbsp;argument.</tt></dd></dl>
+Otherwise,&nbsp;the&nbsp;natural&nbsp;language&nbsp;command&nbsp;is&nbsp;tokenized,&nbsp;the&nbsp;appropriate&nbsp;command<br>
+method&nbsp;is&nbsp;determined&nbsp;from&nbsp;the&nbsp;initial&nbsp;tokens,&nbsp;a&nbsp;shorter&nbsp;tokens&nbsp;tuple&nbsp;is&nbsp;formed<br>
+from&nbsp;the&nbsp;remaining&nbsp;tokens,&nbsp;if&nbsp;the&nbsp;command&nbsp;is&nbsp;other&nbsp;than&nbsp;SET&nbsp;NAME&nbsp;or&nbsp;SET&nbsp;CLASS<br>
+the&nbsp;tokens&nbsp;are&nbsp;lowercased,&nbsp;and&nbsp;the&nbsp;command&nbsp;method&nbsp;is&nbsp;tail&nbsp;called&nbsp;with&nbsp;the&nbsp;tokens<br>
+as&nbsp;a&nbsp;*&nbsp;argument.</tt></dd></dl>
 
 <dl><dt><a name="Command_Processor-put_command"><strong>put_command</strong></a>(self, *tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;PICK&nbsp;UP&nbsp;command.&nbsp;(The&nbsp;command&nbsp;is&nbsp;only&nbsp;usable<br>
 if&nbsp;the&nbsp;player&nbsp;is&nbsp;playing&nbsp;a&nbsp;Thief.)&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that&nbsp;is<br>

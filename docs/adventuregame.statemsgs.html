@@ -8,7 +8,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="adventuregame.html"><font color="#ffffff">adventuregame</font></a>.gamestatemessages</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/NuCampFolder/Python/1-Fundamentals/term_project/adventuregame/adventuregame/statemsgs.py">/home/kmfahey/Workspace/NuCampFolder/Python/1-Fundamentals/term_project/adventuregame/adventuregame/statemsgs.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br></font></td></tr></table>
     <p><tt>This&nbsp;module&nbsp;contains&nbsp;<a href="#Game_State_Message">Game_State_Message</a>&nbsp;and&nbsp;its&nbsp;numerous&nbsp;subclasses.<br>
 adventuregame.processor.Command_Processor.process()&nbsp;processes&nbsp;a&nbsp;natural<br>
 language&nbsp;command&nbsp;from&nbsp;the&nbsp;player&nbsp;and&nbsp;tail&nbsp;calls&nbsp;a&nbsp;command&nbsp;method&nbsp;of&nbsp;the<br>
@@ -53,9 +53,9 @@ natural&nbsp;language.</tt></p>
 </font></dt><dt><font face="helvetica, arial">Begin_Game_Command_Name_or_Class_Not_Set
 </font></dt><dt><font face="helvetica, arial">Cast_Spell_Command_Cast_Damaging_Spell
 </font></dt><dt><font face="helvetica, arial">Cast_Spell_Command_Cast_Healing_Spell
-</font></dt><dt><font face="helvetica, arial">Cast_Spell_Command_Insuffient_Mana
+</font></dt><dt><font face="helvetica, arial">Cast_Spell_Command_Insufficient_Mana
 </font></dt><dt><font face="helvetica, arial">Cast_Spell_Command_No_Creature_to_Target
-</font></dt><dt><font face="helvetica, arial">Close_Command_Element_Not_Closeable
+</font></dt><dt><font face="helvetica, arial">Close_Command_Element_Not_Closable
 </font></dt><dt><font face="helvetica, arial">Close_Command_Object_Has_Been_Closed
 </font></dt><dt><font face="helvetica, arial">Close_Command_Object_Is_Already_Closed
 </font></dt><dt><font face="helvetica, arial">Close_Command_Object_to_Close_Not_Here
@@ -152,7 +152,7 @@ natural&nbsp;language.</tt></p>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
 adventuregame.processor.Command_Processor.attack_command()&nbsp;when&nbsp;the<br>
 player's&nbsp;attack&nbsp;connected&nbsp;with&nbsp;their&nbsp;foe.&nbsp;Because&nbsp;attack_command()<br>
-alwayss&nbsp;triggers&nbsp;the&nbsp;hidden&nbsp;_be_attacked_by_command()&nbsp;pseudo-command,&nbsp;an<br>
+always&nbsp;triggers&nbsp;the&nbsp;hidden&nbsp;_be_attacked_by_command()&nbsp;pseudo-command,&nbsp;an<br>
 <a href="#Attack_Command_Attack_Hit">Attack_Command_Attack_Hit</a>&nbsp;object&nbsp;track&nbsp;if&nbsp;the&nbsp;foe&nbsp;was&nbsp;slain.&nbsp;If&nbsp;not,&nbsp;its<br>
 message&nbsp;includes&nbsp;a&nbsp;clause&nbsp;about&nbsp;the&nbsp;foe&nbsp;turning&nbsp;to&nbsp;attack.&nbsp;If&nbsp;not,&nbsp;nothing<br>
 relating&nbsp;to&nbsp;foe&nbsp;death&nbsp;is&nbsp;conveyed;&nbsp;describing&nbsp;foe&nbsp;death&nbsp;is&nbsp;handled&nbsp;by&nbsp;the<br>
@@ -432,7 +432,7 @@ Data descriptors inherited from Game_State_Message:<br>
 adventuregame.processor.Command_Processor._be_attacked_by_command()&nbsp;when&nbsp;the<br>
 foe's&nbsp;counter&nbsp;attack&nbsp;killed&nbsp;the&nbsp;player's&nbsp;character.&nbsp;The&nbsp;game&nbsp;is&nbsp;now&nbsp;over,<br>
 and&nbsp;advgame.py&nbsp;responds&nbsp;to&nbsp;receiving&nbsp;this&nbsp;object&nbsp;by&nbsp;printing&nbsp;its&nbsp;message&nbsp;and<br>
-then&nbsp;exitting&nbsp;the&nbsp;program.<br>&nbsp;</tt></td></tr>
+then&nbsp;exiting&nbsp;the&nbsp;program.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd>Be_Attacked_by_Command_Character_Death</dd>
@@ -634,24 +634,24 @@ Data descriptors inherited from Game_State_Message:<br>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="Cast_Spell_Command_Insuffient_Mana">class <strong>Cast_Spell_Command_Insuffient_Mana</strong></a>(Game_State_Message)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="Cast_Spell_Command_Insufficient_Mana">class <strong>Cast_Spell_Command_Insufficient_Mana</strong></a>(Game_State_Message)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#Cast_Spell_Command_Insuffient_Mana">Cast_Spell_Command_Insuffient_Mana</a>(current_mana_points,&nbsp;mana_point_total,&nbsp;spell_mana_cost)<br>
+<td colspan=2><tt><a href="#Cast_Spell_Command_Insufficient_Mana">Cast_Spell_Command_Insufficient_Mana</a>(current_mana_points,&nbsp;mana_point_total,&nbsp;spell_mana_cost)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
 adventuregame.processor.Command_Processor.cast_spell_command()&nbsp;when&nbsp;the<br>
 player&nbsp;tries&nbsp;to&nbsp;cast&nbsp;a&nbsp;spell&nbsp;with&nbsp;insufficient&nbsp;mana&nbsp;points.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
-<dd>Cast_Spell_Command_Insuffient_Mana</dd>
+<dd>Cast_Spell_Command_Insufficient_Mana</dd>
 <dd>Game_State_Message</dd>
 <dd><a href="abc.html#ABC">abc.ABC</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
 Methods defined here:<br>
-<dl><dt><a name="Cast_Spell_Command_Insuffient_Mana-__init__"><strong>__init__</strong></a>(self, current_mana_points, mana_point_total, spell_mana_cost)</dt></dl>
+<dl><dt><a name="Cast_Spell_Command_Insufficient_Mana-__init__"><strong>__init__</strong></a>(self, current_mana_points, mana_point_total, spell_mana_cost)</dt></dl>
 
 <hr>
 Readonly properties defined here:<br>
@@ -718,22 +718,22 @@ Data descriptors inherited from Game_State_Message:<br>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="Close_Command_Element_Not_Closeable">class <strong>Close_Command_Element_Not_Closeable</strong></a>(Game_State_Message)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="Close_Command_Element_Not_Closable">class <strong>Close_Command_Element_Not_Closable</strong></a>(Game_State_Message)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#Close_Command_Element_Not_Closeable">Close_Command_Element_Not_Closeable</a>(target_title,&nbsp;target_type)<br>
+<td colspan=2><tt><a href="#Close_Command_Element_Not_Closable">Close_Command_Element_Not_Closable</a>(target_title,&nbsp;target_type)<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
-<dd>Close_Command_Element_Not_Closeable</dd>
+<dd>Close_Command_Element_Not_Closable</dd>
 <dd>Game_State_Message</dd>
 <dd><a href="abc.html#ABC">abc.ABC</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
 Methods defined here:<br>
-<dl><dt><a name="Close_Command_Element_Not_Closeable-__init__"><strong>__init__</strong></a>(self, target_title, target_type)</dt></dl>
+<dl><dt><a name="Close_Command_Element_Not_Closable-__init__"><strong>__init__</strong></a>(self, target_title, target_type)</dt></dl>
 
 <hr>
 Readonly properties defined here:<br>
@@ -810,7 +810,7 @@ Data descriptors inherited from Game_State_Message:<br>
 <td colspan=2><tt><a href="#Close_Command_Object_Is_Already_Closed">Close_Command_Object_Is_Already_Closed</a>(target)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.close_command()&nbsp;when&nbsp;the&nbsp;closeable<br>
+adventuregame.processor.Command_Processor.close_command()&nbsp;when&nbsp;the&nbsp;closable<br>
 object&nbsp;the&nbsp;player&nbsp;targeted&nbsp;is&nbsp;already&nbsp;closed.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>

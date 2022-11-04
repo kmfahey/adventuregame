@@ -8,7 +8,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="adventuregame.html"><font color="#ffffff">adventuregame</font></a>.utility</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/NuCampFolder/Python/1-Fundamentals/term_project/adventuregame/adventuregame/utility.py">/home/kmfahey/Workspace/NuCampFolder/Python/1-Fundamentals/term_project/adventuregame/adventuregame/utility.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br></font></td></tr></table>
     <p><tt>The&nbsp;adventuregame.utility&nbsp;module&nbsp;comprises&nbsp;a&nbsp;small&nbsp;collection&nbsp;of&nbsp;utility<br>
 functions&nbsp;used&nbsp;by&nbsp;other&nbsp;modules&nbsp;in&nbsp;the&nbsp;package&nbsp;to&nbsp;expedite&nbsp;common&nbsp;tasks&nbsp;in&nbsp;the<br>
 codebase.</tt></p>
@@ -54,9 +54,10 @@ and&nbsp;a&nbsp;conjunction.<br>
 &gt;&gt;&gt;&nbsp;<a href="#-join_str_seq_w_commas_and_conjunction">join_str_seq_w_commas_and_conjunction</a>(['foo',&nbsp;'bar',&nbsp;'baz'],&nbsp;'and')<br>
 'foo,&nbsp;bar,&nbsp;and&nbsp;baz'<br>
 &nbsp;<br>
-:str_list:&nbsp;The&nbsp;sequence&nbsp;of&nbsp;strings&nbsp;to&nbsp;join.&nbsp;:conjunction:&nbsp;The&nbsp;conjunction&nbsp;to<br>
-use&nbsp;with&nbsp;sequences&nbsp;longer&nbsp;than&nbsp;1&nbsp;element.&nbsp;Typical&nbsp;values&nbsp;include&nbsp;'and'&nbsp;or&nbsp;'or'.<br>
-:return:&nbsp;Returns&nbsp;a&nbsp;grammatical&nbsp;comma-separated&nbsp;list&nbsp;string.</tt></dd></dl>
+:str_list:&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;sequence&nbsp;of&nbsp;strings&nbsp;to&nbsp;join.<br>
+:conjunction:&nbsp;The&nbsp;conjunction&nbsp;to&nbsp;use&nbsp;with&nbsp;sequences&nbsp;longer&nbsp;than&nbsp;1&nbsp;element.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Typical&nbsp;values&nbsp;include&nbsp;'and'&nbsp;or&nbsp;'or'.<br>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns&nbsp;a&nbsp;grammatical&nbsp;comma-separated&nbsp;list&nbsp;string.</tt></dd></dl>
  <dl><dt><a name="-lexical_number_to_digits"><strong>lexical_number_to_digits</strong></a>(lexical_number)</dt><dd><tt>This&nbsp;function&nbsp;parses&nbsp;a&nbsp;lexical&nbsp;representation&nbsp;of&nbsp;a&nbsp;number&nbsp;between&nbsp;one&nbsp;and<br>
 ninety-nine,&nbsp;and&nbsp;returns&nbsp;an&nbsp;int&nbsp;that&nbsp;is&nbsp;equivalent&nbsp;to&nbsp;that&nbsp;number.&nbsp;For&nbsp;lexical<br>
 numbers&nbsp;outside&nbsp;of&nbsp;one&nbsp;to&nbsp;ninety-nine,&nbsp;math.nan&nbsp;is&nbsp;returned.<br>
@@ -91,7 +92,7 @@ how&nbsp;a&nbsp;character&nbsp;is&nbsp;described&nbsp;as&nbsp;using&nbsp;an&nbsp
 &gt;&gt;&gt;&nbsp;<a href="#-usage_verb">usage_verb</a>('shield',&nbsp;gerund=False)<br>
 'carry'<br>
 &gt;&gt;&gt;&nbsp;<a href="#-usage_verb">usage_verb</a>('weapon',&nbsp;gerund=True)<br>
-'weilding'<br>
+'wielding'<br>
 &nbsp;<br>
 :item_type:&nbsp;Either&nbsp;'armor',&nbsp;'shield',&nbsp;'weapon',&nbsp;or&nbsp;'wand'.&nbsp;:gerund:&nbsp;Either&nbsp;True<br>
 (to&nbsp;receive&nbsp;the&nbsp;gerund)&nbsp;or&nbsp;False&nbsp;(to&nbsp;receive&nbsp;the&nbsp;present&nbsp;indicative).&nbsp;:return:<br>

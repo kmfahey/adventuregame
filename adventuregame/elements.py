@@ -1,5 +1,14 @@
 #!/usr/bin/python3
 
+"""
+This module contains all the classes needed to interpret the game data stored
+in .ini files in data/ into a fully object-oriented environment of game element
+objects, state objects which track game element object collections, and the
+Character object & its subordinate objects which manage the character data
+and model the limited subset of Dungeons & Dragons rules that this library
+implements.
+"""
+
 import abc
 import collections
 import math
