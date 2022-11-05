@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
-'''
+"""
 The adventuregame.utility module comprises a small collection of utility
 functions used by other modules in the package to expedite common tasks in the
 codebase.
-'''
+"""
 
 import math
 import random
@@ -22,7 +22,7 @@ __name__ = 'adventuregame.utility'
 
 
 def join_str_seq_w_commas_and_conjunction(str_list, conjunction='and'):
-    '''
+    """
 This function automates the task of joining a sequence of strings with commas
 and a conjunction.
 
@@ -37,7 +37,7 @@ and a conjunction.
 :conjunction: The conjunction to use with sequences longer than 1 element.
               Typical values include 'and' or 'or'.
 :return:      Returns a grammatical comma-separated list string.
-    '''
+    """
     if len(str_list) == 0:
         return ''
     elif len(str_list) == 1:
@@ -55,7 +55,7 @@ _float_re = re.compile(r'^[+-]?([0-9]+\.|\.[0-9]+|[0-9]+\.[0-9]+|[0-9]+)$')
 
 
 def isfloat(strval):
-    '''
+    """
 This function uses a regular expression to text whether a string represents a
 float value.
 
@@ -67,7 +67,7 @@ True
 False
 
 :strval: The string to test. return: Returns a boolean.
-    '''
+    """
     return bool(_float_re.match(strval))
 
 
@@ -80,14 +80,14 @@ digit_re = re.compile('^[0-9]+$')
 
 # This regular expression matches any lexical number from one to ninety-nine.
 
-lexical_number_in_1_99_re = re.compile('''^(
+lexical_number_in_1_99_re = re.compile("""^(
                                            (one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)
                                        |
                                            (thir|four|fif|six|seven|eigh|nine)teen
                                        |
                                            (twen|thir|for|fif|six|seven|eigh|nine)ty-
                                            (one|two|three|four|five|six|seven|eight|nine)
-                                       )$''', re.X)
+                                       )$""", re.X)
 
 # This dictionary is a lookup table that's used to interpret the ones place and
 # (optionally) tens place of a lexical number.
@@ -100,7 +100,7 @@ _digit_lexical_number_map = {'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 
 
 
 def lexical_number_to_digits(lexical_number):
-    '''
+    """
 This function parses a lexical representation of a number between one and
 ninety-nine, and returns an int that is equivalent to that number. For lexical
 numbers outside of one to ninety-nine, math.nan is returned.
@@ -115,7 +115,7 @@ nan
 :lexical_number: The textual representation of a number to parse. Must be
 between one and ninety-nine inclusive. :return: Returns an int, or math.nan
 (which is a float).
-    '''
+    """
 
     # The lexical number is not in the range this function can parse, so
     # math.nan is returned as a signal value.
@@ -140,7 +140,7 @@ between one and ninety-nine inclusive. :return: Returns an int, or math.nan
 # language messages around types of equippable items.
 
 def usage_verb(item_type, gerund=True):
-    '''
+    """
 This convenience function returns the appropriate verb to use when referring to
 how a character is described as using an equippable type of item.
 
@@ -154,7 +154,7 @@ how a character is described as using an equippable type of item.
 :item_type: Either 'armor', 'shield', 'weapon', or 'wand'. :gerund: Either True
 (to receive the gerund) or False (to receive the present indicative). :return:
 The verb string matching how the item is used.
-    '''
+    """
     if item_type == 'armor':
         return 'wearing' if gerund else 'wear'
     elif item_type == 'shield':
@@ -180,14 +180,14 @@ _dice_expression_re = re.compile(r'([1-9]+)d([1-9][0-9]*)([-+][1-9][0-9]*)?')
 
 
 def roll_dice(dice_expr):
-    '''
+    """
 This function accepts a standard Dungeons & Dragons dice expression (such as
 1d20+5, 1d8+2, or 3d10-3), uses random.randint() to simulate a dice roll or
 rolls with the given modifier, and returns the computed random value>
 
 :dice_expr: A dice expression of the form #d#[±#]. return: A random number
 :value, as an int.
-    '''
+    """
     match = _dice_expression_re.match(dice_expr)
     if not match:
         raise excpt.Internal_Exception('invalid dice expression: ' + dice_expr)
@@ -205,14 +205,14 @@ rolls with the given modifier, and returns the computed random value>
 # paragraph is returned. This function extends it to handle multiple paragraphs.
 
 def textwrapper(paragraphs):
-    '''
+    """
 This function accepts a multiline string comprising paragraphs of unwrapped
 text, separately wraps each one to 80 columns, and returns the wrapped
 paragraphs as a string.
 
 :paragraphs: A multi-line string of text. return: The text input wrapped to 80
 :columns paragraph-by-paragraph.
-    '''
+    """
     # The text is broken into separate paragraph strings and applies
     # textwrap.wrap to each one.
     wrapped_lines = map(lambda para: textwrap.wrap(para, width=80), paragraphs.split('\n'))

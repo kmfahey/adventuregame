@@ -28,6 +28,10 @@ This class is the parent class for classes like Room, Item, and Door that are
 instantiated from .ini file entries.
     """
 
+    # This regular expression is used to parse the contents= attributes
+    # used by rooms.ini and containers.ini to encode initializing data
+    # for an Items_Multi_State object into a single line of text. Used in
+    # Ini_Entry._process_list_value().
     inventory_list_value_re = re.compile(r"""^\[(
                                                     (
                                                         [1-9][0-9]*
@@ -65,7 +69,7 @@ This method enables two Ini_Entry objects or Ini_Entry subclass objects to be
 tested for equality. It draws on __slots__ and checks each attribute's value in
 self and other for equality. Only if all attributes match is True returned.
 
-:other: The other object to compare against.
+:other:  The other object to compare against.
 :return: True or False.
         """
         if not isinstance(other, type(self)):
@@ -79,7 +83,7 @@ This private method is used by Ini_Entry subclasses to finish up their
 __init__'s attribute setting by traversing __slots__ and setting every attribute
 that remained unset to None explicitly.
 
-:slots: The __slots__ value of the class the method is being called from.
+:slots:   The __slots__ value of the class the method is being called from.
 :returns: None.
         """
         for key in slots:
@@ -96,8 +100,9 @@ so the subclass's __init__ can look up the items in Items_State and set the
 contents attribute to an Items_Multi_State object populated with the Items in
 the quantities referrred to.
 
-:inventory_value: A string of the form \[\d+x[A-Z][A-Za-z_]+(,\d+[A-Z][A-Za-z_]+)*\].
-:return: A tuple of pairs of quantity ints and Item subclass objects.
+:inventory_value: A string of the form
+                  \[\d+x[A-Z][A-Za-z_]+(,\d+[A-Z][A-Za-z_]+)*\].
+:return:          A tuple of pairs of quantity ints and Item subclass objects.
         """
         value_match = self.inventory_list_value_re.match(inventory_value)
         inner_capture = value_match.groups(1)[0]
@@ -123,7 +128,7 @@ This method tests whether an item object with the specified internal name is
 present in the private dictionary.
 
 :item_internal_name: The internal name of the Item subclass object.
-:return: True or False.
+:return:             True or False.
         """
         return any(item_internal_name == contained_item.internal_name
                    for contained_item in self._contents.values())
@@ -134,7 +139,7 @@ This accessor method returns the item object with the given internal name if
 present, otherwise the internal dict raises a KeyError.
 
 :item_internal_name: The internal name of the Item subclass object.
-:return: An Item subclass object.
+:return:             An Item subclass object.
         """
         return self._contents[item_internal_name]
 
@@ -145,7 +150,7 @@ internal name as a key.
 
 :item_internal_name: The internal name of the Item subclass object to use as a
                      key.
-:item: The Item subclass object to be set.
+:item:               The Item subclass object to be set.
         """
         self._contents[item_internal_name] = item
 
@@ -155,7 +160,7 @@ This method deletes the item object from the internal dictionary referred to by
 the given internal name.
 
 :item_internal_name: The internal name of the Item subclass object.
-:returns: None.
+:returns:            None.
         """
         del self._contents[item_internal_name]
 
@@ -228,7 +233,7 @@ solely so that an Item object can be type-tested to detect its category.
 
 :**item_dict: A dictionary of key-value pairs to instantiate the Item subclass
               object with.
-:return: An Item subclass object.
+:return:      An Item subclass object.
         """
         if item_dict['item_type'] == 'armor':
             item = Armor(**item_dict)
@@ -258,7 +263,7 @@ returns True if the object has a matching {class}_can_use attribute with a True
 value, or False otherwise.
 
 :character_class: Either 'Warrior', 'Thief', 'Mage', or 'Priest'.
-:return: A boolean.
+:return:          A boolean.
         """
         if character_class not in ('Warrior', 'Thief', 'Mage', 'Priest'):
             raise excpt.Internal_Exception(f'character class {character_class} not recognized')
@@ -381,7 +386,7 @@ This method tests whether an item object with the specified internal name is
 present in the private dictionary.
 
 :item_internal_name: The internal name of the Item subclass object.
-:return: A boolean.
+:return:             A boolean.
         """
         return(any(contained_item.internal_name == item_internal_name
                    for _, contained_item in self._contents.values()))
@@ -393,9 +398,9 @@ accessor method returns a 2-tuple comprising an int of the item's quantity and
 the Item subclass object; otherwise the internal dict raises a KeyError.
 
 :item_internal_name: The internal name of the Item subclass object.
-:item_qty: An int value of the item quantity.
-:item: The Item subclass object.
-:return: None.
+:item_qty:           An int value of the item quantity.
+:item:               The Item subclass object.
+:return:             None.
         """
         self._contents[item_internal_name] = item_qty, item
 
@@ -406,8 +411,8 @@ This method increases the quantity stored for the given Item subclass object by
 with a quantity of 1.
 
 :item_internal_name: The internal name of the Item subclass object.
-:item: The Item subclass object.
-:return: None.
+:item:               The Item subclass object.
+:return:             None.
         """
         if self.contains(item_internal_name):
             self._contents[item_internal_name] = (self._contents[item_internal_name][0] + 1,
@@ -423,7 +428,7 @@ subclass object's stored quantity was 1, the object is deleted from the internal
 dictionary.
 
 :item_internal_name: The internal name of the Item subclass object.
-:return: None.
+:return:             None.
         """
         if item_internal_name not in self._contents:
             raise KeyError(item_internal_name)
@@ -482,7 +487,7 @@ linked by this door, and returns the internal name of the other room in the
 linkage.
 
 :room_internal_name: The internal name of a Room object.
-:return: A Room object.
+:return:             A Room object.
         """
 
         if room_internal_name not in self._linked_rooms_internal_names:
@@ -566,7 +571,7 @@ subclass object's internal names is present in the internal **dict-of-dicts.
                            objects.
 :first_room_internal_name: The internal name of the other of the two linked Room
                            objects.
-:return: A boolean.
+:return:                   A boolean.
         """
         return (first_room_internal_name in self._contents
                 and second_room_internal_name in self._contents[first_room_internal_name])
@@ -580,7 +585,7 @@ subclass object internal names, or raises a KeyError if it's not present.
                            objects.
 :first_room_internal_name: The internal name of the other of the two linked Room
                            objects.
-:return: A Door object.
+:return:                   A Door object.
         """
         return self._contents[first_room_internal_name][second_room_internal_name]
 
@@ -595,8 +600,8 @@ inner dictionary.
                            objects.
 :first_room_internal_name: The internal name of the other of the two linked Room
                            objects.
-:door: A Door object.
-:return: None.
+:door:                     A Door object.
+:return:                   None.
         """
         self._contents[first_room_internal_name][second_room_internal_name] = door
 
@@ -609,8 +614,8 @@ under the given two Room subclass object internal name keys.
                            objects.
 :first_room_internal_name: The internal name of the other of the two linked Room
                            objects.
-:door: A Door object.
-:return: None.
+:door:                     A Door object.
+:return:                   None.
         """
         del self._contents[first_room_internal_name][second_room_internal_name]
 
@@ -681,9 +686,9 @@ It draws on the contents attribute of the source ini data, which is in the
 items_state object is a required argument so that it can be used to look up Item
 subclass objects' internal names and populate the container.
 
-:item_state: An Item_State object.
-:internal_name: The internal name of the container.
-:*item_objs: A tuple of the Item objects contained by the container.
+:item_state:        An Item_State object.
+:internal_name:     The internal name of the container.
+:*item_objs:        A tuple of the Item objects contained by the container.
 :**ini_constr_argd: The key-value pairs from containers.ini to instantiate the
                     Container object with.
         """
@@ -706,7 +711,7 @@ This factory accepts an items_state object and a **dict-of-dicts as featured in
 an IniConfig object's section attribute, and determines which Container subclass
 is appropriate to instantiate from the data.
 
-:items_state: An Items_State object.
+:items_state:      An Items_State object.
 :**container_dict: A dict of key-value pairs to instantiate the Container
                    subclass with.
         """
@@ -748,7 +753,7 @@ This __init__ method accepts an items_state object and a **dict-of-dicts, which 
 iterates down to instantiate the Container subclass objects that the container
 is populated with.
 
-:items_state: An Items_State object.
+:items_state:     An Items_State object.
 :**dict_of_dicts: A structure of internal name keys corresponding to dict values
                   which are key-value pairs to initialize an individual
                   Container subclass object with.
@@ -841,7 +846,7 @@ arbitrary ability score.
 
 :ability_score: A string, one of 'Strength', 'Dexterity', 'Constitution',
                 'Intelligence', 'Wisdom' or 'Charisma'.
-:return: An int.
+:return:        An int.
         """
         if not hasattr(self, ability_score):
             raise excpt.Internal_Exception(f'unrecognized ability {ability_score}')
@@ -945,7 +950,7 @@ This __init__ method instantiates the object with the given character class, and
         """
 This method equips the given Armor object.
 
-:item: An Armor object.
+:item:    An Armor object.
 :returns: None.
         """
         if not isinstance(item, Armor):
@@ -956,7 +961,7 @@ This method equips the given Armor object.
         """
 This method equips the given Shield object.
 
-:item: A Shield object.
+:item:    A Shield object.
 :returns: None.
         """
         if not isinstance(item, Shield):
@@ -967,7 +972,7 @@ This method equips the given Shield object.
         """
 This method equips the given Weapon object.
 
-:item: A Weapon object.
+:item:    A Weapon object.
 :returns: None.
         """
         if not isinstance(item, Weapon):
@@ -978,7 +983,7 @@ This method equips the given Weapon object.
         """
 This method equips the given Wand object.
 
-:item: A Wand object.
+:item:    A Wand object.
 :returns: None.
         """
         if not isinstance(item, Wand):
@@ -1023,7 +1028,7 @@ This private method equips the given Equippable_Item subclass object in the
 given slot.
 
 :equipment_slot: A string, one of 'armor', 'shield', 'weapon', or 'wand'.
-:return: None.
+:return:         None.
         """
         if equipment_slot not in ('armor', 'shield', 'weapon', 'wand'):
             raise excpt.Internal_Exception(f'equipment slot {equipment_slot} not recognized')
@@ -1041,7 +1046,7 @@ given slot.
 This private method unequips the given Equippable_Item subclass object.
 
 :equipment_slot: A string, one of 'armor', 'shield', 'weapon', or 'wand'.
-:return: None.
+:return:         None.
         """
         if equipment_slot not in ('armor', 'shield', 'weapon', 'wand'):
             raise excpt.Internal_Exception(f'equipment slot {equipment_slot} not recognized')
@@ -1125,20 +1130,24 @@ the subordinate inventory Items_Multi_State() object and the subordinate
 Equipment object, and sets up the hit point and (optionally) mana point values.
 It also sets the magic key stat if any.
 
-:character_name_str: A string, the name for the character.
+:character_name_str:  A string, the name for the character.
 :character_class_str: A string one of 'Warrior', 'Thief', 'Priest', or 'Mage'.
-:base_hit_points: An int, the character's base hit points (optional).
-:base_mana_points: An int, the character's base mana points (optional).
-:magic_key_stat: A string, the character's magic key stat (one of
-                 'Intelligence', 'Wisdom', or 'Charisma'.
-:strength: An int, the set value for the character's Strength score (optional).
-:dexterity An int, the set value for the character's Dexterity score (optional).
-:constitution: An int, the set value for the character's Constitution score
-               (optional).
-:intelligence: An int, the set value for the character's Intelligence score
-               (optional).
-:wisdom: An int, the set value for the character's Wisdom score (optional).
-:charisma: An int, the set value for the character's Charisma score (optional).
+:base_hit_points:     An int, the character's base hit points (optional).
+:base_mana_points:    An int, the character's base mana points (optional).
+:magic_key_stat:      A string, the character's magic key stat (one of
+                      'Intelligence', 'Wisdom', or 'Charisma').
+:strength:            An int, the set value for the character's Strength score
+                      (optional).
+:dexterity:           An int, the set value for the character's Dexterity score
+                      (optional).
+:constitution:        An int, the set value for the character's Constitution
+                      score (optional).
+:intelligence:        An int, the set value for the character's Intelligence
+                      score (optional).
+:wisdom:              An int, the set value for the character's Wisdom score
+                      (optional).
+:charisma:            An int, the set value for the character's Charisma score
+                      (optional).
         """
         if character_class_str not in {'Warrior', 'Thief', 'Priest', 'Mage'}:
             raise excpt.Internal_Exception(f'character class argument {character_class_str} not one of '
@@ -1157,14 +1166,18 @@ This private method sets the ability scores from its arguments if they are
 nonzero. It is used by __init__ to set ability scores from its arguments if
 furnished.
 
-:strength: An int, the set value for the character's Strength score (optional).
-:dexterity An int, the set value for the character's Dexterity score (optional).
+:strength:     An int, the set value for the character's Strength score
+               (optional).
+:dexterity:    An int, the set value for the character's Dexterity score
+               (optional).
 :constitution: An int, the set value for the character's Constitution score
                (optional).
 :intelligence: An int, the set value for the character's Intelligence score
                (optional).
-:wisdom: An int, the set value for the character's Wisdom score (optional).
-:charisma: An int, the set value for the character's Charisma score (optional).
+:wisdom:       An int, the set value for the character's Wisdom score
+               (optional).
+:charisma:     An int, the set value for the character's Charisma score
+               (optional).
         """
         if all((strength, dexterity, constitution, intelligence, wisdom, charisma)):
             self.ability_scores.strength = strength
@@ -1188,11 +1201,11 @@ character's Constitution modifier. Bonus mana points are calculated from the
 specified magic key ability score (Intelligence for Mages, and Wisdom for
 Priests).
 
-:base_hit_points: An int, the character's base hit points.
+:base_hit_points:  An int, the character's base hit points.
 :base_mana_points: An int, the character's base mana points.
-:magic_key_stat: A string, the character's magic key stat (one of
-                 'Intelligence', 'Wisdom', or 'Charisma'.
-:return: None.
+:magic_key_stat:   A string, the character's magic key stat (one of
+                   'Intelligence', 'Wisdom', or 'Charisma'.
+:return:           None.
         """
         if base_hit_points:
             self._hit_point_maximum = self._current_hit_points = (base_hit_points +
@@ -1298,7 +1311,7 @@ points would be reduced to less than 0, they are set to 0 instead. The method
 returns the amount of damage assessed.
 
 :damage_value: An int, the number of hit points to lose.
-:return: An int.
+:return:       An int.
         """
         if self._current_hit_points - damage_value < 0:
             taken_amount = self._current_hit_points
@@ -1316,7 +1329,7 @@ points, their hit point value is set to their hit point maximum instead. The
 method returns the amount of healing done.
 
 :healing_value: An int, the number of hit points to recover.
-:return: An int.
+:return:        An int.
         """
         if self._current_hit_points + healing_value > self._hit_point_maximum:
             amount_healed = self._hit_point_maximum - self._current_hit_points
@@ -1334,7 +1347,7 @@ reduce the character's mana points to less than zero, no spending takes place,
 and 0 is returned to indicate failure.
 
 :spent_amount: An int, the number of mana points to spend.
-:return: An int.
+:return:       An int.
         """
         if self._current_mana_points < spent_amount:
             return 0
@@ -1350,7 +1363,7 @@ total, their current mana point value is set equal to their maximum mana point
 value instead. The method returns the amount of mana points regained.
 
 :regaining_value: An int, the number of mana points to regain.
-:return: An int.
+:return:          An int.
         """
         if self._current_mana_points + regaining_value > self._mana_point_maximum:
             amount_regained = self._mana_point_maximum - self._current_mana_points
@@ -1438,8 +1451,8 @@ and the relevant ability score modifier.
 This method adds the given Item subclass object to the character's inventory in
 the quantity specified, default 1.
 
-:item: An Item subclass object.
-:qty: An int, the quantity to add to the container, default 1.
+:item:   An Item subclass object.
+:qty:    An int, the quantity to add to the container, default 1.
 :return: None.
         """
         have_qty = self.item_have_qty(item)
@@ -1453,8 +1466,8 @@ the quantity specified, default 1.
 This method removes the specified quantity (default 1) of the given Item
 subclass object from the character's inventory.
 
-:item: An Item subclass object.
-:qty: An int, the quantity to remove from the container, default 1.
+:item:   An Item subclass object.
+:qty:    An int, the quantity to remove from the container, default 1.
 :return: None.
         """
         have_qty = self.item_have_qty(item)
@@ -1471,7 +1484,7 @@ This method checks whether the given Item subclass object is present in the
 character's inventory. If so, it returns the quantity possessed. If not, it
 returns 0.
 
-:item: An Item subclass object.
+:item:   An Item subclass object.
 :return: An int.
         """
         if not self.inventory.contains(item.internal_name):
@@ -1485,7 +1498,7 @@ returns 0.
 This method checks whether the given Item subclass object is present in the
 character's inventory. It returns True or False.
 
-:item: An Item subclass object.
+:item:   An Item subclass object.
 :return: A boolean.
         """
         return self.inventory.contains(item.internal_name)
@@ -1704,7 +1717,7 @@ This property returns the wand property from the subordinate Equipment object.
 This method calls the equip_armor method on the subordinate Equipment object
 with the given argument.
 
-:item: An Armor object.
+:item:   An Armor object.
 :return: None.
         """
         if not self.inventory.contains(item.internal_name):
@@ -1717,7 +1730,7 @@ with the given argument.
 This method calls the equip_shield method on the subordinate Equipment object
 with the given argument.
 
-:item: A Shield object.
+:item:   A Shield object.
 :return: None.
         """
         if not self.inventory.contains(item.internal_name):
@@ -1730,7 +1743,7 @@ with the given argument.
 This method calls the equip_weapon method on the subordinate Equipment object
 with the given argument.
 
-:item: A Weapon object.
+:item:   A Weapon object.
 :return: None.
         """
         if not self.inventory.contains(item.internal_name):
@@ -1743,7 +1756,7 @@ with the given argument.
 This method calls the equip_wand method on the subordinate Equipment object with
 the given argument.
 
-:item: A Wand object.
+:item:   A Wand object.
 :return: None.
         """
         if not self.inventory.contains(item.internal_name):
@@ -1841,9 +1854,10 @@ This __init__ method initializes the object using super() to call __init__
 methods from both Ini_Entry and Character. It sets the ability scores, populates
 its inventory, and sets up its equipment from its ini file data.
 
-:items_state: An Items_State object.
+:items_state:   An Items_State object.
 :internal_name: A string, the internal name of the creature.
-:**argd: A dict, the key-value pairs to instantiate the Creature object from.
+:**argd:        A dict, the key-value pairs to instantiate the Creature object
+                from.
         """
         character_init_argd, ini_entry_init_argd, equipment_argd, inventory_qty_name_pairs = \
             self._separate_argd_into_different_arg_sets(items_state, internal_name, **argd)
@@ -1863,9 +1877,10 @@ This private method takes the argd supplied to __init__ and separates it into
 Character.__init__() arguments, Ini_Entry.__init__() arguments, inventory
 quantity-internal name pairs, and an equipment dict.
 
-:items_state: An Items_State object.
+:items_state:   An Items_State object.
 :internal_name: A string, the creature's internal name.
-:**argd: The key-value pairs to differentiate into different sets of arguments.
+:**argd:        The key-value pairs to differentiate into different sets of
+                arguments.
         """
         character_init_argd = dict(strength=int(argd.pop('strength')),
                                    dexterity=int(argd.pop('dexterity')),
@@ -1901,10 +1916,10 @@ This private method accepts an items state, inventory quantity-internal name
 pairs, and the equipment dict, and uses them to initialize the creature's
 inventory and equipped items.
 
-:items_state: An Items_State object.
+:items_state:              An Items_State object.
 :inventory_qty_name_pairs: A tuple of 2-tuples of item quantity ints and
                            internal name strings.
-:equipment_argd: A dictionary of equipment assignments.
+:equipment_argd:           A dictionary of equipment assignments.
         """
         for item_qty, item_internal_name in inventory_qty_name_pairs:
             item = items_state.get(item_internal_name)
@@ -1956,7 +1971,7 @@ a Creature object for each section of the **dict-of-dicts. Unlike other *_State
 classes it doesn't use a subclassing_factory because the Creature class is not
 subclassed to delineate different types of creature.
 
-:items_state: An Items_State object.
+:items_state:     An Items_State object.
 :**dict_of_dicts: A structure of internal name keys corresponding to dict values
                   which are key-value pairs to initialize an individual
                   Creature object with.
@@ -2021,11 +2036,12 @@ doors_state object and an items_state object. It initializes the object from its
 argd, drawing on the state objects to set the creature_here, container_here,
 items_here and the {compass_dir}_door attributes.
 
-:creatures_state: A Creatures_State object.
+:creatures_state:  A Creatures_State object.
 :containers_state: A Containers_State object.
-:doors_state: A Doors_State object.
-:items_state: An Items_State object.
-:**argd: A dict of key-value pairs to instantiate the Room object with.
+:doors_state:      A Doors_State object.
+:items_state:      An Items_State object.
+:**argd:           A dict of key-value pairs to instantiate the Room object
+                   with.
         """
         super().__init__(**argd)
         self._containers_state = containers_state
@@ -2035,12 +2051,12 @@ items_here and the {compass_dir}_door attributes.
         self._post_init_slots_set_none(self.__slots__)
         if self.creature_here:
             if not self._creatures_state.contains(self.creature_here):
-                raise internal_exception(f"room obj `{self.internal_name}` creature_here value '{self.creature_here}' "
+                raise excpt.Internal_Exception(f"room obj `{self.internal_name}` creature_here value '{self.creature_here}' "
                                          "doesn't correspond to any creatures in creatures_state store")
             self.creature_here = self._creatures_state.get(self.creature_here)
         if self.container_here:
             if not self._containers_state.contains(self.container_here):
-                raise internal_exception(f"room obj `{self.internal_name}` container_here value '{self.container_here}'"
+                raise excpt.Internal_Exception(f"room obj `{self.internal_name}` container_here value '{self.container_here}'"
                                          " doesn't correspond to any creatures in creatures_state store")
             self.container_here = self._containers_state.get(self.container_here)
         if self.items_here:
@@ -2106,13 +2122,13 @@ object, a containers_state object, a doors_state object and a items_state object
 to initialize them with, and a **dict-of-dicts from rooms.ini as furnished by an
 IniConfig's sections attribute.
 
-:creatures_state: A Creatures_State object.
+:creatures_state:  A Creatures_State object.
 :containers_state: A Containers_State object.
-:doors_state: A Doors_State object.
-:items_state: A Items_State object.
-:**dict_of_dicts: A structure of internal name keys corresponding to dict values
-                  which are key-value pairs to initialize an individual
-                  Creature object with.
+:doors_state:      A Doors_State object.
+:items_state:      A Items_State object.
+:**dict_of_dicts:  A structure of internal name keys corresponding to dict
+                   values which are key-value pairs to initialize an individual
+                   Creature object with.
         """
         self._rooms_objs = dict()
         self._creatures_state = creatures_state
@@ -2132,8 +2148,8 @@ This private method is used to store a Room object to internal storage by the
 given internal name.
 
 :room_internal_name: A string, the internal name of the Room object.
-:room: A Room object.
-:return: None.
+:room:               A Room object.
+:return:             None.
         """
         self._rooms_objs[room_internal_name] = room
 
@@ -2142,10 +2158,10 @@ given internal name.
 This method directs the Rooms_State object to move the cursor from the current
 room to an adjacent room by the given compass direction.
 
-:north: A boolean, True if movement to the north is intended, False otherwise.
-:east: A boolean, True if movement to the east is intended, False otherwise.
-:south: A boolean, True if movement to the south is intended, False otherwise.
-:west: A boolean, True if movement to the west is intended, False otherwise.
+:north:  A boolean, True if movement to the north is intended, False otherwise.
+:east:   A boolean, True if movement to the east is intended, False otherwise.
+:south:  A boolean, True if movement to the south is intended, False otherwise.
+:west:   A boolean, True if movement to the west is intended, False otherwise.
 :return: None.
         """
         if ((north and west) or (north and south) or (north and east) or (west and south)
@@ -2201,7 +2217,7 @@ This property sets the character name, and contains a hook to attempt to
 instantiate the character object if both the name and class have been set.
 
 :name_str: A string, the character name.
-:return: None.
+:return:   None.
         """
         setattr(self, '_character_name', name_str)
         self._incept_character_obj_if_possible()
@@ -2222,7 +2238,7 @@ This property sets the character class, and contains a hook to attempt to
 instantiate the character object if both the name and class have been set.
 
 :name_str: A string, the character class.
-:return: None.
+:return:   None.
         """
         setattr(self, '_character_class', class_str)
         self._incept_character_obj_if_possible()
@@ -2233,11 +2249,11 @@ This __init__ method stores a items_state object, a doors_state object, a
 containers_state object, a creatures_state object, and a rooms_state object from
 its arguments.
 
-:rooms_state: A Rooms_State object.
-:creatures_state: A Creatures_State object.
+:rooms_state:      A Rooms_State object.
+:creatures_state:  A Creatures_State object.
 :containers_state: A Containers_State object.
-:doors_state: A Doors_State object.
-:items_state: An Items_State object.
+:doors_state:      A Doors_State object.
+:items_state:      An Items_State object.
         """
         self.items_state = items_state
         self.doors_state = doors_state

@@ -14,10 +14,11 @@ the command can't complete.
 """
 
 
+import itertools
 import math
 import operator
 import re
-import itertools
+import types
 
 import adventuregame.elements as elem
 import adventuregame.exceptions as excpt
@@ -37,9 +38,15 @@ STARTER_GEAR = dict(Warrior=dict(weapon='Longsword', armor='Studded_Leather', sh
                     Mage=dict(weapon='Staff'),
                     Priest=dict(weapon='Mace', armor='Studded_Leather', shield='Buckler'))
 
-# \u00A0 is a nonbreaking space. I use it in the syntax examples so that the use of text wrapping in advgame.py
-# doesn't break individual syntax examples across lines. The longer syntax examples become difficult to read if
-# adventuregame.utility.textwrapper() is able to break syntax examples across lines.
+
+# The COMMAND_SYNTAX dict is a compendium of usage examples for every command in
+# the game. When a command method needs to return Command_Bad_Syntax object, it
+# consults this dict for the second argument to its constructor.
+#
+# \u00A0 is a unicode nonbreaking space. I use it in the syntax examples so that
+# the use of adventuregame.utility.textwrapper() in advgame.py doesn't break
+# individual syntax examples across lines. The longer syntax examples become
+# difficult to read if wrapped across a line.
 
 COMMANDS_SYNTAX = {
     'ATTACK': ('<creature\u00A0name>',),
@@ -77,6 +84,11 @@ COMMANDS_SYNTAX = {
     'UNEQUIP': ('<armor\u00A0name>', '<shield\u00A0name>', '<wand\u00A0name>', '<weapon\u00A0name>'),
     'UNLOCK': ('<door\u00A0name>', '<chest\u00A0name>')
 }
+
+# The COMMANDS_HELP dict is a compendium of help blurbs for use by
+# Command_Processor.help_command(). Where the blurb explicitly suggests another
+# command, a nonbreaking space is used again to ensure the command doesn't get
+# wrapped and is readable.
 
 COMMANDS_HELP = {
     'ATTACK': "The ATTACK command is used to attack creatures. Beware: if you attack a creature and don't kill it, it "
@@ -119,7 +131,8 @@ COMMANDS_HELP = {
                 'as many parts as you like, but each one must be a capital letter followed by lowercase letters. '
                 'Symbols and numbers are not allowed.',
     'STATUS': "The STATUS command is used to see a summary of your hit points and current weapon, armor, shield "
-              "choices. Spellcasters also see their mana points; and Mages see their current wand if they're using one.",
+              "choices. Spellcasters also see their mana points; and Mages see their current wand if they're using "
+              'one.',
     'TAKE': "The TAKE command is used to remove items from a chest or a corpse and place them in your inventory.",
     'UNEQUIP': "The UNEQUIP command is used to unequip a weapon, armor, shield or wand from your inventory.",
     'UNLOCK': "The UNLOCK command is used to unlock a door or chest. You need a door key to unlock doors and a chest "
@@ -141,21 +154,20 @@ indicates the command succeeded and what the outcome was.
     """
     __slots__ = 'game_state', 'dispatch_table', 'game_ending_state_msg'
 
-    # All return values from *_command methods in this class are
-    # tuples. Every *_command method returns one or more *_command_*
-    # objects, reflecting a sequence of changes in game State. (For
-    # example, an ATTACK action that doesn't kill the foe will prompt
+    # All return values from [a-z_]+_command methods in this class are
+    # tuples. Every [a-z_]+_command method returns a tuple of one or more
+    # adventuregame.statemsgs.Game_State_Message subclass objects reflecting a
+    # change or set of changes in game State.
+    #
+    # For example, an ATTACK action that doesn't kill the foe will prompt
     # the foe to attack. The foe's attack might lead to the character's
     # death. So the return value might be a `Attack_Command_Attack_Hit`
     # object, a `Be_Attacked_by_Command_Attacked_and_Hit` object, and a
     # `Be_Attacked_by_Command_Character_Death` object, each bearing a message in
-    # its `message` property. The code which handles the result of the ATTACK
-    # action knows it's receiving a tuple and will iterate through the result
-    # objects and display each one's message to the player in turn.
+    # its `message` property. The frontend code will iterate through the tuple
+    # printing each message in turn.
 
     valid_name_re = re.compile('^[A-Z][a-z]+$')
-
-    valid_class_re = re.compile('^(Warrior|Thief|Mage|Priest)$')
 
     pregame_commands = {'set_name', 'set_class', 'help', 'reroll', 'begin_game', 'quit'}
 
@@ -175,24 +187,47 @@ command method is stored associated with the command that it implements.
              the character_name and character_class attributes are set on this
              object, a Character object will be added and the game can begin.
         """
+        # This Game_State object contains & makes available Items_State,
+        # Doors_State, Containers_State, Creatures_State, and Rooms_State
+        # objects. It will later furnish a Character object when one can be
+        # initialized. These comprise the game data that the player interacts
+        # with during the game, and have already been initialized by the
+        # frontend script before a Command_Processor object is instantiated.
+        self.game_state = game_state
+
+        # This attribute isn't used until the end of the game. Once the game
+        # is over, self.game_state.game_has_ended is set to True, and any
+        # further commands just get the Game_State_Message subclass object that
+        # indicated end of game. It's saved in this attribute.
+        self.game_ending_state_msg = None
+
+        # This introspection associates each method whose name ends with
+        # _command with a command whose text (with spaces replaced by
+        # underscores) is the beginning of that name.
         self.dispatch_table = dict()
         commands_set = self.pregame_commands | self.ingame_commands
         for method_name in dir(type(self)):
+            attrval = getattr(self, method_name, None)
+            if not isinstance(attrval, types.MethodType):
+                continue
             if not method_name.endswith('_command') or method_name.startswith('_'):
                 continue
             command = method_name.rsplit('_', maxsplit=1)[0]
-            self.dispatch_table[command] = getattr(self, method_name)
+            self.dispatch_table[command] = attrval
+            # This exception catches a programmer error if the pregame_commands
+            # or ingame_commands wasn't updated with a new command.
             if command not in commands_set:
-                raise excpt.Internal_Exception('Inconsistency between set list of commands and command methods found by '
-                                               f'introspection: method {method_name}() does not correspond to a command in '
-                                               'pregame_commands or ingame_commands.')
+                raise excpt.Internal_Exception('Inconsistency between set list of commands and command methods found '
+                                               f'by introspection: method {method_name}() does not correspond to a '
+                                               'command in pregame_commands or ingame_commands.')
             commands_set.remove(command)
+        # This exception catches a programmer error if a new command was added
+        # to pregame_commands or ingame_commands but the corresponding method
+        # hasn't been written or was misnamed.
         if len(commands_set):
-            raise Internal_Exception('Inconsistency between set list of commands and command methods found by '
-                                     f"introspection: command '{commands_set.pop()} does not correspond to a command "
-                                     'in pregame_commands or ingame_commands.')
-        self.game_state = game_state
-        self.game_ending_state_msg = None
+            raise excpt.Internal_Exception('Inconsistency between set list of commands and command methods found by '
+                                           f"introspection: command '{commands_set.pop()} does not correspond to a command "
+                                           'in pregame_commands or ingame_commands.')
 
     def process(self, natural_language_str):
         """
@@ -221,47 +256,61 @@ as a * argument.
             return (self.game_ending_state_msg,)
         tokens = natural_language_str.strip().split()
         command = tokens.pop(0).lower()
+
+        # This block of conditionals is a set of preprocessing steps that handle
+        # multi-token commands and commands which can be said different ways.
         if command == 'cast' and len(tokens) and tokens[0].lower() == 'spell':
-            command += '_' + tokens.pop(0).lower()
-        elif command == 'leave' and len(tokens) and (tokens[0].lower() == 'using' or tokens[0].lower() == 'via'):
-            tokens.pop(0)
+            command += '_' + tokens.pop(0).lower()      # A two-word command.
+        elif (command == 'leave' and len(tokens) and (tokens[0].lower() == 'using' or tokens[0].lower() == 'via')):
+            tokens.pop(0)                               # 'via' or 'using' is dropped.
         elif command == 'begin':
             if len(tokens) >= 1 and tokens[0] == 'game' or len(tokens) >= 2 and tokens[0:2] == ['the', 'game']:
                 if tokens[0] == 'the':
-                    tokens.pop(0)
+                    tokens.pop(0)                       # 'begin the game' becomes 'begin game'.
                 command += '_' + tokens.pop(0)
             elif not len(tokens):
                 command = 'begin_game'
         elif command == 'look' and len(tokens) and tokens[0].lower() == 'at':
-            command += '_' + tokens.pop(0).lower()
+            command += '_' + tokens.pop(0).lower()      # A two-word command.
         elif command == 'pick' and len(tokens) and (tokens[0].lower() == 'up' or tokens[0].lower() == 'lock'):
-            command += '_' + tokens.pop(0).lower()
+            command += '_' + tokens.pop(0).lower()      # Either 'pick lock' or 'pick up', a two-word command.
         elif command == 'quit':
             if len(tokens) >= 1 and tokens[0] == 'game' or len(tokens) >= 2 and tokens[0:2] == ['the', 'game']:
                 if tokens[0] == 'the':
-                    tokens.pop(0)
+                    tokens.pop(0)                       # 'quit the game' or 'quit game' becomes 'quit'.
                 tokens.pop(0)
         elif command == 'set' and len(tokens) and (tokens[0].lower() == 'name' or tokens[0].lower() == 'class'):
             command += '_' + tokens.pop(0).lower()
-            if len(tokens) and tokens[0] == 'to':
-                tokens.pop(0)
+            if len(tokens) and tokens[0] == 'to':       # 'set name to' becomes 'set name'.
+                tokens.pop(0)                           # 'set class to' becomes 'set class'.
         elif command == 'show' and len(tokens) and tokens[0].lower() == 'inventory':
-            command = tokens.pop(0).lower()
+            command = tokens.pop(0).lower()             # 'show inventory' becomes 'inventory'.
         if command not in ('set_name', 'set_class'):
-            tokens = tuple(map(str.lower, tokens))
+            tokens = tuple(map(str.lower, tokens))      # 'set name' and 'set class' are case-sensitive;
+                                                        #  the rest of the commands are not.
 
+        # With the command normalized, I check for it in the dispatch table.
+        # If it's not present, a Command_Not_Recognized error is returned. The
+        # commands allowed in the current game mode are included.
         if command not in self.dispatch_table and not self.game_state.game_has_begun:
             return stmsg.Command_Not_Recognized(command, self.pregame_commands, self.game_state.game_has_begun),
         elif command not in self.dispatch_table and self.game_state.game_has_begun:
             return stmsg.Command_Not_Recognized(command, self.ingame_commands, self.game_state.game_has_begun),
+
+        # If the player used an ingame command during the pregame, or a pregame
+        # command during the ingame, a Command_Not_Allowed_Now error is returned
+        # with a list of the currently allowed commands included.
         elif not self.game_state.game_has_begun and command not in self.pregame_commands:
             return stmsg.Command_Not_Allowed_Now(command, self.pregame_commands, self.game_state.game_has_begun),
         elif self.game_state.game_has_begun and command not in self.ingame_commands:
             return stmsg.Command_Not_Allowed_Now(command, self.ingame_commands, self.game_state.game_has_begun),
 
-        return self.dispatch_table[command](*tokens)
+        # Having completed all the checks, I have a valid command and there is
+        # a matching command method. The command method is tail called with the
+        # remainder of the tokens as an argument.
+        return self.dispatch_table[command](tokens)
 
-    def attack_command(self, *tokens):
+    def attack_command(self, tokens):
         """
 This method implements the ATTACK command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
@@ -287,60 +336,129 @@ ATTACK <creature name>
 * If the attack hits and kills the foe, this method returns a 2-tuple of a
   Attack_Command_Attack_Hit object and a Various_Commands_Foe_Death object.
         """
+
+        # If the player character has no weapon or wand equipped, an error is
+        # returned right away.
         if (not self.game_state.character.weapon_equipped
                 and (self.game_state.character_class != 'Mage' or not self.game_state.character.wand_equipped)):
             return stmsg.Attack_Command_You_Have_No_Weapon_or_Wand_Equipped(self.game_state.character_class),
+
+        # Using this command with no argument is a syntax error.
         elif not tokens:
-            return stmsg.Command_Bad_Syntax('ATTACK', *COMMANDS_SYNTAX['ATTACK']),
+            return stmsg.Command_Bad_Syntax('ATTACK', COMMANDS_SYNTAX['ATTACK']),
+
+        # This var is used by some return values.
         weapon_type = 'wand' if self.game_state.character.wand_equipped else 'weapon'
-        creature_title_token = ' '.join(tokens)
+        creature_title = ' '.join(tokens)
+
+        # If there's no creature in the current room, an error is returned.
         if not self.game_state.rooms_state.cursor.creature_here:
-            return stmsg.Attack_Command_Opponent_Not_Found(creature_title_token),
-        elif self.game_state.rooms_state.cursor.creature_here.title.lower() != creature_title_token:
-            return stmsg.Attack_Command_Opponent_Not_Found(creature_title_token,
+            return stmsg.Attack_Command_Opponent_Not_Found(creature_title),
+        # If the arguments don't match the title of the creature in the current
+        # room, an error is returned.
+        elif self.game_state.rooms_state.cursor.creature_here.title.lower() != creature_title:
+            return stmsg.Attack_Command_Opponent_Not_Found(creature_title,
                                                            self.game_state.rooms_state.cursor.creature_here.title),
+
+        # All possible errors have been handles, so the actual attack is figured
+        # on the creature here.
         creature = self.game_state.rooms_state.cursor.creature_here
         attack_roll_dice_expr = self.game_state.character.attack_roll
         damage_roll_dice_expr = self.game_state.character.damage_roll
         attack_result = util.roll_dice(attack_roll_dice_expr)
+
+        # The attack doesn't meet or exceed the creature's armor class.
         if attack_result < creature.armor_class:
+
+            # So a attack-missed return value is prepared.
             attack_missed_result = stmsg.Attack_Command_Attack_Missed(creature.title, weapon_type)
+
+            # The _be_attacked_by_command() pseudo-command is triggered
+            # by any attack command that doesn't kill the creature. Its
+            # tuple of return values is appended to the attack-missed
+            # return value and the combined tuple is returned.
+            #
+            # Please note that it's possible for self._be_attacked_by_command()
+            # to end in Be_Attacked_by_Command_Character_Death; the game might
+            # end right here.
             be_attacked_by_result = self._be_attacked_by_command(creature)
             return (attack_missed_result,) + be_attacked_by_result
-        else:
+        else:  # attack_result >= creature.armor_class
+            # The attack roll met or exceeded the creature's armor class, so
+            # damage is assessed and inflicted on the creature.
             damage_result = util.roll_dice(damage_roll_dice_expr)
             creature.take_damage(damage_result)
-            if creature.hit_points == 0:
+
+            # If the creature was killed by that damage, the
+            # Creature.convert_to_corpse() method is used to instantiate a
+            # Corpse object from its data, that object is stored to the room's
+            # container_here attribute, and its creature_here attribute is set
+            # to None. Corpse is a Container, so the player can use TAKE to loot
+            # the corpse.
+            if creature.is_dead:
                 corpse = creature.convert_to_corpse()
                 self.game_state.rooms_state.cursor.container_here = corpse
                 self.game_state.rooms_state.cursor.creature_here = None
+
+                # The return tuple is comprised of an attack-hit value and a
+                # foe-death value.
                 return (stmsg.Attack_Command_Attack_Hit(creature.title, damage_result, True, weapon_type),
                         stmsg.Various_Commands_Foe_Death(creature.title))
-            else:
+            else:  # creature.is_alive == True
+                # The attack hit but didn't kill, so the return tuple
+                # begins with an attack-hit value. The creature lived, so
+                # self._be_attacked_by_command() is called and its return tuple
+                # is appended and the entire sequence is returned. Again, the
+                # counterattack might kill the player character, so the game
+                # might end right here.
                 attack_hit_result = stmsg.Attack_Command_Attack_Hit(creature.title, damage_result, False, weapon_type)
                 be_attacked_by_result = self._be_attacked_by_command(creature)
                 return (attack_hit_result,) + be_attacked_by_result
 
     def _be_attacked_by_command(self, creature):
+        """
+This private method is called whenever a self.attack_command() execution
+included a successful attack but didn't end in foe death. It acts like a command
+method so it's implemented as one, but it can only be called internally. An
+attack by the foe creature is calulcated, if it hits damage is assessed on the
+player character, and if character.is_dead becomes True, the game ends.
+
+:creature: The foe creature that was targeted by self.attack_command().
+        """
+
+        # The attack is calculated.
         attack_roll_dice_expr = creature.attack_roll
         damage_roll_dice_expr = creature.damage_roll
         attack_result = util.roll_dice(attack_roll_dice_expr)
+
+        # If the attack roll didn't meet or exceed the player character's armor
+        # class, an attacked-and-not-hit value is returned.
         if attack_result < self.game_state.character.armor_class:
             return stmsg.Be_Attacked_by_Command_Attacked_and_Not_Hit(creature.title),
-        else:
+        else:  # attack_result >= self.game_state.character.armor_class
+            # The attack hit, so damage is rolled and inflicted.
             damage_done = util.roll_dice(damage_roll_dice_expr)
             self.game_state.character.take_damage(damage_done)
             if self.game_state.character.is_dead:
+                # The attack killed the player character, so an attacked-and-hit
+                # value and a character-death value are returned. Game over,
+                # it's that easy. Combat comes with risk.
                 return_tuple = (stmsg.Be_Attacked_by_Command_Attacked_and_Hit(creature.title, damage_done, 0),
                                 stmsg.Be_Attacked_by_Command_Character_Death())
+
+                # The game_has_ended boolean is set True, and the game-ending
+                # return value is saved so that self.process() can return it if
+                # the frontend accidentally tries to submit another command.
                 self.game_state.game_has_ended = True
                 self.game_ending_state_msg = return_tuple[-1]
                 return return_tuple
-            else:
+            else:  # self.game_state.character.is_alive == True
+                # The player character survived, so just an attacked-and-hit
+                # value is returned.
                 return (stmsg.Be_Attacked_by_Command_Attacked_and_Hit(creature.title, damage_done,
                                                                       self.game_state.character.hit_points),)
 
-    def begin_game_command(self, *tokens):
+    def begin_game_command(self, tokens):
         """
 This method implements the BEGIN GAME command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
@@ -359,35 +477,78 @@ command takes no arguments.
   Various_Commands_Entered_Room command describing the initial room of the
   dungeon.
         """
+        # This command begins the game. Most of the work done is devoted to
+        # creating the character's starting gear and equipping all of it.
+
+        # This command takes no argument; if any were used, a syntax error is
+        # returned.
         if len(tokens):
-            return stmsg.Command_Bad_Syntax('BEGIN GAME', *COMMANDS_SYNTAX['BEGIN GAME']),
+            return stmsg.Command_Bad_Syntax('BEGIN GAME', COMMANDS_SYNTAX['BEGIN GAME']),
+
+        # The game can't begin if the player hasn't used both SET NAME and SET
+        # CLASS yet, so I check for that. If not, a name-or-class-not-set error
+        # value is returned.
         character_name = getattr(self.game_state, 'character_name', None)
         character_class = getattr(self.game_state, 'character_class', None)
         if not character_name or not character_class:
             return stmsg.Begin_Game_Command_Name_or_Class_Not_Set(character_name, character_class),
+
+        # The error checking is done, so Game_State.game_has_begun is set to
+        # True, and a game-begins value is used to initialiZe the return_values
+        # tuple.
         self.game_state.game_has_begun = True
-        result = stmsg.Begin_Game_Command_Game_Begins(),      # v-- This is sorted just to make the tests deterministic.
-        for item_type, item_internal_name in sorted(STARTER_GEAR[character_class].items(), key=operator.itemgetter(0)):
-            item = self.game_state.items_state.get(item_internal_name)
-            self.game_state.character.pick_up_item(item)
+        return_values = stmsg.Begin_Game_Command_Game_Begins(),
+
+        # A player character receives starting equipment appropriate to their
+        # class, as laid out in the STARTER_GEAR dict. The value there is a dict
+        # of item types to item internal names. This loop looks up each internal
+        # name in the Items_State object to get an Item subclass object.
+        for item_type, item_internal_name in sorted(STARTER_GEAR[character_class].items(),  # This is sorted just to
+                                                    key=operator.itemgetter(0)):            # make the results 
+                                                                                            # deterministic for ease 
+            item = self.game_state.items_state.get(item_internal_name)                      # of testing.
+            self.game_state.character.pick_up_item(item)                        
+            # Character.equip_{item_type} is looked up and called with the
+            # Item subclass object to equip the character with this item of
+            # equipment.
             getattr(self.game_state.character, 'equip_' + item_type)(item)
+
+            # An appropriate item-equipped return value, complete with either
+            # the updated armor_class value or the updated attack_bonus and
+            # damage values, is appended to the return_values tuple.
             if item.item_type == 'armor':
-                result += (stmsg.Various_Commands_Item_Equipped(item.title, 'armor',
+                return_values += (stmsg.Various_Commands_Item_Equipped(item.title, 'armor',
                                                                 armor_class=self.game_state.character.armor_class),)
             elif item.item_type == 'shield':
-                result += (stmsg.Various_Commands_Item_Equipped(item.title, 'shield',
+                return_values += (stmsg.Various_Commands_Item_Equipped(item.title, 'shield',
                                                                 armor_class=self.game_state.character.armor_class),)
             elif item.item_type == 'wand':
-                result += (stmsg.Various_Commands_Item_Equipped(item.title, 'wand',
+                return_values += (stmsg.Various_Commands_Item_Equipped(item.title, 'wand',
                                                                 attack_bonus=self.game_state.character.attack_bonus,
                                                                 damage=self.game_state.character.damage_roll),)
             else:
-                result += (stmsg.Various_Commands_Item_Equipped(item.title, 'weapon',
+                return_values += (stmsg.Various_Commands_Item_Equipped(item.title, 'weapon',
                                                                 attack_bonus=self.game_state.character.attack_bonus,
                                                                 damage=self.game_state.character.damage_roll),)
-        return result + (stmsg.Various_Commands_Entered_Room(self.game_state.rooms_state.cursor),)
 
-    def cast_spell_command(self, *tokens):
+        # Lastly, an entered-room return value is appended to the return_values
+        # tuple, so a description of the first room will print.
+        return_values += (stmsg.Various_Commands_Entered_Room(self.game_state.rooms_state.cursor),)
+
+        # From the player's perspective, the frontend printing out this entire
+        # sequence of return values can look like:
+        #
+        # The game has begun!
+        # You're now wearing a suit of studded leather armor. Your armor class
+        # is now 11.
+        # You're now carrying a buckler. Your armor class is now 12.
+        # You're now wielding a mace. Your attack bonus is now +1 and your
+        # weapon damage is now 1d6+1.
+        # Antechamber of dungeon. There is a doorway to the north.
+
+        return return_values
+
+    def cast_spell_command(self, tokens):
         """
 This method implements the BEGIN GAME command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
@@ -416,38 +577,70 @@ command takes no arguments.
   of a Cast_Spell_Command_Cast_Healing_Spell object and a
   Various_Commands_Underwent_Healing_Effect object is returned.
         """
+
+        # The first error check detects if the player has used this command
+        # while playing a Warrior or Thief. Those classes can't cast spells, so
+        # a command-class-restricted error is returned.
         if self.game_state.character_class not in ('Mage', 'Priest'):
             return stmsg.Command_Class_Restricted('CAST SPELL', 'mage', 'priest'),
+
+        # This command takes no arguments, so if any were used a syntax error is
+        # returned.
         elif len(tokens):
-            return stmsg.Command_Bad_Syntax('CAST SPELL', *COMMANDS_SYNTAX['CAST SPELL']),
+            return stmsg.Command_Bad_Syntax('CAST SPELL', COMMANDS_SYNTAX['CAST SPELL']),
+
+        # If the player character's mana is less than SPELL_MANA_COST, an
+        # insufficient-mana error is returned.
         elif self.game_state.character.mana_points < SPELL_MANA_COST:
             return stmsg.Cast_Spell_Command_Insufficient_Mana(self.game_state.character.mana_points,
                                                             self.game_state.character.mana_point_total,
                                                             SPELL_MANA_COST),
+
+        # The initial error handling is concluded, so now the execution handles
+        # the Mage and Priest cases separately.
         elif self.game_state.character_class == 'Mage':
+
+            # If the current room has no creature in it, a no-creature-to-target
+            # error is returned.
             if self.game_state.rooms_state.cursor.creature_here is None:
                 return stmsg.Cast_Spell_Command_No_Creature_to_Target(),
             else:
+                # Otherwise, spell damage is rolled and inflicted on
+                # creature_here. The spell always hits (it's styled after _magic
+                # missile_, a classic D&D spell that always hits its target.
                 damage_dealt = util.roll_dice(SPELL_DAMAGE)
                 creature = self.game_state.rooms_state.cursor.creature_here
                 creature.take_damage(damage_dealt)
+
+                # If the creature died, a cast-damaging-spell value and a
+                # foe-death value are returned.
                 if creature.is_dead:
-                    return (stmsg.Cast_Spell_Command_Cast_Damaging_Spell(creature.title, damage_dealt, creature_slain=True),
+                    return (stmsg.Cast_Spell_Command_Cast_Damaging_Spell(creature.title, damage_dealt,
+                                                                         creature_slain=True),
                             stmsg.Various_Commands_Foe_Death(creature.title))
                 else:
+                    # Otherwise, like ATTACK, using this command and
+                    # not killing your foe means they counterattack.
+                    # cast-damaging-spell is conjoined with the outcome of
+                    # self._be_attacked_by_command() and the total tuple is
+                    # returned.
                     be_attacked_by_result = self._be_attacked_by_command(creature)
                     return operator.concat((stmsg.Cast_Spell_Command_Cast_Damaging_Spell(creature.title,
                                                                                            damage_dealt,
                                                                                            creature_slain=False),),
                                            be_attacked_by_result)
         else:
+            # The Mage's spell is a damaging spell, but the Priest's spell is
+            # a self-heal. The same SPELL_DAMAGE dice are used. The healing is
+            # rolled and applied to the Character object. A cast-healing-spell
+            # value and a underwent-healing-effect value are returned.
             damage_rolled = util.roll_dice(SPELL_DAMAGE)
             healed_amt = self.game_state.character.heal_damage(damage_rolled)
             return (stmsg.Cast_Spell_Command_Cast_Healing_Spell(),
                     stmsg.Various_Commands_Underwent_Healing_Effect(healed_amt, self.game_state.character.hit_points,
                                                                     self.game_state.character.hit_point_total))
 
-    def close_command(self, *tokens):
+    def close_command(self, tokens):
         """
 This method implements the CLOSE command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
@@ -460,7 +653,7 @@ CLOSE <chest name>
 * If that syntax is not followed, this method returns a 1-tuple of a
   Command_Bad_Syntax object.
 * If there is no chest or door in the room that matches the arguments, a 1-tuple
-  of a Close_Command_Object_to_Close_Not_Here object is returned.
+  of a Close_Command_Element_to_Close_Not_Here object is returned.
 * If a door is specified and that door compass directory and/or title doesn't
   match any door in self.game_state.rooms_state.cursor.doors, a 1-tuple of a
   Various_Commands_Door_Not_Present object is returned.
@@ -468,21 +661,33 @@ CLOSE <chest name>
   door in self.game_state.rooms_state.cursor.doors, a 1-tuple of a
   Various_Commands_Ambiguous_Door_Specifier object is returned.
 * If the door or chest specified is already closed, a 1-tuple of a
-  Close_Command_Object_Is_Already_Closed object is returned.
-* Otherwise, a 1-tuple of a Close_Command_Object_Has_Been_Closed is returned.
+  Close_Command_Element_Is_Already_Closed object is returned.
+* Otherwise, a 1-tuple of a Close_Command_Element_Has_Been_Closed is returned.
         """
-        result = self._lock_unlock_open_or_close_preproc('CLOSE', *tokens)
+
+        # The self.open_command(), self.close_command(),
+        # self.lock_command(), and self.unlock_command() share the
+        # majority of their logic in a private workhorse method,
+        # self._preprocessing_for_lock_unlock_open_or_close().
+        result = self._preprocessing_for_lock_unlock_open_or_close('CLOSE', tokens)
+
+        # As with any workhorse method, it either returns an error value or the
+        # object to operate on. So I type test if the result tuple's 1st element
+        # is a Game_State_Message subclass object. If so, it's returned.
         if isinstance(result[0], stmsg.Game_State_Message):
             return result
         else:
-            object_to_close, = result
-        if object_to_close.is_closed:
-            return stmsg.Close_Command_Object_Is_Already_Closed(object_to_close.title),
-        else:
-            object_to_close.is_closed = True
-            return stmsg.Close_Command_Object_Has_Been_Closed(object_to_close.title),
+            # Otherwise I extract the element to close.
+            element_to_close, = result
 
-    def drink_command(self, *tokens):
+        # If the element to close is already closed, a
+        if element_to_close.is_closed:
+            return stmsg.Close_Command_Element_Is_Already_Closed(element_to_close.title),
+        else:
+            element_to_close.is_closed = True
+            return stmsg.Close_Command_Element_Has_Been_Closed(element_to_close.title),
+
+    def drink_command(self, tokens):
         """
 This method implements the DRINK command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
@@ -518,46 +723,94 @@ DRINK <number> <potion name>[s]
   with its mana_points_recovered attribute, and a 1-tuple of a
   Drink_Command_Drank_Mana_Potion object is returned.
         """
-        if not len(tokens) or tokens == ('the',):
-            return stmsg.Command_Bad_Syntax('DRINK', *COMMANDS_SYNTAX['DRINK']),
+        # This command requires an argument, which may include a direct or
+        # indirect article. If that standard isn't met, a syntax error is
+        # returned.
+        if not len(tokens) or len(tokens) == 1 and tokens[0] in ('the', 'a', 'an'):
+            return stmsg.Command_Bad_Syntax('DRINK', COMMANDS_SYNTAX['DRINK']),
+
+        # Any leading article is stripped, but it signals that the quantity to
+        # drink is 1, so qty_to_drink is set.
         if tokens[0] == 'the' or tokens[0] == 'a':
-            drinking_qty = 1
+            qty_to_drink = 1
             tokens = tokens[1:]
+
+        # Otherwise, I check if the first token is a digital or lexical integer.
         elif tokens[0].isdigit() or util.lexical_number_in_1_99_re.match(tokens[0]):
-            drinking_qty = int(tokens[0]) if tokens[0].isdigit() else util.lexical_number_to_digits(tokens[0])
-            if (drinking_qty > 1 and not tokens[-1].endswith('s')) or (drinking_qty == 1 and tokens[-1].endswith('s')):
-                return stmsg.Command_Bad_Syntax('DRINK', *COMMANDS_SYNTAX['DRINK']),
+            # If the first token parses as an int, I cast it and
+            # set qty_to_drink. Otherwise, the utility function
+            # adventuregame.utilities.lexical_number_to_digits() is used to
+            # transform a number word to an int.
+            qty_to_drink = int(tokens[0]) if tokens[0].isdigit() else util.lexical_number_to_digits(tokens[0])
+            if (qty_to_drink > 1 and not tokens[-1].endswith('s')) or (qty_to_drink == 1 and tokens[-1].endswith('s')):
+                return stmsg.Command_Bad_Syntax('DRINK', COMMANDS_SYNTAX['DRINK']),
+
+            # The first token is dropped off the tokens tuple.
             tokens = tokens[1:]
         else:
-            drinking_qty = 1
+
+            # No quantifier was detected at the front of the tokens. That
+            # implies qty_to_drink = 1; but if the last token has a plural 's',
+            # the arguments are ambiguous as to quantity. So a quantity-unclear
+            # error is returned.
+            qty_to_drink = 1
             if tokens[-1].endswith('s'):
-                return stmsg.Command_Bad_Syntax('DRINK', *COMMANDS_SYNTAX['DRINK']),
+                return stmsg.Drink_Command_Quantity_Unclear(),
+
+        # The initial error checking is out of the way, so we check the
+        # Character's inventory for an item with a title that matches the
+        # arguments.
         item_title = ' '.join(tokens).rstrip('s')
         matching_items_qtys_objs = tuple(filter(lambda argl: argl[1].title == item_title,
                                                 self.game_state.character.list_items()))
+
+        # The character has no such item, so an item-not-in-inventory error is returned.
         if not len(matching_items_qtys_objs):
             return stmsg.Drink_Command_Item_Not_in_Inventory(item_title),
+
+        # An item by the title that the player specified was found, so the
+        # object and its quantity are saved.
         item_qty, item = matching_items_qtys_objs[0]
+
+        # If the item isn't a potion, an item-not-drinkable error is returned.
         if not item.title.endswith(' potion'):
             return stmsg.Drink_Command_Item_Not_Drinkable(item_title),
-        elif drinking_qty > item_qty:
-            return stmsg.Drink_Command_Tried_to_Drink_More_than_Possessed(item_title, drinking_qty, item_qty),
+
+        # If the arguments specify a quantity to drink that's greater than the
+        # quantity in inventory, a tried-to-drink-more-than-possessed error is
+        # returned.
+        elif qty_to_drink > item_qty:
+            return stmsg.Drink_Command_Tried_to_Drink_More_than_Possessed(item_title, qty_to_drink, item_qty),
+
+        # I execute the effect of a health potion or a mana potion, depending.
+        # Mana potion first.
         elif item.title == 'health potion':
+
+            # The amount of healing done by the potion is healed on the
+            # character, and the potion is removed from inventory. A
+            # underwent-healing-effect value is returned.
             hit_points_recovered = item.hit_points_recovered
             healed_amt = self.game_state.character.heal_damage(hit_points_recovered)
             self.game_state.character.drop_item(item)
             return stmsg.Various_Commands_Underwent_Healing_Effect(healed_amt, self.game_state.character.hit_points,
                                                                    self.game_state.character.hit_point_total),
         else:   # item.title == 'mana potion':
+            # If the player character isn't a Mage or a Priest, a mana potion
+            # does nothing; a drank-mana-potion-when-not-a-spellcaster error is
+            # returned.
             if self.game_state.character_class not in ('Mage', 'Priest'):
                 return stmsg.Drink_Command_Drank_Mana_Potion_when_Not_A_Spellcaster(),
+
+            # The amount of mana recovery done by the potion is granted to the
+            # character, and the potion is removed from inventory. A
+            # drank-mana-potion value is returned.
             mana_points_recovered = item.mana_points_recovered
             regained_amt = self.game_state.character.regain_mana(mana_points_recovered)
             self.game_state.character.drop_item(item)
             return stmsg.Drink_Command_Drank_Mana_Potion(regained_amt, self.game_state.character.mana_points,
                                                          self.game_state.character.mana_point_total),
 
-    def drop_command(self, *tokens):
+    def drop_command(self, tokens):
         """
 This method implements the DROP command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
@@ -580,69 +833,151 @@ DROP <number> <item name>
   is returned.
 * Otherwise, a 1-tuple of a Drop_Command_Dropped_Item object is returned.
         """
-        result = self._pick_up_or_drop_preproc('DROP', *tokens)
+        # self.pick_up_command() and self.drop_command() share a lot of logic in
+        # a private workhorse method self._pick_up_or_drop_preproc(). As with
+        # all private workhorse methods, the return value is a tuple and might
+        # consist of an error value; so the 1st element is type tested to see if
+        # its a Game_State_Message subclass object.
+        result = self._pick_up_or_drop_preproc('DROP', tokens)
         if len(result) == 1 and isinstance(result[0], stmsg.Game_State_Message):
+
+            # The workhorse method returned an error, so I pass that along.
             return result
         else:
-            drop_amount, item_title = result
+
+            # The workhorse method succeeded, I extract the item to drop and the
+            # quantity from its return tuple.
+            drop_quantity, item_title = result
+
+        # The quantity of the item on the floor is reported by some
+        # drop_command() return values, so I check the contents of items_here.
         if self.game_state.rooms_state.cursor.items_here is not None:
             items_here = tuple(self.game_state.rooms_state.cursor.items_here.values())
         else:
             items_here = ()
-        items_had = tuple(self.game_state.character.list_items())
-        item_here_pair = tuple(filter(lambda pair: pair[1].title == item_title, items_here))
-        items_had_pair = tuple(filter(lambda pair: pair[1].title == item_title, items_had))
-        if not len(items_had_pair):
-            return stmsg.Drop_Command_Trying_to_Drop_Item_You_Dont_Have(item_title, drop_amount),
-        (item_had_qty, item), = items_had_pair
-        if drop_amount is math.nan:
-            drop_amount = item_had_qty
-        amount_already_here = item_here_pair[0][0] if len(item_here_pair) else 0
-        if drop_amount > item_had_qty:
-            return stmsg.Drop_Command_Trying_to_Drop_More_than_You_Have(item_title, drop_amount, item_had_qty),
-        else:
-            unequip_return = ()
-            if drop_amount - item_had_qty == 0:
-                armor_equipped = self.game_state.character.armor_equipped
-                weapon_equipped = self.game_state.character.weapon_equipped
-                shield_equipped = self.game_state.character.shield_equipped
-                wand_equipped = self.game_state.character.wand_equipped
-                if item.item_type == 'armor' and armor_equipped is not None and armor_equipped.internal_name == item.internal_name:
-                    self.game_state.character.unequip_armor()
-                    unequip_return = stmsg.Various_Commands_Item_Unequipped(item.title, item.item_type,
-                                                                            armor_class=self.game_state.character.armor_class),
-                elif item.item_type == 'weapon' and weapon_equipped is not None and weapon_equipped.internal_name == item.internal_name:
-                    self.game_state.character.unequip_weapon()
-                    if wand_equipped:
-                        unequip_return = stmsg.Various_Commands_Item_Unequipped(item_title, 'weapon',
-                                                                                attack_bonus=self.game_state.character.attack_bonus,
-                                                                                damage=self.game_state.character.damage_roll,
-                                                                                attacking_with=wand_equipped),
-                    else:
-                        unequip_return = stmsg.Various_Commands_Item_Unequipped(item_title, 'weapon', now_cant_attack=True),
-                elif item.item_type == 'shield' and shield_equipped is not None and shield_equipped.internal_name == item.internal_name:
-                    self.game_state.character.unequip_shield()
-                    unequip_return = stmsg.Various_Commands_Item_Unequipped(item_title, 'shield',
-                                                                            armor_class=self.game_state.character.armor_class),
-                elif item.item_type == 'wand' and wand_equipped is not None and wand_equipped.internal_name == item.internal_name:
-                    self.game_state.character.unequip_wand()
-                    if weapon_equipped:
-                        unequip_return = stmsg.Various_Commands_Item_Unequipped(item_title, 'wand',
-                                                                                attack_bonus=self.game_state.character.attack_bonus,
-                                                                                damage=self.game_state.character.damage_roll,
-                                                                                now_attacking_with=weapon_equipped),
-                    else:
-                        unequip_return = stmsg.Various_Commands_Item_Unequipped(item_title, 'wand', now_cant_attack=True),
-            self.game_state.character.drop_item(item, qty=drop_amount)
-            if self.game_state.rooms_state.cursor.items_here is None:
-                self.game_state.rooms_state.cursor.items_here = elem.Items_Multi_State()
-            self.game_state.rooms_state.cursor.items_here.set(item.internal_name,
-                                                              amount_already_here + drop_amount, item)
-            amount_had_now = item_had_qty - drop_amount
-            return unequip_return + (stmsg.Drop_Command_Dropped_Item(item_title, item.item_type, drop_amount,
-                                                                     amount_already_here + drop_amount, amount_had_now),)
 
-    def equip_command(self, *tokens):
+        # items_here's contents are filtered looking for an item by a matching
+        # title. If one is found, the quantity already in the room is saved to
+        # quantity_already_here.
+        item_here_pair = tuple(filter(lambda pair: pair[1].title == item_title, items_here))
+        quantity_already_here = item_here_pair[0][0] if len(item_here_pair) else 0
+
+        # In the same way, the Character's inventory is listed and filtered
+        # looking for an item by a matching title.
+        items_had_pair = tuple(filter(lambda pair: pair[1].title == item_title, self.game_state.character.list_items()))
+
+        # The player character's inventory doesn't contain an item by that
+        # title, so a trying-to-drop-an-item-you-don't-have error is returned.
+        if not len(items_had_pair):
+            return stmsg.Drop_Command_Trying_to_Drop_Item_You_Dont_Have(item_title, drop_quantity),
+
+        # The item was found, so its object and quantity are saved.
+        (item_had_qty, item), = items_had_pair
+
+        if drop_quantity > item_had_qty:
+
+            # If the quantity specified to drop is greater than the quantity in
+            # inventory, a trying-to-drop-more-than-you-have error is returned.
+            return stmsg.Drop_Command_Trying_to_Drop_More_than_You_Have(item_title, drop_quantity, item_had_qty),
+        elif drop_quantity is math.nan:
+
+            # The workhorse method returns math.nan as the drop_quantity if the
+            # arguments didn't specify a quantity. I now know how many the
+            # player character has, so I assume they mean to drop all of them. I
+            # set drop_quantity to item_had_qty.
+            drop_quantity = item_had_qty
+
+        # If the player drops an item they had equipped, and they have
+        # none left, it is unequipped. The return tuple is started with
+        # unequip_return, which may be empty at the end of this conditional.
+        unequip_return = ()
+        if drop_quantity - item_had_qty == 0:
+
+            # This only runs if the player character will have none left after
+            # this drop. All four equipment types are separately checked to see
+            # if they're the item being dropped. The unequip return value needs
+            # to specify which game stats have been changed by the unequipping,
+            # so this conditional is involved.
+            armor_equipped = self.game_state.character.armor_equipped
+            weapon_equipped = self.game_state.character.weapon_equipped
+            shield_equipped = self.game_state.character.shield_equipped
+            wand_equipped = self.game_state.character.wand_equipped
+
+            # If the character's armor is being dropped, it's unequipped and a
+            # item-unequipped error value is generated, noting the decreased
+            # armor class.
+            if (item.item_type == 'armor' and armor_equipped is not None
+                    and armor_equipped.internal_name == item.internal_name):
+                self.game_state.character.unequip_armor()
+                unequip_return = stmsg.Various_Commands_Item_Unequipped(item.title, item.item_type,
+                                     armor_class=self.game_state.character.armor_class),
+            # If the character's shield is being dropped, it's unequipped and
+            # a item-unequipped error value is generated, noting the decreased
+            # armor class.
+            elif (item.item_type == 'shield' and shield_equipped is not None
+                      and shield_equipped.internal_name == item.internal_name):
+                self.game_state.character.unequip_shield()
+                unequip_return = stmsg.Various_Commands_Item_Unequipped(item_title, 'shield',
+                                     armor_class=self.game_state.character.armor_class),
+
+            # If the character's weapon is being dropped, it's unequipped,
+            # and an item-unequipped error value is generated.
+            elif (item.item_type == 'weapon' and weapon_equipped is not None
+                      and weapon_equipped.internal_name == item.internal_name):
+                self.game_state.character.unequip_weapon()
+                if wand_equipped:
+                    # If the player character is a mage and has a wand equipped,
+                    # the wand's attack values are included since they will
+                    # use the wand to attack. (An equipped wand always takes
+                    # precedence over a weapon for a Mage.)
+                    unequip_return = stmsg.Various_Commands_Item_Unequipped(item_title, 'weapon',
+                                         attack_bonus=self.game_state.character.attack_bonus,
+                                         damage=self.game_state.character.damage_roll,
+                                         attacking_with=wand_equipped),
+                else:
+                    # Otherwise, the player will be informed that they now can't
+                    # attack.
+                    unequip_return = stmsg.Various_Commands_Item_Unequipped(item_title, 'weapon', now_cant_attack=True),
+
+            # If the character's wand is being dropped, it's unequipped,
+            # and an item-unequipped error value is generated.
+            elif (item.item_type == 'wand' and wand_equipped is not None
+                    and wand_equipped.internal_name == item.internal_name):
+                self.game_state.character.unequip_wand()
+                if weapon_equipped:
+                    # If the player has a weapon equipped, the weapon's attack
+                    # values are included since they will fall back on it.
+                    unequip_return = stmsg.Various_Commands_Item_Unequipped(item_title, 'wand',
+                                         attack_bonus=self.game_state.character.attack_bonus,
+                                         damage=self.game_state.character.damage_roll,
+                                         now_attacking_with=weapon_equipped),
+                else:
+                    # Otherwise, the player will be informed that they now can't
+                    # attack.
+                    unequip_return = stmsg.Various_Commands_Item_Unequipped(item_title, 'wand', now_cant_attack=True),
+
+        # Finally, with all other preconditions handled, I actually drop the item.
+        self.game_state.character.drop_item(item, qty=drop_quantity)
+
+        # If there wasn't a Items_Multi_State set to items_here, I
+        # instantiate one.
+        if self.game_state.rooms_state.cursor.items_here is None:
+            self.game_state.rooms_state.cursor.items_here = elem.Items_Multi_State()
+
+        # The item is saved to items_here with the combined quantity of what was
+        # already there (can be 0) and the quantity dropped.
+        self.game_state.rooms_state.cursor.items_here.set(item.internal_name,
+                                                          quantity_already_here + drop_quantity, item)
+
+        # I calculate the quantity left in the character's inventory, and return
+        # a dropped-item value with the quantity dropped, the quantity on the
+        # floor, and the quantity remaining in inventory.
+        quantity_had_now = item_had_qty - drop_quantity
+        return unequip_return + (stmsg.Drop_Command_Dropped_Item(
+                                     item_title, item.item_type, drop_quantity, quantity_already_here + drop_quantity,
+                                     quantity_had_now),)
+
+    def equip_command(self, tokens):
         """
 This method implements the EQUIP command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
@@ -669,60 +1004,124 @@ EQUIP <weapon name>
 * Otherwise, the specified item is equipped, and a 1-tuple of a
   Various_Commands_Item_Equipped object is returned.
         """
-        if not tokens:
-            return stmsg.Command_Bad_Syntax('EQUIP', *COMMANDS_SYNTAX['EQUIP']),
+        # The equip command requires an argument; if none was given, a syntax
+        # error is returned.
+        if not tokens or len(tokens) == 1 and tokens[0] == 'the':
+            return stmsg.Command_Bad_Syntax('EQUIP', COMMANDS_SYNTAX['EQUIP']),
+        if tokens[0] == 'the':
+            tokens = tokens[1:]
+
+        # The title of the item to equip is formed from the arguments.
         item_title = ' '.join(tokens)
+
+        # The inventory is filtered looking for an item with a matching title.
         matching_item_tuple = tuple(item for _, item in self.game_state.character.list_items()
                                              if item.title == item_title)
+
+        # If no such item is found in the inventory, a no-such-item-in-inventory
+        # error is returned.
         if not len(matching_item_tuple):
             return stmsg.Equip_Command_No_Such_Item_in_Inventory(item_title),
+
+        # The Item subclass object was found and is saved.
         item, = matching_item_tuple[0:1]
+
+        # I check that the item has a {class}_can_use = True attribute. If not,
+        # a class-can't-use-item error is returned.
         can_use_attr = self.game_state.character_class.lower() + '_can_use'
         if not getattr(item, can_use_attr):
             return stmsg.Equip_Command_Class_Cant_Use_Item(self.game_state.character_class, item_title, item.item_type),
-        retval = tuple()
-        if item.item_type == 'armor' and self.game_state.character.armor_equipped:
-            old_equipped = self.game_state.character.armor_equipped
-            retval = stmsg.Various_Commands_Item_Unequipped(old_equipped.title, old_equipped.item_type,
-                                                            armor_class=self.game_state.character.armor_class),
-        elif item.item_type == 'shield' and self.game_state.character.shield_equipped:
-            old_equipped = self.game_state.character.shield_equipped
-            retval = stmsg.Various_Commands_Item_Unequipped(old_equipped.title, old_equipped.item_type,
-                                                            armor_class=self.game_state.character.armor_class),
-        elif item.item_type == 'wand' and self.game_state.character.wand_equipped:
-            old_equipped = self.game_state.character.wand_equipped
-            retval = stmsg.Various_Commands_Item_Unequipped(old_equipped.title, old_equipped.item_type,
-                                                            now_cant_attack=True),
-        elif item.item_type == 'weapon' and self.game_state.character.weapon_equipped:
-            old_equipped = self.game_state.character.weapon_equipped
-            retval = stmsg.Various_Commands_Item_Unequipped(old_equipped.title, old_equipped.item_type,
-                                                            now_cant_attack=True),
-        if item.item_type == 'armor':
-            self.game_state.character.equip_armor(item)
-            return retval + (stmsg.Various_Commands_Item_Equipped(item.title, 'armor',
-                                                                  armor_class=self.game_state.character.armor_class),)
-        elif item.item_type == 'shield':
-            self.game_state.character.equip_shield(item)
-            return retval + (stmsg.Various_Commands_Item_Equipped(item.title, 'shield',
-                                                                  armor_class=self.game_state.character.armor_class),)
-        elif item.item_type == 'wand':
-            self.game_state.character.equip_wand(item)
-            return retval + (stmsg.Various_Commands_Item_Equipped(item.title, 'wand',
-                                                                  attack_bonus=self.game_state.character.attack_bonus,
-                                                                  damage=self.game_state.character.damage_roll),)
-        else:
-            self.game_state.character.equip_weapon(item)
-            if self.game_state.character.wand_equipped:
-                return retval + (stmsg.Various_Commands_Item_Equipped(item.title, 'weapon',
-                                                                      attack_bonus=self.game_state.character.attack_bonus,
-                                                                      damage=self.game_state.character.damage_roll,
-                                                                      attacking_with='wand'),)
-            else:
-                return retval + (stmsg.Various_Commands_Item_Equipped(item.title, 'weapon',
-                                                                      attack_bonus=self.game_state.character.attack_bonus,
-                                                                      damage=self.game_state.character.damage_roll),)
 
-    def help_command(self, *tokens):
+        # This conditional handles checking, for each type of equippable
+        # item, whether the player character already has an item of that type
+        # equipped; if so, it's unequipped, and a item-unequipped return value
+        # is appended to the return values tuple.
+        return_values = tuple()
+        if item.item_type == 'armor' and self.game_state.character.armor_equipped:
+            # The player is trying to equip armor but is already wearing armor,
+            # so their existing armor is unequipped.
+            old_equipped = self.game_state.character.armor_equipped
+            self.game_state.character.unequip_armor()
+            return_values += stmsg.Various_Commands_Item_Unequipped(old_equipped.title, old_equipped.item_type,
+                                                                    armor_class=self.game_state.character.armor_class),
+        elif item.item_type == 'shield' and self.game_state.character.shield_equipped:
+            # The player is trying to equip shield but is already carrying a
+            # shield, so their existing shield is unequipped.
+            old_equipped = self.game_state.character.shield_equipped
+            self.game_state.character.unequip_shield()
+            return_values += stmsg.Various_Commands_Item_Unequipped(old_equipped.title, old_equipped.item_type,
+                                                                    armor_class=self.game_state.character.armor_class),
+        elif item.item_type == 'wand' and self.game_state.character.wand_equipped:
+            # The player is trying to equip wand but is already using a wand, so
+            # their existing wand is unequipped.
+            old_equipped = self.game_state.character.wand_equipped
+            self.game_state.character.unequip_wand()
+            if self.game_state.character.weapon_equipped:
+                return_values += stmsg.Various_Commands_Item_Unequipped(old_equipped.title, old_equipped.item_type,
+                                           attacking_with=self.game_state.character.weapon_equipped,
+                                           attack_bonus=self.game_state.character.attack_bonus,
+                                           damage=self.game_state.character.damage_roll),
+            else:
+                return_values += stmsg.Various_Commands_Item_Unequipped(old_equipped.title, old_equipped.item_type,
+                                                                        now_cant_attack=True),
+        elif item.item_type == 'weapon' and self.game_state.character.weapon_equipped:
+            # The player is trying to equip weapon but is already wielding a
+            # weapon, so their existing weapon is unequipped.
+            old_equipped = self.game_state.character.weapon_equipped
+            self.game_state.character.unequip_weapon()
+            if self.game_state.character.wand_equipped:
+                return_values += stmsg.Various_Commands_Item_Unequipped(old_equipped.title, old_equipped.item_type,
+                                           attacking_with=self.game_state.character.wand_equipped,
+                                           attack_bonus=self.game_state.character.attack_bonus,
+                                           damage=self.game_state.character.damage_roll),
+            else:
+                return_values += stmsg.Various_Commands_Item_Unequipped(old_equipped.title, old_equipped.item_type,
+                                                                        now_cant_attack=True),
+
+        # Now it's time to equip the new item; a item-equipped return value is
+        # appended to return_values.
+        if item.item_type == 'armor':
+            # The player is equipping a suit of armor, so the
+            # Character.equip_armor() method is called with the item object.
+            self.game_state.character.equip_armor(item)
+            return_values += (stmsg.Various_Commands_Item_Equipped(item.title, 'armor',
+                                                                   armor_class=self.game_state.character.armor_class),)
+        elif item.item_type == 'shield':
+            # The player is equipping a shield, so the Character.equip_shield()
+            # method is called with the item object.
+            self.game_state.character.equip_shield(item)
+            return_values += (stmsg.Various_Commands_Item_Equipped(item.title, 'shield',
+                                  armor_class=self.game_state.character.armor_class),)
+        elif item.item_type == 'wand':
+            # The player is equipping a wand, so the Character.equip_wand()
+            # method is called with the item object.
+            self.game_state.character.equip_wand(item)
+            return_values += (stmsg.Various_Commands_Item_Equipped(item.title, 'wand',
+                                      attack_bonus=self.game_state.character.attack_bonus,
+                                      damage=self.game_state.character.damage_roll),)
+        else:
+            # The player is equipping a weapon, so the Character.equip_weapon()
+            # method is called with the item object.
+            self.game_state.character.equip_weapon(item)
+
+            # Because a wand equipped always supercedes any weapon equipped for
+            # a Mage, the item-equipped return value is different if a wand is
+            # equipped, so this extra conditional is necessary.
+            if self.game_state.character.wand_equipped:
+                return_values += (stmsg.Various_Commands_Item_Equipped(item.title, 'weapon',
+                                      attack_bonus=self.game_state.character.attack_bonus,
+                                      damage=self.game_state.character.damage_roll,
+                                      attacking_with=self.game_state.character.wand_equipped),)
+            else:
+                return_values += (stmsg.Various_Commands_Item_Equipped(item.title, 'weapon',
+                                      attack_bonus=self.game_state.character.attack_bonus,
+                                      damage=self.game_state.character.damage_roll),)
+
+        # The optional item-unequipped value and the item-equipped value are
+        # returned.
+        return return_values
+
+    def help_command(self, tokens):
         """
 This method implements the HELP command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
@@ -742,21 +1141,31 @@ HELP <command name>
   help for the command is located in COMMANDS_HELP, and a 1-tuple of a
   Help_Command_Display_Help_for_Command object is returned.
         """
+        # An ordered tuple of all commands in uppercase is displayed in some
+        # return values so I compute it.
         commands_tuple = tuple(sorted(map(lambda strval: strval.replace('_', ' ').upper(),
                                           self.pregame_commands | self.ingame_commands)))
+
+        # If called with no arguments, the help command displays a generic help
+        # message listing all available commands.
         if len(tokens) == 0:
             return stmsg.Help_Command_Display_Commands(commands_tuple),
-        else:
-            command = ' '.join(tokens)
-            command_upper = command.upper()
-            command_uscores = command.replace(' ', '_')
-            if command_uscores not in self.pregame_commands and command_uscores not in self.ingame_commands:
-                return stmsg.Help_Command_Command_Not_Recognized(command_upper, commands_tuple),
-            else:
-                return stmsg.Help_Command_Display_Help_for_Command(command_upper, COMMANDS_SYNTAX[command_upper],
-                                                                   COMMANDS_HELP[command_upper]),
 
-    def inventory_command(self, *tokens):
+        # A specific command was included as an argument.
+        else:
+            command = ' '.join(tokens).upper()
+
+            # If the command doesn't occur in commands_tuple, a
+            # command-not-recognized error is returned.
+            if command not in commands_tuple:
+                return stmsg.Help_Command_Command_Not_Recognized(command, commands_tuple),
+            else:
+                # Otherwise, a help message for the command specified is
+                # returned.
+                return stmsg.Help_Command_Display_Help_for_Command(command, COMMANDS_SYNTAX[command],
+                                                                   COMMANDS_HELP[command]),
+
+    def inventory_command(self, tokens):
         """
 This method implements the INVENTORY command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
@@ -768,12 +1177,17 @@ command takes no arguments.
 * Otherwise, a 1-tuple of a Inventory_Command_Display_Inventory object is
   returned.
         """
+        # This command takes no arguments; if any are specified, a syntax error is returned.
         if len(tokens):
-            return stmsg.Command_Bad_Syntax('INVENTORY', *COMMANDS_SYNTAX['INVENTORY']),
+            return stmsg.Command_Bad_Syntax('INVENTORY', COMMANDS_SYNTAX['INVENTORY']),
+
+        # There's not really any other error case, for once. The inventory
+        # contents are stored in a tuple, and a display-inventory value is
+        # returned with the tuple to display.
         inventory_contents = sorted(self.game_state.character.list_items(), key=lambda argl: argl[1].title)
         return stmsg.Inventory_Command_Display_Inventory(inventory_contents),
 
-    def leave_command(self, *tokens):
+    def leave_command(self, tokens):
         """
 This method implements the LEAVE command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
@@ -800,25 +1214,53 @@ LEAVE [USING or VIA] <compass direction> <door name>
   self.game_state.rooms_state object, and a 2-tuple of a Leave_Command_Left_Room
   object and a Various_Commands_Entered_Room object is returned.
         """
+        # This method takes arguments of a specific form; if the arguments don't
+        # match it, a syntax error is returned.
         if (not len(tokens) or not 2 <= len(tokens) <= 4 or tokens[-1] not in ('door', 'doorway')):
-            return stmsg.Command_Bad_Syntax('LEAVE', *COMMANDS_SYNTAX['LEAVE']),
-        result = self._various_commands_door_selector(*tokens)
+            return stmsg.Command_Bad_Syntax('LEAVE', COMMANDS_SYNTAX['LEAVE']),
+
+        # The format for specifying doors is flexible, and is implemented by a
+        # private workhorse method.
+        result = self._door_selector(tokens)
+
+        # Like all workhorse methods, it may return an error. result[0] is
+        # type-tested if it inherits from Game_State_Message. If it matches, the
+        # result tuple is returned.
         if isinstance(result[0], stmsg.Game_State_Message):
             return result
         else:
+            # Otherwise, the matching Door object is extracted from result.
             door, = result
+
+        # The compass direction door type are extracted from the Door object.
         compass_dir = door.title.split(' ')[0]
         portal_type = door.door_type.split('_')[-1]
+
+        # If the door is locked, a door-is-locked error is returned.
+        if door.is_locked:
+            return stmsg.Leave_Command_Door_Is_Locked(compass_dir, portal_type),
+
+        # The exit to the dungeon is a special Door object marked with
+        # is_exit=True. I test the Door object to see if this is the one.
         if door.is_exit:
+
+            # If so, a left-room value will be returned along with a won-the-game value.
             return_tuple = (stmsg.Leave_Command_Left_Room(compass_dir, portal_type), stmsg.Leave_Command_Won_The_Game())
+
+            # The game_has_ended boolean is set True, and the game-ending
+            # return value is saved so that self.process() can return it if the
+            # frontend accidentally tries to submit another command.
             self.game_state.game_has_ended = True
             self.game_ending_state_msg = return_tuple[-1]
             return return_tuple
+
+        # Otherwise, Rooms_State.move is called with the compass direction, and
+        # a left-room value is returned along with a entered-room value.
         self.game_state.rooms_state.move(**{compass_dir: True})
         return (stmsg.Leave_Command_Left_Room(compass_dir, portal_type),
                 stmsg.Various_Commands_Entered_Room(self.game_state.rooms_state.cursor))
 
-    def lock_command(self, *tokens):
+    def lock_command(self, tokens):
         """
 This method implements the LOCK command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
@@ -835,84 +1277,159 @@ LOCK <chest name>
 * If the arguments given match more than one door in the room, a 1-tuple of a
   Various_Commands_Ambiguous_Door_Specifier object is returned.
 * If the arguments specify an object to unlock that is not present, a 1-tuple of
-  a Lock_Command_Object_to_Lock_Not_Here object is returned.
+  a Lock_Command_Element_to_Lock_Not_Here object is returned.
 * If the arguments specify an object to unlock that is already locked, a 1-tuple
-  of a Lock_Command_Object_Is_Already_Locked object is returned.
+  of a Lock_Command_Element_Is_Already_Locked object is returned.
 * If the arguments specify an object to unlock that is not present, a 1-tuple of
   a Lock_Command_Element_Not_Lockable is returned.
 * If the character does not possess the requisite door or chest key to lock the
   specified door or chest, a 1-tuple of a Lock_Command_Dont_Possess_Correct_Key
   object is returned.
 * Otherwise, the object has its is_locked attribute set to True, If the
-  Lock_Command_Object_Has_Been_Locked
+  Lock_Command_Element_Has_Been_Locked
         """
-        result = self._lock_unlock_open_or_close_preproc('LOCK', *tokens)
+        # This command requires an argument, so if tokens is zero-length a
+        # syntax error is returned.
+        if not len(tokens):
+            return stmsg.Command_Bad_Syntax('LOCK', COMMANDS_SYNTAX['LOCK']),
+
+        # A private workhorse method is used for logic shared with
+        # self.unlock_command(), self.open_command(), self.close_command().
+        result = self._preprocessing_for_lock_unlock_open_or_close('LOCK', tokens)
+
+        # As always with a workhorse method, the result is checked to see if
+        # it's an error value. If so, the result tuple is returned as-is.
         if isinstance(result[0], stmsg.Game_State_Message):
             return result
         else:
-            object_to_lock, = result
-        key_required = 'door key' if isinstance(object_to_lock, elem.Door) else 'chest key'
-        if not any(item.title == key_required for _, item in self.game_state.character.list_items()):
-            return stmsg.Lock_Command_Dont_Possess_Correct_Key(object_to_lock.title, key_required),
-        elif object_to_lock.is_locked:
-            return stmsg.Lock_Command_Object_Is_Already_Locked(object_to_lock.title),
-        else:
-            object_to_lock.is_locked = True
-            return stmsg.Lock_Command_Object_Has_Been_Locked(object_to_lock.title),
+            # Otherwise, the element to lock is extracted from the return value.
+            element_to_lock, = result
 
-    def _lock_unlock_open_or_close_preproc(self, command, *tokens):
+        # Locking something requires the matching key in inventory. The key's
+        # item title is determined, and the player character's inventory is
+        # searched for a matching Key object. The object isn't used for anything
+        # (it's not expended), so I don't save it, just check if it's there.
+        key_required = 'door key' if isinstance(element_to_lock, elem.Door) else 'chest key'
+        if not any(item.title == key_required for _, item in self.game_state.character.list_items()):
+            # Lacking the key, a don't-possess-correct-key error is returned.
+            return stmsg.Lock_Command_Dont_Possess_Correct_Key(element_to_lock.title, key_required),
+
+        # If the element_to_lock is already locked, a element-is-already-locked
+        # error is returned.
+        elif element_to_lock.is_locked:
+            return stmsg.Lock_Command_Element_Is_Already_Locked(element_to_lock.title),
+        else:
+            # Otherwise, the element_to_lock's is_locked attribute is set to
+            # True, and a element-has-been-locked value is returned.
+            element_to_lock.is_locked = True
+            return stmsg.Lock_Command_Element_Has_Been_Locked(element_to_lock.title),
+
+    # This private workhorse method handles the shared logic between lock,
+    # unlock, open or close: all four commands have the same type of game
+    # elements as their targets, and a player specifying such an element has the
+    # same failure modes.
+
+    def _preprocessing_for_lock_unlock_open_or_close(self, command, tokens):
+        """
+This private workhorse method handles the shared logic for lock_command(),
+unlock_command(), open_command() and close_command().
+
+:command: The command that the calling method was executing. One of LOCK,
+          UNLOCK, OPEN, or CLOSE.
+:tokens:  The arguments that the calling method was called with. Must be
+          non-null.
+
+* If the calling command received a zero-length tokens argument, a syntax error
+  is returned. The COMMANDS_SYNTAX used for the error uses the command argument
+  iso t matches the calling method's context.
+* If the specified game element is not present in the current
+  room, one of Unlock_Command_Element_to_Unlock_Not_Here,
+  Lock_Command_Element_to_Lock_Not_Here, Open_Command_Element_to_Open_Not_Here,
+  or Close_Command_Element_to_Close_Not_Here is returned, depending on the
+  command argument.
+* If the specified game element is a corpse, creature, doorway or
+  item, it's an invalid element for any of the calling methods; one of
+  Lock_Command_Element_Not_Lockable, Unlock_Command_Element_Not_Unlockable,
+  Open_Command_Element_Not_Openable, or Close_Command_Element_Not_Closable is
+  returned, depending on the command argument.
+        """
+        # If the command was used with no arguments, a syntax error is returned.
+        if not len(tokens):
+            return stmsg.Command_Bad_Syntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
+
+        # door is initialized to None so whether it's non-None later can be a
+        # signal.
         door = None
+
+        # These booleans are initialized to False; later if any one of them is
+        # true, an error value will be returned.
         tried_to_operate_on_doorway = tried_to_operate_on_creature = tried_to_operate_on_corpse = \
             tried_to_operate_on_item = False
-        if not len(tokens):
-            return stmsg.Command_Bad_Syntax(command.upper(), *COMMANDS_SYNTAX[command.upper()]),
+
+        # If the arguments indicate a door(way), a further private workhorse
+        # method self._door_selector() is used to implement the flexible door
+        # specifier syntax. As always with a private workhorse method, result[0]
+        # is type-tested to see if it's a error value. If so, the result tuple
+        # is returned.
         if tokens[-1] in ('door', 'doorway'):
-            result = self._various_commands_door_selector(*tokens)
+            result = self._door_selector(tokens)
             if isinstance(result[0], stmsg.Game_State_Message):
                 return result
             else:
+                # Otherwise, the Door object is extracted. But it may be a
+                # doorway, that's tested later.
                 door, = result
+
+        # The target title is formed, and container_here & creature_here are
+        # assigned to local variables as they're referenced frequently.
         target_title = ' '.join(tokens) if door is None else door.title
         container = self.game_state.rooms_state.cursor.container_here
         creature = self.game_state.rooms_state.cursor.creature_here
+
         if door is not None:
+            # If the Door object is a Doorway, that failure mode boolean is set.
             if door.door_type == 'doorway':
                 tried_to_operate_on_doorway = True
             else:
+                # Otherwise, it's a valid target for the calling method, and
+                # it's returned.
                 return door,
         elif creature is not None and creature.title == target_title:
+            # If the target matches the title for the creature in this room,
+            # that failure mode boolean is set.
             tried_to_operate_on_creature = True
         elif container is not None and container.title == target_title:
+            # If the target matches the title for a container here...
             if isinstance(container, elem.Corpse):
+                # If the container is a corpse, that failure mode boolean is set.
                 tried_to_operate_on_corpse = True
             else:
+                # Otherwise, it's a valid target for the calling method, and
+                # it's returned.
                 return container,
 
-        # If control flow reaches this statement, the first nested conditional
-        # didn't result in a return statement, which means that one of
-        # tried_to_operate_on_doorway, tried_to_operate_on_corpse, or
-        # self.game_state.rooms_state.cursor.items_here may have been set
-        # to True. If none were set, we check if tried_to_operate_on_item
-        # should be True. This is done with a for loop rather than any() so
-        # that the exact matching Item subclass object can be identified. The
-        # (Close|Open|Lock|Unlock)_Command_Element_Not_(Closable|Openable|Locka\
-        # ble|Unlockable) return object takes a target_type argument and I want
-        # to use the exact name of the Item subclass for that argument so I
-        # capture the offending Item subclass object.
-
+        # If I reach this point, the method is in a failure mode. If a door or
+        # chest matched it would already have been returned. If the other three
+        # failure modes don't obtain, the fourth-- an item-- is checked for.
         if (not any((tried_to_operate_on_doorway, tried_to_operate_on_corpse, tried_to_operate_on_corpse))
                 and self.game_state.rooms_state.cursor.items_here is not None):
+            # The room's items_here State object and the Character's inventory
+            # are both searched through looking for an item whose title matches
+            # the target.
             for _, item in itertools.chain(self.game_state.rooms_state.cursor.items_here.values(),
                                            self.game_state.character.list_items()):
                 if item.title != target_title:
                     continue
+                # If a match is found, that failure mode boolean is set and the
+                # loop is broken.
                 tried_to_operate_on_item = True
                 item_targetted = item
                 break
 
-        # Control flow fell off the end of the loop, which means none of the doors in the room had a title matching the
-        # object title specified in the command, and if there's a chest in the room the chest didn't match either. So
-        # whatever the user wanted to lock/unlock, it's not here.
+        # If any of the four failure modes occurred, then the player specified
+        # an existing element that is not openable/closable/lockable/unlockable.
+        # An appropriate argd is constructed and an appropriate error value is
+        # returned identifying the mistargeted element.
         if any((tried_to_operate_on_doorway, tried_to_operate_on_corpse, tried_to_operate_on_item,
                 tried_to_operate_on_creature)):
             argd = {'target_type': 'doorway' if tried_to_operate_on_doorway
@@ -928,45 +1445,86 @@ LOCK <chest name>
             else:
                 return stmsg.Close_Command_Element_Not_Closable(target_title, **argd),
         else:
+            # Otherwise, the target didn't match *any* game element within
+            # the player's reach, so the appropriate error value is returned
+            # indicating the target isn't present.
             if command.lower() == 'unlock':
-                return stmsg.Unlock_Command_Object_to_Unlock_Not_Here(target_title),
+                return stmsg.Unlock_Command_Element_to_Unlock_Not_Here(target_title),
             elif command.lower() == 'lock':
-                return stmsg.Lock_Command_Object_to_Lock_Not_Here(target_title),
+                return stmsg.Lock_Command_Element_to_Lock_Not_Here(target_title),
             elif command.lower() == 'open':
-                return stmsg.Open_Command_Object_to_Open_Not_Here(target_title),
+                return stmsg.Open_Command_Element_to_Open_Not_Here(target_title),
             else:
-                return stmsg.Close_Command_Object_to_Close_Not_Here(target_title),
+                return stmsg.Close_Command_Element_to_Close_Not_Here(target_title),
 
-    def _various_commands_door_selector(self, *tokens):
-        compass_dir = door_type = None
+    def _door_selector(self, tokens):
+        """
+This is a private workhorse method implementing a flexible door specifier
+syntax. The methods close_command(), leave_command(), lock_command(),
+look_at_command(), open_command(), pick_lock_command(), pick_up_command(),
+unlock_command() all use _door_selector() to apply that syntax. A door can be
+specified using any combination of its compass direction, title, or portal type.
+
+:tokens: The arguments token tuple pased to the calling method.
+
+* If the door specifier doesn't match any door in the room, a
+  Various_Commands_Door_Not_Present object is returned.
+* If the door specifier matches more than one door in the room, a
+  Various_Commands_Ambiguous_Door_Specifier object is returned.
+        """
+        # These variables are initialized to None so they can be checked for
+        # non-None values later.
+        compass_dir = door_title = door_type = None
+
+        # If the first token is a compass direction, compass_dir is set to it.
+        # This method is always called from a context where the last token has
+        # tested equal to 'door' or 'doorway', so I rely on that and compose the
+        # door title that the door will be found under in Rooms_State.
         if tokens[0] in ('north', 'east', 'south', 'west'):
             compass_dir = tokens[0]
             door_title = f'{compass_dir} {tokens[-1]}'
             tokens = tokens[1:]
+
+        # If the first token matches 'iron' or 'wooden' and the last token is
+        # 'door' (not 'doorway'), I can match the door_type. I construct the
+        # door_type value.
         if ((len(tokens) == 2 and tokens[0] in ('iron', 'wooden') and tokens[1] == 'door')
                 or len(tokens) == 1 and tokens[0] == 'doorway'):
             door_type = ' '.join(tokens).replace(' ', '_')
+
+        # The tuple of doors in the current room is assigned to a local
+        # variable, and I iterate across it trying to match door_type,
+        # door_title, or both. Matches are saved to matching_doors.
         doors = self.game_state.rooms_state.cursor.doors
-        matching_doors = list()
+        matching_doors = tuple()
         for door in doors:
             if ((door_type and door.door_type == door_type and compass_dir and door.title == door_title)
                     or (door_type and door.door_type == door_type) or (compass_dir and door.title == door_title)
                     or (not door_type and not compass_dir and door.door_type.endswith(tokens[-1]))):
-                matching_doors.append(door)
+                matching_doors += door,
+
+        # If no doors matched, a door-not-present error is returned.
         if len(matching_doors) == 0:
             return stmsg.Various_Commands_Door_Not_Present(compass_dir, tokens[-1]),
         elif len(matching_doors) > 1:
+            # Otherwise if more than one door matches, a
+            # ambiguous-door-specifier error is returned. If possible, it's
+            # constructed with a door_type value to give a more useful error
+            # message.
             compass_dirs = tuple(door.title.split(' ')[0] for door in matching_doors)
             # Checks that all door_types are the same.
-            door_type = matching_doors[0].door_type if len(set(door.door_type for door in matching_doors)) == 1 else None
+            door_type = (matching_doors[0].door_type if len(set(door.door_type
+                             for door in matching_doors)) == 1 else None)
             return stmsg.Various_Commands_Ambiguous_Door_Specifier(compass_dirs, tokens[-1], door_type),
         else:
-            return tuple(matching_doors)
+            # Otherwise matching_doors is length 1; I have a match, so I return
+            # it.
+            return matching_doors
 
     look_at_door_re = re.compile(r"""(
-                                         (north|east|south|west) \s  # For example, this regex matches 'north iron door',
-                                     |                               # 'north door', 'iron door', and 'door'. But it won't
-                                         (iron|wooden) \s            # match 'iron doorway'.
+                                         (north|east|south|west) \s  # For example, this regex matches
+                                     |                               # 'north iron door', 'north door', 'iron door',
+                                         (iron|wooden) \s            # and 'door'. But it won't match 'iron doorway'.
                                      |
                                          (
                                              (north|east|south|west) \s (iron|wooden) \s
@@ -977,7 +1535,7 @@ LOCK <chest name>
                                      (?<! wooden \s doorway)
                                      """, re.X)
 
-    def look_at_command(self, *tokens):
+    def look_at_command(self, tokens):
         """
 This method implements the LOOK AT command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
@@ -1019,19 +1577,33 @@ LOOK AT <compass direction> DOORWAY
   or in self.game_state.character.inventory, a 1-tuple of a
   Look_At_Command_Found_Item_or_Items_Here object is returned.
         """
+        # The LOOK AT command can target an item in a chest or on a corpse, so
+        # the presence of either 'in' or 'on' in the tokens tuple indicates
+        # that case. The tokens tuple is checked for a consistent container
+        # specifier; if it's poorly-constructed, an error value is returned.
         if (not tokens or tokens[0] in ('in', 'on') or tokens[-1] in ('in', 'on')
                 or ('in' in tokens and tokens[-1] == 'corpse')
                 or ('on' in tokens and tokens[-1] == 'chest')):
-            return stmsg.Command_Bad_Syntax('LOOK AT', *COMMANDS_SYNTAX['LOOK AT']),
-        # This conditional is more easily accomplished with a simple regex than a multi-line boolean chain.
+            return stmsg.Command_Bad_Syntax('LOOK AT', COMMANDS_SYNTAX['LOOK AT']),
+
+        # This conditional is more easily accomplished with a regex than a multi-line boolean chain.
         # `look_at_door_re` is defined above.
         elif tokens[-1] in ('door', 'doorway') and not self.look_at_door_re.match(' '.join(tokens)):
-            return stmsg.Command_Bad_Syntax('LOOK AT', *COMMANDS_SYNTAX['LOOK AT']),
+            return stmsg.Command_Bad_Syntax('LOOK AT', COMMANDS_SYNTAX['LOOK AT']),
+
+        # These four booleans are initialized to False so they can be tested for
+        # True values later.
         item_contained = item_in_inventory = item_in_chest = item_on_corpse = False
+
+        # If 'in' or 'on' is used, the tokens can be divided at the point it
+        # occurs into a left-hand value which is the title of an item, and a
+        # right-hand value which is the title of a container or is 'inventory'.
         if 'in' in tokens or 'on' in tokens:
             if 'in' in tokens:
+                # This signal value will control an upcoming conditional tree.
                 item_contained = True
                 joinword_index = tokens.index('in')
+                # As will one of these two.
                 if tokens[joinword_index+1:] == ('inventory',):
                     item_in_inventory = True
                 else:
@@ -1039,89 +1611,167 @@ LOOK AT <compass direction> DOORWAY
             else:
                 joinword_index = tokens.index('on')
                 if tokens[-1] != 'floor':
+                    # These signal values will control an upcoming conditional.
                     item_contained = True
                     item_on_corpse = True
+
+            # joinword_index has been set, so target_title and location_title
+            # are derived from the tokens before that index, and the tokens
+            # after, respectively.
             target_title = ' '.join(tokens[:joinword_index])
             location_title = ' '.join(tokens[joinword_index+1:])
+
+        # If the tokens contain neither 'in' or 'on, and the last token is 'door' or 'dooray', _door_selector is used.
         elif tokens[-1] == 'door' or tokens[-1] == 'doorway':
-            result = self._various_commands_door_selector(*tokens)
+            result = self._door_selector(tokens)
             if isinstance(result, tuple) and isinstance(result[0], stmsg.Game_State_Message):
+                # If it returns an error, that's passed along.
                 return result
             else:
+                # Otherwise the door it returns is the target, and a
+                # found-door-or-doorway value is returned with that door object
+                # informing the message.
                 door, = result
                 return stmsg.Look_At_Command_Found_Door_or_Doorway(door.title.split(' ')[0], door),
         else:
+            # The tokens don't indicate a door and don't have a location_title
+            # to break off the end. The target_title is formed from the tokens.
             target_title = ' '.join(tokens)
+
+        # creature_here and container_here are assigned to local variables.
         creature_here = self.game_state.rooms_state.cursor.creature_here
         container_here = self.game_state.rooms_state.cursor.container_here
+
+        # If earlier reasoning concluded the item is meant to be found in a
+        # chest, but the container here is None or a corpse, a syntax error is
+        # returned.
         if (item_in_chest and isinstance(container_here, elem.Corpse)
-            or item_on_corpse and isinstance(container_here, elem.Chest)):
-            return stmsg.Command_Bad_Syntax('look at', *COMMANDS_SYNTAX['LOOK AT']),
+                or item_on_corpse and isinstance(container_here, elem.Chest)):
+            return stmsg.Command_Bad_Syntax('look at', COMMANDS_SYNTAX['LOOK AT']),
+
+        # If the target_title matches the creature in this room, a
+        # found-creature-here value is returned.
         if creature_here is not None and creature_here.title == target_title.lower():
             return stmsg.Look_At_Command_Found_Creature_Here(creature_here.description),
+
+        # If the container here is not None and matches, a found-container-here
+        # value is returned.
         elif container_here is not None and container_here.title == target_title.lower():
             return stmsg.Look_At_Command_Found_Container_Here(container_here),
+
+        # Otherwise, if the command specified an item that is contained in
+        # something (including the inventory), so I test all the valid states.
         elif item_contained:
+
+            # If the item is supposed to be in the character's inventory, I
+            # iterate through the inventory looking for a matching title.
             if item_in_inventory:
                 for item_qty, item in self.game_state.character.list_items():
                     if item.title != target_title:
                         continue
+                    # If found, a found-item-here value is returned.
+                    # _look_at_item_detail() is used to supply a detailed
+                    # accounting of the item.
                     return stmsg.Look_At_Command_Found_Item_or_Items_Here(self._look_at_item_detail(item),
                                                                           item_qty, 'inventory'),
+                # Otherwise, a found-nothing value is returned.
                 return stmsg.Look_At_Command_Found_Nothing(target_title, 'inventory'),
             else:
+                # Otherwise, the item is in a chest or on a corpse. Either one
+                # would need to be the value for container_here, so I test its
+                # title against the location_title.
                 if container_here is None or container_here.title != location_title:
+
+                    # If it doesn't match, a container-not-found error is
+                    # returned.
                     return stmsg.Various_Commands_Container_Not_Found(location_title),
+
+                # Otherwise, if the container is non-None and its title matches,
+                # I iterate through the container's contents looking for a
+                # matching item title.
                 elif container_here is not None and container_here.title == location_title:
                     for item_qty, item in container_here.values():
                         if item.title != target_title:
                             continue
+                        # If I find a match, I return a found-item-here value.
+                        # _look_at_item_detail() is used to supply a detailed
+                        # accounting of the item.
                         return stmsg.Look_At_Command_Found_Item_or_Items_Here(self._look_at_item_detail(item),
                                                                               item_qty, container_here.title,
                                                                               container_here.container_type),
+                    # Otherwise, I return a found-nothing value.
                     return stmsg.Look_At_Command_Found_Nothing(target_title, location_title,
                                                                'chest' if item_in_chest else 'corpse'),
                 else:
+                    # The container wasn't found, so I return a
+                    # container-not-found error.
                     return stmsg.Various_Commands_Container_Not_Found(location_title),
         else:
+
+            # The target isn't a creature, or a container, or in a container, or
+            # in the character's inventory, so I check the floor. Again I
+            # iterate through items looking for a match.
             for item_name, (item_qty, item) in self.game_state.rooms_state.cursor.items_here.items():
                 if item.title != target_title:
                     continue
+                # If I find a match, I return a found-item-here value.
+                # _look_at_item_detail() is used to supply a detailed accounting
+                # of the item.
                 return stmsg.Look_At_Command_Found_Item_or_Items_Here(self._look_at_item_detail(item),
                                                                       item_qty, 'floor'),
+            # Otherwise, a found-nothing value is returned.
             return stmsg.Look_At_Command_Found_Nothing(target_title, 'floor'),
 
     def _look_at_item_detail(self, element):
+        """
+This private utility method handles the task of constructing a detailed
+description of an item, mentioning everything about it that the game data can
+show. It doesn't return any Game_State_Message subclass objects; it's a utility
+method that accomplishes a task that look_command() needs to execute in 3
+different places in its code, so it's refactored into its own method.
+
+:element: The Item subclass object to derive a detailed description of.
+        """
         descr_append_str = ''
-        if getattr(element, 'item_type', '') in ('armor', 'shield', 'wand', 'weapon'):
-            if element.item_type == 'wand' or element.item_type == 'weapon':
+        # If the item is equipment, its utility as an equippable item will be
+        # detailed.
+        if isinstance(element, elem.Equippable_Item):
+            if isinstance(element, (elem.Wand, elem.Weapon)):
+                # If the item can be attacked with, its attack bonus and damage
+                # are mentioned.
                 descr_append_str = (f' Its attack bonus is +{element.attack_bonus} and its damage is '
                                     f'{element.damage}. ')
-            else:  # item_type == 'armor' or item_type == 'shield'
+            else:  # isinstance(element, (elem.Armor, elem.Shield))
+                # It's a defensive item, so its armor bonus is mentioned.
                 descr_append_str = f' Its armor bonus is +{element.armor_bonus}. '
             can_use_list = []
+            # All Equippable items have *_can_use attributes expresing class
+            # limitations, so I survey those.
             for character_class in ('warrior', 'thief', 'mage', 'priest'):
                 if getattr(element, f'{character_class}_can_use', False):
                     can_use_list.append(f"{character_class}s" if character_class != 'thief' else 'thieves')
+            # The first class name is titlecased because it's the start of a
+            # sentence, and the list of classes is formed into a sentence
+            # appended to the working string.
             can_use_list[0] = can_use_list[0].title()
-            if len(can_use_list) == 1:
-                descr_append_str += f'{can_use_list[0]} can use this.'
-            elif len(can_use_list) == 2:
-                descr_append_str += f'{can_use_list[0]} and {can_use_list[1]} can use this.'
-            else:
-                can_use_joined = ', '.join(can_use_list[:-1])
-                descr_append_str += f'{can_use_joined}, and {can_use_list[-1]} can use this.'
-        elif getattr(element, 'item_type', '') == 'potion':
+            descr_append_str += util.join_str_seq_w_commas_and_conjunction(can_use_list, 'and')
+            descr_append_str += ' can use this.'
+        elif isinstance(element, elem.Potion):
+            # If it's a potion, the points recovered are mentioned.
             if element.title == 'mana potion':
                 descr_append_str = f' It restores {element.mana_points_recovered} mana points.'
             elif element.title == 'health potion':
                 descr_append_str = f' It restores {element.hit_points_recovered} hit points.'
-        elif 'door' in getattr(element, 'door_type', ''):
+        elif isinstance(element, elem.Door):
+            # If it's a door, whether it's open or closed is mentioned.
             if element.closable:
                 descr_append_str = ' It is closed.' if element.is_closed else ' It is open.'
+
+        # The base element description is returned along with the extended
+        # description derived above.
         return element.description + descr_append_str
 
-    def open_command(self, *tokens):
+    def open_command(self, tokens):
         """
 This method implements the OPEN command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
@@ -1141,28 +1791,38 @@ OPEN <chest name>
 * If the arguments specify an item, creature, corpse or doorway, a 1-tuple of a
   Open_Command_Element_Not_Openable object is returned.
 * If the arguments specify a chest, and that chest is not present in the room, a
-  1-tuple of a Open_Command_Object_to_Open_Not_Here object is returned.
+  1-tuple of a Open_Command_Element_to_Open_Not_Here object is returned.
 * If the arguments specify a door or chest that is locked, a 1-tuple of a
-  Open_Command_Object_Is_Locked object is returned.
+  Open_Command_Element_Is_Locked object is returned.
 * If the arguments specify a door or chest that is already open, a 1-tuple of a
-  Open_Command_Object_Is_Already_Open object is returned.
+  Open_Command_Element_Is_Already_Open object is returned.
 * Otherwise, the chest or door has its is_closed attribute set to False, and a
-  1-tuple of a Open_Command_Object_Has_Been_Opened object is returned.
+  1-tuple of a Open_Command_Element_Has_Been_Opened object is returned.
         """
-        result = self._lock_unlock_open_or_close_preproc('OPEN', *tokens)
+        # The shared private workhorse method is called and it handles the
+        # majority of the error-checking. If it returns an error that is passed
+        # along.
+        result = self._preprocessing_for_lock_unlock_open_or_close('OPEN', tokens)
         if isinstance(result[0], stmsg.Game_State_Message):
             return result
         else:
-            object_to_open, = result
-        if object_to_open.is_locked:
-            return stmsg.Open_Command_Object_Is_Locked(object_to_open.title),
-        elif object_to_open.is_closed:
-            object_to_open.is_closed = False
-            return stmsg.Open_Command_Object_Has_Been_Opened(object_to_open.title),
-        else:
-            return stmsg.Open_Command_Object_Is_Already_Open(object_to_open.title),
+            # Otherwise the element to open is extracted from the return tuple.
+            element_to_open, = result
 
-    def pick_lock_command(self, *tokens):
+        # If the element is locked, a element-is-locked error is returned.
+        if element_to_open.is_locked:
+            return stmsg.Open_Command_Element_Is_Locked(element_to_open.title),
+        elif not element_to_open.is_closed:
+            # Otherwise if it's alreadty open, an element-is-already-open error
+            # is returned.
+            return stmsg.Open_Command_Element_Is_Already_Open(element_to_open.title),
+        else:
+            # Otherwise the element has is_closed set to False and an
+            # element-has-been-opened value is returned.
+            element_to_open.is_closed = False
+            return stmsg.Open_Command_Element_Has_Been_Opened(element_to_open.title),
+
+    def pick_lock_command(self, tokens):
         """
 This method implements the PICK LOCK command. (The command is only usable
 if the player is playing a Thief.) It accepts a tokens tuple that is
@@ -1191,50 +1851,92 @@ Priest, a 1-tuple of a Command_Class_Restricted object is returned.
 * Otherwise, the specified door or chest has its is_locked attribute set to
   False, and a 1-tuple of a Pick_Lock_Command_Target_Has_Been_Unlocked object.
         """
+        # These error booleans are initialized to False so they can be checked
+        # for True values later.
         tried_to_operate_on_doorway = tried_to_operate_on_creature = tried_to_operate_on_corpse = \
             tried_to_operate_on_item = False
+
+        # This command is restricted to Thieves; if the player character is of
+        # another class, a command-class-restricted error is returned.
         if self.game_state.character_class != 'Thief':
             return stmsg.Command_Class_Restricted('PICK LOCK', 'thief'),
+
+        # This command requires an argument. If called with no argument or a
+        # patently invalid one, a syntax error is returned.
         if not len(tokens) or tokens[0] != 'on' or tokens == ('on',) or tokens == ('on', 'the',):
-            return stmsg.Command_Bad_Syntax('PICK LOCK', *COMMANDS_SYNTAX['PICK LOCK']),
-        elif tokens[1] == 'the':
+            return stmsg.Command_Bad_Syntax('PICK LOCK', COMMANDS_SYNTAX['PICK LOCK']),
+        elif tokens[:2] == ('on', 'the'):
             tokens = tokens[2:]
-        else:
+        elif tokens[0] == 'on':
             tokens = tokens[1:]
+
+        # I form the target_title from the tokens.
         target_title = ' '.join(tokens)
+
+        # container_here and creature_here are assigned to local variables.
         container = self.game_state.rooms_state.cursor.container_here
         creature = self.game_state.rooms_state.cursor.creature_here
+
+        # If the target is a door or doorway. the _door_selector() is used.
         if tokens[-1] in ('door', 'doorway'):
-            result = self._various_commands_door_selector(*tokens)
+            result = self._door_selector(tokens)
+            # If it returns an error, the error value is returned.
             if isinstance(result[0], stmsg.Game_State_Message):
                 return result
-            door, = result
+            else:
+                # Otherwise, the Door object is extracted from its return value.
+                door, = result
+
+            # If the Door is a doorway, it can't be unlocked; a failure mode boolean is assigned.
             if isinstance(door, elem.Doorway):
                 tried_to_operate_on_doorway = True
             elif not door.is_locked:
+                # Otherwise if the door isn't locked, a target-not-locked error value is returned.
                 return stmsg.Pick_Lock_Command_Target_Not_Locked(target_title),
             else:
+                # Otherwise, the door's is_locked attribute is set to False, and
+                # a target-has-been-unlocked value is returned.
                 door.is_locked = False
                 return stmsg.Pick_Lock_Command_Target_Has_Been_Unlocked(target_title),
+        # The target isn't a door. If there is a container here and its title matches....
         elif container is not None and container.title == target_title:
+            # If it's a Corpse, the failure mode boolean is set.
             if isinstance(container, elem.Corpse):
                 tried_to_operate_on_corpse = True
             elif not getattr(container, 'is_locked', False):
+                # Otherwise if it's not locked, a target-not-locked error value is returned.
                 return stmsg.Pick_Lock_Command_Target_Not_Locked(target_title),
             else:
+                # Otherwise, its is_locked attribute is set to False, and a
+                # target-has-been-unlocked error is returned.
                 container.is_locked = False
                 return stmsg.Pick_Lock_Command_Target_Has_Been_Unlocked(target_title),
+
+        # The Door and Chest case have been handled and any possible success
+        # value has been rejected. Everything from here on down is error
+        # handling.
         elif creature is not None and creature.title == target_title:
+            # If there's a creature here and its title matches target_title,
+            # that failure mode boolean is set.
             tried_to_operate_on_creature = True
         else:
-            for _, item in itertools.chain(self.game_state.rooms_state.cursor.items_here.values(),
+            # I check through items_here (if any) and the player character's
+            # inventory looking for an item with a title matching target_title.
+            for _, item in itertools.chain((self.game_state.rooms_state.cursor.items_here.values()
+                                            if self.game_state.rooms_state.cursor.items_here is not None
+                                            else ()),
                                            self.game_state.character.list_items()):
                 if item.title != target_title:
                     continue
+                # If one is found, the appropriate failure mode boolean is set,
+                # and the loop is broken.
                 tried_to_operate_on_item = True
                 item_targetted = item
                 break
 
+        # If any of the failure mode booleans were set, the appropriate argd is
+        # constructed, and a element-not-unlockable error value is instanced
+        # with it and returned.
         if any((tried_to_operate_on_doorway, tried_to_operate_on_corpse, tried_to_operate_on_item,
                 tried_to_operate_on_creature)):
             argd = {'target_type': 'doorway' if tried_to_operate_on_doorway
@@ -1243,13 +1945,14 @@ Priest, a 1-tuple of a Command_Class_Restricted object is returned.
                                    else item_targetted.__class__.__name__.lower()}
             return stmsg.Pick_Lock_Command_Element_Not_Unlockable(target_title, **argd),
         else:
+            # The target_title didn't match anything in the current room, so a
+            # target-not-found error value is returned.
             return stmsg.Pick_Lock_Command_Target_Not_Found(target_title),
 
-    def pick_up_command(self, *tokens):
+    def pick_up_command(self, tokens):
         """
-This method implements the PICK UP command. (The command is only usable
-if the player is playing a Thief.) It accepts a tokens tuple that is
-the command's arguments, tokenized. It returns a tuple of one or more
+This method implements the PICK UP command. It accepts a tokens tuple that
+is the command's arguments, tokenized. It returns a tuple of one or more
 adventuregame.statemsgs.Game_State_Message subclass objects. The PICK UP command
 has the following usage:
 
@@ -1274,94 +1977,221 @@ PICK UP <number> <item name>),
   self.game_state.character, and a 1-tuple of a Pick_Up_Command_Item_Picked_Up
   object is returned.
         """
+        # The door var is set to None so later it can be checked for a non-None value.
         door = None
-        result = self._pick_up_or_drop_preproc('PICK UP', *tokens)
-        if len(result) == 1 and isinstance(result[0], stmsg.Game_State_Message):
-            return result
-        elif tokens[-1] not in ('door', 'doorway'):
-            pick_up_amount, element_title = result
-        else:
-            result = self._various_commands_door_selector(*tokens)
+        pick_up_quantity = 0
+
+        # If the contents of tokens is a door specifier, _door_selector() is used.
+        if tokens[-1] in ('door', 'doorway'):
+            result = self._door_selector(tokens)
+            # If an error value was returned, it's returned.
             if isinstance(result[0], stmsg.Game_State_Message):
-                element_title = tokens[-1]
+                return result
             else:
+                # Otherwise the Door object is extracted from the result tuple.
+                # Doors can't be picked up but we at least want to match
+                # exactly.
                 door, = result
-                element_title = door.title
-        unpickupable_item_type = ''
-        if door is not None:
-            unpickupable_item_type = 'door'
-        elif self.game_state.rooms_state.cursor.creature_here is not None and self.game_state.rooms_state.cursor.creature_here.title == element_title:
-            unpickupable_item_type = 'creature'
-        elif self.game_state.rooms_state.cursor.container_here is not None and self.game_state.rooms_state.cursor.container_here.title == element_title:
-            unpickupable_item_type = self.game_state.rooms_state.cursor.container_here.container_type
-        if unpickupable_item_type:
-            return stmsg.Pick_Up_Command_Cant_Pick_Up_Chest_Corpse_Creature_or_Door(unpickupable_item_type, element_title),
-        item_title = element_title
-        if self.game_state.rooms_state.cursor.items_here is not None:
-            items_here = tuple(self.game_state.rooms_state.cursor.items_here.values())
+                target_title = door.title
         else:
-            return stmsg.Pick_Up_Command_Item_Not_Found(item_title, pick_up_amount),
+            # Otherwise, a private workhorse method is used to parse the arguments.
+            result = self._pick_up_or_drop_preproc('PICK UP', tokens)
+            if isinstance(result[0], stmsg.Game_State_Message):
+                return result
+            else:
+                pick_up_quantity, target_title = result
+
+        # unpickupable_item_type is initialized to None so it can be tested for
+        # a non-None value later. If it acquires another value, an error value
+        # will be returned.
+        unpickupable_element_type = None
+        if door is not None:
+
+            # The arguments specified a door, so unpickupable_item_type is set to 'door'.
+            unpickupable_element_type = 'door'
+
+        # Otherwise, if the current room has a creature_here and its title
+        # matches, unpickupable_item_type is set to 'creature'.
+        elif (self.game_state.rooms_state.cursor.creature_here is not None
+                  and self.game_state.rooms_state.cursor.creature_here.title == target_title):
+            unpickupable_element_type = 'creature'
+
+        # Otherwise, if the current room has a container_here and its title
+        # matches, unpickupable_item_type is set to its container_type.
+        elif (self.game_state.rooms_state.cursor.container_here is not None and
+                self.game_state.rooms_state.cursor.container_here.title == target_title):
+            unpickupable_element_type = self.game_state.rooms_state.cursor.container_here.container_type
+
+        # If unpickupable_element_type acquired a value, a cant-pick-up-element
+        # error is returned.
+        if unpickupable_element_type:
+            return stmsg.Pick_Up_Command_Cant_Pick_Up_Chest_Corpse_Creature_or_Door(unpickupable_element_type,
+                                                                                    target_title),
+
+        # If this room has no items_here Items_Multi_State object, nothing can
+        # be picked up, and a item-not-found error is returned.
+        if self.game_state.rooms_state.cursor.items_here is None:
+            return stmsg.Pick_Up_Command_Item_Not_Found(target_title, pick_up_quantity),
+
+        # The items_here.values() sequence is cast to tuple and assigned to a
+        # local variable, and the character's inventory is also so assigned. I
+        # iterate through both of them looking for items with titles matching
+        # target_title.
+        items_here = tuple(self.game_state.rooms_state.cursor.items_here.values())
         items_had = tuple(self.game_state.character.list_items())
-        item_here_pair = tuple(filter(lambda pair: pair[1].title == item_title, items_here))
-        items_had_pair = tuple(filter(lambda pair: pair[1].title == item_title, items_had))
+        item_here_pair = tuple(filter(lambda pair: pair[1].title == target_title, items_here))
+        items_had_pair = tuple(filter(lambda pair: pair[1].title == target_title, items_had))
+
+        # If no item was found in items_here matching target_title, a tuple
+        # of items that *are* here is formed, and a item-not-found error is
+        # instanced with it as an argument and returned.
         if not len(item_here_pair):
             items_here_qtys_titles = tuple((item_qty, item.title) for item_qty, item in items_here)
-            return stmsg.Pick_Up_Command_Item_Not_Found(item_title, pick_up_amount, *items_here_qtys_titles),
-        (item_qty, item), = item_here_pair
-        if pick_up_amount is math.nan:
-            pick_up_amount = item_qty
-        amount_already_had = items_had_pair[0][0] if len(items_had_pair) else 0
-        if item_qty < pick_up_amount:
-            return stmsg.Pick_Up_Command_Trying_to_Pick_Up_More_than_Is_Present(item_title, pick_up_amount, item_qty),
+            return stmsg.Pick_Up_Command_Item_Not_Found(target_title, pick_up_quantity, *items_here_qtys_titles),
+
+        # Otherwise, the item was found here, so its quantity and the Item
+        # subclass object are extracted and saved.
+        (quantity_here, item), = item_here_pair
+
+        # _pick_up_or_drop_preproc() returns math.nan if it couldn't determine a
+        # quantity. If it did, I assume the player meant all of the item that's
+        # here, and set pick_up_quantity to quantity_here.
+        if pick_up_quantity is math.nan:
+            pick_up_quantity = quantity_here
+
+        # quantity_in_inventory is needed for the item-picked-up return value
+        # constructor. If the item title had a match in the inventory, the
+        # quantity there is assigned to quantity_in_inventory, otherwise it's
+        # set to 0.
+        quantity_in_inventory = items_had_pair[0][0] if len(items_had_pair) else 0
+
+        # If the quantity to pick up specified in the command is greater than
+        # the quantity in items_here, a trying-to-pick-up-more-than-is-present
+        # error is returned.
+        if quantity_here < pick_up_quantity:
+            return stmsg.Pick_Up_Command_Trying_to_Pick_Up_More_than_Is_Present(target_title, pick_up_quantity,
+                                                                                quantity_here),
         else:
-            self.game_state.character.pick_up_item(item, qty=pick_up_amount)
-            if item_qty == pick_up_amount:
+            # Otherwise, that quantity of the item is added to the player
+            # character's inventory.
+            self.game_state.character.pick_up_item(item, qty=pick_up_quantity)
+
+            # If the entire quantity of the item in items_here was picked up,
+            # it's deleted from items_here.
+            if quantity_here == pick_up_quantity:
                 self.game_state.rooms_state.cursor.items_here.delete(item.internal_name)
             else:
+                # Otherwise its new quantity is set in items_here.
                 self.game_state.rooms_state.cursor.items_here.set(item.internal_name,
-                                                                  item_qty - pick_up_amount, item)
-            amount_had_now = amount_already_had + pick_up_amount
-            return stmsg.Pick_Up_Command_Item_Picked_Up(item_title, pick_up_amount, amount_had_now),
+                                                                  quantity_here - pick_up_quantity, item)
+            # The quantity now possessed is computed, and used to construct a
+            # item-picked-up return value, which is returned.
+            quantity_had_now = quantity_in_inventory + pick_up_quantity
+            return stmsg.Pick_Up_Command_Item_Picked_Up(target_title, pick_up_quantity, quantity_had_now),
 
-    # Both PUT and TAKE have the same preprocessing challenges, so I refactored their logic into a shared private
-    # preprocessing method.
+    # Both PUT and TAKE have the same preprocessing challenges, so I refactored
+    # their logic into a shared private preprocessing method.
 
-    def _pick_up_or_drop_preproc(self, command, *tokens):
-        if tokens[0] == 'a' or tokens[0] == 'the' or tokens[0].isdigit() or util.lexical_number_in_1_99_re.match(tokens[0]):
-            if len(tokens) == 1:
-                return stmsg.Command_Bad_Syntax(command.upper(), *COMMANDS_SYNTAX[command.upper()]),
-            item_title = ' '.join(tokens[1:])
-            if tokens[0] == 'a':
-                if tokens[-1].endswith('s'):
-                    return (stmsg.Drop_Command_Quantity_Unclear(),) if command.lower() == 'drop' else (stmsg.Pick_Up_Command_Quantity_Unclear(),)
-                item_qty = 1
-            elif tokens[0].isdigit():
-                item_qty = int(tokens[0])
-            elif tokens[0] == 'the':
-                if tokens[-1].endswith('s'):
-                    item_qty = math.nan
-                else:
-                    item_qty = 1
-            else:  # util.lexical_number_in_1_99_re.match(tokens[0]) is True
-                item_qty = util.lexical_number_to_digits(tokens[0])
-            if item_qty == 1 and item_title.endswith('s'):
-                return stmsg.Pick_Up_Command_Quantity_Unclear(),
-        else:
-            item_title = ' '.join(tokens)
-            if item_title.endswith('s'):
-                item_qty = math.nan
-            else:
-                item_qty = 1
-        item_title = item_title.rstrip('s')
-        return item_qty, item_title
-
-    def put_command(self, *tokens):
+    def _pick_up_or_drop_preproc(self, command, tokens):
         """
-This method implements the PICK UP command. (The command is only usable
-if the player is playing a Thief.) It accepts a tokens tuple that is
-the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The PICK UP command
-has the following usage:
+This private workhorse method handles argument processing logic which is common
+to pick_up_command() and drop_command(). It detects the quantity intended and
+screens for ambiguous command arguments.
+
+:command: The command the calling method is executing.
+:tokens:  The tokenized command arguments.
+
+* If invalid arguments are sent, a 1-tuple of a Command_Bad_Syntax object is
+  returned.
+* If the player submitted an ungrammatical sentence which is ambiguous
+  as to the quantity intended, a 1-tuple of either a
+  Drop_Command_Quantity_Unclear object or a Pick_Up_Command_Quantity_Unclear
+  object is returned depending on the value in command.
+        """
+        # This long boolean checks whether the first token in tokens can
+        # indicate quantity.
+        if tokens[0] in ('a', 'an', 'the') or tokens[0].isdigit() or util.lexical_number_in_1_99_re.match(tokens[0]):
+            # If the quantity indicator is all there is, a syntax error is
+            # returned.
+            if len(tokens) == 1:
+                return stmsg.Command_Bad_Syntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
+            # The item title is formed from the rest of the tokens.
+            item_title = ' '.join(tokens[1:])
+
+            # If the first token is an indirect article...
+            if tokens[0] == 'a' or tokens[0] == 'an':
+                if tokens[-1].endswith('s'):
+                    # but the end of the last token has a pluralizing 's' on
+                    # it, I return a quantity-unclear error appropriate to the
+                    # caller.
+                    return ((stmsg.Drop_Command_Quantity_Unclear(),) if command.lower() == 'drop'
+                            else (stmsg.Pick_Up_Command_Quantity_Unclear(),))
+                # Otherwise it implies a quantity of 1.
+                item_quantity = 1
+            elif tokens[0].isdigit():
+
+                # Otherwise if it parses as an int, I save that quantity.
+                item_quantity = int(tokens[0])
+
+            # If it's a direct article...
+            elif tokens[0] == 'the':
+
+                # And the last token ends with a pluralizing 's', the player
+                # means to pick up or drop the total quantity possible. I don't
+                # know what that is now, so I set the item_quantity to math.nan
+                # as a signal value. When the caller gets as far as identifying
+                # the total quantity possible, it will replace this value with
+                # that one.
+                if tokens[-1].endswith('s'):
+                    item_quantity = math.nan
+                else:
+                    # Otherwise it implies a quantity of 1.
+                    item_quantity = 1
+            else:
+                # Based on the enclosing conditional, this else implies
+                # util.lexical_number_in_1_99_re.match(tokens[0]) == True. So I
+                # use util.lexical_number_to_digits to parse the 1st token to an
+                # int.
+                item_quantity = util.lexical_number_to_digits(tokens[0])
+
+                # lexical_number_to_digits also uses math.nan as a signal value;
+                # it returns that value if the lexical number was outside the
+                # range of one to ninety-nine. If so, I return a syntax error.
+                if item_quantity is math.nan:
+                    return stmsg.Command_Bad_Syntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
+            if item_quantity == 1 and item_title.endswith('s'):
+                # Repeating an earlier check on a wider set. If the
+                # item_quantity is 1 but the last token ends in a pluralizing
+                # 's', I return the appropriate quantity-unclear value.
+                return ((stmsg.Drop_Command_Quantity_Unclear(),) if command.lower() == 'drop'
+                        else (stmsg.Pick_Up_Command_Quantity_Unclear(),))
+        else:
+            # I form the item title.
+            item_title = ' '.join(tokens)
+
+            # The first token didn't parse as any kind of number, so I check if
+            # the item_title ends with a pluralizing 's'.
+            if item_title.endswith('s'):
+                # If so, the player is implying they want the total quantity
+                # possible. As above, I set item_quantity to math.nan as a
+                # signal value; it'll be replaced by the caller when the total
+                # quantity possible is known.
+                item_quantity = math.nan
+            else:
+
+                # Otherwise item_quantity is implied to be 1.
+                item_quantity = 1
+        item_title = item_title.rstrip('s')
+
+        # Return the item_quantity and item_title parsed from tokens as a 2-tuple.
+        return item_quantity, item_title
+
+    def put_command(self, tokens):
+        """
+This method implements the PUT command. It accepts a tokens tuple that
+is the command's arguments, tokenized. It returns a tuple of one or more
+adventuregame.statemsgs.Game_State_Message subclass objects. The PUT command has
+the following usage:
 
 PUT <item name> IN <chest name>
 PUT <number> <item name> IN <chest name>
@@ -1387,146 +2217,212 @@ PUT <number> <item name> ON <corpse name>
   self.game_state.character, and put in the chest or on the corpse, and a
   1-tuple of a Put_Command_Amount_Put object is returned.
         """
-        results = self._put_or_take_preproc('PUT', 'IN|ON', *tokens)
+        # The shared private workhorse method is called and it handles the
+        # majority of the error-checking. If it returns an error that is passed
+        # along.
+        results = self._put_or_take_preproc('PUT', tokens)
 
-        # The workhorse private method returns either a stmsg.Game_State_Message subclass object (see
-        # adventuregame.game_state_messages) or a tuple of amount to put, parsed title of Item, parsed title of
-        # Container, and the Container object (as a matter of convenience, it's needed by the private method & why fetch
-        # it twice).
         if len(results) == 1 and isinstance(results[0], stmsg.Game_State_Message):
+            # If it returned an error, I return the tuple.
             return results
         else:
-            # len(results) == 4 and isinstance(results[0], int) and isinstance(results[1], str)
-            #     and isinstance(results[2], str) and isinstance(results[3], Container)
+            # Otherwise, I recover put_amount (nt), item_title (str),
+            # container_title (str) and container (Chest or Corpse) from the
+            # results.
             put_amount, item_title, container_title, container = results
 
-        # I read off the player's Inventory and filter it for a (qty,obj) pair whose title matches the supplied Item
-        # name.
+        # I read off the player's Inventory and filter it for a (qty,obj) pair
+        # whose title matches the supplied Item name.
         inventory_list = tuple(filter(lambda pair: pair[1].title == item_title, self.game_state.character.list_items()))
 
         if len(inventory_list) == 1:
 
-            # The player has the Item in their Inventory, so I save the qty they possess and the Item object.
+            # The player has the Item in their Inventory, so I save the qty they
+            # possess and the Item object.
             amount_possessed, item = inventory_list[0]
         else:
+
+            # Otherwise I return an item-not-in-inventory error.
             return stmsg.Put_Command_Item_Not_in_Inventory(item_title, put_amount),
+
+        # I use the Item subclass object to get the internal_name, and look it
+        # up in the container to see if any amount is already there. If so I
+        # record the amount, otherwise the amount is saved as 0.
         if container.contains(item.internal_name):
             amount_in_container, _ = container.get(item.internal_name)
         else:
             amount_in_container = 0
+
         if put_amount > amount_possessed:
+            # If the amount to put is more than the amount in inventory, I
+            # return a trying-to-put-more-than-you-have error.
             return stmsg.Put_Command_Trying_to_Put_More_than_You_Have(item_title, amount_possessed),
         elif put_amount is math.nan:
+            # Otherwise if _put_or_take_preproc returned math.nan for the
+            # put_amount, that means it couldn't be determined from the
+            # arguments but is implied, so I set it equal to the total amount
+            # possessed, and set the amount_possessed to 0.
             put_amount = amount_possessed
+            amount_possessed = 0
         else:
+
+            # Otherwise I decrement the amount_possessed by the put amount.
             amount_possessed -= put_amount
+
+        # I remove the item in the given quantity from the player character's
+        # inventory, and add the item in that quantity to the container. Then I
+        # return a amount-put value.
         self.game_state.character.drop_item(item, qty=put_amount)
         container.set(item.internal_name, amount_in_container + put_amount, item)
         return stmsg.Put_Command_Amount_Put(item_title, container_title, container.container_type, put_amount,
                                             amount_possessed),
 
-    def _put_or_take_preproc(self, command, joinword, *tokens):
+    def _put_or_take_preproc(self, command, tokens):
+        """
+This private workhorse method handles logic that is common to put_command() and
+take_command(). It determines the quantity, item title, container (and container
+title) from the tokens argument.
+
+:command: The command being executed by the calling method. Either 'PUT' or 'TAKE'.
+:tokens:  The tokens argument the calling method was called with.
+
+* If the tokens argument is zero-length or doesn't container the appropriate
+  joinword ('FROM' for TAKE, 'IN' for PUT with chests, or 'ON' for put with
+  corpses), a 1-tuple of a Command_Bad_Syntax object is returned.
+* If the arguments are an ungrammatical sentence and are ambiguous about the
+  quantity of the item, a 1-tuple with (depending on the value for command) a
+  Put_Command_Quantity_Unclear object or a Take_Command_Quantity_Unclear object
+  is returned.
+* If the arguments specify a container title that doesn't match
+  the title of the container in the current room, a 1-tuple of a
+  Various_Commands_Container_Not_Found object is returned.
+* If the arguments targeted a chest and the chest is closed, a 1-tuple of a
+  Various_Commands_Container_Is_Closed object is returned.
+        """
+        # The current room's container_here value is assigned to a local variable.
         container = self.game_state.rooms_state.cursor.container_here
 
-        if command.lower() == 'put':
-            if container.container_type == 'chest':
-                joinword = 'IN'
+        command = command.lower()
+
+        # I seek the joinword in the tokens tuple and record its index so I
+        # can use it to break the tokens tuple into an item-title-part and a
+        # container-title-part.
+        if command == 'take':
+            try:
+                joinword_index = tokens.index('from')
+            except ValueError:
+                joinword_index = -1
             else:
-                joinword = 'ON'
+                joinword = 'from'
+        else:
+            # The PUT command uses joinword IN for chests and ON for corpses so
+            # I seek either one.
+            try:
+                joinword_index = tokens.index('on')
+            except ValueError:
+                joinword_index = -1
+            else:
+                joinword = 'on'
+            if joinword_index == -1:
+                try:
+                    joinword_index = tokens.index('in')
+                except ValueError:
+                    joinword_index = -1
+                else:
+                    joinword = 'in'
 
-        command, joinword = command.lower(), joinword.lower()
-        tokens = list(tokens)
+        # If the joinword wasn't found, or if it's at the beginning or end of
+        # the tokens tuple, I return a syntax error.
+        if joinword_index == -1 or joinword_index == 0 or joinword_index + 1 == len(tokens):
+            return stmsg.Command_Bad_Syntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
 
-        # Whatever the user wrote, it doesn't contain the joinword, which is a required token.
-        if joinword not in tokens or tokens.index(joinword) == 0 or tokens.index(joinword) == len(tokens) - 1:
-            return stmsg.Command_Bad_Syntax(command.upper(), *COMMANDS_SYNTAX[command.upper()]),
+        # I use the joinword_index to break the tokens tuple into an item_tokens
+        # tuple and a container_tokens tuple.
+        item_tokens = tokens[:joinword_index]
+        container_tokens = tokens[joinword_index+1:]
 
-        # The first token is a digital number, great.
-        if util.digit_re.match(tokens[0]):
-            amount = int(tokens.pop(0))
+        # The first token is a digital number, so I cast it to int and set quantity.
+        if util.digit_re.match(item_tokens[0]):
+            quantity = int(item_tokens[0])
+            item_tokens = item_tokens[1:]
 
-        # The first token is a lexical number, so I convert it.
+        # The first token is a lexical number, so I convert it and set quantity.
         elif util.lexical_number_in_1_99_re.match(tokens[0]):
-            amount = util.lexical_number_to_digits(tokens.pop(0))
+            quantity = util.lexical_number_to_digits(item_tokens[0])
+            item_tokens = item_tokens[1:]
 
         # The first token is an indirect article, which would mean '1'.
-        elif tokens[0] == 'a':
-            joinword_index = tokens.index(joinword)
+        elif item_tokens[0] == 'a' or item_tokens[0] == 'an' or item_tokens[0] == 'the':
+            if len(item_tokens) == 1:
+                # item_tokens is *just* ('a',) or ('an',) or ('the',) which is a
+                # syntax error.
+                return stmsg.Command_Bad_Syntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
+            else:
+                # Otherwise quantity is 1.
+                quantity = 1
+            item_tokens = item_tokens[1:]
 
-            # The term before the joinword, which is the Item title, is plural. The sentence is ungrammatical, so I
-            # return an error.
-            if tokens[joinword_index - 1].endswith('s'):
-                return (stmsg.Take_Command_Quantity_Unclear(),) if command == 'take' else (stmsg.Put_Command_Quantity_Unclear(),)
-            amount = 1
-            del tokens[0]
-
-        # No other indication was given, so the amount will have to be determined later; either the total amount found
-        # in the Container (for TAKE) or the total amount in the Inventory (for PUT)
         else:
-            amount = math.nan
+            # I wasn't able to determine quantity which means it's implied; I
+            # assume the player means 'the total amount available', and set
+            # quantity to math.nan as a signal value. The caller will replace
+            # this with the total amount available when it's known.
+            quantity = math.nan
 
-        # I form up the item_title and container_title, but I'm not done testing them.
-        joinword_index = tokens.index(joinword)
-        item_title = ' '.join(tokens[0:joinword_index])
-        container_title = ' '.join(tokens[joinword_index+1:])
+        if item_tokens[-1].endswith('s'):
+            if quantity == 1:
+                # quantity is 1 but the item title is plural, so I return a
+                # syntax error.
+                return ((stmsg.Take_Command_Quantity_Unclear(),) if command == 'take'
+                        else (stmsg.Put_Command_Quantity_Unclear(),))
 
-        # The item_title begins with a direct article.
-        if item_title.startswith('the ') or item_title.startswith('the') and len(item_title) == 3:
+            # I strip the plural s.
+            item_tokens = item_tokens[:-1] + (item_tokens[-1].rstrip('s'),)
 
-            # The title is of the form, 'the gold coins', which means the amount intended is the total amount
-            # available-- either the total amount in the Container (for TAKE) or the total amount in the Character's
-            # Inventory (for PUT). That will be dertermined later, so NaN is used as a signal value to be replaced when
-            # possible.
-            if item_title.endswith('s'):
-                amount = math.nan
-                item_title = item_title[:-1]
-            item_title = item_title[4:]
+        if container_tokens[-1].endswith('s'):
+            # The container title is plural, which is a syntax error.
+            return stmsg.Command_Bad_Syntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
 
-            # `item_title` is *just* 'the'. The sentence is ungrammatical, so I return a syntax error.
-            if not item_title:
-                return stmsg.Command_Bad_Syntax(command.upper(), *COMMANDS_SYNTAX[command.upper()]),
-
-        if item_title.endswith('s'):
-            if amount == 1:
-
-                # The `item_title` ends in a plural, but an amount > 1 was specified. That's an ungrammatical sentence,
+        if container_tokens[0] == 'a' or container_tokens[0] == 'an' or container_tokens[0] == 'the':
+            if len(container_tokens) == 1:
+                # The container title is *just* ('a',) or ('an',) or ('the',),
                 # so I return a syntax error.
-                return stmsg.Command_Bad_Syntax(command.upper(), *COMMANDS_SYNTAX[command.upper()]),
+                return stmsg.Command_Bad_Syntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
 
-            # The title is plural and `amount` is > 1. I strip the pluralizing 's' off to get the correct Item title.
-            item_title = item_title[:-1]
+            # I strip the article from the container tokens.
+            container_tokens = container_tokens[1:]
 
-        if container_title.startswith('the ') or container_title.startswith('the') and len(container_title) == 3:
-
-            # The Container term begins with a direct article and ends with a pluralizing 's'. That's invalid, no
-            # Container in the dungeon is found in grouping of more than one, so I return a syntax error.
-            if container_title.endswith('s'):
-                return stmsg.Command_Bad_Syntax(command.upper(), *COMMANDS_SYNTAX[command.upper()]),
-
-            container_title = container_title[4:]
-            if not container_title:
-
-                # Improbably, the Item title is *just* 'the'. That's an ungrammatical sentence, so I return a syntax
-                # error.
-                return stmsg.Command_Bad_Syntax(command.upper(), *COMMANDS_SYNTAX[command.upper()]),
+        # I construct the item_title and the container_title.
+        item_title = ' '.join(item_tokens)
+        container_title = ' '.join(container_tokens)
 
         if container is None:
 
-            # There is no Container in this Room, so no TAKE command can be correct. I return an error.
-            return stmsg.Various_Commands_Container_Not_Found(container_title),  # tested
+            # There is no container in this room, so I return a container-not-found error.
+            return stmsg.Various_Commands_Container_Not_Found(container_title),
         elif not container_title == container.title:
 
-            # The Container name specified doesn't match the name of the Container in this Room, so I return an error.
-            return stmsg.Various_Commands_Container_Not_Found(container_title, container.title),  # tested
+            # The container name specified doesn't match the name of the
+            # container in this Room, so I return a container-not-found error.
+            return stmsg.Various_Commands_Container_Not_Found(container_title, container.title),
+
+        elif (isinstance(container, elem.Chest) and joinword == 'on' or isinstance(container, elem.Corpse)
+                  and joinword == 'in'):
+
+            # The joinword used doesn't match the one appropriate to the type of
+            # container here, so I return a syntax error.
+            return stmsg.Command_Bad_Syntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
 
         elif container.is_closed:
 
-            # The Container can't be PUT IN to or TAKEn from because it is closed.
+            # The container is closed, so I return a container-is-closed error.
             return stmsg.Various_Commands_Container_Is_Closed(container.title),
 
-        return amount, item_title, container_title, container
+        # All the error checks passed, so I return the values determined from
+        # the tokens argument.
+        return quantity, item_title, container_title, container
 
-    def quit_command(self, *tokens):
+    def quit_command(self, tokens):
         """
 This method implements the QUIT command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
@@ -1538,14 +2434,19 @@ takes no arguments.
 * Otherwise, self.game_state.game_has_ended is set to True, and a 1-tuple of a
   Quit_Command_Have_Quit_The_Game object is returned.
         """
+        # This command takes no arguments, so if any were supplied, I return a syntax error.
         if len(tokens):
-            return stmsg.Command_Bad_Syntax('QUIT', *COMMANDS_SYNTAX['QUIT']),
+            return stmsg.Command_Bad_Syntax('QUIT', COMMANDS_SYNTAX['QUIT']),
+
+        # I devise the quit-the-game return value, set game_has_ended to True,
+        # store the return value in game_ending_state_msg so process() can reuse
+        # it if needs be, and return the value.
         return_tuple = stmsg.Quit_Command_Have_Quit_The_Game(),
         self.game_state.game_has_ended = True
         self.game_ending_state_msg = return_tuple[-1]
         return return_tuple
 
-    def reroll_command(self, *tokens):
+    def reroll_command(self, tokens):
         """
 This method implements the REROLL command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
@@ -1559,12 +2460,22 @@ takes no arguments.
 * Otherwise, self.game_state.character.roll_stats() is called, and a 1-tuple of
   a Various_Commands_Display_Rolled_Stats is returned.
         """
+        # This command takes no arguments, so if any were supplied, I return a
+        # syntax error.
         if len(tokens):
-            return stmsg.Command_Bad_Syntax('REROLL', *COMMANDS_SYNTAX['REROLL']),
+            return stmsg.Command_Bad_Syntax('REROLL', COMMANDS_SYNTAX['REROLL']),
+
+        # This command is only valid during the pregame after the character's
+        # name and class have been set (and, therefore, their stats have been
+        # rolled). If either one is None, I return a name-or-class-not-set
+        # error.
         character_name = getattr(self.game_state, 'character_name', None)
         character_class = getattr(self.game_state, 'character_class', None)
         if not character_name or not character_class:
             return stmsg.Reroll_Command_Name_or_Class_Not_Set(character_name, character_class),
+
+        # I reroll the player character's stats, and return a
+        # display-rolled-stats value.
         self.game_state.character.ability_scores.roll_stats()
         return stmsg.Various_Commands_Display_Rolled_Stats(
                    strength=self.game_state.character.strength,
@@ -1574,22 +2485,10 @@ takes no arguments.
                    wisdom=self.game_state.character.wisdom,
                    charisma=self.game_state.character.charisma),
 
-    # Concerning both set_name_command() and set_class_command() below it:
-    #
-    # The Character object isn't instanced in Game_State.__init__ because it
-    # depends on name and class choice. Its character_name and character_class
-    # setters have a side effect where if both have been set the Character
-    # object is instanced automatically. So after valid input is determined, I
-    # check for the condition of of <both character_name and character_class are
-    # now non-None>; if so, the Character object was just instanced. That means
-    # the ability scores were rolled and assigned. The player may choose to
-    # reroll, so the return tuple includes a prompt to do so.
-
-    def set_class_command(self, *tokens):
+    def set_class_command(self, tokens):
         """
-This method implements the SET CLASS command. (The command is only usable
-if the player is playing a Thief.) It accepts a tokens tuple that is
-the command's arguments, tokenized. It returns a tuple of one or more
+This method implements the SET CLASS command. It accepts a tokens tuple that
+is the command's arguments, tokenized. It returns a tuple of one or more
 adventuregame.statemsgs.Game_State_Message subclass objects. The SET CLASS
 command has the following usage:
 
@@ -1606,13 +2505,26 @@ SET CLASS [TO] <Warrior, Thief, Mage or Priest>
   and a 2-tuple of a Set_Class_Command_Class_Set object and a
   Various_Commands_Display_Rolled_Stats object is returned.
         """
+        # This command takes exactly one argument, so I return a syntax error if
+        # I got 0 or more than 1.
         if len(tokens) == 0 or len(tokens) > 1:
-            return stmsg.Command_Bad_Syntax('SET CLASS', *COMMANDS_SYNTAX['SET CLASS']),
-        elif not self.valid_class_re.match(tokens[0]):
+            return stmsg.Command_Bad_Syntax('SET CLASS', COMMANDS_SYNTAX['SET CLASS']),
+
+        # If the user specified something other than one of the four classes, I
+        # return an invalid-class error.
+        elif tokens[0] not in ('Warrior', 'Thief', 'Mage', 'Priest'):
             return stmsg.Set_Class_Command_Invalid_Class(tokens[0]),
+
+        # I assign the chosen classname, record whether this is the first
+        # time this command is used, and set the class.
         class_str = tokens[0]
         class_was_none = self.game_state.character_class is None
         self.game_state.character_class = class_str
+
+        # If character name was already set and this is the first setting of
+        # character class, the Character object will have been initialized as a
+        # side effect, so I return a class-set value and a display-rolled-stats
+        # value.
         if self.game_state.character_name is not None and class_was_none:
             return (stmsg.Set_Class_Command_Class_Set(class_str),
                     stmsg.Various_Commands_Display_Rolled_Stats(
@@ -1624,16 +2536,13 @@ SET CLASS [TO] <Warrior, Thief, Mage or Priest>
                         charisma=self.game_state.character.charisma
             ))
         else:
+            # Otherwise I return only the class-set value.
             return stmsg.Set_Class_Command_Class_Set(class_str),
 
-    # This is a very hairy method on account of how much natural language processing it has to do to account for all the
-    # permutations on how a user writes TAKE Item FROM Container.
-
-    def set_name_command(self, *tokens):
+    def set_name_command(self, tokens):
         """
-This method implements the SET NAME command. (The command is only usable
-if the player is playing a Thief.) It accepts a tokens tuple that is
-the command's arguments, tokenized. It returns a tuple of one or more
+This method implements the SET NAME command. It accepts a tokens tuple that
+is the command's arguments, tokenized. It returns a tuple of one or more
 adventuregame.statemsgs.Game_State_Message subclass objects. The SET NAME
 command has the following usage:
 
@@ -1651,34 +2560,46 @@ SET NAME [TO] <character name>
   and a 2-tuple of a Set_Name_Command_Name_Set object and a
   Various_Commands_Display_Rolled_Stats object is returned.
         """
+        # This command requires one or more arguments, so if len(tokens) == 0 I
+        # return a syntax error.
         if len(tokens) == 0:
-            return stmsg.Command_Bad_Syntax('SET NAME', *COMMANDS_SYNTAX['SET NAME']),
-        name_parts_tests = list(map(bool, map(self.valid_name_re.match, tokens)))
-        name_was_none = self.game_state.character_name is None
-        if False in name_parts_tests:
-            failing_parts = list()
-            offset = 0
-            for _ in range(0, name_parts_tests.count(False)):
-                failing_part_index = name_parts_tests.index(False, offset)
-                failing_parts.append(tokens[failing_part_index])
-                offset = failing_part_index + 1
-            return tuple(map(stmsg.Set_Name_Command_Invalid_Part, failing_parts))
-        else:
-            name_str = ' '.join(tokens)
-            self.game_state.character_name = ' '.join(tokens)
-            if self.game_state.character_class is not None and name_was_none:
-                return (stmsg.Set_Name_Command_Name_Set(name_str), stmsg.Various_Commands_Display_Rolled_Stats(
-                            strength=self.game_state.character.strength,
-                            dexterity=self.game_state.character.dexterity,
-                            constitution=self.game_state.character.constitution,
-                            intelligence=self.game_state.character.intelligence,
-                            wisdom=self.game_state.character.wisdom,
-                            charisma=self.game_state.character.charisma
-                ))
-            else:
-                return stmsg.Set_Name_Command_Name_Set(self.game_state.character_name),
+            return stmsg.Command_Bad_Syntax('SET NAME', COMMANDS_SYNTAX['SET NAME']),
 
-    def status_command(self, *tokens):
+        # valid_name_re.pattern == '^[A-Z][a-z]+$'. I test each token for a
+        # match, and non-matching name parts are saved. If invalid_name_parts is
+        # nonempty afterwards, a separate invalid-name-part error is returned
+        # for each failing name part.
+        invalid_name_parts = list()
+        for name_part in tokens:
+            if self.valid_name_re.match(name_part):
+                continue
+            invalid_name_parts.append(name_part)
+        if len(invalid_name_parts):
+            return tuple(map(stmsg.Set_Name_Command_Invalid_Part, invalid_name_parts))
+
+        # If the name wasn't set before this call, I save that fact, then set the character name.
+        name_was_none = self.game_state.character_name is None
+        name_str = ' '.join(tokens)
+        self.game_state.character_name = ' '.join(tokens)
+
+        # If the character class is set and this command is the first time the
+        # name has been set, that means that self.game_state has instantiated a
+        # Character object as a side effect, so I return a 2-tuple of a name-set
+        # value and a display-rolled-stats value.
+        if self.game_state.character_class is not None and name_was_none:
+            return (stmsg.Set_Name_Command_Name_Set(name_str), stmsg.Various_Commands_Display_Rolled_Stats(
+                        strength=self.game_state.character.strength,
+                        dexterity=self.game_state.character.dexterity,
+                        constitution=self.game_state.character.constitution,
+                        intelligence=self.game_state.character.intelligence,
+                        wisdom=self.game_state.character.wisdom,
+                        charisma=self.game_state.character.charisma
+            ))
+        else:
+            # Otherwise I just return a name-set value.
+            return stmsg.Set_Name_Command_Name_Set(self.game_state.character_name),
+
+    def status_command(self, tokens):
         """
 This method implements the STATUS command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
@@ -1689,40 +2610,60 @@ takes no arguments.
   Command_Bad_Syntax object.
 * Otherwise, a 1-tuple of a Status_Command_Output object is returned.
         """
+        # This command takes no arguments so if any were supplied I return a
+        # syntax error.
         if len(tokens):
-            return stmsg.Command_Bad_Syntax('STATUS', *COMMANDS_SYNTAX['STATUS']),
-        character = self.game_state.character
-        output_args = dict()
-        output_args['hit_points'] = character.hit_points
-        output_args['hit_point_total'] = character.hit_point_total
-        if character.character_class in ('Mage', 'Priest'):
-            output_args['mana_points'] = character.mana_points
-            output_args['mana_point_total'] = character.mana_point_total
-        else:
-            output_args['mana_points'] = None
-            output_args['mana_point_total'] = None
-        output_args['armor_class'] = character.armor_class
-        if character.weapon_equipped or (character.character_class == 'Mage' and character.wand_equipped):
-            output_args['attack_bonus'] = character.attack_bonus
-            output_args['damage'] = character.damage_roll
-        else:
-            output_args['attack_bonus'] = 0
-            output_args['damage'] = ''
-        if character.character_class != 'Mage':
-            output_args['armor'] = character.armor.title if character.armor_equipped else None
-        if character.character_class not in ('Thief', 'Mage'):
-            output_args['shield'] = character.shield.title if character.shield_equipped else None
-        if character.character_class == 'Mage':
-            output_args['wand'] = character.wand.title if character.wand_equipped else None
-        output_args['weapon'] = character.weapon.title if character.weapon_equipped else None
-        output_args['character_class'] = character.character_class
-        return stmsg.Status_Command_Output(**output_args),
+            return stmsg.Command_Bad_Syntax('STATUS', COMMANDS_SYNTAX['STATUS']),
 
-    def take_command(self, *tokens):
+        # A lot of data goes into a status command so I build the argd to
+        # Status_Command_Output key by key.
+        character = self.game_state.character
+        status_gsm_argd = dict()
+        status_gsm_argd['hit_points'] = character.hit_points
+        status_gsm_argd['hit_point_total'] = character.hit_point_total
+
+        # Mana points are only part of a status line if the player character is
+        # a Mage or Priest.
+        if character.character_class in ('Mage', 'Priest'):
+            status_gsm_argd['mana_points'] = character.mana_points
+            status_gsm_argd['mana_point_total'] = character.mana_point_total
+        else:
+            status_gsm_argd['mana_points'] = None
+            status_gsm_argd['mana_point_total'] = None
+
+        status_gsm_argd['armor_class'] = character.armor_class
+
+        # attack_bonus and damage are only set if a weapon is equipped... or if
+        # the player character is a Mage and a wand is equipped.
+        if character.weapon_equipped or (character.character_class == 'Mage' and character.wand_equipped):
+            status_gsm_argd['attack_bonus'] = character.attack_bonus
+            status_gsm_argd['damage'] = character.damage_roll
+        else:
+            status_gsm_argd['attack_bonus'] = 0
+            status_gsm_argd['damage'] = ''
+
+        # The status line can display the currently equipped armor, shield,
+        # weapon and wand, and if an item isn't equipped in a given slot it
+        # can display 'none'; but it only shows '<Equipment>: none' if that
+        # equipment type is one the player character's class can use. So I use
+        # class-tests to determine whether to add each equipment-type argument.
+        if character.character_class != 'Mage':
+            status_gsm_argd['armor'] = character.armor.title if character.armor_equipped else None
+        if character.character_class not in ('Thief', 'Mage'):
+            status_gsm_argd['shield'] = character.shield.title if character.shield_equipped else None
+        if character.character_class == 'Mage':
+            status_gsm_argd['wand'] = character.wand.title if character.wand_equipped else None
+
+        status_gsm_argd['weapon'] = character.weapon.title if character.weapon_equipped else None
+        status_gsm_argd['character_class'] = character.character_class
+
+        # The entire argd has been assembled so I return a status-ouput value.
+        return stmsg.Status_Command_Output(**status_gsm_argd),
+
+    def take_command(self, tokens):
         """
-This method implements the TAKE command. (The command is only usable
-if the player is playing a Thief.) It accepts a tokens tuple that is
-the command's arguments, tokenized. It returns a tuple of one or more
+This method implements the TAKE command. It accepts a tokens tuple that
+is the command's arguments, tokenized. It returns a tuple of one or more
 adventuregame.statemsgs.Game_State_Message subclass objects. The TAKE command
 has the following usage:
 
@@ -1749,78 +2690,60 @@ TAKE <number> <item name> FROM <container name>
   self.game_state.character, and a 1-tuple of a Take_Command_Item_or_Items_Taken
   object is returned.
         """
-        results = self._put_or_take_preproc('TAKE', 'FROM', *tokens)
+        # take_command() shares logic with put_command() in a private workhorse
+        # method _put_or_take_preproc().
+        results = self._put_or_take_preproc('TAKE', tokens)
 
-        # The workhorse private method returns either a stmsg.Game_State_Message subclass object (see
-        # adventuregame.game_state_messages) or a tuple of amount to take, parsed title of Item, parsed title of
-        # Container, and the Container object (as a matter of convenience, it's needed by the private method & why fetch
-        # it twice).
+        # As always with private workhorse methods, it may have returned an
+        # error value; if so, I return it.
         if len(results) == 1 and isinstance(results[0], stmsg.Game_State_Message):
             return results
         else:
-            # len(results) == 4 and isinstance(results[0], int) and isinstance(results[1], str)
-            #     and isinstance(results[2], str) and isinstance(results[3], Container)
-            take_amount, item_title, container_title, container = results
+            # Otherwise, I extract the values parsed out of tokens from the
+            # results tuple.
+            quantity_to_take, item_title, container_title, container = results
 
-        # The following loop iterates over all the items in the Container. I use a while loop so it's possible for the
-        # search to fall off the end of the loop. If that code is reached, the specified Item isn't in this Container.
-        container_here_contents = list(container.items())
-        index = 0
-        while index < len(container_here_contents):
-            item_internal_name, (item_qty, item) = container_here_contents[index]
+        # The following loop iterates over all the items in the Container. I use
+        # a while loop so it's possible for the search to fall off the end of
+        # the loop. If that code is reached, the specified Item isn't in this
+        # Container.
+        matching_item = tuple(filter(lambda argl: argl[1][1].title == item_title, container.items()))
+        if len(matching_item) == 0:
+            return stmsg.Take_Command_Item_Not_Found_in_Container(
+                       container_title, quantity_to_take, container.container_type, item_title),
 
-            # This isn't the Item specified.
-            if item.title != item_title:
-                index += 1
-                continue
+        (item_internal_name, (item_quantity, item)), = matching_item
 
-            if take_amount is math.nan:
-                # This *is* the Item, but the command didn't specify the quantity, so I set `take_amount` to the
-                # quantity in the Container.
-                take_amount = item_qty
+        # The private workhorse method couldn't determine a quantity and
+        # returned the signal value math.nan, so I assume the entire amount
+        # present is intended, and set quantity_to_take to item_quantity.
+        if quantity_to_take is math.nan:
+            quantity_to_take = item_quantity
+        if quantity_to_take > item_quantity:
+            # The amount specified is more than how much is in the Container, so
+            # I return a trying-to-take-more-than-is-present error.
+            return stmsg.Take_Command_Trying_to_Take_More_than_Is_Present(
+                             container_title, container.container_type,
+                             item_title, item.item_type, quantity_to_take, item_quantity),
 
-            if take_amount > item_qty:
+        if quantity_to_take == item_quantity:
+            # The amount to remove is the total amount present, so I delete it
+            # from the container.
+            container.delete(item_internal_name)
+        else:
+            # The quantity to take is less thant the amount present, so I set
+            # the item in the container to the new lower quantity.
+            container.set(item_internal_name, item_quantity - quantity_to_take, item)
 
-                # The amount specified is more than how much is in the Container, so I return an error.
-                return stmsg.Take_Command_Trying_to_Take_More_than_Is_Present(container_title, container.container_type,
-                                                                              item_title, item.item_type, take_amount,
-                                                                              item_qty),
-            elif take_amount == 1:
+        # I add the item in the given quantity to the player character's
+        # inventory and return an item-or-items-taken value.
+        self.game_state.character.pick_up_item(item, qty=quantity_to_take)
+        return stmsg.Take_Command_Item_or_Items_Taken(container_title, item_title, quantity_to_take),
 
-                # We have a match. One Item is remove from the Container and added to the Character's Inventory; and a
-                # success return object is returned.
-                container.remove_one(item_internal_name)
-                self.game_state.character.pick_up_item(item)
-                return stmsg.Take_Command_Item_or_Items_Taken(container_title, item_title, take_amount),
-            else:
-
-                # We have a match.
-                if take_amount == item_qty:
-
-                    # The amount specified is how much is here, so I delete the Item from the Container.
-                    container.delete(item_internal_name)
-                else:
-
-                    # There's more in the Container than was specified, so I set the amount in the Container to the
-                    # amount that was there minus the amount being taken.
-                    container.set(item_internal_name, item_qty - take_amount, item)
-
-                # The Character's Inventory is updated with the items taken, and a success object is returned.
-                self.game_state.character.pick_up_item(item, qty=take_amount)
-                return stmsg.Take_Command_Item_or_Items_Taken(container_title, item_title, take_amount),
-
-            # The loop didn't find the Item on this path, so I increment the index and try again.
-            index += 1
-
-        # The loop completed without finding the Item, so it isn't present in the Container. I return an error.
-        return stmsg.Take_Command_Item_Not_Found_in_Container(container_title, take_amount, container.container_type,
-                                                              item_title),  # tested
-
-    def unequip_command(self, *tokens):
+    def unequip_command(self, tokens):
         """
-This method implements the UNEQUIP command. (The command is only usable
-if the player is playing a Thief.) It accepts a tokens tuple that is
-the command's arguments, tokenized. It returns a tuple of one or more
+This method implements the UNEQUIP command. It accepts a tokens tuple that
+is the command's arguments, tokenized. It returns a tuple of one or more
 adventuregame.statemsgs.Game_State_Message subclass objects. The UNEQUIP command
 has the following usage:
 
@@ -1838,11 +2761,20 @@ UNEQUIP <weapon name>
   self.game_state.rooms_state.character, and a 1-tuple of a
   Various_Commands_Item_Unequipped is returned.
         """
+        # This command requires an argument so if none was supplied I return a
+        # syntax error.
         if not tokens:
-            return stmsg.Command_Bad_Syntax('UNEQUIP', *COMMANDS_SYNTAX['UNEQUIP']),
+            return stmsg.Command_Bad_Syntax('UNEQUIP', COMMANDS_SYNTAX['UNEQUIP']),
+
+        # I construct the item title and search for it in the player character's
+        # inventory.
         item_title = ' '.join(tokens)
         matching_item_tuple = tuple(item for _, item in self.game_state.character.list_items()
                                     if item.title == item_title)
+
+        # If the item isn't found in the player character's inventory, I search
+        # for it in the items_state just to get the item_type; I return an
+        # item-not-equipped error informed by the found item_type if possible.
         if not len(matching_item_tuple):
             matching_item_tuple = tuple(item for item in self.game_state.items_state.values()
                                         if item.title == item_title)
@@ -1851,34 +2783,64 @@ UNEQUIP <weapon name>
                 return stmsg.Unequip_Command_Item_Not_Equipped(item.title, item.item_type),
             else:
                 return stmsg.Unequip_Command_Item_Not_Equipped(item_title),
+
+        # I extract the matched item.
         item, = matching_item_tuple[0:1]
+
+        # This code is very repetitive but it can't easily be condensed into a
+        # loop due to the special case handling in the weapon section vis a vis
+        # wands, so I just deal with repetitive code.
         if item.item_type == 'armor':
-            if self.game_state.character.armor_equipped is not None:
-                if self.game_state.character.armor_equipped.title == item_title:
+            if self.game_state.character.armor_equipped is None:
+                # If I'm unequipping armor but the player character has no armor
+                # equipped I return a item-not-equipped error.
+                return stmsg.Unequip_Command_Item_Not_Equipped(item_title, 'armor'),
+            else:
+                if self.game_state.character.armor_equipped.title != item_title:
+                    # If armor_equipped's title doesn't match the argument
+                    # item_title, I return an item-not-equipped error.
+                    return stmsg.Unequip_Command_Item_Not_Equipped(item_title, 'armor',
+                                                                   self.game_state.character.armor_equipped.title),
+                else:
+                    # Otherwise, the title matches, so I unequip the armor and
+                    # return a item-unequipped value.
                     self.game_state.character.unequip_armor()
                     return stmsg.Various_Commands_Item_Unequipped(item_title, 'armor',
                                                                   armor_class=self.game_state.character.armor_class),
-                else:
-                    return stmsg.Unequip_Command_Item_Not_Equipped(item_title, 'armor',
-                                                                   self.game_state.character.armor_equipped.title),
-            else:
-                return stmsg.Unequip_Command_Item_Not_Equipped(item_title, 'armor'),
         elif item.item_type == 'shield':
-            if self.game_state.character.shield_equipped is not None:
-                if self.game_state.character.shield_equipped.title == item_title:
+            if self.game_state.character.shield_equipped is None:
+                # If I'm unequipping a shield but the player character has no shield
+                # equipped I return a item-not-equipped error.
+                return stmsg.Unequip_Command_Item_Not_Equipped(item_title, 'shield'),
+            else:
+                if self.game_state.character.shield_equipped.title != item_title:
+                    # If shield_equipped's title doesn't match the argument
+                    # item_title, I return an item-not-equipped error.
+                    return stmsg.Unequip_Command_Item_Not_Equipped(item_title, 'shield',
+                                                                   self.game_state.character.shield_equipped.title),
+                else:
+                    # Otherwise, the title matches, so I unequip the shield and
+                    # return a item-unequipped value.
                     self.game_state.character.unequip_shield()
                     return stmsg.Various_Commands_Item_Unequipped(item_title, 'shield',
                                                                   armor_class=self.game_state.character.armor_class),
-                else:
-                    return stmsg.Unequip_Command_Item_Not_Equipped(item_title, 'shield',
-                                                                   self.game_state.character.shield_equipped.title),
-            else:
-                return stmsg.Unequip_Command_Item_Not_Equipped(item_title, 'shield'),
         elif item.item_type == 'wand':
-            if self.game_state.character.wand_equipped is not None:
-                if self.game_state.character.wand_equipped.title == item_title:
+            if self.game_state.character.wand_equipped is None:
+                # If I'm unequipping a wand but the player character has no wand
+                # equipped I return a item-not-equipped error.
+                return stmsg.Unequip_Command_Item_Not_Equipped(item_title, 'wand'),
+            else:
+                if self.game_state.character.wand_equipped.title != item_title:
+                    # If wand_equipped's title doesn't match the argument
+                    # item_title, I return an item-not-equipped error.
+                    return stmsg.Unequip_Command_Item_Not_Equipped(item_title, 'wand'),
+                else:
+                    # Otherwise, the title matches, so I unequip the wand.
                     self.game_state.character.unequip_wand()
                     weapon_equipped = self.game_state.character.weapon_equipped
+                    # If a weapon is equipped, the player character will
+                    # still be able to attack with *that*, so I return an
+                    # item-unequipped value initialized with the weapon's info.
                     if weapon_equipped is not None:
                         return stmsg.Various_Commands_Item_Unequipped(item_title, 'wand',
                                                                       attack_bonus=self.game_state.character.
@@ -1886,31 +2848,42 @@ UNEQUIP <weapon name>
                                                                       damage=self.game_state.character.damage_roll,
                                                                       now_attacking_with=weapon_equipped),
                     else:
+                        # Otherwise, I return an item-unequipped value with
+                        # cant_attack set to True.
                         return stmsg.Various_Commands_Item_Unequipped(item_title, 'wand', cant_attack=True),
-                else:
-                    return stmsg.Unequip_Command_Item_Not_Equipped(item_title, 'wand'),
-            else:
-                return stmsg.Unequip_Command_Item_Not_Equipped(item_title, 'wand'),
         elif item.item_type == 'weapon':
-            if self.game_state.character.weapon_equipped is not None:
-                if self.game_state.character.weapon_equipped.title == item_title:
+            # If I'm unequipping a weapon but the player character has no weapon
+            # equipped I return a item-not-equipped error.
+            if self.game_state.character.weapon_equipped is None:
+                return stmsg.Unequip_Command_Item_Not_Equipped(item.title, 'weapon'),
+            else:
+                if self.game_state.character.weapon_equipped.title != item_title:
+                    # If weapon_equipped's title doesn't match the argument
+                    # item_title, I return an item-not-equipped error.
+                    return stmsg.Unequip_Command_Item_Not_Equipped(item.title, 'weapon'),
+                else:
+                    # Otherwise, the title matches, so I unequip the weapon.
                     self.game_state.character.unequip_weapon()
                     wand_equipped = self.game_state.character.wand_equipped
+                    # If the player character has a wand equipped, they'll
+                    # be attacking with that regardless of their weapon, so
+                    # I return an item-unequipped value initialized with the
+                    # wand's info.
                     if wand_equipped is not None:
                         return stmsg.Various_Commands_Item_Unequipped(item_title, 'weapon',
+                                                                      attack_bonus=self.game_state.character.
+                                                                          attack_bonus,
+                                                                      damage=self.game_state.character.damage_roll,
                                                                       attacking_with=wand_equipped),
                     else:
+                        # Otherwise I return an item-unequipped value with
+                        # now_cant_attack set to True.
                         return stmsg.Various_Commands_Item_Unequipped(item_title, 'weapon', now_cant_attack=True),
-                else:
-                    return stmsg.Unequip_Command_Item_Not_Equipped(item.title, 'weapon'),
-            else:
-                return stmsg.Unequip_Command_Item_Not_Equipped(item.title, 'weapon'),
 
-    def unlock_command(self, *tokens):
+    def unlock_command(self, tokens):
         """
-This method implements the UNLOCK command. (The command is only usable
-if the player is playing a Thief.) It accepts a tokens tuple that is
-the command's arguments, tokenized. It returns a tuple of one or more
+This method implements the UNLOCK command. It accepts a tokens tuple that
+is the command's arguments, tokenized. It returns a tuple of one or more
 adventuregame.statemsgs.Game_State_Message subclass objects. The UNLOCK command
 has the following usage:
 
@@ -1924,28 +2897,49 @@ UNLOCK <chest\u00A0name>
 * If the arguments given match more than one door in the room, a 1-tuple of a
   Various_Commands_Ambiguous_Door_Specifier object is returned.
 * If the specified door or chest is not present in the current room, a 1-tuple
-  of an Unlock_Command_Object_to_Unlock_Not_Here object is returned.
+  of an Unlock_Command_Element_to_Unlock_Not_Here object is returned.
 * If the specified element is a doorway, item, creature or corpse, a 1-tuple of
   an Unlock_Command_Element_Not_Unlockable object is returned.
 * If the character does not possess the requisite door or chest key to lock the
   specified door or chest, a 1-tuple of an
   Unlock_Command_Dont_Possess_Correct_Key object is returned.
 * If the specified door or chest is already unlocked, a 1-tuple of a
-  Unlock_Command_Object_Is_Already_Unlocked object is returned.
+  Unlock_Command_Element_Is_Already_Unlocked object is returned.
 * Otherwise, the specified door's or chest's is_locked attribute is set to
-  False, and a 1-tuple of an Unlock_Command_Object_Has_Been_Unlocked object is
+  False, and a 1-tuple of an Unlock_Command_Element_Has_Been_Unlocked object is
   returned.
         """
-        result = self._lock_unlock_open_or_close_preproc('UNLOCK', *tokens)
+        # This command requires an argument; so if it was called with no
+        # arguments, I return a syntax error.
+        if len(tokens) == 0:
+            return stmsg.Command_Bad_Syntax('UNLOCK', COMMANDS_SYNTAX['UNLOCK']),
+
+        # unlock_command() shares preprocessing logic with lock_command(),
+        # open_command() and close_command(), so a private workhorse method is
+        # called.
+        result = self._preprocessing_for_lock_unlock_open_or_close('UNLOCK', tokens)
         if isinstance(result[0], stmsg.Game_State_Message):
+            # If an error value is returned, I return it in turn.
             return result
         else:
-            object_to_unlock, = result
-        key_required = 'door key' if isinstance(object_to_unlock, elem.Door) else 'chest key'
+            # Otherwise I extract the element_to_unlock from the result tuple.
+            element_to_unlock, = result
+
+        # A key is required to unlock something; the chest key for chests and
+        # the door key for doors. So I search the player character's inventory
+        # for it. The key is not consumed by use, so I only need to know it's
+        # there, not retrieve the Key object and operate on it.
+        key_required = 'door key' if isinstance(element_to_unlock, elem.Door) else 'chest key'
         if not any(item.title == key_required for _, item in self.game_state.character.list_items()):
-            return stmsg.Unlock_Command_Dont_Possess_Correct_Key(object_to_unlock.title, key_required),
-        elif object_to_unlock.is_locked is False:
-            return stmsg.Unlock_Command_Object_Is_Already_Unlocked(object_to_unlock.title),
+            # If the required key is not present, I return a
+            # don't-possess-correct-key error.
+            return stmsg.Unlock_Command_Dont_Possess_Correct_Key(element_to_unlock.title, key_required),
+        elif element_to_unlock.is_locked is False:
+            # Otherwise, if the item is already unlocked, I return an
+            # element-is-already-unlocked error.
+            return stmsg.Unlock_Command_Element_Is_Already_Unlocked(element_to_unlock.title),
         else:
-            object_to_unlock.is_locked = False
-            return stmsg.Unlock_Command_Object_Has_Been_Unlocked(object_to_unlock.title),
+            # Otherwise, I unlock the element, and return an
+            # element-has-been-unlocked value.
+            element_to_unlock.is_locked = False
+            return stmsg.Unlock_Command_Element_Has_Been_Unlocked(element_to_unlock.title),

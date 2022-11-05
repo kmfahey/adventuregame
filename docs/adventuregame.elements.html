@@ -24,10 +24,12 @@ implements.</tt></p>
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="abc.html">abc</a><br>
 <a href="collections.html">collections</a><br>
-</td><td width="25%" valign=top><a href="math.html">math</a><br>
-<a href="random.html">random</a><br>
-</td><td width="25%" valign=top><a href="re.html">re</a><br>
-</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+</td><td width="25%" valign=top><a href="adventuregame.exceptions.html">adventuregame.exceptions</a><br>
+<a href="math.html">math</a><br>
+</td><td width="25%" valign=top><a href="random.html">random</a><br>
+<a href="re.html">re</a><br>
+</td><td width="25%" valign=top><a href="adventuregame.utility.html">adventuregame.utility</a><br>
+</td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
 <td colspan=3 valign=bottom>&nbsp;<br>
@@ -213,7 +215,7 @@ returns&nbsp;True&nbsp;if&nbsp;the&nbsp;<a href="builtins.html#object">object</a
 value,&nbsp;or&nbsp;False&nbsp;otherwise.<br>
 &nbsp;<br>
 :character_class:&nbsp;Either&nbsp;'Warrior',&nbsp;'Thief',&nbsp;'Mage',&nbsp;or&nbsp;'Priest'.<br>
-:return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;boolean.</tt></dd></dl>
 
 <hr>
 Methods inherited from <a href="adventuregame.elements.html#Item">Item</a>:<br>
@@ -234,9 +236,9 @@ The&nbsp;factory&nbsp;chooses&nbsp;between&nbsp;the&nbsp;subclasses&nbsp;<a href
 <a href="#Wand">Wand</a>,&nbsp;and&nbsp;<a href="#Weapon">Weapon</a>.&nbsp;The&nbsp;subclasses&nbsp;don't&nbsp;offer&nbsp;any&nbsp;functionality;&nbsp;they&nbsp;exist<br>
 solely&nbsp;so&nbsp;that&nbsp;an&nbsp;<a href="#Item">Item</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;can&nbsp;be&nbsp;type-tested&nbsp;to&nbsp;detect&nbsp;its&nbsp;category.<br>
 &nbsp;<br>
-:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<br>
+:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="builtins.html#object">object</a>&nbsp;with.<br>
-:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <hr>
 Data descriptors inherited from <a href="adventuregame.elements.html#Item">Item</a>:<br>
@@ -276,7 +278,7 @@ Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
 self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
-:other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
+:other:&nbsp;&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <hr>
@@ -315,56 +317,60 @@ the&nbsp;subordinate&nbsp;inventory&nbsp;<a href="#Items_Multi_State">Items_Mult
 <a href="#Equipment">Equipment</a>&nbsp;<a href="builtins.html#object">object</a>,&nbsp;and&nbsp;sets&nbsp;up&nbsp;the&nbsp;hit&nbsp;point&nbsp;and&nbsp;(optionally)&nbsp;mana&nbsp;point&nbsp;values.<br>
 It&nbsp;also&nbsp;sets&nbsp;the&nbsp;magic&nbsp;key&nbsp;stat&nbsp;if&nbsp;any.<br>
 &nbsp;<br>
-:character_name_str:&nbsp;A&nbsp;string,&nbsp;the&nbsp;name&nbsp;for&nbsp;the&nbsp;character.<br>
+:character_name_str:&nbsp;&nbsp;A&nbsp;string,&nbsp;the&nbsp;name&nbsp;for&nbsp;the&nbsp;character.<br>
 :character_class_str:&nbsp;A&nbsp;string&nbsp;one&nbsp;of&nbsp;'Warrior',&nbsp;'Thief',&nbsp;'Priest',&nbsp;or&nbsp;'Mage'.<br>
-:base_hit_points:&nbsp;An&nbsp;int,&nbsp;the&nbsp;character's&nbsp;base&nbsp;hit&nbsp;points&nbsp;(optional).<br>
-:base_mana_points:&nbsp;An&nbsp;int,&nbsp;the&nbsp;character's&nbsp;base&nbsp;mana&nbsp;points&nbsp;(optional).<br>
-:magic_key_stat:&nbsp;A&nbsp;string,&nbsp;the&nbsp;character's&nbsp;magic&nbsp;key&nbsp;stat&nbsp;(one&nbsp;of&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'Intelligence',&nbsp;'Wisdom',&nbsp;or&nbsp;'Charisma'.<br>
-:strength:&nbsp;An&nbsp;int,&nbsp;the&nbsp;set&nbsp;value&nbsp;for&nbsp;the&nbsp;character's&nbsp;Strength&nbsp;score&nbsp;(optional).<br>
-:dexterity&nbsp;An&nbsp;int,&nbsp;the&nbsp;set&nbsp;value&nbsp;for&nbsp;the&nbsp;character's&nbsp;Dexterity&nbsp;score&nbsp;(optional).<br>
-:constitution:&nbsp;An&nbsp;int,&nbsp;the&nbsp;set&nbsp;value&nbsp;for&nbsp;the&nbsp;character's&nbsp;Constitution&nbsp;score&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(optional).<br>
-:intelligence:&nbsp;An&nbsp;int,&nbsp;the&nbsp;set&nbsp;value&nbsp;for&nbsp;the&nbsp;character's&nbsp;Intelligence&nbsp;score&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(optional).<br>
-:wisdom:&nbsp;An&nbsp;int,&nbsp;the&nbsp;set&nbsp;value&nbsp;for&nbsp;the&nbsp;character's&nbsp;Wisdom&nbsp;score&nbsp;(optional).<br>
-:charisma:&nbsp;An&nbsp;int,&nbsp;the&nbsp;set&nbsp;value&nbsp;for&nbsp;the&nbsp;character's&nbsp;Charisma&nbsp;score&nbsp;(optional).</tt></dd></dl>
+:base_hit_points:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int,&nbsp;the&nbsp;character's&nbsp;base&nbsp;hit&nbsp;points&nbsp;(optional).<br>
+:base_mana_points:&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int,&nbsp;the&nbsp;character's&nbsp;base&nbsp;mana&nbsp;points&nbsp;(optional).<br>
+:magic_key_stat:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;string,&nbsp;the&nbsp;character's&nbsp;magic&nbsp;key&nbsp;stat&nbsp;(one&nbsp;of<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'Intelligence',&nbsp;'Wisdom',&nbsp;or&nbsp;'Charisma').<br>
+:strength:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int,&nbsp;the&nbsp;set&nbsp;value&nbsp;for&nbsp;the&nbsp;character's&nbsp;Strength&nbsp;score<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(optional).<br>
+:dexterity:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int,&nbsp;the&nbsp;set&nbsp;value&nbsp;for&nbsp;the&nbsp;character's&nbsp;Dexterity&nbsp;score<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(optional).<br>
+:constitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int,&nbsp;the&nbsp;set&nbsp;value&nbsp;for&nbsp;the&nbsp;character's&nbsp;Constitution<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;score&nbsp;(optional).<br>
+:intelligence:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int,&nbsp;the&nbsp;set&nbsp;value&nbsp;for&nbsp;the&nbsp;character's&nbsp;Intelligence<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;score&nbsp;(optional).<br>
+:wisdom:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int,&nbsp;the&nbsp;set&nbsp;value&nbsp;for&nbsp;the&nbsp;character's&nbsp;Wisdom&nbsp;score<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(optional).<br>
+:charisma:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int,&nbsp;the&nbsp;set&nbsp;value&nbsp;for&nbsp;the&nbsp;character's&nbsp;Charisma&nbsp;score<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(optional).</tt></dd></dl>
 
 <dl><dt><a name="Character-drop_item"><strong>drop_item</strong></a>(self, item, qty=1)</dt><dd><tt>This&nbsp;method&nbsp;removes&nbsp;the&nbsp;specified&nbsp;quantity&nbsp;(default&nbsp;1)&nbsp;of&nbsp;the&nbsp;given&nbsp;<a href="#Item">Item</a><br>
 subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;from&nbsp;the&nbsp;character's&nbsp;inventory.<br>
 &nbsp;<br>
-:item:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:qty:&nbsp;An&nbsp;int,&nbsp;the&nbsp;quantity&nbsp;to&nbsp;remove&nbsp;from&nbsp;the&nbsp;container,&nbsp;default&nbsp;1.<br>
+:item:&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:qty:&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int,&nbsp;the&nbsp;quantity&nbsp;to&nbsp;remove&nbsp;from&nbsp;the&nbsp;container,&nbsp;default&nbsp;1.<br>
 :return:&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Character-equip_armor"><strong>equip_armor</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;equip_armor&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;<a href="#Equipment">Equipment</a>&nbsp;<a href="builtins.html#object">object</a><br>
 with&nbsp;the&nbsp;given&nbsp;argument.<br>
 &nbsp;<br>
-:item:&nbsp;An&nbsp;<a href="#Armor">Armor</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:item:&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Armor">Armor</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 :return:&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Character-equip_shield"><strong>equip_shield</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;equip_shield&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;<a href="#Equipment">Equipment</a>&nbsp;<a href="builtins.html#object">object</a><br>
 with&nbsp;the&nbsp;given&nbsp;argument.<br>
 &nbsp;<br>
-:item:&nbsp;A&nbsp;<a href="#Shield">Shield</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:item:&nbsp;&nbsp;&nbsp;A&nbsp;<a href="#Shield">Shield</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 :return:&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Character-equip_wand"><strong>equip_wand</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;equip_wand&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;<a href="#Equipment">Equipment</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with<br>
 the&nbsp;given&nbsp;argument.<br>
 &nbsp;<br>
-:item:&nbsp;A&nbsp;<a href="#Wand">Wand</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:item:&nbsp;&nbsp;&nbsp;A&nbsp;<a href="#Wand">Wand</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 :return:&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Character-equip_weapon"><strong>equip_weapon</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;equip_weapon&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;<a href="#Equipment">Equipment</a>&nbsp;<a href="builtins.html#object">object</a><br>
 with&nbsp;the&nbsp;given&nbsp;argument.<br>
 &nbsp;<br>
-:item:&nbsp;A&nbsp;<a href="#Weapon">Weapon</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:item:&nbsp;&nbsp;&nbsp;A&nbsp;<a href="#Weapon">Weapon</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 :return:&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Character-have_item"><strong>have_item</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;checks&nbsp;whether&nbsp;the&nbsp;given&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;is&nbsp;present&nbsp;in&nbsp;the<br>
 character's&nbsp;inventory.&nbsp;It&nbsp;returns&nbsp;True&nbsp;or&nbsp;False.<br>
 &nbsp;<br>
-:item:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:item:&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
 :return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
 
 <dl><dt><a name="Character-heal_damage"><strong>heal_damage</strong></a>(self, healing_value)</dt><dd><tt>This&nbsp;method&nbsp;applies&nbsp;an&nbsp;amount&nbsp;of&nbsp;healing&nbsp;to&nbsp;the&nbsp;character's&nbsp;hit&nbsp;points.&nbsp;If&nbsp;the<br>
@@ -373,13 +379,13 @@ points,&nbsp;their&nbsp;hit&nbsp;point&nbsp;value&nbsp;is&nbsp;set&nbsp;to&nbsp;
 method&nbsp;returns&nbsp;the&nbsp;amount&nbsp;of&nbsp;healing&nbsp;done.<br>
 &nbsp;<br>
 :healing_value:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;hit&nbsp;points&nbsp;to&nbsp;recover.<br>
-:return:&nbsp;An&nbsp;int.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int.</tt></dd></dl>
 
 <dl><dt><a name="Character-item_have_qty"><strong>item_have_qty</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;checks&nbsp;whether&nbsp;the&nbsp;given&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;is&nbsp;present&nbsp;in&nbsp;the<br>
 character's&nbsp;inventory.&nbsp;If&nbsp;so,&nbsp;it&nbsp;returns&nbsp;the&nbsp;quantity&nbsp;possessed.&nbsp;If&nbsp;not,&nbsp;it<br>
 returns&nbsp;0.<br>
 &nbsp;<br>
-:item:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:item:&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
 :return:&nbsp;An&nbsp;int.</tt></dd></dl>
 
 <dl><dt><a name="Character-list_items"><strong>list_items</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;a&nbsp;sorted&nbsp;list&nbsp;of&nbsp;2-tuples&nbsp;comprising&nbsp;an&nbsp;integer&nbsp;item<br>
@@ -391,8 +397,8 @@ quantity&nbsp;and&nbsp;an&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a hr
 <dl><dt><a name="Character-pick_up_item"><strong>pick_up_item</strong></a>(self, item, qty=1)</dt><dd><tt>This&nbsp;method&nbsp;adds&nbsp;the&nbsp;given&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;the&nbsp;character's&nbsp;inventory&nbsp;in<br>
 the&nbsp;quantity&nbsp;specified,&nbsp;default&nbsp;1.<br>
 &nbsp;<br>
-:item:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:qty:&nbsp;An&nbsp;int,&nbsp;the&nbsp;quantity&nbsp;to&nbsp;add&nbsp;to&nbsp;the&nbsp;container,&nbsp;default&nbsp;1.<br>
+:item:&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:qty:&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int,&nbsp;the&nbsp;quantity&nbsp;to&nbsp;add&nbsp;to&nbsp;the&nbsp;container,&nbsp;default&nbsp;1.<br>
 :return:&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Character-regain_mana"><strong>regain_mana</strong></a>(self, regaining_value)</dt><dd><tt>This&nbsp;method&nbsp;regains&nbsp;mana&nbsp;points&nbsp;by&nbsp;the&nbsp;given&nbsp;value.&nbsp;If&nbsp;the&nbsp;amount&nbsp;regained&nbsp;would<br>
@@ -401,7 +407,7 @@ total,&nbsp;their&nbsp;current&nbsp;mana&nbsp;point&nbsp;value&nbsp;is&nbsp;set&
 value&nbsp;instead.&nbsp;The&nbsp;method&nbsp;returns&nbsp;the&nbsp;amount&nbsp;of&nbsp;mana&nbsp;points&nbsp;regained.<br>
 &nbsp;<br>
 :regaining_value:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;mana&nbsp;points&nbsp;to&nbsp;regain.<br>
-:return:&nbsp;An&nbsp;int.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int.</tt></dd></dl>
 
 <dl><dt><a name="Character-spend_mana"><strong>spend_mana</strong></a>(self, spent_amount)</dt><dd><tt>This&nbsp;method&nbsp;attempts&nbsp;to&nbsp;spend&nbsp;an&nbsp;amount&nbsp;of&nbsp;mana&nbsp;points&nbsp;from&nbsp;the&nbsp;character's&nbsp;mana<br>
 points,&nbsp;returning&nbsp;the&nbsp;amount&nbsp;spent&nbsp;if&nbsp;successful.&nbsp;If&nbsp;the&nbsp;amount&nbsp;spent&nbsp;would<br>
@@ -409,14 +415,14 @@ reduce&nbsp;the&nbsp;character's&nbsp;mana&nbsp;points&nbsp;to&nbsp;less&nbsp;th
 and&nbsp;0&nbsp;is&nbsp;returned&nbsp;to&nbsp;indicate&nbsp;failure.<br>
 &nbsp;<br>
 :spent_amount:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;mana&nbsp;points&nbsp;to&nbsp;spend.<br>
-:return:&nbsp;An&nbsp;int.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int.</tt></dd></dl>
 
 <dl><dt><a name="Character-take_damage"><strong>take_damage</strong></a>(self, damage_value)</dt><dd><tt>This&nbsp;method&nbsp;applies&nbsp;the&nbsp;given&nbsp;damage&nbsp;to&nbsp;the&nbsp;character's&nbsp;hit&nbsp;points.&nbsp;If&nbsp;the&nbsp;hit<br>
 points&nbsp;would&nbsp;be&nbsp;reduced&nbsp;to&nbsp;less&nbsp;than&nbsp;0,&nbsp;they&nbsp;are&nbsp;set&nbsp;to&nbsp;0&nbsp;instead.&nbsp;The&nbsp;method<br>
 returns&nbsp;the&nbsp;amount&nbsp;of&nbsp;damage&nbsp;assessed.<br>
 &nbsp;<br>
 :damage_value:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;hit&nbsp;points&nbsp;to&nbsp;lose.<br>
-:return:&nbsp;An&nbsp;int.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int.</tt></dd></dl>
 
 <dl><dt><a name="Character-unequip_armor"><strong>unequip_armor</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;unequip_armor&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;<a href="#Equipment">Equipment</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
@@ -659,10 +665,10 @@ It&nbsp;draws&nbsp;on&nbsp;the&nbsp;contents&nbsp;attribute&nbsp;of&nbsp;the&nbs
 items_state&nbsp;<a href="builtins.html#object">object</a>&nbsp;is&nbsp;a&nbsp;required&nbsp;argument&nbsp;so&nbsp;that&nbsp;it&nbsp;can&nbsp;be&nbsp;used&nbsp;to&nbsp;look&nbsp;up&nbsp;<a href="#Item">Item</a><br>
 subclass&nbsp;objects'&nbsp;internal&nbsp;names&nbsp;and&nbsp;populate&nbsp;the&nbsp;container.<br>
 &nbsp;<br>
-:item_state:&nbsp;An&nbsp;Item_State&nbsp;<a href="builtins.html#object">object</a>.<br>
-:internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;container.<br>
-:*item_objs:&nbsp;A&nbsp;tuple&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;objects&nbsp;contained&nbsp;by&nbsp;the&nbsp;container.<br>
-:**ini_constr_argd:&nbsp;The&nbsp;key-value&nbsp;pairs&nbsp;from&nbsp;containers.ini&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<br>
+:item_state:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;Item_State&nbsp;<a href="builtins.html#object">object</a>.<br>
+:internal_name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;container.<br>
+:*item_objs:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;tuple&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;objects&nbsp;contained&nbsp;by&nbsp;the&nbsp;container.<br>
+:**ini_constr_argd:&nbsp;The&nbsp;key-value&nbsp;pairs&nbsp;from&nbsp;containers.ini&nbsp;to&nbsp;instantiate&nbsp;the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Container">Container</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with.</tt></dd></dl>
 
 <hr>
@@ -671,8 +677,8 @@ Class methods inherited from <a href="adventuregame.elements.html#Container">Con
 an&nbsp;IniConfig&nbsp;<a href="builtins.html#object">object</a>'s&nbsp;section&nbsp;attribute,&nbsp;and&nbsp;determines&nbsp;which&nbsp;<a href="#Container">Container</a>&nbsp;subclass<br>
 is&nbsp;appropriate&nbsp;to&nbsp;instantiate&nbsp;from&nbsp;the&nbsp;data.<br>
 &nbsp;<br>
-:items_state:&nbsp;An&nbsp;<a href="#Items_State">Items_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
-:**container_dict:&nbsp;A&nbsp;dict&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Container">Container</a>&nbsp;<br>
+:items_state:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Items_State">Items_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:**container_dict:&nbsp;A&nbsp;dict&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Container">Container</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;subclass&nbsp;with.</tt></dd></dl>
 
 <hr>
@@ -695,7 +701,7 @@ Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
 self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
-:other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
+:other:&nbsp;&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <hr>
@@ -719,14 +725,14 @@ Methods inherited from <a href="adventuregame.elements.html#Items_Multi_State">I
 with&nbsp;a&nbsp;quantity&nbsp;of&nbsp;1.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:item:&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;None.</tt></dd></dl>
+:item:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Chest-contains"><strong>contains</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;tests&nbsp;whether&nbsp;an&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;specified&nbsp;internal&nbsp;name&nbsp;is<br>
 present&nbsp;in&nbsp;the&nbsp;private&nbsp;dictionary.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;boolean.</tt></dd></dl>
 
 <dl><dt><a name="Chest-remove_one"><strong>remove_one</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;decreases&nbsp;the&nbsp;quantity&nbsp;stored&nbsp;for&nbsp;the&nbsp;given&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a><br>
 by&nbsp;1,&nbsp;if&nbsp;it's&nbsp;present.&nbsp;If&nbsp;it's&nbsp;not&nbsp;present,&nbsp;a&nbsp;KeyError&nbsp;is&nbsp;raised.&nbsp;If&nbsp;the&nbsp;<a href="#Item">Item</a><br>
@@ -734,16 +740,16 @@ subclass&nbsp;<a href="builtins.html#object">object</a>'s&nbsp;stored&nbsp;quant
 dictionary.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;None.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Chest-set"><strong>set</strong></a>(self, item_internal_name, item_qty, item)</dt><dd><tt>If&nbsp;an&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;is&nbsp;present&nbsp;in&nbsp;the&nbsp;internal&nbsp;dict,&nbsp;this<br>
 accessor&nbsp;method&nbsp;returns&nbsp;a&nbsp;2-tuple&nbsp;comprising&nbsp;an&nbsp;int&nbsp;of&nbsp;the&nbsp;item's&nbsp;quantity&nbsp;and<br>
 the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>;&nbsp;otherwise&nbsp;the&nbsp;internal&nbsp;dict&nbsp;raises&nbsp;a&nbsp;KeyError.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:item_qty:&nbsp;An&nbsp;int&nbsp;value&nbsp;of&nbsp;the&nbsp;item&nbsp;quantity.<br>
-:item:&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;None.</tt></dd></dl>
+:item_qty:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int&nbsp;value&nbsp;of&nbsp;the&nbsp;item&nbsp;quantity.<br>
+:item:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None.</tt></dd></dl>
 
 <hr>
 Methods inherited from <a href="adventuregame.elements.html#State">State</a>:<br>
@@ -751,13 +757,13 @@ Methods inherited from <a href="adventuregame.elements.html#State">State</a>:<br
 the&nbsp;given&nbsp;internal&nbsp;name.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:returns:&nbsp;None.</tt></dd></dl>
+:returns:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Chest-get"><strong>get</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;accessor&nbsp;method&nbsp;returns&nbsp;the&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;if<br>
 present,&nbsp;otherwise&nbsp;the&nbsp;internal&nbsp;dict&nbsp;raises&nbsp;a&nbsp;KeyError.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <dl><dt><a name="Chest-items"><strong>items</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;items&nbsp;iterator.<br>
 &nbsp;<br>
@@ -813,9 +819,9 @@ The&nbsp;factory&nbsp;chooses&nbsp;between&nbsp;the&nbsp;subclasses&nbsp;<a href
 <a href="#Wand">Wand</a>,&nbsp;and&nbsp;<a href="#Weapon">Weapon</a>.&nbsp;The&nbsp;subclasses&nbsp;don't&nbsp;offer&nbsp;any&nbsp;functionality;&nbsp;they&nbsp;exist<br>
 solely&nbsp;so&nbsp;that&nbsp;an&nbsp;<a href="#Item">Item</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;can&nbsp;be&nbsp;type-tested&nbsp;to&nbsp;detect&nbsp;its&nbsp;category.<br>
 &nbsp;<br>
-:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<br>
+:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="builtins.html#object">object</a>&nbsp;with.<br>
-:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <hr>
 Data descriptors inherited from <a href="adventuregame.elements.html#Item">Item</a>:<br>
@@ -855,7 +861,7 @@ Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
 self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
-:other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
+:other:&nbsp;&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <hr>
@@ -902,10 +908,10 @@ It&nbsp;draws&nbsp;on&nbsp;the&nbsp;contents&nbsp;attribute&nbsp;of&nbsp;the&nbs
 items_state&nbsp;<a href="builtins.html#object">object</a>&nbsp;is&nbsp;a&nbsp;required&nbsp;argument&nbsp;so&nbsp;that&nbsp;it&nbsp;can&nbsp;be&nbsp;used&nbsp;to&nbsp;look&nbsp;up&nbsp;<a href="#Item">Item</a><br>
 subclass&nbsp;objects'&nbsp;internal&nbsp;names&nbsp;and&nbsp;populate&nbsp;the&nbsp;container.<br>
 &nbsp;<br>
-:item_state:&nbsp;An&nbsp;Item_State&nbsp;<a href="builtins.html#object">object</a>.<br>
-:internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;container.<br>
-:*item_objs:&nbsp;A&nbsp;tuple&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;objects&nbsp;contained&nbsp;by&nbsp;the&nbsp;container.<br>
-:**ini_constr_argd:&nbsp;The&nbsp;key-value&nbsp;pairs&nbsp;from&nbsp;containers.ini&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<br>
+:item_state:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;Item_State&nbsp;<a href="builtins.html#object">object</a>.<br>
+:internal_name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;container.<br>
+:*item_objs:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;tuple&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;objects&nbsp;contained&nbsp;by&nbsp;the&nbsp;container.<br>
+:**ini_constr_argd:&nbsp;The&nbsp;key-value&nbsp;pairs&nbsp;from&nbsp;containers.ini&nbsp;to&nbsp;instantiate&nbsp;the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Container">Container</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with.</tt></dd></dl>
 
 <hr>
@@ -914,8 +920,8 @@ Class methods defined here:<br>
 an&nbsp;IniConfig&nbsp;<a href="builtins.html#object">object</a>'s&nbsp;section&nbsp;attribute,&nbsp;and&nbsp;determines&nbsp;which&nbsp;<a href="#Container">Container</a>&nbsp;subclass<br>
 is&nbsp;appropriate&nbsp;to&nbsp;instantiate&nbsp;from&nbsp;the&nbsp;data.<br>
 &nbsp;<br>
-:items_state:&nbsp;An&nbsp;<a href="#Items_State">Items_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
-:**container_dict:&nbsp;A&nbsp;dict&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Container">Container</a>&nbsp;<br>
+:items_state:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Items_State">Items_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:**container_dict:&nbsp;A&nbsp;dict&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Container">Container</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;subclass&nbsp;with.</tt></dd></dl>
 
 <hr>
@@ -942,7 +948,7 @@ Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
 self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
-:other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
+:other:&nbsp;&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <hr>
@@ -966,14 +972,14 @@ Methods inherited from <a href="adventuregame.elements.html#Items_Multi_State">I
 with&nbsp;a&nbsp;quantity&nbsp;of&nbsp;1.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:item:&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;None.</tt></dd></dl>
+:item:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Container-contains"><strong>contains</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;tests&nbsp;whether&nbsp;an&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;specified&nbsp;internal&nbsp;name&nbsp;is<br>
 present&nbsp;in&nbsp;the&nbsp;private&nbsp;dictionary.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;boolean.</tt></dd></dl>
 
 <dl><dt><a name="Container-remove_one"><strong>remove_one</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;decreases&nbsp;the&nbsp;quantity&nbsp;stored&nbsp;for&nbsp;the&nbsp;given&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a><br>
 by&nbsp;1,&nbsp;if&nbsp;it's&nbsp;present.&nbsp;If&nbsp;it's&nbsp;not&nbsp;present,&nbsp;a&nbsp;KeyError&nbsp;is&nbsp;raised.&nbsp;If&nbsp;the&nbsp;<a href="#Item">Item</a><br>
@@ -981,16 +987,16 @@ subclass&nbsp;<a href="builtins.html#object">object</a>'s&nbsp;stored&nbsp;quant
 dictionary.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;None.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Container-set"><strong>set</strong></a>(self, item_internal_name, item_qty, item)</dt><dd><tt>If&nbsp;an&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;is&nbsp;present&nbsp;in&nbsp;the&nbsp;internal&nbsp;dict,&nbsp;this<br>
 accessor&nbsp;method&nbsp;returns&nbsp;a&nbsp;2-tuple&nbsp;comprising&nbsp;an&nbsp;int&nbsp;of&nbsp;the&nbsp;item's&nbsp;quantity&nbsp;and<br>
 the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>;&nbsp;otherwise&nbsp;the&nbsp;internal&nbsp;dict&nbsp;raises&nbsp;a&nbsp;KeyError.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:item_qty:&nbsp;An&nbsp;int&nbsp;value&nbsp;of&nbsp;the&nbsp;item&nbsp;quantity.<br>
-:item:&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;None.</tt></dd></dl>
+:item_qty:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int&nbsp;value&nbsp;of&nbsp;the&nbsp;item&nbsp;quantity.<br>
+:item:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None.</tt></dd></dl>
 
 <hr>
 Methods inherited from <a href="adventuregame.elements.html#State">State</a>:<br>
@@ -998,13 +1004,13 @@ Methods inherited from <a href="adventuregame.elements.html#State">State</a>:<br
 the&nbsp;given&nbsp;internal&nbsp;name.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:returns:&nbsp;None.</tt></dd></dl>
+:returns:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Container-get"><strong>get</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;accessor&nbsp;method&nbsp;returns&nbsp;the&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;if<br>
 present,&nbsp;otherwise&nbsp;the&nbsp;internal&nbsp;dict&nbsp;raises&nbsp;a&nbsp;KeyError.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <dl><dt><a name="Container-items"><strong>items</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;items&nbsp;iterator.<br>
 &nbsp;<br>
@@ -1048,9 +1054,9 @@ Methods defined here:<br>
 iterates&nbsp;down&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Container">Container</a>&nbsp;subclass&nbsp;objects&nbsp;that&nbsp;the&nbsp;container<br>
 is&nbsp;populated&nbsp;with.<br>
 &nbsp;<br>
-:items_state:&nbsp;An&nbsp;<a href="#Items_State">Items_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:items_state:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Items_State">Items_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 :**dict_of_dicts:&nbsp;A&nbsp;structure&nbsp;of&nbsp;internal&nbsp;name&nbsp;keys&nbsp;corresponding&nbsp;to&nbsp;dict&nbsp;values<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;which&nbsp;are&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;initialize&nbsp;an&nbsp;individual&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;which&nbsp;are&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;initialize&nbsp;an&nbsp;individual<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Container">Container</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;with.</tt></dd></dl>
 
 <hr>
@@ -1071,19 +1077,19 @@ Methods inherited from <a href="adventuregame.elements.html#State">State</a>:<br
 present&nbsp;in&nbsp;the&nbsp;private&nbsp;dictionary.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <dl><dt><a name="Containers_State-delete"><strong>delete</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;deletes&nbsp;the&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;from&nbsp;the&nbsp;internal&nbsp;dictionary&nbsp;referred&nbsp;to&nbsp;by<br>
 the&nbsp;given&nbsp;internal&nbsp;name.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:returns:&nbsp;None.</tt></dd></dl>
+:returns:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Containers_State-get"><strong>get</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;accessor&nbsp;method&nbsp;returns&nbsp;the&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;if<br>
 present,&nbsp;otherwise&nbsp;the&nbsp;internal&nbsp;dict&nbsp;raises&nbsp;a&nbsp;KeyError.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <dl><dt><a name="Containers_State-items"><strong>items</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;items&nbsp;iterator.<br>
 &nbsp;<br>
@@ -1096,9 +1102,9 @@ present,&nbsp;otherwise&nbsp;the&nbsp;internal&nbsp;dict&nbsp;raises&nbsp;a&nbsp
 <dl><dt><a name="Containers_State-set"><strong>set</strong></a>(self, item_internal_name, item)</dt><dd><tt>This&nbsp;setter&nbsp;method&nbsp;adds&nbsp;an&nbsp;item&nbsp;to&nbsp;the&nbsp;internal&nbsp;dictionary&nbsp;using&nbsp;the&nbsp;given<br>
 internal&nbsp;name&nbsp;as&nbsp;a&nbsp;key.<br>
 &nbsp;<br>
-:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;use&nbsp;as&nbsp;a&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;use&nbsp;as&nbsp;a<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;key.<br>
-:item:&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;be&nbsp;set.</tt></dd></dl>
+:item:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;be&nbsp;set.</tt></dd></dl>
 
 <dl><dt><a name="Containers_State-size"><strong>size</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;len()&nbsp;builtin&nbsp;applies&nbsp;to&nbsp;the&nbsp;internal<br>
 dictionary.<br>
@@ -1144,10 +1150,10 @@ It&nbsp;draws&nbsp;on&nbsp;the&nbsp;contents&nbsp;attribute&nbsp;of&nbsp;the&nbs
 items_state&nbsp;<a href="builtins.html#object">object</a>&nbsp;is&nbsp;a&nbsp;required&nbsp;argument&nbsp;so&nbsp;that&nbsp;it&nbsp;can&nbsp;be&nbsp;used&nbsp;to&nbsp;look&nbsp;up&nbsp;<a href="#Item">Item</a><br>
 subclass&nbsp;objects'&nbsp;internal&nbsp;names&nbsp;and&nbsp;populate&nbsp;the&nbsp;container.<br>
 &nbsp;<br>
-:item_state:&nbsp;An&nbsp;Item_State&nbsp;<a href="builtins.html#object">object</a>.<br>
-:internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;container.<br>
-:*item_objs:&nbsp;A&nbsp;tuple&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;objects&nbsp;contained&nbsp;by&nbsp;the&nbsp;container.<br>
-:**ini_constr_argd:&nbsp;The&nbsp;key-value&nbsp;pairs&nbsp;from&nbsp;containers.ini&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<br>
+:item_state:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;Item_State&nbsp;<a href="builtins.html#object">object</a>.<br>
+:internal_name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;container.<br>
+:*item_objs:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;tuple&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;objects&nbsp;contained&nbsp;by&nbsp;the&nbsp;container.<br>
+:**ini_constr_argd:&nbsp;The&nbsp;key-value&nbsp;pairs&nbsp;from&nbsp;containers.ini&nbsp;to&nbsp;instantiate&nbsp;the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Container">Container</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with.</tt></dd></dl>
 
 <hr>
@@ -1156,8 +1162,8 @@ Class methods inherited from <a href="adventuregame.elements.html#Container">Con
 an&nbsp;IniConfig&nbsp;<a href="builtins.html#object">object</a>'s&nbsp;section&nbsp;attribute,&nbsp;and&nbsp;determines&nbsp;which&nbsp;<a href="#Container">Container</a>&nbsp;subclass<br>
 is&nbsp;appropriate&nbsp;to&nbsp;instantiate&nbsp;from&nbsp;the&nbsp;data.<br>
 &nbsp;<br>
-:items_state:&nbsp;An&nbsp;<a href="#Items_State">Items_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
-:**container_dict:&nbsp;A&nbsp;dict&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Container">Container</a>&nbsp;<br>
+:items_state:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Items_State">Items_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:**container_dict:&nbsp;A&nbsp;dict&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Container">Container</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;subclass&nbsp;with.</tt></dd></dl>
 
 <hr>
@@ -1180,7 +1186,7 @@ Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
 self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
-:other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
+:other:&nbsp;&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <hr>
@@ -1204,14 +1210,14 @@ Methods inherited from <a href="adventuregame.elements.html#Items_Multi_State">I
 with&nbsp;a&nbsp;quantity&nbsp;of&nbsp;1.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:item:&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;None.</tt></dd></dl>
+:item:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Corpse-contains"><strong>contains</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;tests&nbsp;whether&nbsp;an&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;specified&nbsp;internal&nbsp;name&nbsp;is<br>
 present&nbsp;in&nbsp;the&nbsp;private&nbsp;dictionary.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;boolean.</tt></dd></dl>
 
 <dl><dt><a name="Corpse-remove_one"><strong>remove_one</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;decreases&nbsp;the&nbsp;quantity&nbsp;stored&nbsp;for&nbsp;the&nbsp;given&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a><br>
 by&nbsp;1,&nbsp;if&nbsp;it's&nbsp;present.&nbsp;If&nbsp;it's&nbsp;not&nbsp;present,&nbsp;a&nbsp;KeyError&nbsp;is&nbsp;raised.&nbsp;If&nbsp;the&nbsp;<a href="#Item">Item</a><br>
@@ -1219,16 +1225,16 @@ subclass&nbsp;<a href="builtins.html#object">object</a>'s&nbsp;stored&nbsp;quant
 dictionary.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;None.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Corpse-set"><strong>set</strong></a>(self, item_internal_name, item_qty, item)</dt><dd><tt>If&nbsp;an&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;is&nbsp;present&nbsp;in&nbsp;the&nbsp;internal&nbsp;dict,&nbsp;this<br>
 accessor&nbsp;method&nbsp;returns&nbsp;a&nbsp;2-tuple&nbsp;comprising&nbsp;an&nbsp;int&nbsp;of&nbsp;the&nbsp;item's&nbsp;quantity&nbsp;and<br>
 the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>;&nbsp;otherwise&nbsp;the&nbsp;internal&nbsp;dict&nbsp;raises&nbsp;a&nbsp;KeyError.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:item_qty:&nbsp;An&nbsp;int&nbsp;value&nbsp;of&nbsp;the&nbsp;item&nbsp;quantity.<br>
-:item:&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;None.</tt></dd></dl>
+:item_qty:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int&nbsp;value&nbsp;of&nbsp;the&nbsp;item&nbsp;quantity.<br>
+:item:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None.</tt></dd></dl>
 
 <hr>
 Methods inherited from <a href="adventuregame.elements.html#State">State</a>:<br>
@@ -1236,13 +1242,13 @@ Methods inherited from <a href="adventuregame.elements.html#State">State</a>:<br
 the&nbsp;given&nbsp;internal&nbsp;name.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:returns:&nbsp;None.</tt></dd></dl>
+:returns:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Corpse-get"><strong>get</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;accessor&nbsp;method&nbsp;returns&nbsp;the&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;if<br>
 present,&nbsp;otherwise&nbsp;the&nbsp;internal&nbsp;dict&nbsp;raises&nbsp;a&nbsp;KeyError.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <dl><dt><a name="Corpse-items"><strong>items</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;items&nbsp;iterator.<br>
 &nbsp;<br>
@@ -1286,9 +1292,10 @@ Methods defined here:<br>
 methods&nbsp;from&nbsp;both&nbsp;<a href="#Ini_Entry">Ini_Entry</a>&nbsp;and&nbsp;<a href="#Character">Character</a>.&nbsp;It&nbsp;sets&nbsp;the&nbsp;ability&nbsp;scores,&nbsp;populates<br>
 its&nbsp;inventory,&nbsp;and&nbsp;sets&nbsp;up&nbsp;its&nbsp;equipment&nbsp;from&nbsp;its&nbsp;ini&nbsp;file&nbsp;data.<br>
 &nbsp;<br>
-:items_state:&nbsp;An&nbsp;<a href="#Items_State">Items_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:items_state:&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Items_State">Items_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 :internal_name:&nbsp;A&nbsp;string,&nbsp;the&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;creature.<br>
-:**argd:&nbsp;A&nbsp;dict,&nbsp;the&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Creature">Creature</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;from.</tt></dd></dl>
+:**argd:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;dict,&nbsp;the&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Creature">Creature</a>&nbsp;<a href="builtins.html#object">object</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;from.</tt></dd></dl>
 
 <dl><dt><a name="Creature-convert_to_corpse"><strong>convert_to_corpse</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;is&nbsp;used&nbsp;when&nbsp;a&nbsp;creature&nbsp;has&nbsp;been&nbsp;defeated&nbsp;in&nbsp;combat&nbsp;and&nbsp;its&nbsp;presence<br>
 in&nbsp;a&nbsp;<a href="#Room">Room</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;needs&nbsp;to&nbsp;be&nbsp;converted&nbsp;from&nbsp;a&nbsp;creature&nbsp;to&nbsp;a&nbsp;container&nbsp;(subclass<br>
@@ -1320,7 +1327,7 @@ Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
 self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
-:other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
+:other:&nbsp;&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <hr>
@@ -1334,38 +1341,38 @@ Methods inherited from <a href="adventuregame.elements.html#Character">Character
 <dl><dt><a name="Creature-drop_item"><strong>drop_item</strong></a>(self, item, qty=1)</dt><dd><tt>This&nbsp;method&nbsp;removes&nbsp;the&nbsp;specified&nbsp;quantity&nbsp;(default&nbsp;1)&nbsp;of&nbsp;the&nbsp;given&nbsp;<a href="#Item">Item</a><br>
 subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;from&nbsp;the&nbsp;character's&nbsp;inventory.<br>
 &nbsp;<br>
-:item:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:qty:&nbsp;An&nbsp;int,&nbsp;the&nbsp;quantity&nbsp;to&nbsp;remove&nbsp;from&nbsp;the&nbsp;container,&nbsp;default&nbsp;1.<br>
+:item:&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:qty:&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int,&nbsp;the&nbsp;quantity&nbsp;to&nbsp;remove&nbsp;from&nbsp;the&nbsp;container,&nbsp;default&nbsp;1.<br>
 :return:&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Creature-equip_armor"><strong>equip_armor</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;equip_armor&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;<a href="#Equipment">Equipment</a>&nbsp;<a href="builtins.html#object">object</a><br>
 with&nbsp;the&nbsp;given&nbsp;argument.<br>
 &nbsp;<br>
-:item:&nbsp;An&nbsp;<a href="#Armor">Armor</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:item:&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Armor">Armor</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 :return:&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Creature-equip_shield"><strong>equip_shield</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;equip_shield&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;<a href="#Equipment">Equipment</a>&nbsp;<a href="builtins.html#object">object</a><br>
 with&nbsp;the&nbsp;given&nbsp;argument.<br>
 &nbsp;<br>
-:item:&nbsp;A&nbsp;<a href="#Shield">Shield</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:item:&nbsp;&nbsp;&nbsp;A&nbsp;<a href="#Shield">Shield</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 :return:&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Creature-equip_wand"><strong>equip_wand</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;equip_wand&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;<a href="#Equipment">Equipment</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with<br>
 the&nbsp;given&nbsp;argument.<br>
 &nbsp;<br>
-:item:&nbsp;A&nbsp;<a href="#Wand">Wand</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:item:&nbsp;&nbsp;&nbsp;A&nbsp;<a href="#Wand">Wand</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 :return:&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Creature-equip_weapon"><strong>equip_weapon</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;equip_weapon&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;<a href="#Equipment">Equipment</a>&nbsp;<a href="builtins.html#object">object</a><br>
 with&nbsp;the&nbsp;given&nbsp;argument.<br>
 &nbsp;<br>
-:item:&nbsp;A&nbsp;<a href="#Weapon">Weapon</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:item:&nbsp;&nbsp;&nbsp;A&nbsp;<a href="#Weapon">Weapon</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 :return:&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Creature-have_item"><strong>have_item</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;checks&nbsp;whether&nbsp;the&nbsp;given&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;is&nbsp;present&nbsp;in&nbsp;the<br>
 character's&nbsp;inventory.&nbsp;It&nbsp;returns&nbsp;True&nbsp;or&nbsp;False.<br>
 &nbsp;<br>
-:item:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:item:&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
 :return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
 
 <dl><dt><a name="Creature-heal_damage"><strong>heal_damage</strong></a>(self, healing_value)</dt><dd><tt>This&nbsp;method&nbsp;applies&nbsp;an&nbsp;amount&nbsp;of&nbsp;healing&nbsp;to&nbsp;the&nbsp;character's&nbsp;hit&nbsp;points.&nbsp;If&nbsp;the<br>
@@ -1374,13 +1381,13 @@ points,&nbsp;their&nbsp;hit&nbsp;point&nbsp;value&nbsp;is&nbsp;set&nbsp;to&nbsp;
 method&nbsp;returns&nbsp;the&nbsp;amount&nbsp;of&nbsp;healing&nbsp;done.<br>
 &nbsp;<br>
 :healing_value:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;hit&nbsp;points&nbsp;to&nbsp;recover.<br>
-:return:&nbsp;An&nbsp;int.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int.</tt></dd></dl>
 
 <dl><dt><a name="Creature-item_have_qty"><strong>item_have_qty</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;checks&nbsp;whether&nbsp;the&nbsp;given&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;is&nbsp;present&nbsp;in&nbsp;the<br>
 character's&nbsp;inventory.&nbsp;If&nbsp;so,&nbsp;it&nbsp;returns&nbsp;the&nbsp;quantity&nbsp;possessed.&nbsp;If&nbsp;not,&nbsp;it<br>
 returns&nbsp;0.<br>
 &nbsp;<br>
-:item:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:item:&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
 :return:&nbsp;An&nbsp;int.</tt></dd></dl>
 
 <dl><dt><a name="Creature-list_items"><strong>list_items</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;a&nbsp;sorted&nbsp;list&nbsp;of&nbsp;2-tuples&nbsp;comprising&nbsp;an&nbsp;integer&nbsp;item<br>
@@ -1392,8 +1399,8 @@ quantity&nbsp;and&nbsp;an&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a hr
 <dl><dt><a name="Creature-pick_up_item"><strong>pick_up_item</strong></a>(self, item, qty=1)</dt><dd><tt>This&nbsp;method&nbsp;adds&nbsp;the&nbsp;given&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;the&nbsp;character's&nbsp;inventory&nbsp;in<br>
 the&nbsp;quantity&nbsp;specified,&nbsp;default&nbsp;1.<br>
 &nbsp;<br>
-:item:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:qty:&nbsp;An&nbsp;int,&nbsp;the&nbsp;quantity&nbsp;to&nbsp;add&nbsp;to&nbsp;the&nbsp;container,&nbsp;default&nbsp;1.<br>
+:item:&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:qty:&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int,&nbsp;the&nbsp;quantity&nbsp;to&nbsp;add&nbsp;to&nbsp;the&nbsp;container,&nbsp;default&nbsp;1.<br>
 :return:&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Creature-regain_mana"><strong>regain_mana</strong></a>(self, regaining_value)</dt><dd><tt>This&nbsp;method&nbsp;regains&nbsp;mana&nbsp;points&nbsp;by&nbsp;the&nbsp;given&nbsp;value.&nbsp;If&nbsp;the&nbsp;amount&nbsp;regained&nbsp;would<br>
@@ -1402,7 +1409,7 @@ total,&nbsp;their&nbsp;current&nbsp;mana&nbsp;point&nbsp;value&nbsp;is&nbsp;set&
 value&nbsp;instead.&nbsp;The&nbsp;method&nbsp;returns&nbsp;the&nbsp;amount&nbsp;of&nbsp;mana&nbsp;points&nbsp;regained.<br>
 &nbsp;<br>
 :regaining_value:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;mana&nbsp;points&nbsp;to&nbsp;regain.<br>
-:return:&nbsp;An&nbsp;int.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int.</tt></dd></dl>
 
 <dl><dt><a name="Creature-spend_mana"><strong>spend_mana</strong></a>(self, spent_amount)</dt><dd><tt>This&nbsp;method&nbsp;attempts&nbsp;to&nbsp;spend&nbsp;an&nbsp;amount&nbsp;of&nbsp;mana&nbsp;points&nbsp;from&nbsp;the&nbsp;character's&nbsp;mana<br>
 points,&nbsp;returning&nbsp;the&nbsp;amount&nbsp;spent&nbsp;if&nbsp;successful.&nbsp;If&nbsp;the&nbsp;amount&nbsp;spent&nbsp;would<br>
@@ -1410,14 +1417,14 @@ reduce&nbsp;the&nbsp;character's&nbsp;mana&nbsp;points&nbsp;to&nbsp;less&nbsp;th
 and&nbsp;0&nbsp;is&nbsp;returned&nbsp;to&nbsp;indicate&nbsp;failure.<br>
 &nbsp;<br>
 :spent_amount:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;mana&nbsp;points&nbsp;to&nbsp;spend.<br>
-:return:&nbsp;An&nbsp;int.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int.</tt></dd></dl>
 
 <dl><dt><a name="Creature-take_damage"><strong>take_damage</strong></a>(self, damage_value)</dt><dd><tt>This&nbsp;method&nbsp;applies&nbsp;the&nbsp;given&nbsp;damage&nbsp;to&nbsp;the&nbsp;character's&nbsp;hit&nbsp;points.&nbsp;If&nbsp;the&nbsp;hit<br>
 points&nbsp;would&nbsp;be&nbsp;reduced&nbsp;to&nbsp;less&nbsp;than&nbsp;0,&nbsp;they&nbsp;are&nbsp;set&nbsp;to&nbsp;0&nbsp;instead.&nbsp;The&nbsp;method<br>
 returns&nbsp;the&nbsp;amount&nbsp;of&nbsp;damage&nbsp;assessed.<br>
 &nbsp;<br>
 :damage_value:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;hit&nbsp;points&nbsp;to&nbsp;lose.<br>
-:return:&nbsp;An&nbsp;int.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int.</tt></dd></dl>
 
 <dl><dt><a name="Creature-unequip_armor"><strong>unequip_armor</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;unequip_armor&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;<a href="#Equipment">Equipment</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
@@ -1647,9 +1654,9 @@ a&nbsp;<a href="#Creature">Creature</a>&nbsp;<a href="builtins.html#object">obje
 classes&nbsp;it&nbsp;doesn't&nbsp;use&nbsp;a&nbsp;subclassing_factory&nbsp;because&nbsp;the&nbsp;<a href="#Creature">Creature</a>&nbsp;class&nbsp;is&nbsp;not<br>
 subclassed&nbsp;to&nbsp;delineate&nbsp;different&nbsp;types&nbsp;of&nbsp;creature.<br>
 &nbsp;<br>
-:items_state:&nbsp;An&nbsp;<a href="#Items_State">Items_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:items_state:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Items_State">Items_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 :**dict_of_dicts:&nbsp;A&nbsp;structure&nbsp;of&nbsp;internal&nbsp;name&nbsp;keys&nbsp;corresponding&nbsp;to&nbsp;dict&nbsp;values<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;which&nbsp;are&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;initialize&nbsp;an&nbsp;individual&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;which&nbsp;are&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;initialize&nbsp;an&nbsp;individual<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Creature">Creature</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with.</tt></dd></dl>
 
 <hr>
@@ -1670,19 +1677,19 @@ Methods inherited from <a href="adventuregame.elements.html#State">State</a>:<br
 present&nbsp;in&nbsp;the&nbsp;private&nbsp;dictionary.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <dl><dt><a name="Creatures_State-delete"><strong>delete</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;deletes&nbsp;the&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;from&nbsp;the&nbsp;internal&nbsp;dictionary&nbsp;referred&nbsp;to&nbsp;by<br>
 the&nbsp;given&nbsp;internal&nbsp;name.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:returns:&nbsp;None.</tt></dd></dl>
+:returns:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Creatures_State-get"><strong>get</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;accessor&nbsp;method&nbsp;returns&nbsp;the&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;if<br>
 present,&nbsp;otherwise&nbsp;the&nbsp;internal&nbsp;dict&nbsp;raises&nbsp;a&nbsp;KeyError.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <dl><dt><a name="Creatures_State-items"><strong>items</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;items&nbsp;iterator.<br>
 &nbsp;<br>
@@ -1695,9 +1702,9 @@ present,&nbsp;otherwise&nbsp;the&nbsp;internal&nbsp;dict&nbsp;raises&nbsp;a&nbsp
 <dl><dt><a name="Creatures_State-set"><strong>set</strong></a>(self, item_internal_name, item)</dt><dd><tt>This&nbsp;setter&nbsp;method&nbsp;adds&nbsp;an&nbsp;item&nbsp;to&nbsp;the&nbsp;internal&nbsp;dictionary&nbsp;using&nbsp;the&nbsp;given<br>
 internal&nbsp;name&nbsp;as&nbsp;a&nbsp;key.<br>
 &nbsp;<br>
-:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;use&nbsp;as&nbsp;a&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;use&nbsp;as&nbsp;a<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;key.<br>
-:item:&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;be&nbsp;set.</tt></dd></dl>
+:item:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;be&nbsp;set.</tt></dd></dl>
 
 <dl><dt><a name="Creatures_State-size"><strong>size</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;len()&nbsp;builtin&nbsp;applies&nbsp;to&nbsp;the&nbsp;internal<br>
 dictionary.<br>
@@ -1744,7 +1751,7 @@ linked&nbsp;by&nbsp;this&nbsp;door,&nbsp;and&nbsp;returns&nbsp;the&nbsp;internal
 linkage.<br>
 &nbsp;<br>
 :room_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;a&nbsp;<a href="#Room">Room</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;A&nbsp;<a href="#Room">Room</a>&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;<a href="#Room">Room</a>&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <hr>
 Class methods defined here:<br>
@@ -1778,7 +1785,7 @@ Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
 self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
-:other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
+:other:&nbsp;&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <hr>
@@ -1816,42 +1823,42 @@ order&nbsp;is&nbsp;the&nbsp;outer&nbsp;dict's&nbsp;key,&nbsp;and&nbsp;the&nbsp;o
 inner&nbsp;dict's&nbsp;key.<br>
 &nbsp;<br>
 :**dict_of_dicts:&nbsp;A&nbsp;structure&nbsp;of&nbsp;internal&nbsp;name&nbsp;keys&nbsp;corresponding&nbsp;to&nbsp;dict&nbsp;values<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;which&nbsp;are&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;initialize&nbsp;an&nbsp;individual&nbsp;<a href="#Door">Door</a>&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;which&nbsp;are&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;initialize&nbsp;an&nbsp;individual&nbsp;<a href="#Door">Door</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="builtins.html#object">object</a>&nbsp;with.</tt></dd></dl>
 
 <dl><dt><a name="Doors_State-contains"><strong>contains</strong></a>(self, first_room_internal_name, second_room_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;tests&nbsp;whether&nbsp;a&nbsp;<a href="#Door">Door</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;indexed&nbsp;by&nbsp;the&nbsp;given&nbsp;two&nbsp;<a href="#Room">Room</a><br>
 subclass&nbsp;<a href="builtins.html#object">object</a>'s&nbsp;internal&nbsp;names&nbsp;is&nbsp;present&nbsp;in&nbsp;the&nbsp;internal&nbsp;**dict-of-dicts.<br>
 &nbsp;<br>
-:first_room_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;one&nbsp;of&nbsp;the&nbsp;two&nbsp;linked&nbsp;<a href="#Room">Room</a>&nbsp;<br>
+:first_room_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;one&nbsp;of&nbsp;the&nbsp;two&nbsp;linked&nbsp;<a href="#Room">Room</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objects.<br>
 :first_room_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;other&nbsp;of&nbsp;the&nbsp;two&nbsp;linked&nbsp;<a href="#Room">Room</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objects.<br>
-:return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;boolean.</tt></dd></dl>
 
 <dl><dt><a name="Doors_State-delete"><strong>delete</strong></a>(self, first_room_internal_name, second_room_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;deletes&nbsp;the&nbsp;<a href="#Door">Door</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;found&nbsp;in&nbsp;the&nbsp;internal&nbsp;**dict-of-dicts<br>
 under&nbsp;the&nbsp;given&nbsp;two&nbsp;<a href="#Room">Room</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;internal&nbsp;name&nbsp;keys.<br>
 &nbsp;<br>
-:first_room_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;one&nbsp;of&nbsp;the&nbsp;two&nbsp;linked&nbsp;<a href="#Room">Room</a>&nbsp;<br>
+:first_room_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;one&nbsp;of&nbsp;the&nbsp;two&nbsp;linked&nbsp;<a href="#Room">Room</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objects.<br>
 :first_room_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;other&nbsp;of&nbsp;the&nbsp;two&nbsp;linked&nbsp;<a href="#Room">Room</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objects.<br>
-:door:&nbsp;A&nbsp;<a href="#Door">Door</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;None.</tt></dd></dl>
+:door:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;<a href="#Door">Door</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Doors_State-get"><strong>get</strong></a>(self, first_room_internal_name, second_room_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;<a href="#Door">Door</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;indexed&nbsp;by&nbsp;the&nbsp;two&nbsp;given&nbsp;<a href="#Room">Room</a><br>
 subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;internal&nbsp;names,&nbsp;or&nbsp;raises&nbsp;a&nbsp;KeyError&nbsp;if&nbsp;it's&nbsp;not&nbsp;present.<br>
 &nbsp;<br>
-:first_room_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;one&nbsp;of&nbsp;the&nbsp;two&nbsp;linked&nbsp;<a href="#Room">Room</a>&nbsp;<br>
+:first_room_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;one&nbsp;of&nbsp;the&nbsp;two&nbsp;linked&nbsp;<a href="#Room">Room</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objects.<br>
 :first_room_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;other&nbsp;of&nbsp;the&nbsp;two&nbsp;linked&nbsp;<a href="#Room">Room</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objects.<br>
-:return:&nbsp;A&nbsp;<a href="#Door">Door</a>&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;<a href="#Door">Door</a>&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <dl><dt><a name="Doors_State-items"><strong>items</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;a&nbsp;list&nbsp;of&nbsp;3-tuples,&nbsp;each&nbsp;comprising&nbsp;a&nbsp;pair&nbsp;of&nbsp;<a href="#Room">Room</a>&nbsp;subclass<br>
 <a href="builtins.html#object">object</a>&nbsp;internal&nbsp;names&nbsp;that&nbsp;are&nbsp;a&nbsp;key&nbsp;to&nbsp;the&nbsp;container,&nbsp;coupled&nbsp;with&nbsp;the&nbsp;<a href="#Door">Door</a><br>
 subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;that&nbsp;is&nbsp;the&nbsp;value&nbsp;to&nbsp;that&nbsp;key.<br>
 &nbsp;<br>
-:return:&nbsp;A&nbsp;list&nbsp;of&nbsp;3-tuples,&nbsp;comprised&nbsp;of&nbsp;a&nbsp;string&nbsp;(the&nbsp;internal&nbsp;name),&nbsp;an&nbsp;int&nbsp;<br>
+:return:&nbsp;A&nbsp;list&nbsp;of&nbsp;3-tuples,&nbsp;comprised&nbsp;of&nbsp;a&nbsp;string&nbsp;(the&nbsp;internal&nbsp;name),&nbsp;an&nbsp;int<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(the&nbsp;quantity)&nbsp;and&nbsp;an&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <dl><dt><a name="Doors_State-keys"><strong>keys</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;a&nbsp;list&nbsp;of&nbsp;2-tuples&nbsp;comprising&nbsp;each&nbsp;valid&nbsp;<a href="#Room">Room</a>&nbsp;subclass<br>
@@ -1865,12 +1872,12 @@ using&nbsp;the&nbsp;first&nbsp;<a href="#Room">Room</a>&nbsp;subclass&nbsp;<a hr
 dictionary&nbsp;and&nbsp;the&nbsp;second&nbsp;<a href="#Room">Room</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;internal&nbsp;name&nbsp;as&nbsp;the&nbsp;key&nbsp;to&nbsp;the<br>
 inner&nbsp;dictionary.<br>
 &nbsp;<br>
-:first_room_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;one&nbsp;of&nbsp;the&nbsp;two&nbsp;linked&nbsp;<a href="#Room">Room</a>&nbsp;<br>
+:first_room_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;one&nbsp;of&nbsp;the&nbsp;two&nbsp;linked&nbsp;<a href="#Room">Room</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objects.<br>
 :first_room_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;other&nbsp;of&nbsp;the&nbsp;two&nbsp;linked&nbsp;<a href="#Room">Room</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objects.<br>
-:door:&nbsp;A&nbsp;<a href="#Door">Door</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;None.</tt></dd></dl>
+:door:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;<a href="#Door">Door</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Doors_State-size"><strong>size</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;number&nbsp;of&nbsp;<a href="#Door">Door</a>&nbsp;subclass&nbsp;objects&nbsp;that&nbsp;is&nbsp;stored&nbsp;in&nbsp;this<br>
 container.<br>
@@ -1926,7 +1933,7 @@ linked&nbsp;by&nbsp;this&nbsp;door,&nbsp;and&nbsp;returns&nbsp;the&nbsp;internal
 linkage.<br>
 &nbsp;<br>
 :room_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;a&nbsp;<a href="#Room">Room</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;A&nbsp;<a href="#Room">Room</a>&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;<a href="#Room">Room</a>&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <hr>
 Class methods inherited from <a href="adventuregame.elements.html#Door">Door</a>:<br>
@@ -1960,7 +1967,7 @@ Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
 self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
-:other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
+:other:&nbsp;&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <hr>
@@ -1996,22 +2003,22 @@ derived&nbsp;values&nbsp;armor&nbsp;class,&nbsp;attack&nbsp;bonus&nbsp;and&nbsp;
 
 <dl><dt><a name="Equipment-equip_armor"><strong>equip_armor</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;equips&nbsp;the&nbsp;given&nbsp;<a href="#Armor">Armor</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
-:item:&nbsp;An&nbsp;<a href="#Armor">Armor</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:item:&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Armor">Armor</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 :returns:&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Equipment-equip_shield"><strong>equip_shield</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;equips&nbsp;the&nbsp;given&nbsp;<a href="#Shield">Shield</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
-:item:&nbsp;A&nbsp;<a href="#Shield">Shield</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:item:&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;<a href="#Shield">Shield</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 :returns:&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Equipment-equip_wand"><strong>equip_wand</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;equips&nbsp;the&nbsp;given&nbsp;<a href="#Wand">Wand</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
-:item:&nbsp;A&nbsp;<a href="#Wand">Wand</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:item:&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;<a href="#Wand">Wand</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 :returns:&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Equipment-equip_weapon"><strong>equip_weapon</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;equips&nbsp;the&nbsp;given&nbsp;<a href="#Weapon">Weapon</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;<br>
-:item:&nbsp;A&nbsp;<a href="#Weapon">Weapon</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:item:&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;<a href="#Weapon">Weapon</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 :returns:&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Equipment-unequip_armor"><strong>unequip_armor</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;unequips&nbsp;the&nbsp;armor&nbsp;that&nbsp;is&nbsp;equipped.<br>
@@ -2106,7 +2113,7 @@ returns&nbsp;True&nbsp;if&nbsp;the&nbsp;<a href="builtins.html#object">object</a
 value,&nbsp;or&nbsp;False&nbsp;otherwise.<br>
 &nbsp;<br>
 :character_class:&nbsp;Either&nbsp;'Warrior',&nbsp;'Thief',&nbsp;'Mage',&nbsp;or&nbsp;'Priest'.<br>
-:return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;boolean.</tt></dd></dl>
 
 <hr>
 Methods inherited from <a href="adventuregame.elements.html#Item">Item</a>:<br>
@@ -2127,9 +2134,9 @@ The&nbsp;factory&nbsp;chooses&nbsp;between&nbsp;the&nbsp;subclasses&nbsp;<a href
 <a href="#Wand">Wand</a>,&nbsp;and&nbsp;<a href="#Weapon">Weapon</a>.&nbsp;The&nbsp;subclasses&nbsp;don't&nbsp;offer&nbsp;any&nbsp;functionality;&nbsp;they&nbsp;exist<br>
 solely&nbsp;so&nbsp;that&nbsp;an&nbsp;<a href="#Item">Item</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;can&nbsp;be&nbsp;type-tested&nbsp;to&nbsp;detect&nbsp;its&nbsp;category.<br>
 &nbsp;<br>
-:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<br>
+:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="builtins.html#object">object</a>&nbsp;with.<br>
-:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <hr>
 Data descriptors inherited from <a href="adventuregame.elements.html#Item">Item</a>:<br>
@@ -2169,7 +2176,7 @@ Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
 self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
-:other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
+:other:&nbsp;&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <hr>
@@ -2205,11 +2212,11 @@ rooms_state&nbsp;<a href="builtins.html#object">object</a>,&nbsp;and&nbsp;(once&
 containers_state&nbsp;<a href="builtins.html#object">object</a>,&nbsp;a&nbsp;creatures_state&nbsp;<a href="builtins.html#object">object</a>,&nbsp;and&nbsp;a&nbsp;rooms_state&nbsp;<a href="builtins.html#object">object</a>&nbsp;from<br>
 its&nbsp;arguments.<br>
 &nbsp;<br>
-:rooms_state:&nbsp;A&nbsp;<a href="#Rooms_State">Rooms_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
-:creatures_state:&nbsp;A&nbsp;<a href="#Creatures_State">Creatures_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:rooms_state:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;<a href="#Rooms_State">Rooms_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:creatures_state:&nbsp;&nbsp;A&nbsp;<a href="#Creatures_State">Creatures_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 :containers_state:&nbsp;A&nbsp;<a href="#Containers_State">Containers_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
-:doors_state:&nbsp;A&nbsp;<a href="#Doors_State">Doors_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
-:items_state:&nbsp;An&nbsp;<a href="#Items_State">Items_State</a>&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:doors_state:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;<a href="#Doors_State">Doors_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:items_state:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Items_State">Items_State</a>&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -2256,7 +2263,7 @@ instantiated&nbsp;from&nbsp;.ini&nbsp;file&nbsp;entries.<br>&nbsp;</tt></td></tr
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
 self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
-:other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
+:other:&nbsp;&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <dl><dt><a name="Ini_Entry-__init__"><strong>__init__</strong></a>(self, **argd)</dt><dd><tt>The&nbsp;init&nbsp;method&nbsp;defined&nbsp;in&nbsp;this&nbsp;parent&nbsp;class&nbsp;accepts&nbsp;arbitrary&nbsp;keyword&nbsp;arguments<br>
@@ -2314,7 +2321,7 @@ linked&nbsp;by&nbsp;this&nbsp;door,&nbsp;and&nbsp;returns&nbsp;the&nbsp;internal
 linkage.<br>
 &nbsp;<br>
 :room_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;a&nbsp;<a href="#Room">Room</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;A&nbsp;<a href="#Room">Room</a>&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;<a href="#Room">Room</a>&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <hr>
 Class methods inherited from <a href="adventuregame.elements.html#Door">Door</a>:<br>
@@ -2348,7 +2355,7 @@ Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
 self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
-:other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
+:other:&nbsp;&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <hr>
@@ -2402,9 +2409,9 @@ The&nbsp;factory&nbsp;chooses&nbsp;between&nbsp;the&nbsp;subclasses&nbsp;<a href
 <a href="#Wand">Wand</a>,&nbsp;and&nbsp;<a href="#Weapon">Weapon</a>.&nbsp;The&nbsp;subclasses&nbsp;don't&nbsp;offer&nbsp;any&nbsp;functionality;&nbsp;they&nbsp;exist<br>
 solely&nbsp;so&nbsp;that&nbsp;an&nbsp;<a href="#Item">Item</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;can&nbsp;be&nbsp;type-tested&nbsp;to&nbsp;detect&nbsp;its&nbsp;category.<br>
 &nbsp;<br>
-:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<br>
+:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="builtins.html#object">object</a>&nbsp;with.<br>
-:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -2444,7 +2451,7 @@ Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
 self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
-:other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
+:other:&nbsp;&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <hr>
@@ -2493,14 +2500,14 @@ altered&nbsp;with&nbsp;subsequent&nbsp;method&nbsp;use&nbsp;but&nbsp;setting&nbs
 with&nbsp;a&nbsp;quantity&nbsp;of&nbsp;1.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:item:&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;None.</tt></dd></dl>
+:item:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Items_Multi_State-contains"><strong>contains</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;tests&nbsp;whether&nbsp;an&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;specified&nbsp;internal&nbsp;name&nbsp;is<br>
 present&nbsp;in&nbsp;the&nbsp;private&nbsp;dictionary.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;boolean.</tt></dd></dl>
 
 <dl><dt><a name="Items_Multi_State-remove_one"><strong>remove_one</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;decreases&nbsp;the&nbsp;quantity&nbsp;stored&nbsp;for&nbsp;the&nbsp;given&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a><br>
 by&nbsp;1,&nbsp;if&nbsp;it's&nbsp;present.&nbsp;If&nbsp;it's&nbsp;not&nbsp;present,&nbsp;a&nbsp;KeyError&nbsp;is&nbsp;raised.&nbsp;If&nbsp;the&nbsp;<a href="#Item">Item</a><br>
@@ -2508,16 +2515,16 @@ subclass&nbsp;<a href="builtins.html#object">object</a>'s&nbsp;stored&nbsp;quant
 dictionary.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;None.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Items_Multi_State-set"><strong>set</strong></a>(self, item_internal_name, item_qty, item)</dt><dd><tt>If&nbsp;an&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;is&nbsp;present&nbsp;in&nbsp;the&nbsp;internal&nbsp;dict,&nbsp;this<br>
 accessor&nbsp;method&nbsp;returns&nbsp;a&nbsp;2-tuple&nbsp;comprising&nbsp;an&nbsp;int&nbsp;of&nbsp;the&nbsp;item's&nbsp;quantity&nbsp;and<br>
 the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>;&nbsp;otherwise&nbsp;the&nbsp;internal&nbsp;dict&nbsp;raises&nbsp;a&nbsp;KeyError.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:item_qty:&nbsp;An&nbsp;int&nbsp;value&nbsp;of&nbsp;the&nbsp;item&nbsp;quantity.<br>
-:item:&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;None.</tt></dd></dl>
+:item_qty:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;int&nbsp;value&nbsp;of&nbsp;the&nbsp;item&nbsp;quantity.<br>
+:item:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None.</tt></dd></dl>
 
 <hr>
 Data and other attributes defined here:<br>
@@ -2537,13 +2544,13 @@ Methods inherited from <a href="adventuregame.elements.html#State">State</a>:<br
 the&nbsp;given&nbsp;internal&nbsp;name.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:returns:&nbsp;None.</tt></dd></dl>
+:returns:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Items_Multi_State-get"><strong>get</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;accessor&nbsp;method&nbsp;returns&nbsp;the&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;if<br>
 present,&nbsp;otherwise&nbsp;the&nbsp;internal&nbsp;dict&nbsp;raises&nbsp;a&nbsp;KeyError.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <dl><dt><a name="Items_Multi_State-items"><strong>items</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;items&nbsp;iterator.<br>
 &nbsp;<br>
@@ -2589,7 +2596,7 @@ Methods defined here:<br>
 internal_name&nbsp;set&nbsp;to&nbsp;the&nbsp;corresponding&nbsp;key&nbsp;from&nbsp;the&nbsp;outer&nbsp;dict.<br>
 &nbsp;<br>
 :**dict_of_dicts:&nbsp;A&nbsp;structure&nbsp;of&nbsp;internal&nbsp;name&nbsp;keys&nbsp;corresponding&nbsp;to&nbsp;dict&nbsp;values<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;which&nbsp;are&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;initialize&nbsp;an&nbsp;individual&nbsp;<a href="#Item">Item</a>&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;which&nbsp;are&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;initialize&nbsp;an&nbsp;individual&nbsp;<a href="#Item">Item</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;with.</tt></dd></dl>
 
 <hr>
@@ -2610,19 +2617,19 @@ Methods inherited from <a href="adventuregame.elements.html#State">State</a>:<br
 present&nbsp;in&nbsp;the&nbsp;private&nbsp;dictionary.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <dl><dt><a name="Items_State-delete"><strong>delete</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;deletes&nbsp;the&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;from&nbsp;the&nbsp;internal&nbsp;dictionary&nbsp;referred&nbsp;to&nbsp;by<br>
 the&nbsp;given&nbsp;internal&nbsp;name.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:returns:&nbsp;None.</tt></dd></dl>
+:returns:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="Items_State-get"><strong>get</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;accessor&nbsp;method&nbsp;returns&nbsp;the&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;if<br>
 present,&nbsp;otherwise&nbsp;the&nbsp;internal&nbsp;dict&nbsp;raises&nbsp;a&nbsp;KeyError.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <dl><dt><a name="Items_State-items"><strong>items</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;items&nbsp;iterator.<br>
 &nbsp;<br>
@@ -2635,9 +2642,9 @@ present,&nbsp;otherwise&nbsp;the&nbsp;internal&nbsp;dict&nbsp;raises&nbsp;a&nbsp
 <dl><dt><a name="Items_State-set"><strong>set</strong></a>(self, item_internal_name, item)</dt><dd><tt>This&nbsp;setter&nbsp;method&nbsp;adds&nbsp;an&nbsp;item&nbsp;to&nbsp;the&nbsp;internal&nbsp;dictionary&nbsp;using&nbsp;the&nbsp;given<br>
 internal&nbsp;name&nbsp;as&nbsp;a&nbsp;key.<br>
 &nbsp;<br>
-:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;use&nbsp;as&nbsp;a&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;use&nbsp;as&nbsp;a<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;key.<br>
-:item:&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;be&nbsp;set.</tt></dd></dl>
+:item:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;be&nbsp;set.</tt></dd></dl>
 
 <dl><dt><a name="Items_State-size"><strong>size</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;len()&nbsp;builtin&nbsp;applies&nbsp;to&nbsp;the&nbsp;internal<br>
 dictionary.<br>
@@ -2685,9 +2692,9 @@ The&nbsp;factory&nbsp;chooses&nbsp;between&nbsp;the&nbsp;subclasses&nbsp;<a href
 <a href="#Wand">Wand</a>,&nbsp;and&nbsp;<a href="#Weapon">Weapon</a>.&nbsp;The&nbsp;subclasses&nbsp;don't&nbsp;offer&nbsp;any&nbsp;functionality;&nbsp;they&nbsp;exist<br>
 solely&nbsp;so&nbsp;that&nbsp;an&nbsp;<a href="#Item">Item</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;can&nbsp;be&nbsp;type-tested&nbsp;to&nbsp;detect&nbsp;its&nbsp;category.<br>
 &nbsp;<br>
-:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<br>
+:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="builtins.html#object">object</a>&nbsp;with.<br>
-:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <hr>
 Data descriptors inherited from <a href="adventuregame.elements.html#Item">Item</a>:<br>
@@ -2727,7 +2734,7 @@ Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
 self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
-:other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
+:other:&nbsp;&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <hr>
@@ -2782,9 +2789,9 @@ The&nbsp;factory&nbsp;chooses&nbsp;between&nbsp;the&nbsp;subclasses&nbsp;<a href
 <a href="#Wand">Wand</a>,&nbsp;and&nbsp;<a href="#Weapon">Weapon</a>.&nbsp;The&nbsp;subclasses&nbsp;don't&nbsp;offer&nbsp;any&nbsp;functionality;&nbsp;they&nbsp;exist<br>
 solely&nbsp;so&nbsp;that&nbsp;an&nbsp;<a href="#Item">Item</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;can&nbsp;be&nbsp;type-tested&nbsp;to&nbsp;detect&nbsp;its&nbsp;category.<br>
 &nbsp;<br>
-:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<br>
+:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="builtins.html#object">object</a>&nbsp;with.<br>
-:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <hr>
 Data descriptors inherited from <a href="adventuregame.elements.html#Item">Item</a>:<br>
@@ -2824,7 +2831,7 @@ Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
 self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
-:other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
+:other:&nbsp;&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <hr>
@@ -2867,11 +2874,12 @@ doors_state&nbsp;<a href="builtins.html#object">object</a>&nbsp;and&nbsp;an&nbsp
 argd,&nbsp;drawing&nbsp;on&nbsp;the&nbsp;state&nbsp;objects&nbsp;to&nbsp;set&nbsp;the&nbsp;creature_here,&nbsp;container_here,<br>
 items_here&nbsp;and&nbsp;the&nbsp;{compass_dir}_door&nbsp;attributes.<br>
 &nbsp;<br>
-:creatures_state:&nbsp;A&nbsp;<a href="#Creatures_State">Creatures_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:creatures_state:&nbsp;&nbsp;A&nbsp;<a href="#Creatures_State">Creatures_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 :containers_state:&nbsp;A&nbsp;<a href="#Containers_State">Containers_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
-:doors_state:&nbsp;A&nbsp;<a href="#Doors_State">Doors_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
-:items_state:&nbsp;An&nbsp;<a href="#Items_State">Items_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
-:**argd:&nbsp;A&nbsp;dict&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Room">Room</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with.</tt></dd></dl>
+:doors_state:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;<a href="#Doors_State">Doors_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:items_state:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Items_State">Items_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:**argd:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;dict&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Room">Room</a>&nbsp;<a href="builtins.html#object">object</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with.</tt></dd></dl>
 
 <hr>
 Readonly properties defined here:<br>
@@ -2937,7 +2945,7 @@ Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
 self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
-:other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
+:other:&nbsp;&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <hr>
@@ -2971,21 +2979,21 @@ This&nbsp;class&nbsp;implements&nbsp;a&nbsp;state&nbsp;<a href="builtins.html#ob
 to&nbsp;initialize&nbsp;them&nbsp;with,&nbsp;and&nbsp;a&nbsp;**dict-of-dicts&nbsp;from&nbsp;rooms.ini&nbsp;as&nbsp;furnished&nbsp;by&nbsp;an<br>
 IniConfig's&nbsp;sections&nbsp;attribute.<br>
 &nbsp;<br>
-:creatures_state:&nbsp;A&nbsp;<a href="#Creatures_State">Creatures_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:creatures_state:&nbsp;&nbsp;A&nbsp;<a href="#Creatures_State">Creatures_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
 :containers_state:&nbsp;A&nbsp;<a href="#Containers_State">Containers_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
-:doors_state:&nbsp;A&nbsp;<a href="#Doors_State">Doors_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
-:items_state:&nbsp;A&nbsp;<a href="#Items_State">Items_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
-:**dict_of_dicts:&nbsp;A&nbsp;structure&nbsp;of&nbsp;internal&nbsp;name&nbsp;keys&nbsp;corresponding&nbsp;to&nbsp;dict&nbsp;values<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;which&nbsp;are&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;initialize&nbsp;an&nbsp;individual&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Creature">Creature</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with.</tt></dd></dl>
+:doors_state:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;<a href="#Doors_State">Doors_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:items_state:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;<a href="#Items_State">Items_State</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:**dict_of_dicts:&nbsp;&nbsp;A&nbsp;structure&nbsp;of&nbsp;internal&nbsp;name&nbsp;keys&nbsp;corresponding&nbsp;to&nbsp;dict<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;values&nbsp;which&nbsp;are&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;initialize&nbsp;an&nbsp;individual<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Creature">Creature</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with.</tt></dd></dl>
 
 <dl><dt><a name="Rooms_State-move"><strong>move</strong></a>(self, north=False, west=False, south=False, east=False)</dt><dd><tt>This&nbsp;method&nbsp;directs&nbsp;the&nbsp;<a href="#Rooms_State">Rooms_State</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;move&nbsp;the&nbsp;cursor&nbsp;from&nbsp;the&nbsp;current<br>
 room&nbsp;to&nbsp;an&nbsp;adjacent&nbsp;room&nbsp;by&nbsp;the&nbsp;given&nbsp;compass&nbsp;direction.<br>
 &nbsp;<br>
-:north:&nbsp;A&nbsp;boolean,&nbsp;True&nbsp;if&nbsp;movement&nbsp;to&nbsp;the&nbsp;north&nbsp;is&nbsp;intended,&nbsp;False&nbsp;otherwise.<br>
-:east:&nbsp;A&nbsp;boolean,&nbsp;True&nbsp;if&nbsp;movement&nbsp;to&nbsp;the&nbsp;east&nbsp;is&nbsp;intended,&nbsp;False&nbsp;otherwise.<br>
-:south:&nbsp;A&nbsp;boolean,&nbsp;True&nbsp;if&nbsp;movement&nbsp;to&nbsp;the&nbsp;south&nbsp;is&nbsp;intended,&nbsp;False&nbsp;otherwise.<br>
-:west:&nbsp;A&nbsp;boolean,&nbsp;True&nbsp;if&nbsp;movement&nbsp;to&nbsp;the&nbsp;west&nbsp;is&nbsp;intended,&nbsp;False&nbsp;otherwise.<br>
+:north:&nbsp;&nbsp;A&nbsp;boolean,&nbsp;True&nbsp;if&nbsp;movement&nbsp;to&nbsp;the&nbsp;north&nbsp;is&nbsp;intended,&nbsp;False&nbsp;otherwise.<br>
+:east:&nbsp;&nbsp;&nbsp;A&nbsp;boolean,&nbsp;True&nbsp;if&nbsp;movement&nbsp;to&nbsp;the&nbsp;east&nbsp;is&nbsp;intended,&nbsp;False&nbsp;otherwise.<br>
+:south:&nbsp;&nbsp;A&nbsp;boolean,&nbsp;True&nbsp;if&nbsp;movement&nbsp;to&nbsp;the&nbsp;south&nbsp;is&nbsp;intended,&nbsp;False&nbsp;otherwise.<br>
+:west:&nbsp;&nbsp;&nbsp;A&nbsp;boolean,&nbsp;True&nbsp;if&nbsp;movement&nbsp;to&nbsp;the&nbsp;west&nbsp;is&nbsp;intended,&nbsp;False&nbsp;otherwise.<br>
 :return:&nbsp;None.</tt></dd></dl>
 
 <hr>
@@ -3025,7 +3033,7 @@ returns&nbsp;True&nbsp;if&nbsp;the&nbsp;<a href="builtins.html#object">object</a
 value,&nbsp;or&nbsp;False&nbsp;otherwise.<br>
 &nbsp;<br>
 :character_class:&nbsp;Either&nbsp;'Warrior',&nbsp;'Thief',&nbsp;'Mage',&nbsp;or&nbsp;'Priest'.<br>
-:return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;boolean.</tt></dd></dl>
 
 <hr>
 Methods inherited from <a href="adventuregame.elements.html#Item">Item</a>:<br>
@@ -3046,9 +3054,9 @@ The&nbsp;factory&nbsp;chooses&nbsp;between&nbsp;the&nbsp;subclasses&nbsp;<a href
 <a href="#Wand">Wand</a>,&nbsp;and&nbsp;<a href="#Weapon">Weapon</a>.&nbsp;The&nbsp;subclasses&nbsp;don't&nbsp;offer&nbsp;any&nbsp;functionality;&nbsp;they&nbsp;exist<br>
 solely&nbsp;so&nbsp;that&nbsp;an&nbsp;<a href="#Item">Item</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;can&nbsp;be&nbsp;type-tested&nbsp;to&nbsp;detect&nbsp;its&nbsp;category.<br>
 &nbsp;<br>
-:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<br>
+:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="builtins.html#object">object</a>&nbsp;with.<br>
-:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <hr>
 Data descriptors inherited from <a href="adventuregame.elements.html#Item">Item</a>:<br>
@@ -3088,7 +3096,7 @@ Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
 self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
-:other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
+:other:&nbsp;&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <hr>
@@ -3127,19 +3135,19 @@ Methods defined here:<br>
 present&nbsp;in&nbsp;the&nbsp;private&nbsp;dictionary.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <dl><dt><a name="State-delete"><strong>delete</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;deletes&nbsp;the&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;from&nbsp;the&nbsp;internal&nbsp;dictionary&nbsp;referred&nbsp;to&nbsp;by<br>
 the&nbsp;given&nbsp;internal&nbsp;name.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:returns:&nbsp;None.</tt></dd></dl>
+:returns:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None.</tt></dd></dl>
 
 <dl><dt><a name="State-get"><strong>get</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;accessor&nbsp;method&nbsp;returns&nbsp;the&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;if<br>
 present,&nbsp;otherwise&nbsp;the&nbsp;internal&nbsp;dict&nbsp;raises&nbsp;a&nbsp;KeyError.<br>
 &nbsp;<br>
 :item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <dl><dt><a name="State-items"><strong>items</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;items&nbsp;iterator.<br>
 &nbsp;<br>
@@ -3152,9 +3160,9 @@ present,&nbsp;otherwise&nbsp;the&nbsp;internal&nbsp;dict&nbsp;raises&nbsp;a&nbsp
 <dl><dt><a name="State-set"><strong>set</strong></a>(self, item_internal_name, item)</dt><dd><tt>This&nbsp;setter&nbsp;method&nbsp;adds&nbsp;an&nbsp;item&nbsp;to&nbsp;the&nbsp;internal&nbsp;dictionary&nbsp;using&nbsp;the&nbsp;given<br>
 internal&nbsp;name&nbsp;as&nbsp;a&nbsp;key.<br>
 &nbsp;<br>
-:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;use&nbsp;as&nbsp;a&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;use&nbsp;as&nbsp;a<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;key.<br>
-:item:&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;be&nbsp;set.</tt></dd></dl>
+:item:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;be&nbsp;set.</tt></dd></dl>
 
 <dl><dt><a name="State-size"><strong>size</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;len()&nbsp;builtin&nbsp;applies&nbsp;to&nbsp;the&nbsp;internal<br>
 dictionary.<br>
@@ -3198,7 +3206,7 @@ returns&nbsp;True&nbsp;if&nbsp;the&nbsp;<a href="builtins.html#object">object</a
 value,&nbsp;or&nbsp;False&nbsp;otherwise.<br>
 &nbsp;<br>
 :character_class:&nbsp;Either&nbsp;'Warrior',&nbsp;'Thief',&nbsp;'Mage',&nbsp;or&nbsp;'Priest'.<br>
-:return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;boolean.</tt></dd></dl>
 
 <hr>
 Methods inherited from <a href="adventuregame.elements.html#Item">Item</a>:<br>
@@ -3219,9 +3227,9 @@ The&nbsp;factory&nbsp;chooses&nbsp;between&nbsp;the&nbsp;subclasses&nbsp;<a href
 <a href="#Wand">Wand</a>,&nbsp;and&nbsp;<a href="#Weapon">Weapon</a>.&nbsp;The&nbsp;subclasses&nbsp;don't&nbsp;offer&nbsp;any&nbsp;functionality;&nbsp;they&nbsp;exist<br>
 solely&nbsp;so&nbsp;that&nbsp;an&nbsp;<a href="#Item">Item</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;can&nbsp;be&nbsp;type-tested&nbsp;to&nbsp;detect&nbsp;its&nbsp;category.<br>
 &nbsp;<br>
-:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<br>
+:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="builtins.html#object">object</a>&nbsp;with.<br>
-:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <hr>
 Data descriptors inherited from <a href="adventuregame.elements.html#Item">Item</a>:<br>
@@ -3261,7 +3269,7 @@ Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
 self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
-:other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
+:other:&nbsp;&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <hr>
@@ -3307,7 +3315,7 @@ returns&nbsp;True&nbsp;if&nbsp;the&nbsp;<a href="builtins.html#object">object</a
 value,&nbsp;or&nbsp;False&nbsp;otherwise.<br>
 &nbsp;<br>
 :character_class:&nbsp;Either&nbsp;'Warrior',&nbsp;'Thief',&nbsp;'Mage',&nbsp;or&nbsp;'Priest'.<br>
-:return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;boolean.</tt></dd></dl>
 
 <hr>
 Methods inherited from <a href="adventuregame.elements.html#Item">Item</a>:<br>
@@ -3328,9 +3336,9 @@ The&nbsp;factory&nbsp;chooses&nbsp;between&nbsp;the&nbsp;subclasses&nbsp;<a href
 <a href="#Wand">Wand</a>,&nbsp;and&nbsp;<a href="#Weapon">Weapon</a>.&nbsp;The&nbsp;subclasses&nbsp;don't&nbsp;offer&nbsp;any&nbsp;functionality;&nbsp;they&nbsp;exist<br>
 solely&nbsp;so&nbsp;that&nbsp;an&nbsp;<a href="#Item">Item</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;can&nbsp;be&nbsp;type-tested&nbsp;to&nbsp;detect&nbsp;its&nbsp;category.<br>
 &nbsp;<br>
-:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<br>
+:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a>&nbsp;subclass<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="builtins.html#object">object</a>&nbsp;with.<br>
-:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <hr>
 Data descriptors inherited from <a href="adventuregame.elements.html#Item">Item</a>:<br>
@@ -3370,7 +3378,7 @@ Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
 self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
-:other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
+:other:&nbsp;&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <hr>
@@ -3423,7 +3431,7 @@ linked&nbsp;by&nbsp;this&nbsp;door,&nbsp;and&nbsp;returns&nbsp;the&nbsp;internal
 linkage.<br>
 &nbsp;<br>
 :room_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;a&nbsp;<a href="#Room">Room</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
-:return:&nbsp;A&nbsp;<a href="#Room">Room</a>&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;<a href="#Room">Room</a>&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
 
 <hr>
 Class methods inherited from <a href="adventuregame.elements.html#Door">Door</a>:<br>
@@ -3457,7 +3465,7 @@ Methods inherited from <a href="adventuregame.elements.html#Ini_Entry">Ini_Entry
 tested&nbsp;for&nbsp;equality.&nbsp;It&nbsp;draws&nbsp;on&nbsp;__slots__&nbsp;and&nbsp;checks&nbsp;each&nbsp;attribute's&nbsp;value&nbsp;in<br>
 self&nbsp;and&nbsp;other&nbsp;for&nbsp;equality.&nbsp;Only&nbsp;if&nbsp;all&nbsp;attributes&nbsp;match&nbsp;is&nbsp;True&nbsp;returned.<br>
 &nbsp;<br>
-:other:&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
+:other:&nbsp;&nbsp;The&nbsp;other&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;compare&nbsp;against.<br>
 :return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
 
 <hr>

@@ -78,7 +78,7 @@ has been used.
         proper_syntax_options_str = util.join_str_seq_w_commas_and_conjunction(syntax_options, 'or')
         return f'{self.command.upper()} command: bad syntax. Should be {proper_syntax_options_str}.'
 
-    def __init__(self, command, *proper_syntax_options):
+    def __init__(self, command, proper_syntax_options):
         self.command = command
         self.proper_syntax_options = proper_syntax_options
 
@@ -492,7 +492,7 @@ attempts to close a corpse, creature, doorway or item.
         self.target_type = target_type
 
 
-class Close_Command_Object_Has_Been_Closed(Game_State_Message):
+class Close_Command_Element_Has_Been_Closed(Game_State_Message):
     """
 This class implements an object that is returned by
 adventuregame.processor.Command_Processor.close_command() when the player
@@ -508,7 +508,7 @@ succeeds in closing a door or chest.
         self.target = target
 
 
-class Close_Command_Object_Is_Already_Closed(Game_State_Message):
+class Close_Command_Element_Is_Already_Closed(Game_State_Message):
     """
 This class implements an object that is returned by
 adventuregame.processor.Command_Processor.close_command() when the closable
@@ -524,7 +524,7 @@ object the player targeted is already closed.
         self.target = target
 
 
-class Close_Command_Object_to_Close_Not_Here(Game_State_Message):
+class Close_Command_Element_to_Close_Not_Here(Game_State_Message):
     """
 This class implements an object that is returned by
 adventuregame.processor.Command_Processor.close_command() when the player
@@ -638,6 +638,22 @@ have in their inventory.
         self.item_title = item_title
         self.attempted_qty = attempted_qty
         self.possessed_qty = possessed_qty
+
+
+class Drink_Command_Quantity_Unclear(Game_State_Message):
+    """
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.drink_command() when the player writes
+an ungrammatical sentence that is ambiguous as to how many of the item they
+intend to target.
+    """
+
+    @property
+    def message(self):
+        return 'Amount to drink unclear. How many do you mean?'
+
+    def __init__(self):
+        pass
 
 
 class Drop_Command_Dropped_Item(Game_State_Message):
@@ -830,7 +846,7 @@ player to ask for help with one of them.
 
     @property
     def message(self):
-        return_lines = [f'The full list of commands is:', '']
+        return_lines = ['The full list of commands is:', '']
         return_lines.extend((util.join_str_seq_w_commas_and_conjunction(self.commands_available, 'and'), ''))
         return_lines.extend(('Which one do you want help with?', ''))
         return '\n'.join(return_lines)
@@ -891,6 +907,24 @@ information they need to say 'LOOK AT <item title> IN INVENTORY'.
 
     def __init__(self, inventory_contents_list):
         self.inventory_contents = inventory_contents_list
+
+
+class Leave_Command_Door_Is_Locked(Game_State_Message):
+    """
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.leave_command() if the player tries to
+leave through a door that is locked.
+    """
+    __slots__ = 'compass_dir', 'portal_type'
+
+    @property
+    def message(self):
+        return (f"You can't leave the room via the {self.compass_dir} {self.portal_type}: the {self.portal_type} is "
+                 'locked.')
+
+    def __init__(self, compass_dir, portal_type):
+        self.compass_dir = compass_dir
+        self.portal_type = portal_type
 
 
 class Leave_Command_Left_Room(Game_State_Message):
@@ -964,7 +998,7 @@ class Lock_Command_Element_Not_Lockable(Game_State_Message):
         self.target_type = target_type
 
 
-class Lock_Command_Object_Has_Been_Locked(Game_State_Message):
+class Lock_Command_Element_Has_Been_Locked(Game_State_Message):
     """
 This class implements an object that is returned by
 adventuregame.processor.Command_Processor.lock_command() when the player
@@ -980,7 +1014,7 @@ successfully locks a chest or door.
         self.target = target
 
 
-class Lock_Command_Object_Is_Already_Locked(Game_State_Message):
+class Lock_Command_Element_Is_Already_Locked(Game_State_Message):
     """
 This class implements an object that is returned by
 adventuregame.processor.Command_Processor.lock_command() when the player tries
@@ -996,7 +1030,7 @@ to lock a chest or door that is already locked.
         self.target = target
 
 
-class Lock_Command_Object_to_Lock_Not_Here(Game_State_Message):
+class Lock_Command_Element_to_Lock_Not_Here(Game_State_Message):
     """
 This class implements an object that is returned by
 adventuregame.processor.Command_Processor.lock_command() when the player
@@ -1213,7 +1247,7 @@ attempts to open a corpse, creature, doorway or item.
         self.target_type = target_type
 
 
-class Open_Command_Object_Has_Been_Opened(Game_State_Message):
+class Open_Command_Element_Has_Been_Opened(Game_State_Message):
     """
 This class implements an object that is returned by
 adventuregame.processor.Command_Processor.open_command() when the player
@@ -1229,7 +1263,7 @@ successfully opens a chest or door.
         self.target = target
 
 
-class Open_Command_Object_Is_Already_Open(Game_State_Message):
+class Open_Command_Element_Is_Already_Open(Game_State_Message):
     """
 This class implements an object that is returned by
 adventuregame.processor.Command_Processor.open_command() when the player targets
@@ -1245,7 +1279,7 @@ a door or chest that is already open.
         self.target = target
 
 
-class Open_Command_Object_Is_Locked(Game_State_Message):
+class Open_Command_Element_Is_Locked(Game_State_Message):
     """
 This class implements an object that is returned by
 adventuregame.processor.Command_Processor.open_command() when the player targets
@@ -1261,7 +1295,7 @@ a door or chest that is locked.
         self.target = target
 
 
-class Open_Command_Object_to_Open_Not_Here(Game_State_Message):
+class Open_Command_Element_to_Open_Not_Here(Game_State_Message):
     """
 This class implements an object that is returned by
 adventuregame.processor.Command_Processor.open_command() when the player targets
@@ -1710,9 +1744,9 @@ if a Mage, and their Weapon equipped.
         armor_str = (f'Armor: {self.armor}' if self.armor
                      else 'Armor: none' if self.character_class != 'Mage'
                      else '')
-        shield_str =(f'Shield: {self.shield}' if self.shield
-                     else 'Shield: none' if self.character_class in ('Warrior', 'Priest')
-                     else '')
+        shield_str = (f'Shield: {self.shield}' if self.shield
+                      else 'Shield: none' if self.character_class in ('Warrior', 'Priest')
+                      else '')
         wand_str = (f'Wand: {self.wand}' if self.wand
                     else 'Wand: none' if self.character_class == 'Mage'
                     else '')
@@ -1921,7 +1955,7 @@ attempts to unlock a corpse, creature, doorway or item.
         self.target_type = target_type
 
 
-class Unlock_Command_Object_Has_Been_Unlocked(Game_State_Message):
+class Unlock_Command_Element_Has_Been_Unlocked(Game_State_Message):
     """
 This class implements an object that is returned by
 adventuregame.processor.Command_Processor.unlock_command() when the player
@@ -1937,7 +1971,7 @@ successfully unlocks a chest or door.
         self.target = target
 
 
-class Unlock_Command_Object_Is_Already_Unlocked(Game_State_Message):
+class Unlock_Command_Element_Is_Already_Unlocked(Game_State_Message):
     """
 This class implements an object that is returned by
 adventuregame.processor.Command_Processor.unlock_command() when the player tries
@@ -1953,7 +1987,7 @@ to unlock a door or chest that is already unlocked.
         self.target = target
 
 
-class Unlock_Command_Object_to_Unlock_Not_Here(Game_State_Message):
+class Unlock_Command_Element_to_Unlock_Not_Here(Game_State_Message):
     """
 This class implements an object that is returned by
 adventuregame.processor.Command_Processor.unlock_command() when the player tries
@@ -2050,12 +2084,12 @@ scores.
     @property
     def message(self):
         return (f'Your ability scores are '
-                f'Strength {self.strength}, '
-                f'Dexterity {self.dexterity}, '
-                f'Constitution {self.constitution}, '
-                f'Intelligence {self.intelligence}, '
-                f'Wisdom {self.wisdom}, '
-                f'Charisma {self.charisma}.\n'
+                f'Strength\u00A0{self.strength}, '
+                f'Dexterity\u00A0{self.dexterity}, '
+                f'Constitution\u00A0{self.constitution}, '
+                f'Intelligence\u00A0{self.intelligence}, '
+                f'Wisdom\u00A0{self.wisdom}, '
+                f'Charisma\u00A0{self.charisma}.\n'
                 f'Would you like to reroll or begin the game?')
 
     def __init__(self, strength, dexterity, constitution, intelligence, wisdom, charisma):
@@ -2195,21 +2229,28 @@ relevant game parameters have changed as a result.
         referent = ('a suit of' if self.item_type == 'armor'
                     else 'an' if self.item_title[0] in 'aeiou'
                     else 'a')
-        return_str = f"You're now {item_usage_verb} {referent} {self.item_title}. "
+        if self.attacking_with is not None:
+            item_usage_verb = util.usage_verb(self.attacking_with.item_type, gerund=True)
+            referent = ('an' if self.attacking_with.title[0] in 'aeiou' else 'a')
+            return_str = f"You're {item_usage_verb} {referent} {self.attacking_with.title}. "
+        else:
+            return_str = f"You're now {item_usage_verb} {referent} {self.item_title}. "
         if self.armor_class is not None:
             return_str += f'Your armor class is now {self.armor_class}.'
         else:  # attack_bonus is not None and damage != ''
             plussign = '+' if self.attack_bonus >= 0 else ''
-            return_str += (f'Your attack bonus is now {plussign}{self.attack_bonus} '
-                           f'and your {self.item_type} damage is now {self.damage}.')
+            tense = 'now ' if not self.attacking_with else ''
+            return_str += (f'Your attack bonus is {tense}{plussign}{self.attack_bonus} '
+                           f'and your {self.item_type} damage is {tense}{self.damage}.')
         return return_str
 
-    def __init__(self, item_title, item_type, attack_bonus=None, damage='', armor_class=None):
+    def __init__(self, item_title, item_type, attack_bonus=None, damage='', armor_class=None, attacking_with=None):
         self.item_title = item_title
         self.item_type = item_type
         self.attack_bonus = attack_bonus
         self.damage = damage
         self.armor_class = armor_class
+        self.attacking_with = attacking_with
 
 
 class Various_Commands_Item_Unequipped(Game_State_Message):

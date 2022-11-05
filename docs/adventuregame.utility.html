@@ -19,15 +19,12 @@ codebase.</tt></p>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
     
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="functools.html">functools</a><br>
-<a href="iniconfig.html">iniconfig</a><br>
-</td><td width="25%" valign=top><a href="math.html">math</a><br>
-<a href="os.html">os</a><br>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="adventuregame.exceptions.html">adventuregame.exceptions</a><br>
+<a href="math.html">math</a><br>
 </td><td width="25%" valign=top><a href="random.html">random</a><br>
 <a href="re.html">re</a><br>
-</td><td width="25%" valign=top><a href="tempfile.html">tempfile</a><br>
-<a href="textwrap.html">textwrap</a><br>
-</td></tr></table></td></tr></table><p>
+</td><td width="25%" valign=top><a href="textwrap.html">textwrap</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#eeaa77">
 <td colspan=3 valign=bottom>&nbsp;<br>
@@ -36,11 +33,12 @@ codebase.</tt></p>
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><dl><dt><a name="-isfloat"><strong>isfloat</strong></a>(strval)</dt><dd><tt>This&nbsp;function&nbsp;uses&nbsp;a&nbsp;regular&nbsp;expression&nbsp;to&nbsp;text&nbsp;whether&nbsp;a&nbsp;string&nbsp;represents&nbsp;a<br>
 float&nbsp;value.<br>
-&gt;&gt;&gt;&nbsp;<a href="#-isfloat">isfloat</a>("-0.5")<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;<a href="#-isfloat">isfloat</a>('-0.5')<br>
 True<br>
-&gt;&gt;&gt;&nbsp;<a href="#-isfloat">isfloat</a>("3.14159")<br>
+&gt;&gt;&gt;&nbsp;<a href="#-isfloat">isfloat</a>('3.14159')<br>
 True<br>
-&gt;&gt;&gt;&nbsp;<a href="#-isfloat">isfloat</a>("2+5i")<br>
+&gt;&gt;&gt;&nbsp;<a href="#-isfloat">isfloat</a>('2+5i')<br>
 False<br>
 &nbsp;<br>
 :strval:&nbsp;The&nbsp;string&nbsp;to&nbsp;test.&nbsp;return:&nbsp;Returns&nbsp;a&nbsp;boolean.</tt></dd></dl>
@@ -62,11 +60,11 @@ and&nbsp;a&nbsp;conjunction.<br>
 ninety-nine,&nbsp;and&nbsp;returns&nbsp;an&nbsp;int&nbsp;that&nbsp;is&nbsp;equivalent&nbsp;to&nbsp;that&nbsp;number.&nbsp;For&nbsp;lexical<br>
 numbers&nbsp;outside&nbsp;of&nbsp;one&nbsp;to&nbsp;ninety-nine,&nbsp;math.nan&nbsp;is&nbsp;returned.<br>
 &nbsp;<br>
-&gt;&gt;&gt;&nbsp;<a href="#-lexical_number_to_digits">lexical_number_to_digits</a>("one")<br>
+&gt;&gt;&gt;&nbsp;<a href="#-lexical_number_to_digits">lexical_number_to_digits</a>('one')<br>
 1<br>
-&gt;&gt;&gt;&nbsp;<a href="#-lexical_number_to_digits">lexical_number_to_digits</a>("ninety-nine")<br>
+&gt;&gt;&gt;&nbsp;<a href="#-lexical_number_to_digits">lexical_number_to_digits</a>('ninety-nine')<br>
 99<br>
-&gt;&gt;&gt;&nbsp;<a href="#-lexical_number_to_digits">lexical_number_to_digits</a>("one&nbsp;hundred&nbsp;and&nbsp;sixty")<br>
+&gt;&gt;&gt;&nbsp;<a href="#-lexical_number_to_digits">lexical_number_to_digits</a>('one&nbsp;hundred&nbsp;and&nbsp;sixty')<br>
 nan<br>
 &nbsp;<br>
 :lexical_number:&nbsp;The&nbsp;textual&nbsp;representation&nbsp;of&nbsp;a&nbsp;number&nbsp;to&nbsp;parse.&nbsp;Must&nbsp;be<br>
