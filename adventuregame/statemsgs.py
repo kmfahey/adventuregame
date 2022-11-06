@@ -737,7 +737,7 @@ specifies an item to drop that is not in their inventory.
         # This message property assembles a string informing the player they
         # don't have the item in their inventory, hanlding both the singular and
         # the plural cases.
-        article_or_pronoun = 'a' if self.amount_attempted == 1 else 'any'
+        article_or_pronoun = 'any' if self.amount_attempted > 1 else 'an' if self.item_title[0] in 'aeiou' else 'a'
         pluralizer = '' if self.amount_attempted == 1 else 's'
         return f"You don't have {article_or_pronoun} {self.item_title}{pluralizer} in your inventory."
 
@@ -2160,11 +2160,13 @@ compass direction.
 
         # If there's a container here, a sentence mentioning it is added to the list.
         if self.room.container_here is not None:
-            message_list.append(f'You see a {self.room.container_here.title} here.')
+            indirect_article = 'an' if self.room.container_here.title[0] in 'aeiou' else 'a'
+            message_list.append(f'You see {indirect_article} {self.room.container_here.title} here.')
 
         # If there's a creature here, a sentence mentioning them is added to the list.
         if self.room.creature_here is not None:
-            message_list.append(f'There is a {self.room.creature_here.title} in the room.')
+            indirect_article = 'an' if self.room.creature_here.title[0] in 'aeiou' else 'a'
+            message_list.append(f'There is {indirect_article} {self.room.creature_here.title} in the room.')
 
         # If the items_here attribute is a Items_Multi_State object, its
         # contents are assembled into a list, joined into a comma-separated
@@ -2187,7 +2189,8 @@ compass direction.
             if door is None:
                 continue
             door_ersatz_title = door.door_type.replace('_', ' ')
-            door_list.append(f'a {door_ersatz_title} to the {compass_dir}')
+            indirect_article = 'an' if door_ersatz_title[0] in 'aeiou' else 'a'
+            door_list.append(f'{indirect_article} {door_ersatz_title} to the {compass_dir}')
         door_str = 'There is ' + util.join_str_seq_w_commas_and_conjunction(door_list, 'and') + '.'
         message_list.append(door_str)
 

@@ -249,6 +249,10 @@ solely so that an Item object can be type-tested to detect its category.
             item = Wand(**item_dict)
         elif item_dict['item_type'] == 'weapon':
             item = Weapon(**item_dict)
+        elif item_dict['item_type'] == 'oddment':
+            item = Oddment(**item_dict)
+        else:
+            raise Internal_Exception(f"couldn't instance Item subclass, unrecognized item type '{item_dict['item_type']}.")
         return item
 
 
@@ -303,6 +307,15 @@ class Key(Item):
     """
 This Item subclass is used to represent items which are suits of armor. It
 offers no functionality, but is useful for detecting key items by type testing.
+    """
+    pass
+
+
+class Oddment(Item):
+    """
+This Item subclass is used to represent items which are miscellaneous goods with
+no in-game purpose. It offers no functionality, but is useful for detecting key
+items by type testing.
     """
     pass
 

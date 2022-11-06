@@ -7,7 +7,11 @@ import iniconfig
 import adventuregame as advg
 
 
-# This stage uses IniConfig to load the game data files from ./data/ . Each
+### Establishing the game data object environment ###
+
+# Stage 1: parsing the config files
+# 
+# The first step oThis stage uses IniConfig to load the game data files from ./data/ . Each
 # one becomes an IniConfig object, with a .sections attribute that is a
 # dict-of-dicts representation of the .ini file data.
 items_ini_config = iniconfig.IniConfig('./data/items.ini')
@@ -16,10 +20,12 @@ containers_ini_config = iniconfig.IniConfig('./data/containers.ini')
 creatures_ini_config = iniconfig.IniConfig('./data/creatures.ini')
 rooms_ini_config = iniconfig.IniConfig('./data/rooms.ini')
 
-# Each State subclass can initialize itself from a dict-of-dicts ** argument,
-# so I initialize the state objects. Some state objects require other ones as
-# arguments to initialize properly, so this proceeds in order from simple to
-# complex.
+# Stage 2: instancing the state objects.
+# 
+# Each state class can initialize itself from a **dict-of-dicts argument, so
+# I initialize the state objects from the parsed .ini data files. Some state
+# objects require other ones as arguments to initialize properly, so this
+# proceeds in order from simple to complex.
 items_state = advg.Items_State(**items_ini_config.sections)
 doors_state = advg.Doors_State(**doors_ini_config.sections)
 containers_state = advg.Containers_State(items_state, **containers_ini_config.sections)
@@ -29,15 +35,18 @@ rooms_state = advg.Rooms_State(creatures_state, containers_state, doors_state, i
 game_state = advg.Game_State(rooms_state, creatures_state, containers_state, doors_state,
                             items_state)
 
+# Stage 3: instancing the Command_Processor object.
+# 
 # The state objects are summarized by a Game_State object, which is the
 # sole argument to Command_Processor.__init__. Its methods will consult the
 # game_state object to interact with the game's object environment.
 command_processor = advg.Command_Processor(game_state)
 
 
-# The game has a splash page. I didn't assemble the header text
+# The game has a splash page. I didn't author the headline text
 # myself, an online generator did it for me. The generator is here:
 # <https://www.patorjk.com/software/taag/>.
+
 print("""Welcome to...
               _                 _                   _____                      
     /\\      | |               | |                 / ____|                     
@@ -86,9 +95,9 @@ while True:
     for game_state_message in result:
         print(advg.textwrapper(game_state_message.message))
 
-    # These three Game_State_Message subclasses signify the end of the game. If
-    # any one of them occurs at the end of a list of state messages, the game
-    # exits.
+    # Any one of these three Game_State_Message subclass objects signifies the
+    # end of the game. If one of them occurs at the end of a list of state
+    # messages, the game exits.
     if isinstance(result[-1], (advg.Quit_Command_Have_Quit_The_Game,
                                advg.Be_Attacked_by_Command_Character_Death,
                                advg.Leave_Command_Won_The_Game)):

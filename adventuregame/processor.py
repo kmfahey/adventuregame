@@ -1496,12 +1496,21 @@ specified using any combination of its compass direction, title, or portal type.
         # variable, and I iterate across it trying to match door_type,
         # door_title, or both. Matches are saved to matching_doors.
         doors = self.game_state.rooms_state.cursor.doors
-        matching_doors = tuple()
+        matching_doors = list()
         for door in doors:
-            if ((door_type and door.door_type == door_type and compass_dir and door.title == door_title)
-                    or (door_type and door.door_type == door_type) or (compass_dir and door.title == door_title)
-                    or (not door_type and not compass_dir and door.door_type.endswith(tokens[-1]))):
-                matching_doors += door,
+            if compass_dir is not None and door_type is not None:
+                if not (door.title.startswith(compass_dir) and door.door_type == door_type):
+                    continue
+            elif compass_dir is not None:
+                if not door.title.startswith(compass_dir):
+                    continue
+            elif door_type is not None:
+                if door.door_type != door_type:
+                    continue
+            else:
+                if not door.title.endswith(tokens[-1]):
+                    continue
+            matching_doors.append(door)
 
         # If no doors matched, a door-not-present error is returned.
         if len(matching_doors) == 0:
