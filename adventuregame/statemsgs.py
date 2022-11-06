@@ -2089,7 +2089,7 @@ scores.
                 f'Constitution\u00A0{self.constitution}, '
                 f'Intelligence\u00A0{self.intelligence}, '
                 f'Wisdom\u00A0{self.wisdom}, '
-                f'Charisma\u00A0{self.charisma}.\n'
+                f'Charisma\u00A0{self.charisma}.\n\n'
                 f'Would you like to reroll or begin the game?')
 
     def __init__(self, strength, dexterity, constitution, intelligence, wisdom, charisma):

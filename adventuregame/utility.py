@@ -204,7 +204,7 @@ rolls with the given modifier, and returns the computed random value>
 # multi-paragraph string, the paragraphs are run together and a single wrapped
 # paragraph is returned. This function extends it to handle multiple paragraphs.
 
-def textwrapper(paragraphs):
+def textwrapper(paragraphs, width=80):
     """
 This function accepts a multiline string comprising paragraphs of unwrapped
 text, separately wraps each one to 80 columns, and returns the wrapped
@@ -215,7 +215,7 @@ paragraphs as a string.
     """
     # The text is broken into separate paragraph strings and applies
     # textwrap.wrap to each one.
-    wrapped_lines = map(lambda para: textwrap.wrap(para, width=80), paragraphs.split('\n'))
+    wrapped_lines = map(lambda para: textwrap.wrap(para, width=width), paragraphs.split('\n'))
 
     # textwrap.wrap returns a list of lines, so I reassemble the paragraphs with
     # '\n'.join()
