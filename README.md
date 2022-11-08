@@ -1,30 +1,60 @@
-﻿#### ADVISORY
+﻿### ADVISORY
 
-The adventuregame library can either be installed to your normal python
-library directory, or used directly from this directory if you set your
-PYTHONPATH variable to include the current directory.
+The recommended usage of this code is to run the game advgame.py from this
+directory and load the package from the current working directory without
+installing them. The package is purpose-built for containing the game logic used
+by advgame.py and has limited potential for reuse. (Although, conceivably, the
+D&D object environment defined in adventuregame.elements could be reused for
+another game that implements Dungeons & Dragons rules.)
 
-EVEN IF you install the library however, the advgame.py script depends on the
-game data files stored in the `data` directory, which it assumes is in the SAME
-directory as the script is run from.
+*EVEN IF* you install the library however, the advgame.py frontend program is
+written with the assumption that it will be run from a directory that contains
+the `data` directory and its .ini file contents that were distributed with the
+game. It can't be used from /usr/local/bin.
 
 
-#### Main Readme
+#### Background
 
-This library implements all the functionality needed to run a fairly complex
+The author, Kerne M. Fahey, was taking a coding bootcamp course with NuCamp
+in python and Devops, and was assigned to write a game of their choosing.
+They chose a text-adventure game implementing D&D rules; this package and its
+front-end program advgame.py was the result.
+
+
+#### Documentation
+
+docstrings are written into the code and `pydoc` is supported. `pydoc -w` has
+been used to generate HTML code documentation; please see `docs` for those
+files, as well as Command\_Reference.md which replicates the in-game HELP text.
+
+
+#### Gameplay
+
+The adventuregame package implements all the functionality needed to run a
 text adventure game, inspired by ADVENT but written to be compatible with basic
-Dungeons & Dragons rules. The frontend script advgame.py draws on the library to
-run the game.
+Dungeons & Dragons rules. The frontend program advgame.py draws on the package
+to run the game.
 
-The game takes place in an underground vault. The vault features more than a
-dozen rooms, where creatures, items and chests can be found. The object of the
-game is to find the exit. Some doors and chests are locked; the keys can be
-found somewhere in the vault.
+The game takes place in a dungeon. The dungeon features more than a dozen rooms,
+where creatures, items and chests can be found. The object of the game is to
+find the exit. Some doors and chests are locked; the keys can be found somewhere
+in the vault.
+
+In play, the player plays one of four classes: Warrior, Thief, Mage or
+Priest. The Warrior has the highest hit point total and can use any weapon,
+armor or shield in the game. The Thief can pick locks, obviating the need to
+find keys in order to advance. The Mage can cast magic missile and use magic
+wands, but can't wear armor, use a shield, or use most weapons. The Priest can
+cast a healing spell on themself.
+
+
+#### Implementation Details
 
 The game logic that implements the Dungeons & Dragons rules is found in
 adventuregame.elements. The ruleset implemented is a simplified version of the
-D&D paradigm, not specific to any edition, and doesn't use levels, a base attack
-or proficiency bonus, or more than one spell per spellcasting class.
+D&D paradigm that draws on both 3rd ed. and 5th ed. conventions. The simplified
+rules doesn't use levels, a base attack or proficiency bonus, and a spellcaster
+only has one spell to their name.
 
 The adventure game functionality is implemented between adventuregame.processor
 and adventuregame.statemsg. The processor module is home to a monolithic
@@ -49,15 +79,9 @@ from a command method can be summarized by a single state message, a tuple is
 always returned for uniformity of response from process(). Some command methods
 need to have several messages printed to the UI in sequence.
 
-The game data is stored in adventuregame.data. The data-- including collections
-of rooms, doors, containers, creatures, items, and chests-- is recorded in
-.ini format. The 3rd-party package iniconfig is used to parse the data. The
-different data files are stored as multi-line strings in data.py to avoid
-keeping non-python files in the module hierarchy. iniconfig has a limitation in
-that it only accepts a filesystem path to parse, rather than any iterable \_io
-object, so a utility function iniconfig\_obj\_from\_ini\_text() is included that
-stores a multiline string of .ini data to a temporary file and then parses it to
-an IniConfig object.
+The game data is stored in the data directory, in .ini format. The 3rd-party
+package iniconfig is used to parse the data.
 
 Last but not least, adventuregame.utility contains a small collection of utility
 functions used by the other components of the library.
+
