@@ -18,7 +18,7 @@ import operator
 import adventuregame.exceptions as excpt
 import adventuregame.utility as util
 
-__name__ = 'adventuregame.gamestatemessages'
+__name__ = 'adventuregame.statemsgs'
 
 
 class Game_State_Message(abc.ABC):

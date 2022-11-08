@@ -26,7 +26,7 @@ import adventuregame.statemsgs as stmsg
 import adventuregame.utility as util
 
 
-__name__ = 'adventuregame.commandprocessor'
+__name__ = 'adventuregame.processor'
 
 
 SPELL_DAMAGE = '3d8+5'

@@ -313,7 +313,7 @@ offers no functionality, but is useful for detecting key items by type testing.
 
 class Oddment(Item):
     """
-This Item subclass is used to represent items which are miscellaneous goods with
+This Item subclass is used to represent items that are miscellaneous goods with
 no in-game purpose. It offers no functionality, but is useful for detecting key
 items by type testing.
     """

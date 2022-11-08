@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: package adventuregame.__init__</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="adventuregame.html"><font color="#ffffff">adventuregame</font></a>.__init__</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href="adventuregame.html">index</a><br></font></td></tr></table>
+    <p><tt>This&nbsp;package&nbsp;implements&nbsp;all&nbsp;the&nbsp;functionality&nbsp;needed&nbsp;to&nbsp;run&nbsp;a&nbsp;text-adventure<br>
+game&nbsp;in&nbsp;the&nbsp;style&nbsp;of&nbsp;the&nbsp;old&nbsp;BSD&nbsp;UNIX&nbsp;game&nbsp;ADVENT,&nbsp;augmented&nbsp;with&nbsp;support&nbsp;for<br>
+tabletop&nbsp;role-playing&nbsp;game&nbsp;conventions&nbsp;drawn&nbsp;from&nbsp;Dungeons&nbsp;&amp;&nbsp;Dragons.&nbsp;The<br>
+functionality&nbsp;here&nbsp;is&nbsp;able&nbsp;to&nbsp;model&nbsp;a&nbsp;player&nbsp;playing&nbsp;a&nbsp;specific&nbsp;class&nbsp;(one&nbsp;of<br>
+Warrior,&nbsp;Thief,&nbsp;Mage&nbsp;or&nbsp;Priest),&nbsp;exploring&nbsp;a&nbsp;dungeon&nbsp;room&nbsp;to&nbsp;room,&nbsp;fighting<br>
+creatures,&nbsp;looting&nbsp;chests&nbsp;and&nbsp;corpses,&nbsp;finding&nbsp;keys&nbsp;and&nbsp;discovering&nbsp;the&nbsp;exit&nbsp;to<br>
+the&nbsp;dungeon&nbsp;(which&nbsp;is&nbsp;the&nbsp;win&nbsp;condition).<br>
+&nbsp;<br>
+*&nbsp;adventuregame.exceptions&nbsp;comprises&nbsp;the&nbsp;exceptions&nbsp;used&nbsp;by&nbsp;the&nbsp;package.<br>
+*&nbsp;adventuregame.utility&nbsp;comprises&nbsp;a&nbsp;small&nbsp;collection&nbsp;of&nbsp;utility&nbsp;functions&nbsp;used<br>
+&nbsp;&nbsp;by&nbsp;the&nbsp;package.<br>
+*&nbsp;adventuregame.elements&nbsp;comprises&nbsp;the&nbsp;base&nbsp;layer:&nbsp;the&nbsp;game&nbsp;element&nbsp;object<br>
+&nbsp;&nbsp;environment&nbsp;used&nbsp;by&nbsp;the&nbsp;package,&nbsp;featureing&nbsp;OO&nbsp;representations&nbsp;of&nbsp;game<br>
+&nbsp;&nbsp;elements&nbsp;such&nbsp;as&nbsp;rooms,&nbsp;doors,&nbsp;items,&nbsp;creatures,&nbsp;containers&nbsp;and&nbsp;the&nbsp;character<br>
+&nbsp;&nbsp;themself.<br>
+*&nbsp;adventuregame.processor&nbsp;comprises&nbsp;a&nbsp;higher-level&nbsp;layer&nbsp;that&nbsp;handles&nbsp;processing<br>
+&nbsp;&nbsp;commands&nbsp;entered&nbsp;by&nbsp;the&nbsp;player&nbsp;and&nbsp;returning&nbsp;semantic&nbsp;return&nbsp;values.<br>
+*&nbsp;adventuregame.statemsgs&nbsp;comprises&nbsp;the&nbsp;return&nbsp;values&nbsp;used&nbsp;in<br>
+&nbsp;&nbsp;adventuregame.processor;&nbsp;an&nbsp;abstract&nbsp;base&nbsp;class&nbsp;and&nbsp;a&nbsp;large&nbsp;collection&nbsp;of<br>
+&nbsp;&nbsp;subclasses&nbsp;each&nbsp;of&nbsp;which&nbsp;implements&nbsp;a&nbsp;specific&nbsp;result&nbsp;case&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
+&nbsp;&nbsp;specific&nbsp;commands.</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Package Contents</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="adventuregame.elements.html">elements</a><br>
+<a href="adventuregame.exceptions.html">exceptions</a><br>
+</td><td width="25%" valign=top><a href="adventuregame.processor.html">processor</a><br>
+<a href="adventuregame.statemsgs.html">statemsgs</a><br>
+</td><td width="25%" valign=top><a href="adventuregame.utility.html">utility</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>COMMANDS_HELP</strong> = {'ATTACK': 'The ATTACK command is used to attack creatures. ...K AT command and take loot with the TAKE command.', 'BEGIN GAME': 'The BEGIN GAME command is used to start the game...ar and started in the antechamber of the dungeon.', 'CAST SPELL': 'The CAST SPELL command can only be used by Mages... A Priest can cast a healing spell on themselves.', 'CLOSE': 'The CLOSE command can be used to close doors and chests.', 'DRINK': 'The DRINK command can be used to drink health or mana potions.', 'DROP': 'The DROP command can be used to remove items fro...lly be unequipped unless you have another on you.', 'EQUIP': "The EQUIP command can be used to equip a weapon,... inventory. You can't equip items from the floor.", 'HELP': 'The HELP command can be used to get help about any game commands.', 'INVENTORY': "The INVENTORY command can be used to get a listi...an item, say 'LOOK<font color="#c040c0">\xa0</font>AT<font color="#c040c0">\xa0</font>&lt;item<font color="#c040c0">\xa0</font>title&gt;<font color="#c040c0">\xa0</font>IN<font color="#c040c0">\xa0</font>INVENTORY'.", 'LEAVE': "The LEAVE command is used to exit the room you'r...unable to leave using it until you can unlock it.", ...}<br>
+<strong>COMMANDS_SYNTAX</strong> = {'ATTACK': ('&lt;creature<font color="#c040c0">\xa0</font>name&gt;',), 'BEGIN GAME': ('',), 'CAST SPELL': ('',), 'CLOSE': ('&lt;door<font color="#c040c0">\xa0</font>name&gt;', '&lt;chest<font color="#c040c0">\xa0</font>name&gt;'), 'DRINK': ('[THE]<font color="#c040c0">\xa0</font>&lt;potion<font color="#c040c0">\xa0</font>name&gt;', '&lt;number&gt;<font color="#c040c0">\xa0</font>&lt;potion<font color="#c040c0">\xa0</font>name&gt;(s)'), 'DROP': ('&lt;item<font color="#c040c0">\xa0</font>name&gt;', '&lt;number&gt;<font color="#c040c0">\xa0</font>&lt;item<font color="#c040c0">\xa0</font>name&gt;'), 'EQUIP': ('&lt;armor<font color="#c040c0">\xa0</font>name&gt;', '&lt;shield<font color="#c040c0">\xa0</font>name&gt;', '&lt;wand<font color="#c040c0">\xa0</font>name&gt;', '&lt;weapon<font color="#c040c0">\xa0</font>name&gt;'), 'HELP': ('', '&lt;command<font color="#c040c0">\xa0</font>name&gt;'), 'INVENTORY': ('',), 'LEAVE': ('[USING<font color="#c040c0">\xa0</font>or<font color="#c040c0">\xa0</font>VIA]<font color="#c040c0">\xa0</font>&lt;compass<font color="#c040c0">\xa0</font>direction&gt;<font color="#c040c0">\xa0</font>DOOR', '[USING<font color="#c040c0">\xa0</font>or<font color="#c040c0">\xa0</font>VIA]<font color="#c040c0">\xa0</font>&lt;compass<font color="#c040c0">\xa0</font>direction&gt;<font color="#c040c0">\xa0</font>DOORWAY', '[USING<font color="#c040c0">\xa0</font>or<font color="#c040c0">\xa0</font>VIA]<font color="#c040c0">\xa0</font>&lt;door<font color="#c040c0">\xa0</font>name&gt;', '[USING<font color="#c040c0">\xa0</font>or<font color="#c040c0">\xa0</font>VIA]<font color="#c040c0">\xa0</font>&lt;compass<font color="#c040c0">\xa0</font>direction&gt;<font color="#c040c0">\xa0</font>&lt;door<font color="#c040c0">\xa0</font>name&gt;'), ...}<br>
+<strong>SPELL_DAMAGE</strong> = '3d8+5'<br>
+<strong>SPELL_MANA_COST</strong> = 5<br>
+<strong>STARTER_GEAR</strong> = {'Mage': {'weapon': 'Staff'}, 'Priest': {'armor': 'Studded_Leather', 'shield': 'Buckler', 'weapon': 'Heavy_Mace'}, 'Thief': {'armor': 'Studded_Leather', 'weapon': 'Rapier'}, 'Warrior': {'armor': 'Studded_Leather', 'shield': 'Buckler', 'weapon': 'Longsword'}}<br>
+<strong>digit_re</strong> = re.compile('^[0-9]+$')<br>
+<strong>lexical_number_in_1_99_re</strong> = re.compile('^(\n                                ...                                   (, re.VERBOSE)</td></tr></table>
+</body></html>
