@@ -36,7 +36,7 @@ SPELL_MANA_COST = 5
 STARTER_GEAR = dict(Warrior=dict(weapon='Longsword', armor='Studded_Leather', shield='Buckler'),
                     Thief=dict(weapon='Rapier', armor='Studded_Leather'),
                     Mage=dict(weapon='Staff'),
-                    Priest=dict(weapon='Mace', armor='Studded_Leather', shield='Buckler'))
+                    Priest=dict(weapon='Heavy_Mace', armor='Studded_Leather', shield='Buckler'))
 
 
 # The COMMAND_SYNTAX dict is a compendium of usage examples for every command in
@@ -94,7 +94,7 @@ COMMANDS_HELP = {
     'ATTACK': "The ATTACK command is used to attack creatures. Beware: if you attack a creature and don't kill it, it "
               'will attack you in return! After you kill a creature, you can check its corpse for loot using the LOOK '
               'AT command and take loot with the TAKE command.',
-    'BEGIN GAME': "The BEGIN GAME command is used to start the game after you have set your name and class and approved"
+    'BEGIN GAME': 'The BEGIN GAME command is used to start the game after you have set your name and class and approved'
                   ' your ability scores. When you enter this command, you will automatically be equiped with your '
                   'starting gear and started in the antechamber of the dungeon.',
     'CAST SPELL': 'The CAST SPELL command can only be used by Mages and Priests. A Mage can cast an attack spell that '
@@ -130,12 +130,12 @@ COMMANDS_HELP = {
     'SET NAME': 'The SET NAME command is used before game start to pick a name for your character. Your name can have '
                 'as many parts as you like, but each one must be a capital letter followed by lowercase letters. '
                 'Symbols and numbers are not allowed.',
-    'STATUS': "The STATUS command is used to see a summary of your hit points and current weapon, armor, shield "
+    'STATUS': 'The STATUS command is used to see a summary of your hit points and current weapon, armor, shield '
               "choices. Spellcasters also see their mana points; and Mages see their current wand if they're using "
               'one.',
-    'TAKE': "The TAKE command is used to remove items from a chest or a corpse and place them in your inventory.",
-    'UNEQUIP': "The UNEQUIP command is used to unequip a weapon, armor, shield or wand from your inventory.",
-    'UNLOCK': "The UNLOCK command is used to unlock a door or chest. You need a door key to unlock doors and a chest "
+    'TAKE': 'The TAKE command is used to remove items from a chest or a corpse and place them in your inventory.',
+    'UNEQUIP': 'The UNEQUIP command is used to unequip a weapon, armor, shield or wand from your inventory.',
+    'UNLOCK': 'The UNLOCK command is used to unlock a door or chest. You need a door key to unlock doors and a chest '
               'key to unlock chests.'
 }
 
@@ -387,7 +387,7 @@ ATTACK <creature name>
             # The attack roll met or exceeded the creature's armor class, so
             # damage is assessed and inflicted on the creature.
             damage_result = util.roll_dice(damage_roll_dice_expr)
-            creature.take_damage(damage_result)
+            damage_result = creature.take_damage(damage_result)
 
             # If the creature was killed by that damage, the
             # Creature.convert_to_corpse() method is used to instantiate a
@@ -504,10 +504,10 @@ command takes no arguments.
         # of item types to item internal names. This loop looks up each internal
         # name in the Items_State object to get an Item subclass object.
         for item_type, item_internal_name in sorted(STARTER_GEAR[character_class].items(),  # This is sorted just to
-                                                    key=operator.itemgetter(0)):            # make the results 
-                                                                                            # deterministic for ease 
+                                                    key=operator.itemgetter(0)):            # make the results
+                                                                                            # deterministic for ease
             item = self.game_state.items_state.get(item_internal_name)                      # of testing.
-            self.game_state.character.pick_up_item(item)                        
+            self.game_state.character.pick_up_item(item)
             # Character.equip_{item_type} is looked up and called with the
             # Item subclass object to equip the character with this item of
             # equipment.
@@ -610,11 +610,15 @@ command takes no arguments.
                 # missile_, a classic D&D spell that always hits its target.
                 damage_dealt = util.roll_dice(SPELL_DAMAGE)
                 creature = self.game_state.rooms_state.cursor.creature_here
-                creature.take_damage(damage_dealt)
+                damage_dealt = creature.take_damage(damage_dealt)
+                self.game_state.character.spend_mana(SPELL_MANA_COST)
 
                 # If the creature died, a cast-damaging-spell value and a
                 # foe-death value are returned.
                 if creature.is_dead:
+                    corpse = creature.convert_to_corpse()
+                    self.game_state.rooms_state.cursor.container_here = corpse
+                    self.game_state.rooms_state.cursor.creature_here = None
                     return (stmsg.Cast_Spell_Command_Cast_Damaging_Spell(creature.title, damage_dealt,
                                                                          creature_slain=True),
                             stmsg.Various_Commands_Foe_Death(creature.title))
@@ -636,9 +640,64 @@ command takes no arguments.
             # value and a underwent-healing-effect value are returned.
             damage_rolled = util.roll_dice(SPELL_DAMAGE)
             healed_amt = self.game_state.character.heal_damage(damage_rolled)
+            self.game_state.character.spend_mana(SPELL_MANA_COST)
             return (stmsg.Cast_Spell_Command_Cast_Healing_Spell(),
                     stmsg.Various_Commands_Underwent_Healing_Effect(healed_amt, self.game_state.character.hit_points,
                                                                     self.game_state.character.hit_point_total))
+
+    def _matching_door(self, target_door):
+        """
+This private utility method is used to fetch the corresponding door object in
+the room linked to by a door object, so that an operation can be performed
+on both door objects representing the two sides of the same door element. It
+returns None if the door being tested is the exit door of the game.
+
+:target_door: A door object.
+:return:      A door object, or None.
+        """
+        # There's a limitation in the implementations of close_command(),
+        # lock_command(), open_command(), pick_lock_command(), and
+        # unlock_command(): when targetting a door, the door object that's
+        # retrieved to unlock is the one that represents that exit from the
+        # current room object; but the other room linked by that door uses a
+        # different door object to represent the opposite side of the same
+        # notional door game element. In order to operate on the same door in
+        # two rooms, both door objects must have their state changed.
+
+        # This dict is used to match opposing door attributes so that the
+        # opposite door can be retrieved from the opposite room.
+        opposite_compass_door_attrs = {'north_door': 'south_door', 'east_door': 'west_door',
+                                       'south_door': 'north_door', 'west_door': 'east_door'}
+
+        # First I iterate across the four possible doors in the current room
+        # object to find which door_attr attribute name the door object is
+        # stored under.
+        door_found_at_attr = None
+        for door_attr in ('north_door', 'south_door', 'east_door', 'west_door'):
+            found_door = getattr(self.game_state.rooms_state.cursor, door_attr, None)
+            if found_door is target_door:
+                door_found_at_attr = door_attr
+                break
+
+        # I use the handy method Door.other_room_internal_name(), which returns
+        # the internal_name of the linked room when given the internal_name of
+        # the room the player is in.
+        other_room_internal_name = target_door.other_room_internal_name(
+                                       self.game_state.rooms_state.cursor.internal_name)
+
+        # If the door is the exit to the dungeon, it will have 'Exit' as its
+        # other_room_internal_name. There is no far room or far door object, so
+        # I return None.
+        if other_room_internal_name == 'Exit':
+            return None
+
+        # Otherwise, I fetch the opposite room, and use the opposite_door_attr
+        # to fetch the other door object that represents the other side of the
+        # game element door from the door object that I've got, and return it.
+        opposite_room = self.game_state.rooms_state.get(other_room_internal_name)
+        opposite_door_attr = opposite_compass_door_attrs[door_found_at_attr]
+        opposite_door = getattr(opposite_room, opposite_door_attr)
+        return opposite_door
 
     def close_command(self, tokens):
         """
@@ -683,9 +742,19 @@ CLOSE <chest name>
         # If the element to close is already closed, a
         if element_to_close.is_closed:
             return stmsg.Close_Command_Element_Is_Already_Closed(element_to_close.title),
-        else:
-            element_to_close.is_closed = True
-            return stmsg.Close_Command_Element_Has_Been_Closed(element_to_close.title),
+        elif isinstance(element_to_close, elem.Door):
+            # This is a door object, and it only represents _this side_ of the
+            # door game element; I use _matching_door() to fetch the door object
+            # representing the opposite side so that the door game element will
+            # be closed from the perspective of either room.
+            opposite_door = self._matching_door(element_to_close)
+            if opposite_door is not None:
+                opposite_door.is_closed = True
+
+        # I set the element's is_closed attribute to True, and return an
+        # element-has-been-closed value.
+        element_to_close.is_closed = True
+        return stmsg.Close_Command_Element_Has_Been_Closed(element_to_close.title),
 
     def drink_command(self, tokens):
         """
@@ -1318,11 +1387,19 @@ LOCK <chest name>
         # error is returned.
         elif element_to_lock.is_locked:
             return stmsg.Lock_Command_Element_Is_Already_Locked(element_to_lock.title),
-        else:
-            # Otherwise, the element_to_lock's is_locked attribute is set to
-            # True, and a element-has-been-locked value is returned.
-            element_to_lock.is_locked = True
-            return stmsg.Lock_Command_Element_Has_Been_Locked(element_to_lock.title),
+        elif isinstance(element_to_lock, elem.Door):
+            # This is a door object, and it only represents _this side_ of the
+            # door game element; I use _matching_door() to fetch the door object
+            # representing the opposite side so that the door game element will
+            # be locked from the perspective of either room.
+            opposite_door = self._matching_door(element_to_lock)
+            if opposite_door is not None:
+                opposite_door.is_locked = True
+
+        # The element_to_lock's is_locked attribute is set to rue, and a
+        # Telement-has-been-locked value is returned.
+        element_to_lock.is_locked = True
+        return stmsg.Lock_Command_Element_Has_Been_Locked(element_to_lock.title),
 
     # This private workhorse method handles the shared logic between lock,
     # unlock, open or close: all four commands have the same type of game
@@ -1493,8 +1570,9 @@ specified using any combination of its compass direction, title, or portal type.
             door_type = ' '.join(tokens).replace(' ', '_')
 
         # The tuple of doors in the current room is assigned to a local
-        # variable, and I iterate across it trying to match door_type,
-        # door_title, or both. Matches are saved to matching_doors.
+        # variable, and I iterate across it trying to match compass_dir,
+        # door_type, or both. As a fallback, 'door' vs. 'doorway' in the title
+        # is tested. Matches are saved to matching_doors.
         doors = self.game_state.rooms_state.cursor.doors
         matching_doors = list()
         for door in doors:
@@ -1758,7 +1836,7 @@ different places in its code, so it's refactored into its own method.
             # limitations, so I survey those.
             for character_class in ('warrior', 'thief', 'mage', 'priest'):
                 if getattr(element, f'{character_class}_can_use', False):
-                    can_use_list.append(f"{character_class}s" if character_class != 'thief' else 'thieves')
+                    can_use_list.append(f'{character_class}s' if character_class != 'thief' else 'thieves')
             # The first class name is titlecased because it's the start of a
             # sentence, and the list of classes is formed into a sentence
             # appended to the working string.
@@ -1825,11 +1903,19 @@ OPEN <chest name>
             # Otherwise if it's alreadty open, an element-is-already-open error
             # is returned.
             return stmsg.Open_Command_Element_Is_Already_Open(element_to_open.title),
-        else:
-            # Otherwise the element has is_closed set to False and an
-            # element-has-been-opened value is returned.
-            element_to_open.is_closed = False
-            return stmsg.Open_Command_Element_Has_Been_Opened(element_to_open.title),
+        elif isinstance(element_to_open, elem.Door):
+            # This is a door object, and it only represents _this side_ of the
+            # door game element; I use _matching_door() to fetch the door object
+            # representing the opposite side so that the door game element will
+            # be open from the perspective of either room.
+            opposite_door = self._matching_door(element_to_open)
+            if opposite_door is not None:
+                opposite_door.is_closed = False
+
+        # The element has is_closed set to False and an element-has-been-opened
+        # value is returned.
+        element_to_open.is_closed = False
+        return stmsg.Open_Command_Element_Has_Been_Opened(element_to_open.title),
 
     def pick_lock_command(self, tokens):
         """
@@ -1903,8 +1989,17 @@ Priest, a 1-tuple of a Command_Class_Restricted object is returned.
                 # Otherwise if the door isn't locked, a target-not-locked error value is returned.
                 return stmsg.Pick_Lock_Command_Target_Not_Locked(target_title),
             else:
-                # Otherwise, the door's is_locked attribute is set to False, and
-                # a target-has-been-unlocked value is returned.
+                # This is a door object, and it only represents _this side_ of
+                # the door game element; I use _matching_door() to fetch the
+                # door object representing the opposite side so that the door
+                # game element will be unlocked from the perspective of either
+                # room.
+                opposite_door = self._matching_door(door)
+                if opposite_door is not None:
+                    opposite_door.is_locked = False
+
+                # The door's is_locked attribute is set to False, and a
+                # target-has-been-unlocked value is returned.
                 door.is_locked = False
                 return stmsg.Pick_Lock_Command_Target_Has_Been_Unlocked(target_title),
         # The target isn't a door. If there is a container here and its title matches....
@@ -2947,8 +3042,15 @@ UNLOCK <chest\u00A0name>
             # Otherwise, if the item is already unlocked, I return an
             # element-is-already-unlocked error.
             return stmsg.Unlock_Command_Element_Is_Already_Unlocked(element_to_unlock.title),
-        else:
-            # Otherwise, I unlock the element, and return an
-            # element-has-been-unlocked value.
-            element_to_unlock.is_locked = False
-            return stmsg.Unlock_Command_Element_Has_Been_Unlocked(element_to_unlock.title),
+        elif isinstance(element_to_unlock, elem.Door):
+            # This is a door object, and it only represents _this side_ of the
+            # door game element; I use _matching_door() to fetch the door object
+            # representing the opposite side so that the door game element will
+            # be unlocked from the perspective of either room.
+            opposite_door = self._matching_door(element_to_unlock)
+            if opposite_door is not None:
+                opposite_door.is_locked = False
+
+        # I unlock the element, and return an element-has-been-unlocked value.
+        element_to_unlock.is_locked = False
+        return stmsg.Unlock_Command_Element_Has_Been_Unlocked(element_to_unlock.title),

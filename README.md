@@ -1,3 +1,16 @@
+﻿#### ADVISORY
+
+The adventuregame library can either be installed to your normal python
+library directory, or used directly from this directory if you set your
+PYTHONPATH variable to include the current directory.
+
+EVEN IF you install the library however, the advgame.py script depends on the
+game data files stored in the `data` directory, which it assumes is in the SAME
+directory as the script is run from.
+
+
+#### Main Readme
+
 This library implements all the functionality needed to run a fairly complex
 text adventure game, inspired by ADVENT but written to be compatible with basic
 Dungeons & Dragons rules. The frontend script advgame.py draws on the library to
@@ -15,7 +28,7 @@ or proficiency bonus, or more than one spell per spellcasting class.
 
 The adventure game functionality is implemented between adventuregame.processor
 and adventuregame.statemsg. The processor module is home to a monolithic
-Command\_Processor class, that manags the natural language parsing which
+Command\_Processor class, that manages the natural language parsing which
 translates the commands entered by a player during the game into game logic.
 The Command\_Processor class has a method for every command in the game, and a
 processor() method that accepts a natural language string, tokenizes it, strips

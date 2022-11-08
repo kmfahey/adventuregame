@@ -106,6 +106,7 @@ class Test_Lexical_Number_to_Digits_1(unittest.TestCase):
         self.assertIs(advg.lexical_number_to_digits('zero'), math.nan)
         self.assertIs(advg.lexical_number_to_digits('one hundred'), math.nan)
 
+
 class Test_Lexical_Number_to_Digits_2(unittest.TestCase):
 
     def __init__(self, *argl, **argd):

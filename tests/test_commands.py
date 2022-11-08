@@ -2,7 +2,6 @@
 
 import operator
 import unittest
-import math
 
 import iniconfig
 
@@ -255,9 +254,9 @@ class Test_Begin_Game(unittest.TestCase):
         self.assertTrue(self.command_processor.game_state.game_has_begun)
         self.assertIsInstance(result[-1], advg.Various_Commands_Entered_Room)
         self.assertIsInstance(result[-1].room, advg.Room)
-        self.assertEqual(result[-1].message, 'Entrance room. You see a wooden chest here. There is a kobold in the '
-                                            'room. You see a mana potion and 2 health potions on the floor. There '
-                                            'is a wooden door to the north and a iron door to the east.')
+        self.assertEqual(result[-1].message, 'Entrance room.\nYou see a wooden chest here.\nThere is a kobold in the '
+                                            'room.\nYou see a mana potion and 2 health potions on the floor.\nThere '
+                                            'is an iron door to the north and an iron door to the east.')
 
     def test_begin_game_6(self):
         self.command_processor.process('set class to Warrior')
@@ -281,9 +280,9 @@ class Test_Begin_Game(unittest.TestCase):
                                             r' weapon damage is now [\dd+-]+.$')
         self.assertIsInstance(result[4], advg.Various_Commands_Entered_Room)
         self.assertIsInstance(result[4].room, advg.Room)
-        self.assertEqual(result[4].message, 'Entrance room. You see a wooden chest here. There is a kobold in the '
-                                            'room. You see a mana potion and 2 health potions on the floor. There '
-                                            'is a wooden door to the north and a iron door to the east.')
+        self.assertEqual(result[4].message, 'Entrance room.\nYou see a wooden chest here.\nThere is a kobold in the '
+                                            'room.\nYou see a mana potion and 2 health potions on the floor.\nThere '
+                                            'is an iron door to the north and an iron door to the east.')
 
     def test_begin_game_7(self):
         self.command_processor.process('set class to Thief')
@@ -304,9 +303,9 @@ class Test_Begin_Game(unittest.TestCase):
                                             r' weapon damage is now [\dd+-]+.$')
         self.assertIsInstance(result[3], advg.Various_Commands_Entered_Room)
         self.assertIsInstance(result[3].room, advg.Room)
-        self.assertEqual(result[3].message, 'Entrance room. You see a wooden chest here. There is a kobold in the '
-                                            'room. You see a mana potion and 2 health potions on the floor. There '
-                                            'is a wooden door to the north and a iron door to the east.')
+        self.assertEqual(result[3].message, 'Entrance room.\nYou see a wooden chest here.\nThere is a kobold in the '
+                                            'room.\nYou see a mana potion and 2 health potions on the floor.\nThere '
+                                            'is an iron door to the north and an iron door to the east.')
 
     def test_begin_game_8(self):
         self.command_processor.process('set class to Priest')
@@ -330,9 +329,9 @@ class Test_Begin_Game(unittest.TestCase):
                                             r' weapon damage is now [\dd+-]+.$')
         self.assertIsInstance(result[4], advg.Various_Commands_Entered_Room)
         self.assertIsInstance(result[4].room, advg.Room)
-        self.assertEqual(result[4].message, 'Entrance room. You see a wooden chest here. There is a kobold in the '
-                                            'room. You see a mana potion and 2 health potions on the floor. There '
-                                            'is a wooden door to the north and a iron door to the east.')
+        self.assertEqual(result[4].message, 'Entrance room.\nYou see a wooden chest here.\nThere is a kobold in the '
+                                            'room.\nYou see a mana potion and 2 health potions on the floor.\nThere '
+                                            'is an iron door to the north and an iron door to the east.')
 
     def test_begin_game_9(self):
         self.command_processor.process('set class to Mage')
@@ -348,9 +347,9 @@ class Test_Begin_Game(unittest.TestCase):
                                             r' weapon damage is now [\dd+-]+.$')
         self.assertIsInstance(result[2], advg.Various_Commands_Entered_Room)
         self.assertIsInstance(result[2].room, advg.Room)
-        self.assertEqual(result[2].message, 'Entrance room. You see a wooden chest here. There is a kobold in the '
-                                            'room. You see a mana potion and 2 health potions on the floor. There '
-                                            'is a wooden door to the north and a iron door to the east.')
+        self.assertEqual(result[2].message, 'Entrance room.\nYou see a wooden chest here.\nThere is a kobold in the '
+                                            'room.\nYou see a mana potion and 2 health potions on the floor.\nThere '
+                                            'is an iron door to the north and an iron door to the east.')
 
 
 class Test_Cast_Spell(unittest.TestCase):
@@ -420,12 +419,17 @@ class Test_Cast_Spell(unittest.TestCase):
         self.assertIsInstance(result[1], (advg.Various_Commands_Foe_Death,
                                           advg.Be_Attacked_by_Command_Attacked_and_Not_Hit,
                                           advg.Be_Attacked_by_Command_Attacked_and_Hit))
+        spell_cast_count = 1
         while result[0].damage_dealt >= 20:
             self.command_processor.game_state.rooms_state.cursor.creature_here.heal_damage(20)
             result = self.command_processor.process('cast spell')
+            spell_cast_count += 1
         self.assertRegex(result[0].message, 'A magic missile springs from your gesturing hand and unerringly strikes '
                                             r'the kobold. You have done \d+ points of damage. The kobold turns to '
                                             'attack!')
+        self.assertEqual(self.command_processor.game_state.character.mana_points
+                         + spell_cast_count * advg.SPELL_MANA_COST,
+                         self.command_processor.game_state.character.mana_point_total)
 
     def test_cast_spell5(self):
         self.command_processor.game_state.character_name = 'Kaeva'
@@ -435,6 +439,8 @@ class Test_Cast_Spell(unittest.TestCase):
         self.assertIsInstance(result[0], advg.Cast_Spell_Command_Cast_Healing_Spell)
         self.assertRegex(result[0].message, r'You cast a healing spell on yourself.')
         self.assertIsInstance(result[1], advg.Various_Commands_Underwent_Healing_Effect)
+        self.assertEqual(self.command_processor.game_state.character.mana_points + advg.SPELL_MANA_COST,
+                         self.command_processor.game_state.character.mana_point_total)
 
 
 class Test_Close(unittest.TestCase):
@@ -453,8 +459,8 @@ class Test_Close(unittest.TestCase):
         self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
         self.command_processor = advg.Command_Processor(self.game_state)
-        self.command_processor.game_state.character_name = 'Niath'
-        self.command_processor.game_state.character_class = 'Warrior'
+        self.command_processor.game_state.character_name = 'Lidda'
+        self.command_processor.game_state.character_class = 'Thief'
         self.game_state.game_has_begun = True
         self.chest = self.command_processor.game_state.rooms_state.cursor.container_here
         self.chest.is_closed = True
@@ -507,9 +513,20 @@ class Test_Close(unittest.TestCase):
         self.assertEqual(result[0].target, self.door_title)
         self.assertEqual(result[0].message, f'You have closed the {self.door_title}.')
         self.assertTrue(self.door.is_closed)
+        result = self.command_processor.process('pick lock on east door')
+        result = self.command_processor.process('leave via east door')
+        result = self.command_processor.process('pick lock on north door')
+        result = self.command_processor.process('leave via north door')
+        result = self.command_processor.process('pick lock on west door')
+        result = self.command_processor.process('leave via west door')
+        result = self.command_processor.process('close south door')
+        self.assertIsInstance(result[0], advg.Close_Command_Element_Is_Already_Closed)
+        self.assertEqual(result[0].target, 'south door')
+        self.assertEqual(result[0].message, f'The south door is already closed.')
+        self.assertTrue(self.door.is_closed)
 
     def test_close_8(self):
-        result = self.command_processor.process('close wooden door')
+        result = self.command_processor.process('close north iron door')
         self.assertIsInstance(result[0], advg.Close_Command_Element_Is_Already_Closed)
         self.assertEqual(result[0].target, 'north door')
         self.assertEqual(result[0].message, 'The north door is already closed.'),
@@ -1125,7 +1142,7 @@ class Test_Equip_2(unittest.TestCase):
         self.command_processor = advg.Command_Processor(self.game_state)
         self.buckler = self.command_processor.game_state.items_state.get('Buckler')
         self.longsword = self.command_processor.game_state.items_state.get('Longsword')
-        self.mace = self.command_processor.game_state.items_state.get('Mace')
+        self.mace = self.command_processor.game_state.items_state.get('Heavy_Mace')
         self.magic_wand_2 = self.command_processor.game_state.items_state.get('Magic_Wand_2')
         self.magic_wand = self.command_processor.game_state.items_state.get('Magic_Wand')
         self.scale_mail = self.command_processor.game_state.items_state.get('Scale_Mail')
@@ -1411,7 +1428,7 @@ class Test_Leave(unittest.TestCase):
         self.assertEqual(result[0].message, 'You leave the room via the north door.')
         self.assertIsInstance(result[1], advg.Various_Commands_Entered_Room)
         self.assertIsInstance(result[1].room, advg.Room)
-        self.assertEqual(result[1].message, 'Nondescript room. There is a doorway to the east and a wooden door to the '
+        self.assertEqual(result[1].message, 'Nondescript room.\nThere is a doorway to the east and an iron door to the '
                                             'south.')
         result = self.command_processor.process('leave using south door')
         self.assertIsInstance(result[0], advg.Leave_Command_Left_Room)
@@ -1419,18 +1436,18 @@ class Test_Leave(unittest.TestCase):
         self.assertEqual(result[0].message, 'You leave the room via the south door.')
         self.assertIsInstance(result[1], advg.Various_Commands_Entered_Room)
         self.assertIsInstance(result[1].room, advg.Room)
-        self.assertEqual(result[1].message, 'Entrance room. You see a wooden chest here. There is a kobold in the '
-                                            'room. You see a mana potion and 2 health potions on the floor. There '
-                                            'is a wooden door to the north and a iron door to the east.')
+        self.assertEqual(result[1].message, 'Entrance room.\nYou see a wooden chest here.\nThere is a kobold in the '
+                                            'room.\nYou see a mana potion and 2 health potions on the floor.\nThere '
+                                            'is an iron door to the north and an iron door to the east.')
 
     def test_leave_4(self):
-        result = self.command_processor.process('leave using wooden door')
+        result = self.command_processor.process('leave using north iron door')
         self.assertIsInstance(result[0], advg.Leave_Command_Left_Room)
         self.assertEqual(result[0].compass_dir, 'north')
         self.assertEqual(result[0].message, 'You leave the room via the north door.')
         self.assertIsInstance(result[1], advg.Various_Commands_Entered_Room)
         self.assertIsInstance(result[1].room, advg.Room)
-        self.assertEqual(result[1].message, 'Nondescript room. There is a doorway to the east and a wooden door to the '
+        self.assertEqual(result[1].message, 'Nondescript room.\nThere is a doorway to the east and an iron door to the '
                                             'south.')
 
     def test_leave_5(self):
@@ -1447,7 +1464,7 @@ class Test_Leave(unittest.TestCase):
         self.assertIsInstance(result[0], advg.Leave_Command_Door_Is_Locked)
         self.assertEqual(result[0].compass_dir, 'north')
         self.assertEqual(result[0].portal_type, 'door')
-        self.assertEqual(result[0].message, "You can't leave the room via the north door: the door is locked.")
+        self.assertEqual(result[0].message, "You can't leave the room via the north door. The door is locked.")
         result = self.command_processor.process('pick lock on north door')
         result = self.command_processor.process('leave using north door')
         self.assertIsInstance(result[0], advg.Leave_Command_Left_Room)
@@ -1524,6 +1541,16 @@ class Test_Lock(unittest.TestCase):
         self.assertEqual(result[0].target, self.door_title)
         self.assertEqual(result[0].message, f'You have locked the {self.door_title}.')
         self.assertTrue(self.door.is_locked)
+        result = self.command_processor.process('unlock east door')
+        result = self.command_processor.process('leave via east door')
+        result = self.command_processor.process('unlock north door')
+        result = self.command_processor.process('leave via north door')
+        result = self.command_processor.process('unlock west door')
+        result = self.command_processor.process('leave via west door')
+        result = self.command_processor.process('lock south door')
+        self.assertIsInstance(result[0], advg.Lock_Command_Element_Is_Already_Locked)
+        self.assertEqual(result[0].target, 'south door')
+        self.assertEqual(result[0].message, 'The south door is already locked.')
 
     def test_lock_5(self):
         result = self.command_processor.process(f'lock {self.chest_title}')
@@ -1549,7 +1576,7 @@ class Test_Lock(unittest.TestCase):
         self.assertTrue(self.chest.is_locked)
 
     def test_lock_7(self):
-        result = self.command_processor.process('lock wooden door')
+        result = self.command_processor.process('lock north iron door')
         self.assertIsInstance(result[0], advg.Lock_Command_Dont_Possess_Correct_Key)
         self.assertEqual(result[0].object_to_lock_title, 'north door')
         self.assertEqual(result[0].key_needed, 'door key')
@@ -1772,12 +1799,12 @@ class Test_Look_At_1(unittest.TestCase):
         self.assertEqual(result[0].message, f'{self.game_state.rooms_state.cursor.creature_here.description}')
 
     def test_look_at_13(self):
-        result = self.command_processor.process('look at wooden door')
+        result = self.command_processor.process('look at north iron door')
         self.assertIsInstance(result[0], advg.Look_At_Command_Found_Door_or_Doorway)
         self.assertEqual(result[0].compass_dir, 'north')
         self.assertIsInstance(result[0].door, advg.Door)
-        self.assertEqual(result[0].message, 'This door is made of wooden planks secured together with iron divots. It '
-                                            'is set in the north wall. It is closed but unlocked.')
+        self.assertEqual(result[0].message, 'This door is bound in iron plates with a small barred window set up high.'
+                                            ' It is set in the north wall. It is closed but unlocked.')
 
 
 class Test_Look_At_2(unittest.TestCase):
@@ -1901,8 +1928,8 @@ class Test_Look_At_2(unittest.TestCase):
         result = self.command_processor.process('look at north door')
         self.assertIsInstance(result[0], advg.Look_At_Command_Found_Door_or_Doorway)
         self.assertEqual(result[0].compass_dir, 'north')
-        self.assertEqual(result[0].message, 'This door is made of wooden planks secured together with iron divots. It '
-                                            'is set in the north wall. It is closed but unlocked.')
+        self.assertEqual(result[0].message, 'This door is bound in iron plates with a small barred window set up '
+                                            'high. It is set in the north wall. It is closed but unlocked.')
 
     def test_look_at_10(self):
         result = self.command_processor.process('look at mana potion in inventory')
@@ -1936,7 +1963,7 @@ class Test_Look_At_2(unittest.TestCase):
         result = self.command_processor.process('look at north door')
         self.assertIsInstance(result[0], advg.Look_At_Command_Found_Door_or_Doorway)
         self.assertEqual(result[0].compass_dir, 'north')
-        self.assertEqual(result[0].message, 'This door is made of wooden planks secured together with iron divots. It '
+        self.assertEqual(result[0].message, 'This door is bound in iron plates with a small barred window set up high. It '
                                             'is set in the north wall. It is closed and locked.')
 
     def test_look_at_14(self):
@@ -1944,7 +1971,7 @@ class Test_Look_At_2(unittest.TestCase):
         result = self.command_processor.process('look at north door')
         self.assertIsInstance(result[0], advg.Look_At_Command_Found_Door_or_Doorway)
         self.assertEqual(result[0].compass_dir, 'north')
-        self.assertEqual(result[0].message, 'This door is made of wooden planks secured together with iron divots. It '
+        self.assertEqual(result[0].message, 'This door is bound in iron plates with a small barred window set up high. It '
                                             'is set in the north wall. It is open.')
 
     def test_look_at_15(self):
@@ -1995,10 +2022,10 @@ class Test_Look_At_2(unittest.TestCase):
         result = self.command_processor.process('look at door')
         self.assertIsInstance(result[0], advg.Various_Commands_Ambiguous_Door_Specifier)
         self.assertEqual(set(result[0].compass_dirs), {'north', 'east'})
-        self.assertEqual(result[0].door_type, None)
+        self.assertEqual(result[0].door_type, 'iron_door')
         self.assertEqual(result[0].door_or_doorway, 'door')
         self.assertEqual(result[0].message, 'More than one door in this room matches your command. Do you mean the '
-                                            'north door or the east door?')
+                                            'north iron door or the east iron door?')
 
     def test_look_at_20(self):
         result = self.command_processor.process('look at mana potion')
@@ -2091,6 +2118,14 @@ class Test_Open(unittest.TestCase):
         self.assertEqual(result[0].message, f'You have opened the {self.door_title}.')
         self.assertFalse(self.door.is_closed)
 
+        result = self.command_processor.process(f'leave using {self.door_title}')
+        result = self.command_processor.process(f'open south door')
+        self.assertIsInstance(result[0], advg.Open_Command_Element_Is_Already_Open)
+        self.assertEqual(result[0].target, 'south door')
+        self.assertEqual(result[0].message, f'The south door is already open.')
+        self.assertFalse(self.door.is_closed)
+
+
     def test_open_7(self):
         self.door.is_closed = True
         self.door.is_locked = True
@@ -2104,14 +2139,14 @@ class Test_Open(unittest.TestCase):
         self.door.is_closed = True
         self.door.is_locked = True
         alternate_title = self.door.door_type.replace('_', ' ')
-        result = self.command_processor.process(f'open {alternate_title}')
+        result = self.command_processor.process(f'open north {alternate_title}')
         self.assertIsInstance(result[0], advg.Open_Command_Element_Is_Locked)
         self.assertEqual(result[0].target, self.door_title)
         self.assertEqual(result[0].message, f'The {self.door_title} is locked.')
         self.assertTrue(self.door.is_closed)
 
     def test_open_9(self):
-        result = self.command_processor.process('open wooden door')
+        result = self.command_processor.process('open north iron door')
         self.assertIsInstance(result[0], advg.Open_Command_Element_Is_Already_Open)
         self.assertEqual(result[0].target, 'north door')
         self.assertEqual(result[0].message, 'The north door is already open.'),
@@ -2218,10 +2253,10 @@ class Test_Pick_Lock(unittest.TestCase):
         self.command_processor.game_state.character_name = 'Lidda'
         self.command_processor.game_state.character_class = 'Thief'
         self.game_state.game_has_begun = True
-        result = self.command_processor.process('pick lock on wooden door')
+        result = self.command_processor.process('pick lock on north iron door')
         self.assertIsInstance(result[0], advg.Pick_Lock_Command_Target_Not_Locked)
-        self.assertEqual(result[0].target_title, 'wooden door')
-        self.assertEqual(result[0].message, 'The wooden door is not locked.')
+        self.assertEqual(result[0].target_title, 'north iron door')
+        self.assertEqual(result[0].message, 'The north iron door is not locked.')
 
     def test_pick_lock_5(self):
         self.command_processor.game_state.character_name = 'Lidda'
@@ -2274,6 +2309,11 @@ class Test_Pick_Lock(unittest.TestCase):
         self.assertEqual(result[0].target_title, 'east door')
         self.assertEqual(result[0].message, 'You have unlocked the east door.')
         self.assertFalse(self.command_processor.game_state.rooms_state.cursor.east_door.is_locked)
+        result = self.command_processor.process('leave via east door')
+        result = self.command_processor.process('pick lock on west door')
+        self.assertIsInstance(result[0], advg.Pick_Lock_Command_Target_Not_Locked)
+        self.assertEqual(result[0].target_title, 'west door')
+        self.assertEqual(result[0].message, 'The west door is not locked.')
 
     def test_pick_lock_10(self):
         self.command_processor.game_state.character_name = 'Lidda'
@@ -2478,7 +2518,7 @@ class Test_Pick_Up(unittest.TestCase):
         self.assertEqual(result[0].message, "You can't pick up the kobold: can't pick up creatures!")
 
     def test_pick_up_13(self):
-        result = self.command_processor.process('pick up wooden door')  # check
+        result = self.command_processor.process('pick up north iron door')  # check
         self.assertIsInstance(result[0], advg.Pick_Up_Command_Cant_Pick_Up_Chest_Corpse_Creature_or_Door)
         self.assertEqual(result[0].element_type, 'door')
         self.assertEqual(result[0].element_title, 'north door')
@@ -2843,7 +2883,7 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Games(unittest.TestCase):
                                             f'Constitution\u00A0{result[1].constitution}, '
                                             f'Intelligence\u00A0{result[1].intelligence}, '
                                             f'Wisdom\u00A0{result[1].wisdom}, '
-                                            f'Charisma\u00A0{result[1].charisma}.\n'
+                                            f'Charisma\u00A0{result[1].charisma}.\n\n'
                                             'Would you like to reroll or begin the game?')
         first_roll = second_roll = {'strength': result[1].strength, 'dexterity': result[1].dexterity,
                                     'constitution': result[1].constitution, 'intelligence': result[1].intelligence,
@@ -3473,7 +3513,7 @@ class Test_Unequip_1(unittest.TestCase):
         self.command_processor = advg.Command_Processor(self.game_state)
         self.buckler = self.command_processor.game_state.items_state.get('Buckler')
         self.longsword = self.command_processor.game_state.items_state.get('Longsword')
-        self.mace = self.command_processor.game_state.items_state.get('Mace')
+        self.mace = self.command_processor.game_state.items_state.get('Heavy_Mace')
         self.magic_wand_2 = self.command_processor.game_state.items_state.get('Magic_Wand_2')
         self.magic_wand = self.command_processor.game_state.items_state.get('Magic_Wand')
         self.scale_mail = self.command_processor.game_state.items_state.get('Scale_Mail')
@@ -3656,6 +3696,12 @@ class Test_Unlock(unittest.TestCase):
         self.assertEqual(result[0].target, self.door_title)
         self.assertEqual(result[0].message, f'You have unlocked the {self.door_title}.')
         self.assertFalse(self.door.is_locked)
+        self.command_processor.game_state.rooms_state.move(north=True)
+
+        result = self.command_processor.process(f'unlock south door')
+        self.assertIsInstance(result[0], advg.Unlock_Command_Element_Is_Already_Unlocked)
+        self.assertEqual(result[0].target, 'south door')
+        self.assertEqual(result[0].message, f'The south door is already unlocked.')
 
     def test_unlock_5(self):
         result = self.command_processor.process(f'unlock {self.chest_title}')
@@ -3683,7 +3729,7 @@ class Test_Unlock(unittest.TestCase):
         self.assertFalse(self.chest.is_locked)
 
     def test_unlock_7(self):
-        result = self.command_processor.process('unlock wooden door')
+        result = self.command_processor.process('unlock north iron door')
         self.assertIsInstance(result[0], advg.Unlock_Command_Dont_Possess_Correct_Key)
         self.assertEqual(result[0].object_to_unlock_title, 'north door')
         self.assertEqual(result[0].key_needed, 'door key')

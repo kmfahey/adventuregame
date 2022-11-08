@@ -3,17 +3,37 @@
 import textwrap
 import functools
 import iniconfig
+import os
 
 import adventuregame as advg
 
 
 ### Establishing the game data object environment ###
 
+# Stage 0: a pertinent error message
+#
+# The game relies on its game data directory to run. This step checks for
+# the data files, so the user gets a helpful error message informing them
+# how to resolve the issue, rather than the somewhat opaque exception that
+# iniconfig.IniConfig's constructor would raise.
+
+for game_data_file in ('./data/items.ini', './data/doors.ini', 
+                       './data/containers.ini', './data/creatures.ini',
+                       './data/rooms.ini'):
+    if os.path.exists(game_data_file):
+        continue
+    else:
+        raise advg.Internal_Exception(
+            f"Could not access game data file '{game_data_file}'. Please "
+             "ensure you are running this program from a directory that "
+             "contains the 'data' directory distributed with the game.")
+
 # Stage 1: parsing the config files
 # 
-# The first step oThis stage uses IniConfig to load the game data files from ./data/ . Each
-# one becomes an IniConfig object, with a .sections attribute that is a
-# dict-of-dicts representation of the .ini file data.
+# The first step oThis stage uses IniConfig to load the game data files from
+# ./data/ . Each one becomes an IniConfig object, with a .sections attribute
+# that is a dict-of-dicts representation of the .ini file data.
+
 items_ini_config = iniconfig.IniConfig('./data/items.ini')
 doors_ini_config = iniconfig.IniConfig('./data/doors.ini')
 containers_ini_config = iniconfig.IniConfig('./data/containers.ini')
@@ -26,14 +46,17 @@ rooms_ini_config = iniconfig.IniConfig('./data/rooms.ini')
 # I initialize the state objects from the parsed .ini data files. Some state
 # objects require other ones as arguments to initialize properly, so this
 # proceeds in order from simple to complex.
+
 items_state = advg.Items_State(**items_ini_config.sections)
 doors_state = advg.Doors_State(**doors_ini_config.sections)
-containers_state = advg.Containers_State(items_state, **containers_ini_config.sections)
-creatures_state = advg.Creatures_State(items_state, **creatures_ini_config.sections)
-rooms_state = advg.Rooms_State(creatures_state, containers_state, doors_state, items_state,
-                              **rooms_ini_config.sections)
-game_state = advg.Game_State(rooms_state, creatures_state, containers_state, doors_state,
-                            items_state)
+containers_state = advg.Containers_State(items_state, 
+                                         **containers_ini_config.sections)
+creatures_state = advg.Creatures_State(items_state, 
+                                       **creatures_ini_config.sections)
+rooms_state = advg.Rooms_State(creatures_state, containers_state, doors_state, 
+                              items_state, **rooms_ini_config.sections)
+game_state = advg.Game_State(rooms_state, creatures_state, containers_state, 
+                             doors_state, items_state)
 
 # Stage 3: instancing the Command_Processor object.
 # 
@@ -74,7 +97,6 @@ that, enter BEGIN GAME and enter the dungeon!
 
 """)
 
-# The main loop of the game. Natural language commands are grabbed from the
 # input() builtin, and Command_Processor.process() is used to interpret &
 # execute them.
 #
@@ -87,6 +109,9 @@ while True:
         command = input('Enter command> ')
     except (EOFError, KeyboardInterrupt):
         exit(0)
+
+    print()
+
     result = command_processor.process(command)
 
     # Game_State_Message subclass objects' message properties return one or more

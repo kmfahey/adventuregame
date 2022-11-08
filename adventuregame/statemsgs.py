@@ -194,7 +194,8 @@ class. If not, its message includes a clause about the foe turning to attack.
         # The attack was with a weapon, the creature didn't die, and they're
         # counterattacking.
         elif not self.creature_slain and self.weapon_type == 'weapon':
-            return f'Your attack on the {self.creature_title} hit! You did {self.damage_done} damage.'
+            return (f'Your attack on the {self.creature_title} hit! You did {self.damage_done} damage. The '
+                    f'{self.creature_title} turns to attack!')
         # The attack was with a wand, the creature didn't die, and they're
         # counterattacking.
         else:
@@ -919,7 +920,7 @@ leave through a door that is locked.
 
     @property
     def message(self):
-        return (f"You can't leave the room via the {self.compass_dir} {self.portal_type}: the {self.portal_type} is "
+        return (f"You can't leave the room via the {self.compass_dir} {self.portal_type}. The {self.portal_type} is "
                  'locked.')
 
     def __init__(self, compass_dir, portal_type):
@@ -2195,7 +2196,7 @@ compass direction.
         message_list.append(door_str)
 
         # The list of sentences is joined into a string and returned.
-        return ' '.join(message_list)
+        return '\n'.join(message_list)
 
     def __init__(self, room):
         self.room = room
@@ -2206,7 +2207,7 @@ class Various_Commands_Foe_Death(Game_State_Message):
 
     @property
     def message(self):
-        return f'The {self.creature_title} is slain.'
+        return f'The {self.creature_title} is slain. You see a {self.creature_title} corpse here.'
 
     def __init__(self, creature_title):
         self.creature_title = creature_title

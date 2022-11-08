@@ -252,7 +252,7 @@ solely so that an Item object can be type-tested to detect its category.
         elif item_dict['item_type'] == 'oddment':
             item = Oddment(**item_dict)
         else:
-            raise Internal_Exception(f"couldn't instance Item subclass, unrecognized item type '{item_dict['item_type']}.")
+            raise excpt.Internal_Exception(f"couldn't instance Item subclass, unrecognized item type '{item_dict['item_type']}.")
         return item
 
 
@@ -1144,7 +1144,6 @@ inventory.
                  '_mana_point_maximum', '_current_mana_points', 'ability_scores', 'inventory',
                  '_equipment')
 
-
     # The rules for "mana" points I use in this class are drawn from Dungeons &
     # Dragons 3rd edition rules. In those rules they're called "spell points".
     # These two dicts are drawn from the variant Spell Points rules, which are
@@ -1257,7 +1256,7 @@ Priests).
         # these values are supplied to __init__. But the Creature object that
         # subclasses Character draws its values from an .ini entry and it does
         # have all these values supplied to __init__.
-        # 
+        #
         # Base hit points are taken either from an argument to __init__ or from
         # the class's default in the _hitpoint_base dict.
         if base_hit_points:
@@ -1463,7 +1462,7 @@ ability score modifier.
         """
         # This standard for formulating attack rolls is drawn from Dungeons &
         # Dragon 3rd edition. Those rules can be found at <https://dndsrd.net/>.
-        # 
+        #
         # If no weapon or wand is equipped, None is returned.
         if not (self._equipment.weapon_equipped or self._equipment.wand_equipped):
             return None
@@ -1912,14 +1911,17 @@ Intelligence for Mages wielding a wand).
         """
         # A character with no weapon or wand has no attack bonus.
         if (not (self._equipment.weapon_equipped
-            or self.character_class == 'Mage' and self._equipment.wand_equipped)):
+                or self.character_class == 'Mage' and self._equipment.wand_equipped)):
             raise excpt.Internal_Exception('The character does not have a weapon equipped; no valid value for '
                                      '`attack_bonus` can be computed.')
         stat_dependency = self._attack_or_damage_stat_dependency()
         # By the shield statement above, I know that the control flow getting
         # here means that if no weapon is equipped a wand must be.
-        base_attack_bonus = (self._equipment.weapon.attack_bonus if self._equipment.weapon_equipped
-                             else self._equipment.wand.attack_bonus)
+        if self.character_class == 'Mage':
+            base_attack_bonus = (self._equipment.wand.attack_bonus if self._equipment.wand_equipped
+                             else self._equipment.weapon.attack_bonus)
+        else:
+            base_attack_bonus = self._equipment.weapon.attack_bonus
 
         # The attack bonus is drawn from the weapon or wand's attack bonus plus
         # the relevant stat mod.
@@ -2272,18 +2274,28 @@ IniConfig's sections attribute.
             # The cursor is set to the room identifies by is_entrance=True
             if room.is_entrance:
                 self._room_cursor = room.internal_name
-            self._store_room(room.internal_name, room)
+            self.set(room.internal_name, room)
 
-    def _store_room(self, room_internal_name, room):
+    def get(self, internal_name):
         """
-This private method is used to store a Room object to internal storage by the
-given internal name.
+This method is used to retrieve a Room object from internal storage with the given
+internal name.
+
+:room_internal_name: A string, the internal name of the Room object.
+:return:             A Room object.
+        """
+        return self._rooms_objs[internal_name]
+
+    def set(self, internal_name, room):
+        """
+This method is used to store a Room object to internal storage by the given
+internal name.
 
 :room_internal_name: A string, the internal name of the Room object.
 :room:               A Room object.
 :return:             None.
         """
-        self._rooms_objs[room_internal_name] = room
+        self._rooms_objs[internal_name] = room
 
     def move(self, north=False, west=False, south=False, east=False):
         """
@@ -2299,7 +2311,7 @@ room to an adjacent room by the given compass direction.
         # If more than one of north, east, south and west are True, raise an
         # exception.
         if ((north and west) or (north and south) or (north and east) or (west and south)
-            or (west and east) or (south and east)):
+                or (west and east) or (south and east)):
             raise excpt.Internal_Exception('move() must receive only *one* True argument of the four keys `north`, `south`, '
                                      '`east` and `west`')
         if north:
@@ -2318,7 +2330,7 @@ room to an adjacent room by the given compass direction.
         if not getattr(self.cursor, exit_name):
             raise excpt.Bad_Command_Exception('MOVE', f'This room has no <{exit_key}> exit.')
         door = getattr(self.cursor, exit_name)
-        
+
         # If the Door object has is_locked=True, an exception is raised.
         if door.is_locked:
             raise excpt.Internal_Exception(f'exiting {self.cursor.internal_name} via the {exit_name.replace("_"," ")}: door '
