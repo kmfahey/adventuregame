@@ -7,7 +7,7 @@ by `advgame.py` and has limited potential for reuse. (Although, conceivably, the
 D&D object environment defined in `adventuregame.elements` could be reused for
 another game that implements Dungeons & Dragons rules.)
 
-*EVEN IF* you install the library however, the `advgame.py` front-end program is
+*EVEN IF* you install the library however, the `advgame.py` frontend program is
 written with the assumption that it will be run from a directory that contains
 the `data` directory and its .ini file contents that were distributed with the
 game. It can't be used from /usr/local/bin.
@@ -25,7 +25,7 @@ frontend program `advgame.py` was the result.
 
 docstrings are written into the code and `pydoc` is supported. `pydoc -w` has
 been used to generate HTML code documentation; please see `docs` for those
-files, as well as Command\_Reference.md which replicates the in-game HELP text.
+files, as well as Command_Reference.md which replicates the in-game HELP text.
 
 
 #### Gameplay
@@ -51,30 +51,30 @@ cast a healing spell on themself.
 #### Implementation Details
 
 The game logic that implements the Dungeons & Dragons rules is found in
-`adventuregame`.elements. The ruleset implemented is a simplified version of the
+`adventuregame.elements`. The ruleset implemented is a simplified version of the
 D&D paradigm that draws on both 3rd ed. and 5th ed. conventions. The simplified
 rules doesn't use levels, a base attack or proficiency bonus, and a spellcaster
 only has one spell to their name.
 
 The adventure game functionality is implemented between `adventuregame.processor`
 and `adventuregame.statemsgs`. The processor module is home to a monolithic
-`Command\_Processor` class that manages the natural language parsing which
+`Command_Processor` class that manages the natural language parsing which
 translates the commands entered by a player during the game into game logic.
-The `Command\_Processor` class has a method for every command in the game, and a
+The `Command_Processor` class has a method for every command in the game, and a
 `process()` method that accepts a natural language string, tokenizes it, strips
 off the command prefix, selects the matching method from a dispatch table, and
 calls that method with the remainder of the tokens.
 
 A command method always returns a tuple of one or objects that subclass
-`Game\_State\_Message`. That class and its subclasses are found in
+`Game_State_Message`. That class and its subclasses are found in
 `adventuregame.statemsgs`. Every possible outcome from every command is
-represented by a separate `Game\_State\_Message` subclass. Each one has an
-`\_\_init\_\_()` method that stores its keyword arguments to attributes, and a
+represented by a separate `Game_State_Message` subclass. Each one has an
+`__init__()` method that stores its keyword arguments to attributes, and a
 `message` property that contains the logic for translating the semantic content of
 the object to a natural language response that can be printed to the UI for the
 player to read. There are 95 such subclasses in `adventuregame.statemsgs`.
 
-`Command\_Processor.process()` tail calls the command method. While most outcomes
+`Command_Processor.process()` tail calls the command method. While most outcomes
 from a command method can be summarized by a single state message, a tuple is
 always returned for uniformity of response from `process()`. Some command methods
 need to have several messages printed to the UI in sequence.
