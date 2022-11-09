@@ -1,13 +1,13 @@
 ﻿### ADVISORY
 
-The recommended usage of this code is to run the game advgame.py from this
+The recommended usage of this code is to run the game `advgame.py` from this
 directory and load the package from the current working directory without
 installing it. The package is purpose-built for containing the game logic used
 by advgame.py and has limited potential for reuse. (Although, conceivably, the
 D&D object environment defined in `adventuregame.elements` could be reused for
 another game that implements Dungeons & Dragons rules.)
 
-*EVEN IF* you install the library however, the advgame.py frontend program is
+*EVEN IF* you install the library however, the advgame.py front-end program is
 written with the assumption that it will be run from a directory that contains
 the `data` directory and its .ini file contents that were distributed with the
 game. It can't be used from /usr/local/bin.
@@ -57,7 +57,7 @@ rules doesn't use levels, a base attack or proficiency bonus, and a spellcaster
 only has one spell to their name.
 
 The adventure game functionality is implemented between `adventuregame.processor`
-and `adventuregame.statemsg`. The processor module is home to a monolithic
+and `adventuregame.statemsgs`. The processor module is home to a monolithic
 `Command\_Processor` class that manages the natural language parsing which
 translates the commands entered by a player during the game into game logic.
 The `Command\_Processor` class has a method for every command in the game, and a
