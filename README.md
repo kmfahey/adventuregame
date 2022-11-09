@@ -3,11 +3,11 @@
 The recommended usage of this code is to run the game `advgame.py` from this
 directory and load the package from the current working directory without
 installing it. The package is purpose-built for containing the game logic used
-by advgame.py and has limited potential for reuse. (Although, conceivably, the
+by `advgame.py` and has limited potential for reuse. (Although, conceivably, the
 D&D object environment defined in `adventuregame.elements` could be reused for
 another game that implements Dungeons & Dragons rules.)
 
-*EVEN IF* you install the library however, the advgame.py front-end program is
+*EVEN IF* you install the library however, the `advgame.py` front-end program is
 written with the assumption that it will be run from a directory that contains
 the `data` directory and its .ini file contents that were distributed with the
 game. It can't be used from /usr/local/bin.
@@ -18,7 +18,7 @@ game. It can't be used from /usr/local/bin.
 The author, Kerne M. Fahey, was taking a coding bootcamp course with NuCamp
 in python and Devops, and was assigned to write a game of their choosing.
 They chose a text-adventure game implementing D&D rules; this package and its
-front-end program advgame.py was the result.
+frontend program `advgame.py` was the result.
 
 
 #### Documentation
