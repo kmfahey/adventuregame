@@ -11,7 +11,7 @@ with open('LICENSE') as f:
 
 setup(
     name='adventuregame',
-    version='0.9.001',
+    version='0.9.1',
     description='A text-adventure game inspired by the old UNIX game ADVENT, running on a limited Dungeons-&-Dragons-like ruleset and implementing 24 action commands. The player explores a small underground complex, slaying foes, collecting treasure, and trying to find both the exit and the key to unlock it.',
     long_description=readme,
     author='Kerne MacDonald Fahey',

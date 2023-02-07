@@ -31,4 +31,4 @@ from adventuregame.utility import *
 from adventuregame.exceptions import *
 
 __name__ = 'adventuregame.__init__'
-__version__ = 0.9.001
+__version__ = 0.9.1
