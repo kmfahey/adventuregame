@@ -260,34 +260,34 @@ as a * argument.
         # This block of conditionals is a set of preprocessing steps that handle
         # multi-token commands and commands which can be said different ways.
         if command == 'cast' and len(tokens) and tokens[0].lower() == 'spell':
-            command += '_' + tokens.pop(0).lower()      # A two-word command.
-        elif (command == 'leave' and len(tokens) and (tokens[0].lower() == 'using' or tokens[0].lower() == 'via')):
-            tokens.pop(0)                               # 'via' or 'using' is dropped.
+            command += '_' + tokens.pop(0).lower()          # A two-word command.
+        elif command == 'leave' and len(tokens) and tokens[0].lower() in ('using', 'via'):
+            tokens.pop(0)                                   # 'via' or 'using' is dropped.
         elif command == 'begin':
-            if len(tokens) >= 1 and tokens[0] == 'game' or len(tokens) >= 2 and tokens[0:2] == ['the', 'game']:
-                if tokens[0] == 'the':
-                    tokens.pop(0)                       # 'begin the game' becomes 'begin game'.
-                command += '_' + tokens.pop(0)
+            if len(tokens) >= 1 and tokens[0].lower() == 'game' or len(tokens) >= 2 and (tokens[0].lower(), tokens[1].lower()) == ('the', 'game'):
+                if tokens[0].lower() == 'the':
+                    tokens.pop(0)                           # 'begin the game' becomes 'begin game'.
+                command += '_' + tokens.pop(0).lower()
             elif not len(tokens):
                 command = 'begin_game'
         elif command == 'look' and len(tokens) and tokens[0].lower() == 'at':
-            command += '_' + tokens.pop(0).lower()      # A two-word command.
+            command += '_' + tokens.pop(0).lower()          # A two-word command.
         elif command == 'pick' and len(tokens) and (tokens[0].lower() == 'up' or tokens[0].lower() == 'lock'):
-            command += '_' + tokens.pop(0).lower()      # Either 'pick lock' or 'pick up', a two-word command.
+            command += '_' + tokens.pop(0).lower()          # Either 'pick lock' or 'pick up', a two-word command.
         elif command == 'quit':
             if len(tokens) >= 1 and tokens[0] == 'game' or len(tokens) >= 2 and tokens[0:2] == ['the', 'game']:
                 if tokens[0] == 'the':
-                    tokens.pop(0)                       # 'quit the game' or 'quit game' becomes 'quit'.
+                    tokens.pop(0)                           # 'quit the game' or 'quit game' becomes 'quit'.
                 tokens.pop(0)
         elif command == 'set' and len(tokens) and (tokens[0].lower() == 'name' or tokens[0].lower() == 'class'):
             command += '_' + tokens.pop(0).lower()
-            if len(tokens) and tokens[0] == 'to':       # 'set name to' becomes 'set name'.
-                tokens.pop(0)                           # 'set class to' becomes 'set class'.
+            if len(tokens) and tokens[0].lower() == 'to':   # 'set name to' becomes 'set name'.
+                tokens.pop(0)                               # 'set class to' becomes 'set class'.
         elif command == 'show' and len(tokens) and tokens[0].lower() == 'inventory':
-            command = tokens.pop(0).lower()             # 'show inventory' becomes 'inventory'.
+            command = tokens.pop(0).lower()                 # 'show inventory' becomes 'inventory'.
         if command not in ('set_name', 'set_class'):
-            tokens = tuple(map(str.lower, tokens))      # 'set name' and 'set class' are case-sensitive;
-                                                        #  the rest of the commands are not.
+            tokens = tuple(map(str.lower, tokens))          # 'set name' and 'set class' are case-sensitive;
+                                                            #  the rest of the commands are not.
 
         # With the command normalized, I check for it in the dispatch table.
         # If it's not present, a Command_Not_Recognized error is returned. The
@@ -1211,28 +1211,31 @@ HELP <command name>
   Help_Command_Display_Help_for_Command object is returned.
         """
         # An ordered tuple of all commands in uppercase is displayed in some
-        # return values so I compute it.
-        commands_tuple = tuple(sorted(map(lambda strval: strval.replace('_', ' ').upper(),
-                                          self.pregame_commands | self.ingame_commands)))
+        # return values so it is computed.
 
         # If called with no arguments, the help command displays a generic help
         # message listing all available commands.
         if len(tokens) == 0:
-            return stmsg.Help_Command_Display_Commands(commands_tuple),
+            commands_set = self.ingame_commands if self.game_state.game_has_begun else self.pregame_commands
+            commands_tuple = tuple(sorted(map(lambda strval: strval.replace('_', ' ').upper(), commands_set)))
+            return stmsg.Help_Command_Display_Commands(commands_tuple, self.game_state.game_has_begun),
 
         # A specific command was included as an argument.
         else:
-            command = ' '.join(tokens).upper()
+            command_uc = ' '.join(tokens).upper()
+            command_lc = '_'.join(tokens).lower()
 
             # If the command doesn't occur in commands_tuple, a
             # command-not-recognized error is returned.
-            if command not in commands_tuple:
-                return stmsg.Help_Command_Command_Not_Recognized(command, commands_tuple),
+            if command_lc not in (self.ingame_commands | self.pregame_commands):
+                commands_tuple = tuple(sorted(map(lambda strval: strval.replace('_', ' ').upper(),
+                                                  self.ingame_commands | self.pregame_commands)))
+                return stmsg.Help_Command_Command_Not_Recognized(command_uc, commands_tuple),
             else:
                 # Otherwise, a help message for the command specified is
                 # returned.
-                return stmsg.Help_Command_Display_Help_for_Command(command, COMMANDS_SYNTAX[command],
-                                                                   COMMANDS_HELP[command]),
+                return stmsg.Help_Command_Display_Help_for_Command(command_uc, COMMANDS_SYNTAX[command_uc],
+                                                                   COMMANDS_HELP[command_uc]),
 
     def inventory_command(self, tokens):
         """

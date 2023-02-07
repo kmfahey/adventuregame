@@ -843,17 +843,21 @@ adventuregame.processor.Command_Processor.help_command() when the player calls
 it with no arguments; it displays all the commands in the game and prompts the
 player to ask for help with one of them.
     """
-    __slots__ = 'commands_available',
+    __slots__ = 'commands_available', 'game_started'
 
     @property
     def message(self):
-        return_lines = ['The full list of commands is:', '']
+        if self.game_started:
+            return_lines = ['The list of commands available during the game is:', '']
+        else:
+            return_lines = ['The list of commands available before game start is:', '']
         return_lines.extend((util.join_str_seq_w_commas_and_conjunction(self.commands_available, 'and'), ''))
         return_lines.extend(('Which one do you want help with?', ''))
         return '\n'.join(return_lines)
 
-    def __init__(self, commands_available):
+    def __init__(self, commands_available, game_started=True):
         self.commands_available = commands_available
+        self.game_started = game_started
 
 
 class Help_Command_Display_Help_for_Command(Game_State_Message):

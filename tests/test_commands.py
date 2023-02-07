@@ -419,17 +419,18 @@ class Test_Cast_Spell(unittest.TestCase):
         self.assertIsInstance(result[1], (advg.Various_Commands_Foe_Death,
                                           advg.Be_Attacked_by_Command_Attacked_and_Not_Hit,
                                           advg.Be_Attacked_by_Command_Attacked_and_Hit))
-        spell_cast_count = 1
-        while result[0].damage_dealt >= 20:
-            self.command_processor.game_state.rooms_state.cursor.creature_here.heal_damage(20)
-            result = self.command_processor.process('cast spell')
-            spell_cast_count += 1
-        self.assertRegex(result[0].message, 'A magic missile springs from your gesturing hand and unerringly strikes '
-                                            r'the kobold. You have done \d+ points of damage. The kobold turns to '
-                                            'attack!')
-        self.assertEqual(self.command_processor.game_state.character.mana_points
-                         + spell_cast_count * advg.SPELL_MANA_COST,
-                         self.command_processor.game_state.character.mana_point_total)
+        if not isinstance(result[1], advg.Various_Commands_Foe_Death):
+            spell_cast_count = 1
+            while result[0].damage_dealt >= 20:
+                self.command_processor.game_state.rooms_state.cursor.creature_here.heal_damage(20)
+                result = self.command_processor.process('cast spell')
+                spell_cast_count += 1
+            self.assertRegex(result[0].message, 'A magic missile springs from your gesturing hand and unerringly strikes '
+                                                r'the kobold. You have done \d+ points of damage. The kobold turns to '
+                                                'attack!')
+            self.assertEqual(self.command_processor.game_state.character.mana_points
+                             + spell_cast_count * advg.SPELL_MANA_COST,
+                             self.command_processor.game_state.character.mana_point_total)
 
     def test_cast_spell5(self):
         self.command_processor.game_state.character_name = 'Kaeva'
@@ -1213,7 +1214,7 @@ class Test_Equip_2(unittest.TestCase):
         self.assertEqual(result[0].message, "Warriors can't use magic wands.")
 
 
-class Test_Help(unittest.TestCase):
+class Test_Help_1(unittest.TestCase):
 
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
@@ -1236,15 +1237,117 @@ class Test_Help(unittest.TestCase):
     def test_help_1(self):
         result = self.command_processor.process('help')
         self.assertIsInstance(result[0], advg.Help_Command_Display_Commands)
+        self.assertEqual(result[0].commands_available, ('ATTACK', 'CAST SPELL', 'CLOSE', 'DRINK', 'DROP', 'EQUIP',
+                                                        'HELP', 'INVENTORY', 'LEAVE', 'LOCK', 'LOOK AT', 'OPEN',
+                                                        'PICK LOCK', 'PICK UP', 'PUT', 'QUIT', 'STATUS', 'TAKE',
+                                                        'UNEQUIP', 'UNLOCK',))
+        self.assertEqual(result[0].message, """The list of commands available during the game is:
+
+ATTACK, CAST SPELL, CLOSE, DRINK, DROP, EQUIP, HELP, INVENTORY, LEAVE, LOCK, LOOK AT, OPEN, PICK LOCK, \
+PICK UP, PUT, QUIT, STATUS, TAKE, UNEQUIP, and UNLOCK
+
+Which one do you want help with?
+""")
+
+    def test_help_2(self):
+        result = self.command_processor.process('help juggle')
+        self.assertIsInstance(result[0], advg.Help_Command_Command_Not_Recognized)
         self.assertEqual(result[0].commands_available, ('ATTACK', 'BEGIN GAME', 'CAST SPELL', 'CLOSE', 'DRINK', 'DROP',
                                                         'EQUIP', 'HELP', 'INVENTORY', 'LEAVE', 'LOCK', 'LOOK AT',
                                                         'OPEN', 'PICK LOCK', 'PICK UP', 'PUT', 'QUIT', 'REROLL',
                                                         'SET CLASS', 'SET NAME', 'STATUS', 'TAKE', 'UNEQUIP',
                                                         'UNLOCK',))
-        self.assertEqual(result[0].message, """The full list of commands is:
+        self.assertEqual(result[0].message, """The command 'JUGGLE' is not recognized. The full list of commands is:
 
 ATTACK, BEGIN GAME, CAST SPELL, CLOSE, DRINK, DROP, EQUIP, HELP, INVENTORY, LEAVE, LOCK, LOOK AT, OPEN, PICK LOCK, \
 PICK UP, PUT, QUIT, REROLL, SET CLASS, SET NAME, STATUS, TAKE, UNEQUIP, and UNLOCK
+
+Which one do you want help with?
+""")
+
+    def test_help_3(self):
+        result = self.command_processor.process('help attack')
+        self.assertIsInstance(result[0], advg.Help_Command_Display_Help_for_Command)
+        self.assertEqual(result[0].command, 'ATTACK')
+        self.assertEqual(result[0].syntax_tuple, ('<creature\u00A0name>',))
+        self.assertEqual(result[0].message, """Help for the ATTACK command:
+
+Usage: 'ATTACK\u00A0<creature\u00A0name>'
+
+The ATTACK command is used to attack creatures. Beware: if you attack a creature and don't kill it, it will attack you \
+in return! After you kill a creature, you can check its corpse for loot using the LOOK AT command and take loot with \
+the TAKE command.
+""")
+
+    def test_help_4(self):
+        result = self.command_processor.process('help close')
+        self.assertIsInstance(result[0], advg.Help_Command_Display_Help_for_Command)
+        self.assertEqual(result[0].command, 'CLOSE')
+        self.assertEqual(result[0].syntax_tuple, ('<door\u00A0name>', '<chest\u00A0name>'))
+        self.assertEqual(result[0].message, """Help for the CLOSE command:
+
+Usage: 'CLOSE\u00A0<door\u00A0name>' or 'CLOSE\u00A0<chest\u00A0name>'
+
+The CLOSE command can be used to close doors and chests.
+""")
+
+    def test_help_5(self):
+        result = self.command_processor.process('help put')
+        self.assertIsInstance(result[0], advg.Help_Command_Display_Help_for_Command)
+        self.assertEqual(result[0].command, 'PUT')
+        self.assertEqual(result[0].syntax_tuple, ('<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>',
+                                                  '<number>\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>',
+                                                  '<item\u00A0name>\u00A0ON\u00A0<corpse\u00A0name>',
+                                                  '<number>\u00A0<item\u00A0name>\u00A0ON\u00A0<corpse\u00A0name>'))
+        self.assertEqual(result[0].message, """Help for the PUT command:
+
+Usage: 'PUT\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>', \
+'PUT\u00A0<number>\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>', \
+'PUT\u00A0<item\u00A0name>\u00A0ON\u00A0<corpse\u00A0name>', or \
+'PUT\u00A0<number>\u00A0<item\u00A0name>\u00A0ON\u00A0<corpse\u00A0name>'
+
+The PUT command can be used to remove items from your inventory and place them in a chest or on a corpse's person. To \
+leave items on the floor, use DROP.
+""")
+
+    def test_help_6(self):
+        result = self.command_processor.process('help begin game')
+        self.assertIsInstance(result[0], advg.Help_Command_Display_Help_for_Command)
+        self.assertEqual(result[0].command, 'BEGIN GAME')
+        self.assertEqual(result[0].syntax_tuple, ('',)),
+        self.assertEqual(result[0].message, """Help for the BEGIN GAME command:
+
+Usage: 'BEGIN GAME'
+
+The BEGIN GAME command is used to start the game after you have set your name and class and approved your ability scores. When you enter this command, you will automatically be equiped with your starting gear and started in the antechamber of the dungeon.
+""")
+
+
+class Test_Help_2(unittest.TestCase):
+
+    def __init__(self, *argl, **argd):
+        super().__init__(*argl, **argd)
+        self.maxDiff = None
+
+    def setUp(self):
+        self.items_state = advg.Items_State(**items_ini_config.sections)
+        self.doors_state = advg.Doors_State(**doors_ini_config.sections)
+        self.containers_state = advg.Containers_State(self.items_state, **containers_ini_config.sections)
+        self.creatures_state = advg.Creatures_State(self.items_state, **creatures_ini_config.sections)
+        self.rooms_state = advg.Rooms_State(self.creatures_state, self.containers_state, self.doors_state,
+                                           self.items_state, **rooms_ini_config.sections)
+        self.game_state = advg.Game_State(self.rooms_state, self.creatures_state, self.containers_state,
+                                         self.doors_state, self.items_state)
+        self.command_processor = advg.Command_Processor(self.game_state)
+
+    def test_help_1(self):
+        result = self.command_processor.process('help')
+        self.assertIsInstance(result[0], advg.Help_Command_Display_Commands)
+        self.assertEqual(result[0].commands_available, ('BEGIN GAME', 'HELP', 'QUIT', 'REROLL', 'SET CLASS',
+                                                        'SET NAME'))
+        self.assertEqual(result[0].message, """The list of commands available before game start is:
+
+BEGIN GAME, HELP, QUIT, REROLL, SET CLASS, and SET NAME
 
 Which one do you want help with?
 """)
