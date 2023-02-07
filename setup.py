@@ -18,5 +18,5 @@ setup(
     author_email='kernefahey@protonmail.com',
     url='https://github.com/kmfahey/adventuregame/',
     license=license,
-    packages=find_packages(exclude=('tests', 'docs'))
+    packages=find_packages(exclude=('tests', 'docs', 'pyxtermjs'))
 )
