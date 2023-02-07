@@ -968,6 +968,9 @@ while True:
 
     print()
 
+    if len(command) == 0:
+        continue
+
     result = command_processor.process(command)
 
     # Game_State_Message subclass objects' message properties return one or more
