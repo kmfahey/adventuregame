@@ -1,1 +1,5 @@
 iniconfig
+eventlet
+flask
+flask_socketio
+psutil

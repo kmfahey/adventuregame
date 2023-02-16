@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import argparse
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_socketio import SocketIO, disconnect
 import pty
 import os
@@ -108,6 +108,7 @@ def connect():
 
 
 def main():
+    print(os.getcwd())
     parser = argparse.ArgumentParser(
         description=(
             "A fully functional terminal in your browser. "
