@@ -1,5 +1,7 @@
 gevent
+gevent-websocket
 iniconfig
 flask
 flask_socketio
 psutil
+gunicorn
