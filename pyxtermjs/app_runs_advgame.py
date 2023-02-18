@@ -24,6 +24,10 @@ app = Flask(__name__, template_folder=".", static_folder=".", static_url_path=""
 app.config["SECRET_KEY"] = "secret!"
 app.config["fd"] = None
 app.config["child_pid"] = None
+
+# Hardcoding typical arguments so gunicorn can run this app
+app.config["cmd"] = ["python", "advgame.py"]
+
 socketio = SocketIO(app)
 
 
