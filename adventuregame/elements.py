@@ -1,12 +1,11 @@
 #!/usr/bin/python3
 
 """
-This module contains all the classes needed to interpret the game data
-stored in .ini files in data/ into a fully object-oriented environment
-of game element objects, state objects which track game element object
-collections, and the Character object & its subordinate objects which
-manage the character data and model the limited subset of Dungeons &
-Dragons rules that this library implements.
+All the classes needed to interpret game data in .ini format into an
+environment of game element objects, state objects which track game
+element object collections, the Character object & its subordinate
+objects, which manage the character data and model the limited subset of
+Dungeons & Dragons rules that this library implements.
 """
 
 import abc
@@ -22,16 +21,24 @@ import adventuregame.utility as util
 __name__ = "adventuregame.elements"
 
 
+__all__ = ("AbilityScores", "Armor", "Character", "Chest", "Coin", "Container",
+           "ContainersState", "Corpse", "Creature", "CreaturesState", "Door",
+           "DoorsState", "Doorway", "Equipment", "EquippableItem", "GameState",
+           "IniEntry", "IronDoor", "Item", "ItemsMultiState", "ItemsState",
+           "Key", "Oddment", "Potion", "Room", "RoomsState", "Shield", "State",
+           "Wand", "Weapon", "WoodenDoor")
+
+
 class IniEntry(object):
     """
-This class is the parent class for classes like Room, Item, and Door
-that are instantiated from .ini file entries.
+Parent class for classes like Room, Item, and Door that are instantiated
+from .ini file entries.
     """
 
     # This regular expression is used to parse the contents= attributes
     # used by rooms.ini and containers.ini to encode initializing data
     # for an Items_Multi_State object into a single line of text. Used
-    # in Ini_Entry._process_list_value().
+    # in IniEntry._process_list_value().
 
     inventory_list_value_re = re.compile(r"""^\[(
                                                     (
@@ -47,10 +54,9 @@ that are instantiated from .ini file entries.
 
     def __init__(self, **argd):
         """
-The init method defined in this parent class accepts arbitrary keyword
-arguments and parses them .ini format. Values 'true' and 'false' are
-cast to boolean, integer strings are cast to int ands float strings are
-cast to float. All entries in **argd are assigned to object attributes.
+Accept arbitrary keyword arguments and parses them from .ini format.
+Casts 'true' and 'false' to boolean, integer strings to int and float
+strings to float. Assigns all entries in **argd to object attributes.
         """
         for key, value in argd.items():
             if isinstance(value, str):
@@ -66,13 +72,7 @@ cast to float. All entries in **argd are assigned to object attributes.
 
     def __eq__(self, other):
         """
-This method enables two Ini_Entry objects or Ini_Entry subclass objects
-to be tested for equality. It draws on __slots__ and checks each
-attribute's value in self and other for equality. Only if all attributes
-match is True returned.
-
-:other:  The other object to compare against.
-:return: True or False.
+Test two IniEntry objects or objects that subclass IniEntry for equality.
         """
         if not isinstance(other, type(self)):
             return False
@@ -82,12 +82,11 @@ match is True returned.
 
     def _post_init_slots_set_none(self, slots):
         """
-This private method is used by Ini_Entry subclasses to finish up their
-__init__'s attribute setting by traversing __slots__ and setting every
-attribute that remained unset to None explicitly.
+Set any attributes listed in __slots__ that haven't been set to None
+explicitly.
 
-:slots:   The __slots__ value of the class the method is being called
-          from.
+:slots: The __slots__ value of the class the method is being called
+from.
 :returns: None.
         """
         for key in slots:
@@ -96,19 +95,12 @@ attribute that remained unset to None explicitly.
 
     def _process_list_value(self, inventory_value):
         r"""
-Some Ini_Entry subclasses that describe objects which can contain
-items-- such as a chest-- have an .ini attribute that lists the items
-contained in the format \[\d+x[A-Z][A-Za-z_]+(,\d+x[A-Z][A-Za-z_]+)*\].
-This private method parses this compact sequence of quantity/internal
-name pairs and returns them so the subclass's __init__ can look
-up the items in Items_State and set the contents attribute to an
-Items_Multi_State object populated with the Items in the quantities
-referrred to.
+Parse the item inventory stored and returns a list that can be converted
+to the contents of a container or corpse.
 
 :inventory_value: A string of the form
-                  \[\d+x[A-Z][A-Za-z_]+(,\d+[A-Z][A-Za-z_]+)*\].
-:return:          A tuple of pairs of quantity ints and Item subclass
-                  objects.
+\[\d+x[A-Z][A-Za-z_]+(,\d+[A-Z][A-Za-z_]+)*\].
+:return: A tuple of pairs of quantity ints and Item subclass objects.
         """
         value_match = self.inventory_list_value_re.match(inventory_value)
         inner_capture = value_match.groups(1)[0]
@@ -122,9 +114,8 @@ referrred to.
 
 class State(abc.ABC):
     """
-This abstract base class represents a generic key-value container object
-that maintains an internal dictionary and provides access to it by
-method. __init__ is the abstract method left to subclasses to define.
+A generic key-value container object that maintains an internal
+dictionary and provides access to it by method.
     """
     __slots__ = "_contents",
 
@@ -132,86 +123,65 @@ method. __init__ is the abstract method left to subclasses to define.
 
     def contains(self, item_internal_name):
         """
-This method tests whether an item object with the specified internal
-name is present in the private dictionary.
+Test whether an item object with the specified internal name is present
+in the private dictionary.
 
 :item_internal_name: The internal name of the Item subclass object.
-:return:             True or False.
+:return: True or False.
         """
         return any(item_internal_name == contained_item.internal_name
                    for contained_item in self._contents.values())
 
     def get(self, item_internal_name):
         """
-This accessor method returns the item object with the given internal
-name if present, otherwise the internal dict raises a KeyError.
+Returns the item object with the given internal name if present,
+otherwise raise a KeyError.
 
 :item_internal_name: The internal name of the Item subclass object.
-:return:             An Item subclass object.
+:return: An Item subclass object.
         """
         return self._contents[item_internal_name]
 
     def set(self, item_internal_name, item):
         """
-This setter method adds an item to the internal dictionary using the
-given internal name as a key.
+Add an item to the internal dictionary using the given internal name as
+a key.
 
-:item_internal_name: The internal name of the Item subclass object to use as a
-                     key.
-:item:               The Item subclass object to be set.
+:item_internal_name: The internal name of the Item subclass object to
+use as a key.
+:item: The Item subclass object to be set.
         """
         self._contents[item_internal_name] = item
 
     def delete(self, item_internal_name):
         """
-This deleter method deletes the item object from the internal dictionary
-referred to by the given internal name.
+Delete the item object from the internal dictionary referred to by the
+given internal name.
 
 :item_internal_name: The internal name of the Item subclass object.
-:returns:            None.
+:returns: None.
         """
         del self._contents[item_internal_name]
 
     def keys(self):
-        """
-This method returns the internal dictionary's keys iterator.
-
-:return: A dict_keys object.
-        """
+        """Return the internal dictionary's keys iterator."""
         return self._contents.keys()
 
     def values(self):
-        """
-This method returns the internal dictionary's values iterator.
-
-:return: A dict_values object.
-        """
+        """Return the internal dictionary's values iterator."""
         return self._contents.values()
 
     def items(self):
-        """
-This method returns the internal dictionary's items iterator.
-
-:return: A dict_items object.
-        """
+        """Return the internal dictionary's items iterator."""
         return self._contents.items()
 
     def size(self):
-        """
-This method returns the value for the len() builtin applies to the
-internal dictionary.
-
-:return: An int.
-        """
+        """Return the length of the internal dictionary."""
         return len(self._contents)
 
 
 class Item(IniEntry):
-    """
-The Item subclass of Ini_Entry represents a single item. It is
-instantiated from a single section of an items.ini file as returned by
-an IniConfig's dict-of-dicts sections attribute.
-    """
+    """A single item, taken from .ini format."""
     __slots__ = ("internal_name", "title", "description", "weight", "value",
                  "damage", "attack_bonus", "armor_bonus", "item_type",
                  "warrior_can_use", "thief_can_use", "priest_can_use",
@@ -219,32 +189,19 @@ an IniConfig's dict-of-dicts sections attribute.
                  "mana_points_recovered")
 
     def __init__(self, **argd):
-        """
-The Item class's __init__ method accepts arbitrary key-value pairs via
-**argd and uses super() to have Ini_Entry.__init__ set them. Afterward,
-it uses _post_init_slots_set_none to set every remaining attribute
-listed in __slots__ to None explicitly.
-
-:**argd: Key-value pairs to set as attributes on the object.
-:return: None.
-        """
+        """Instance the item for arbitrary key-value pairs."""
         super().__init__(**argd)
         self._post_init_slots_set_none(self.__slots__)
 
     @classmethod
     def subclassing_factory(cls, **item_dict):
         """
-The Item class's subclassing_factory is offered as a convenient option
-for instantiating an Item subclass from an argd, relying on the Item
-class to test the data for which subclass should be selected based on
-the 'item_type' value. The factory chooses between the subclasses Armor,
-Coin, Key, Potion, Shield, Wand, and Weapon. The subclasses don't offer
-any functionality; they exist solely so that an Item object can be
-type-tested to detect its category.
+Instance an arbitrary subclass from arguments based on the value of the
+item_type key.
 
 :**item_dict: A dictionary of key-value pairs to instantiate the Item
-              subclass object with.
-:return:      An Item subclass object.
+subclass object with.
+:return: An Item subclass object.
         """
         if item_dict["item_type"] == "armor":
             item = Armor(**item_dict)
@@ -273,14 +230,12 @@ class EquippableItem(Item):
 
     def usable_by(self, character_class):
         """
-An Equippable_Item subclass may have a warrior_can_use, thief_can_use,
-mage_can_use, or priest_can_use attribute which indicates which class or
-classes the item's use is restricted to. This method accepts a character
-class and returns True if the object has a matching {class}_can_use
-attribute with a True value, or False otherwise.
+An item equippable by some classes and not by others, based on the
+'warrior_can_use', 'thief_can_use', 'mage_can_use', or 'priest_can_use'
+attributes.
 
 :character_class: Either 'Warrior', 'Thief', 'Mage', or 'Priest'.
-:return:          A boolean.
+:return: A boolean.
         """
         if character_class not in ("Warrior", "Thief", "Mage", "Priest"):
             raise excpt.Internal_Exception(
@@ -294,84 +249,50 @@ attribute with a True value, or False otherwise.
 # been supplied as an argument.
 
 class Armor(EquippableItem):
-    """
-This Equippable_Item subclass is used to represent items which are suits
-of armor. It offers no functionality, but is useful for detecting armor
-items by type testing.
-    """
+    """A suit of armor, which can be equipped, to raise armor class."""
     pass
 
 
 class Coin(Item):
-    """
-This Item subclass is used to represent items which are suits of armor.
-It offers no functionality, but is useful for detecting coin items by
-type testing.
-    """
+    """A coin, i.e. a unit of value."""
     pass
 
 
 class Potion(Item):
-    """
-This Item subclass is used to represent items which are suits of armor.
-It offers no functionality, but is useful for detecting potion items by
-type testing.
-    """
+    """A potion, which is drinkable."""
     pass
 
 
 class Key(Item):
-    """
-This Item subclass is used to represent items which are suits of armor.
-It offers no functionality, but is useful for detecting key items by
-type testing.
-    """
+    """A key, which can be used to unlock doors."""
     pass
 
 
 class Oddment(Item):
-    """
-This Item subclass is used to represent items that are miscellaneous
-goods with no in-game purpose. It offers no functionality, but is useful
-for detecting key items by type testing.
-    """
+    """A miscellaneous good with no in-game purpose."""
     pass
 
 
 class Shield(EquippableItem):
-    """
-This Equippable_Item subclass is used to represent items which are suits
-of armor. It offers no functionality, but is useful for detecting shield
-items by type testing.
-    """
+    """A shield, which can be equipped, to raise armor class."""
     pass
 
 
 class Wand(EquippableItem):
-    """
-This Equippable_Item subclass is used to represent items which are suits
-of armor. It offers no functionality, but is useful for detecting wand
-items by type testing.
-    """
+    """A wand, which can be equipped and used by mages to do damage"""
     pass
 
 
 class Weapon(EquippableItem):
-    """
-This Equippable_Item subclass is used to represent items which are suits
-of armor. It offers no functionality, but is useful for detecting weapon
-items by type testing.
-    """
+    """A weapon, which can be equipped, and wielded to do damage."""
     pass
 
 
 class ItemsState(State):
     """
-This subclass of the abstract base class State represents a
-container object which stores Item objects. It's initialized with a
-**dict-of-dicts from the items.ini IniConfig object.
+A container object which stores Item objects (an abstract class).
     """
-
+# <<< HERE
     def __init__(self, **dict_of_dicts):
         """
 This __init__ method accepts a **dict-of-dicts -- such as offered by an
@@ -479,7 +400,7 @@ deleted from the internal dictionary.
 
 class Door(IniEntry):
     """
-The Item subclass of Ini_Entry represents a single door. It is
+The Item subclass of IniEntry represents a single door. It is
 instantiated from a single section of a doors.ini file as returned by an
 IniConfig's dict-of-dicts sections attribute.
     """
@@ -489,7 +410,7 @@ IniConfig's dict-of-dicts sections attribute.
 
     def __init__(self, **argd):
         """
-The __init__ method uses super() to call Ini_Entry.__init__ to
+The __init__ method uses super() to call IniEntry.__init__ to
 populate the object with attributes from argd. It then sets all unset
 attributes to None and parses the internal name (which has the form
 'Room_#,#_x_Room_#,#') to detect which two rooms are joined by this
@@ -736,7 +657,7 @@ in this container.
 
 class Container(IniEntry, ItemsMultiState):
     """
-This class uses multiple inheritance to inherit from both Ini_Entry and
+This class uses multiple inheritance to inherit from both IniEntry and
 Items_Multi_State: it is an object that's instantiated from an entry in
 items.ini, but also can contain Item subclass objects.
     """
@@ -1143,7 +1064,7 @@ This method unequips the wand that is equipped.
 
     def _equip(self, equipment_slot, item):
         """
-This private method equips the given Equippable_Item subclass object in
+This private method equips the given EquippableItem subclass object in
 the given slot.
 
 :equipment_slot: A string, one of 'armor', 'shield', 'weapon', or
@@ -1164,7 +1085,7 @@ the given slot.
 
     def _unequip(self, equipment_slot):
         """
-This private method unequips the given Equippable_Item subclass object.
+This private method unequips the given EquippableItem subclass object.
 
 :equipment_slot: A string, one of 'armor', 'shield', 'weapon', or
                  'wand'.
@@ -2123,7 +2044,7 @@ Dexterity for Thieves; and Intelligence for Mages wielding a wand).
 
 class Creature(IniEntry, Character):
     """
-This class uses multiple inheritance to subclass both Ini_Entry and
+This class uses multiple inheritance to subclass both IniEntry and
 Character. It is instantiated from an .ini file entry, but draws on all
 the game rules entity logic in Character to have access to the same
 mechanics as a character.
@@ -2137,7 +2058,7 @@ mechanics as a character.
     def __init__(self, items_state, internal_name, **argd):
         """
 This __init__ method initializes the object using super() to call
-__init__ methods from both Ini_Entry and Character. It sets the ability
+__init__ methods from both IniEntry and Character. It sets the ability
 scores, populates its inventory, and sets up its equipment from its ini
 file data.
 
@@ -2149,7 +2070,7 @@ file data.
 
         # _separate_argd_into_different_arg_sets() is a utility function
         # that separates all the .ini key-value pairs into args for
-        # Character.__init__, args for Ini_Entry.__init__, attributes
+        # Character.__init__, args for IniEntry.__init__, attributes
         # that can be used to initialize an Equipment object, and
         # quantity/internal_name pairs that can be used to initialize an
         # Inventory object.
@@ -2162,7 +2083,7 @@ file data.
         self._post_init_slots_set_none(self.__slots__)
         Character.__init__(self, **char_init_argd)
 
-        # The Ini_Entry.__init__ and Character.__init__ steps
+        # The IniEntry.__init__ and Character.__init__ steps
         # are complete. _init_invent_and_equip handles the other
         # initializations with invent_qty_pairs and equip_argd as
         # arguments.
@@ -2172,7 +2093,7 @@ file data.
         self._items_state = items_state
 
     # Divides the argd passed to __init__ into arguments for
-    # Character.__init__, arguments for Ini_Entry.__init__, arguments to
+    # Character.__init__, arguments for IniEntry.__init__, arguments to
     # Character.equip_*, and arguments to Character.pick_up_item.
     #
     # argd is accepted as a ** argument, so it's passed by copy rather
@@ -2181,7 +2102,7 @@ file data.
     def _seprt_argd_into_diff_arg_sets(self, items_state, intrn_name, **argd):
         """
 This private method takes the argd supplied to __init__ and separates
-it into Character.__init__() arguments, Ini_Entry.__init__() arguments,
+it into Character.__init__() arguments, IniEntry.__init__() arguments,
 inventory quantity-internal name pairs, and an equipment dict.
 
 :items_state:   An Items_State object.
@@ -2220,7 +2141,7 @@ inventory quantity-internal name pairs, and an equipment dict.
 
         # The item quantity/intrn_name pairs are unpacked from
         # 'inventory_items' using _process_list_value, which is
-        # inherited from Ini_Entry and uses the standard item qty/name
+        # inherited from IniEntry and uses the standard item qty/name
         # compact notation.
 
         invent_qty_name_pairs = self._process_list_value(
@@ -2243,7 +2164,7 @@ inventory quantity-internal name pairs, and an equipment dict.
                 "present in `Items_State` argument: "
                 + (", ".join(missing_names)))
 
-        # The remaining argd is for Ini_Entry.__init__. And the four
+        # The remaining argd is for IniEntry.__init__. And the four
         # argds are returned.
 
         ini_entry_init_argd = argd
@@ -2344,7 +2265,7 @@ types of creature.
 
 class Room(IniEntry):
     """
-This Ini_Entry subclass represents a single room. It is instantiated
+This IniEntry subclass represents a single room. It is instantiated
 from a single section of a doors.ini file as returned by an IniConfig's
 dict-of-dicts sections attribute.
     """
@@ -2445,7 +2366,7 @@ attributes.
 
         # If an items_here attribute is set, it's parsed as the
         # compact item quantity/internal_name as interpretable
-        # by Ini_Entry._process_list_value(), and the resultant
+        # by IniEntry._process_list_value(), and the resultant
         # Items_Multi_State object is assigned to items_here.
 
         if self.items_here:
