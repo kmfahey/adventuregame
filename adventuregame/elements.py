@@ -32,6 +32,7 @@ that are instantiated from .ini file entries.
     # used by rooms.ini and containers.ini to encode initializing data
     # for an Items_Multi_State object into a single line of text. Used in
     # Ini_Entry._process_list_value().
+
     inventory_list_value_re = re.compile(r"""^\[(
                                                     (
                                                         [1-9][0-9]*
@@ -126,7 +127,7 @@ method. __init__ is the abstract method left to subclasses to define.
 
     __abstractmethods__ = frozenset(('__init__',))
 
-    def contains(self, item_internal_name):  # check
+    def contains(self, item_internal_name):
         """
 This method tests whether an item object with the specified internal
 name is present in the private dictionary.
@@ -137,7 +138,7 @@ name is present in the private dictionary.
         return any(item_internal_name == contained_item.internal_name
                    for contained_item in self._contents.values())
 
-    def get(self, item_internal_name):  # check
+    def get(self, item_internal_name):
         """
 This accessor method returns the item object with the given internal
 name if present, otherwise the internal dict raises a KeyError.
@@ -147,7 +148,7 @@ name if present, otherwise the internal dict raises a KeyError.
         """
         return self._contents[item_internal_name]
 
-    def set(self, item_internal_name, item):  # check
+    def set(self, item_internal_name, item):
         """
 This setter method adds an item to the internal dictionary using the
 given internal name as a key.
@@ -158,7 +159,7 @@ given internal name as a key.
         """
         self._contents[item_internal_name] = item
 
-    def delete(self, item_internal_name):  # check
+    def delete(self, item_internal_name):
         """
 This deleter method deletes the item object from the internal dictionary
 referred to by the given internal name.
@@ -168,7 +169,7 @@ referred to by the given internal name.
         """
         del self._contents[item_internal_name]
 
-    def keys(self):  # check
+    def keys(self):
         """
 This method returns the internal dictionary's keys iterator.
 
@@ -176,7 +177,7 @@ This method returns the internal dictionary's keys iterator.
         """
         return self._contents.keys()
 
-    def values(self):  # check
+    def values(self):
         """
 This method returns the internal dictionary's values iterator.
 
@@ -184,7 +185,7 @@ This method returns the internal dictionary's values iterator.
         """
         return self._contents.values()
 
-    def items(self):  # check
+    def items(self):
         """
 This method returns the internal dictionary's items iterator.
 
@@ -192,7 +193,7 @@ This method returns the internal dictionary's items iterator.
         """
         return self._contents.items()
 
-    def size(self):  # check
+    def size(self):
         """
 This method returns the value for the len() builtin applies to the
 internal dictionary.
@@ -279,9 +280,11 @@ attribute with a True value, or False otherwise.
         return bool(getattr(self, character_class.lower() + '_can_use', None))
 
 
-# The subclasses don't have much differing functionality but accurately typing each Item allows classes that handle
-# items of specific types, like Equipment(), to use type testing to determine if a valid Item has been supplied as an
-# argument.
+# The subclasses don't have much differing functionality but accurately
+# typing each Item allows classes that handle items of specific types, like
+# Equipment(), to use type testing to determine if a valid Item has been
+# supplied as an argument.
+
 class Armor(Equippable_Item):
     """
 This Equippable_Item subclass is used to represent items which are suits
@@ -395,8 +398,9 @@ quantities above 1 in Items_Multi_State.__init__ is not supported.
         """
         super().__init__(**argd)
 
-        # I preload the dict's items() sequence outside of the loop because the loop alters the dict and I don't want a
-        # concurrent update error.
+        # I preload the dict's items() sequence outside of the loop because the
+        # loop alters the dict and I don't want a concurrent update error.
+
         contents_items = tuple(self._contents.items())
         for item_internal_name, item in contents_items:
             self._contents[item_internal_name] = (1, item)
@@ -521,6 +525,7 @@ room in the linkage.
         # The _linked_rooms_internal_names set is only 2 elements long and by
         # the above one of those elements is the name supplied so this loop
         # returns the other name.
+
         for found_internal_name in self._linked_rooms_internal_names:
             if found_internal_name == room_internal_name:
                 continue
@@ -584,11 +589,13 @@ that's later in the sort order is the inner dict's key.
                   individual Door object with.
         """
         self._contents = collections.defaultdict(dict)
+
         # The entries in doors.ini have internal_names that consist of the
         # internal names for the two rooms they connect, connected by '_x_'.
         # This loop recovers the two room internal names for each .ini entry and
         # stores the Door subclass object in a dict-of-dicts under the two room
         # internal names.
+
         for door_internal_name, door_argd in dict_of_dicts.items():
             first_room_internal_name, second_room_internal_name = door_internal_name.split('_x_')
             self._contents[first_room_internal_name][second_room_internal_name] = \
@@ -733,25 +740,33 @@ populate the container.
         """
         contents_str = ini_constr_argd.pop('contents', None)
         Ini_Entry.__init__(self, internal_name=internal_name, **ini_constr_argd)
+
         # If this Container has a contents attribute, it is a compacted list of
         # Item internal names and quantities. _process_list_value unpacks it and
         # returns quantity-internal_name pairs.
+
         if contents_str:
             contents_qtys_names = self._process_list_value(contents_str)
+
             # This list comprehension retrieves the Item subclass objects from
             # items_state.
+HERE
             contents_qtys_item_objs = tuple((item_qty, items_state.get(item_internal_name))
                                              for item_qty, item_internal_name in contents_qtys_names)
         Items_Multi_State.__init__(self)
         if contents_str:
+
             # If the contents attribute was non-None, contents_qtys_item_objs
             # contains the quantities and Item subclass objects to populate this
             # Container object with. I set each internal name to the quantity
             # and Item subclass object values in turn.
+
             for item_qty, item in contents_qtys_item_objs:
                 self.set(item.internal_name, item_qty, item)
+
         # This cleanup step sets any attributes from __slots__ not yet to None
         # explicitly.
+
         self._post_init_slots_set_none(self.__slots__)
 
     @classmethod
@@ -1181,6 +1196,7 @@ points if a spellcaster, and inventory.
     # Dragons 3rd edition rules. In those rules they're called "spell points".
     # These two dicts are drawn from the variant Spell Points rules, which are
     # available online at <http://dndsrd.net/unearthedSpellPoints.html>
+
     _base_mana_points = {'Priest': 16, 'Mage': 19}
 
     _bonus_mana_points = {-4: 0, -3: 0, -2: 0, -1: 0, 0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
@@ -1188,10 +1204,13 @@ points if a spellcaster, and inventory.
 
     # These defaults are adapted from D&D 3rd edition rules. This info is
     # generic and doesn't have a citation.
+
     _magic_key_stats = {'Priest': 'wisdom', 'Mage': 'intelligence'}
+
     # End rules drawn from D&D.
 
     # These are arbitrary.
+
     _hitpoint_base = {'Warrior': 40, 'Priest': 30, 'Thief': 30, 'Mage': 20}
 
     def __init__(self, character_name_str, character_class_str, base_hit_points=0, base_mana_points=0,
@@ -1233,13 +1252,17 @@ the magic key stat if any.
         self.character_name = character_name_str
         self.character_class = character_class_str
         self.ability_scores = Ability_Scores(character_class_str)
+
         # This step is refactored into a private method for readability. All it
         # does is set the ability scores if they're all nonzero.
+
         self._set_up_ability_scores(strength, dexterity, constitution, intelligence, wisdom, charisma)
         self.inventory = Items_Multi_State()
         self._equipment = Equipment(character_class_str)
+
         # This step is refactored into a private method for readability. Its
         # logic is fairly complex, q.v.
+
         self._set_up_hit_points_and_mana_points(base_hit_points, base_mana_points, magic_key_stat)
 
     def _set_up_ability_scores(self, strength=0, dexterity=0, constitution=0, intelligence=0, wisdom=0, charisma=0):
@@ -1289,6 +1312,7 @@ for Mages, and Wisdom for Priests).
                    'Intelligence', 'Wisdom', or 'Charisma'.
 :return:           None.
         """
+
         # When the Character is instanced by a Game_State object, none of
         # these values are supplied to __init__. But the Creature object that
         # subclasses Character draws its values from an .ini entry and it does
@@ -1296,13 +1320,17 @@ for Mages, and Wisdom for Priests).
         #
         # Base hit points are taken either from an argument to __init__ or from
         # the class's default in the _hitpoint_base dict.
+
         if base_hit_points:
             self._hit_point_maximum = self._current_hit_points = (base_hit_points +
                                                                   self.ability_scores.constitution_mod * 3)
         else:
             self._hit_point_maximum = self._current_hit_points = (self._hitpoint_base[self.character_class]
                                                                   + self.ability_scores.constitution_mod * 3)
-        # Magic key stat can be set from the arguments to __init__ or drawn from class defaults.
+
+        # Magic key stat can be set from the arguments to __init__ or drawn from
+        # class defaults.
+
         if magic_key_stat:
             if magic_key_stat not in ('intelligence', 'wisdom', 'charisma'):
                 raise excpt.Internal_Exception("`magic_key_stat` argument '" + magic_key_stat + "' not recognized")
@@ -1317,9 +1345,11 @@ for Mages, and Wisdom for Priests).
                 self._mana_point_maximum = self._current_mana_points = 0
                 return
         magic_key_stat_mod = getattr(self, self.magic_key_stat + '_mod', None)
+
         # These assignments add bonus mana points from the _bonus_mana_points
         # dict. A spellcaster with a high spellcasting stat (16-18) can gain a
         # lot of extra mana points.
+
         if base_mana_points:
             self._mana_point_maximum = self._current_mana_points = (base_mana_points
                                                                     + self._bonus_mana_points[magic_key_stat_mod])
@@ -1339,9 +1369,11 @@ wielding a wand.
 
 :return: A string, one of 'strength', 'dexterity', or 'intelligence'.
         """
+
         # The convention that a Mage using a spell add Intelligence to their
         # attack & damage is drawn from Dungeons & Dragons 5th edition rules as
         # laid out in the 5th edition _Player's Handbook_.
+
         if self.character_class in ('Warrior', 'Priest') or (self.character_class == 'Mage'
                                                              and self._equipment.weapon_equipped):
             return 'strength'
@@ -1501,18 +1533,23 @@ and the relevant ability score modifier.
 
 :return: A string of the form '\d+d\d+([+-]\d+)?'.
         """
+
         # This standard for formulating attack rolls is drawn from Dungeons &
         # Dragon 3rd edition. Those rules can be found at <https://dndsrd.net/>.
         #
         # If no weapon or wand is equipped, None is returned.
+
         if not (self._equipment.weapon_equipped or self._equipment.wand_equipped):
             return None
+
         # The ability score can be strength, dexterity or intelligence,
         # depending on class. Its modifier is added to the attack roll.
+
         stat_dependency = self._attack_or_damage_stat_dependency()
 
         # The item attacking with can have a bonus to attack. That is added to
         # the attack roll.
+
         item_attacking_with = self._item_attacking_with
         stat_mod = getattr(self.ability_scores, stat_dependency+'_mod')
         total_mod = item_attacking_with.attack_bonus + stat_mod
@@ -1521,6 +1558,7 @@ and the relevant ability score modifier.
         # Attack rolls are resolved with a roll of a twenty-sided die.
         # .utility.roll_dice can interpret this return value into a random
         # number generation and execute it.
+
         return '1d20' + mod_str
 
     @property
@@ -1533,8 +1571,10 @@ wand or weapon, and the relevant ability score modifier.
 
 :return: A string of the form '\d+d\d+([+-]\d+)?'.
         """
+
         # This standard for formulating damage rolls is drawn from Dungeons &
         # Dragon 3rd edition. Those rules can be found at <https://dndsrd.net/>.
+
         if not (self._equipment.weapon_equipped or self._equipment.wand_equipped):
             return None
         stat_dependency = self._attack_or_damage_stat_dependency()
@@ -1543,18 +1583,21 @@ wand or weapon, and the relevant ability score modifier.
 
         # The item's damage is a die roll and an optional modifier. This step
         # splits that into the dice and the modifier.
+
         damage_base_dice, damage_mod = (item_damage.split('+') if '+' in item_damage
                                         else item_damage.split('-') if '-' in item_damage
                                         else (item_damage, '0'))
         damage_mod = int(damage_mod)
 
         # The damage modifier needs to be adjusted by the stat mod from above.
+
         total_damage_mod = damage_mod + getattr(self.ability_scores, stat_dependency+'_mod')
         damage_str = damage_base_dice + ('+' + str(total_damage_mod) if total_damage_mod > 0
                                          else str(total_damage_mod) if total_damage_mod < 0
                                          else '')
         # The dice expression is reassembled with the changed modifier, and
         # returned.
+
         return damage_str
 
     # This class keeps its `Ability_Scores`, `Equipment` and `Items_Multi_State`
@@ -1958,14 +2001,18 @@ Dexterity for Thieves; and Intelligence for Mages wielding a wand).
 
 :return: An int.
         """
+
         # A character with no weapon or wand has no attack bonus.
+
         if (not (self._equipment.weapon_equipped
                 or self.character_class == 'Mage' and self._equipment.wand_equipped)):
             raise excpt.Internal_Exception('The character does not have a weapon equipped; no valid value for '
                                      '`attack_bonus` can be computed.')
         stat_dependency = self._attack_or_damage_stat_dependency()
+
         # By the shield statement above, I know that the control flow getting
         # here means that if no weapon is equipped a wand must be.
+
         if self.character_class == 'Mage':
             base_attack_bonus = (self._equipment.wand.attack_bonus if self._equipment.wand_equipped
                              else self._equipment.weapon.attack_bonus)
@@ -1974,6 +2021,7 @@ Dexterity for Thieves; and Intelligence for Mages wielding a wand).
 
         # The attack bonus is drawn from the weapon or wand's attack bonus plus
         # the relevant stat mod.
+
         return base_attack_bonus + getattr(self.ability_scores, stat_dependency + '_mod')
 
 
@@ -2000,11 +2048,13 @@ file data.
 :**argd:        A dict, the key-value pairs to instantiate the
                 Creature object from.
         """
+
         # _separate_argd_into_different_arg_sets() is a utility function
         # that separates all the .ini key-value pairs into args for
         # Character.__init__, args for Ini_Entry.__init__, attributes that can
         # be used to initialize an Equipment object, and quantity/internal_name
         # pairs that can be used to initialize an Inventory object.
+
         character_init_argd, ini_entry_init_argd, equipment_argd, inventory_qty_name_pairs = \
             self._separate_argd_into_different_arg_sets(items_state, internal_name, **argd)
         Ini_Entry.__init__(self, internal_name=internal_name, **ini_entry_init_argd)
@@ -2014,6 +2064,7 @@ file data.
         # The Ini_Entry.__init__ and Character.__init__ steps are complete.
         # _init_inventory_and_equipment handles the other initializations with
         # inventory_qty_name_pairs and equipment_argd as arguments.
+
         self._init_inventory_and_equipment(items_state, inventory_qty_name_pairs, equipment_argd)
         self._items_state = items_state
 
@@ -2021,6 +2072,7 @@ file data.
     # arguments to Character.equip_*, and arguments to Character.pick_up_item.
     #
     # argd is accepted as a ** argument so it's passed by copy rather than by reference.
+
     def _separate_argd_into_different_arg_sets(self, items_state, internal_name, **argd):
         """
 This private method takes the argd supplied to __init__ and separates
@@ -2032,9 +2084,11 @@ inventory quantity-internal name pairs, and an equipment dict.
 :**argd:        The key-value pairs to differentiate into different
                 sets of arguments.
         """
+
         # Character's __init__ args are formed first. dict.pop is used so
         # this step removes those values from argd as they're added to
         # character_init_argd.
+
         character_init_argd = dict(strength=int(argd.pop('strength')),
                                    dexterity=int(argd.pop('dexterity')),
                                    constitution=int(argd.pop('constitution')),
@@ -2046,19 +2100,25 @@ inventory quantity-internal name pairs, and an equipment dict.
                                    character_class_str=argd.pop('character_class'),
                                    base_mana_points=int(argd.pop('base_mana_points', 0)),
                                    magic_key_stat=argd.pop('magic_key_stat', None))
+
         # Equipment argd is next, *_equipped key-values are popped from argd and
         # added to equipment_argd.
+
         equipment_argd = dict()
         for ini_key in ('weapon_equipped', 'armor_equipped', 'shield_equipped', 'wand_equipped'):
             if ini_key not in argd:
                 continue
             equipment_argd[ini_key] = argd.pop(ini_key)
+
         # The item quantity/internal_name pairs are unpacked from
         # 'inventory_items' using _process_list_value, which is inherited from
         # Ini_Entry and uses the standard item qty/name compact notation.
+
         inventory_qty_name_pairs = self._process_list_value(argd.pop('inventory_items'))
 
-        # If any item internal names don't occur in items_state an exception is raised.
+        # If any item internal names don't occur in items_state an exception is
+        # raised.
+
         if any(not items_state.contains(inventory_internal_name)
                for _, inventory_internal_name in inventory_qty_name_pairs):
             missing_names = tuple(item_internal_name for _, item_internal_name in inventory_qty_name_pairs
@@ -2070,6 +2130,7 @@ inventory quantity-internal name pairs, and an equipment dict.
 
         # The remaining argd is for Ini_Entry.__init__. And the four argds are
         # returned.
+
         ini_entry_init_argd = argd
         return character_init_argd, ini_entry_init_argd, equipment_argd, inventory_qty_name_pairs
 
@@ -2084,9 +2145,11 @@ creature's inventory and equipped items.
                            and internal name strings.
 :equipment_argd:           A dictionary of equipment assignments.
         """
+
         # The internal_name pairs in inventory_qty_name_pairs are used to look
         # up Item subclass objects and those objects are saved to the Character
         # object's inventory.
+
         for item_qty, item_internal_name in inventory_qty_name_pairs:
             item = items_state.get(item_internal_name)
             self.pick_up_item(item, qty=item_qty)
@@ -2094,6 +2157,7 @@ creature's inventory and equipped items.
         # The *_equipped key-values are used to equip items from the inventory,
         # if they're there. If any points to an object not in inventory an
         # exception is raised.
+
         for equipment_key, item_internal_name in equipment_argd.items():
             if not items_state.contains(item_internal_name):
                 raise excpt.Internal_Exception(f'bad creatures.ini specification for creature {self.internal_name}: items '
@@ -2225,26 +2289,32 @@ attributes.
         self._items_state = items_state
         self._doors_state = doors_state
         self._post_init_slots_set_none(self.__slots__)
+
         # If a creature_here attribute is set, that value is taken as an
         # internal_name, looked up in creatures_state, and the matching creature
         # is saved to creature_here.
+
         if self.creature_here:
             if not self._creatures_state.contains(self.creature_here):
                 raise excpt.Internal_Exception(f"room obj `{self.internal_name}` creature_here value '{self.creature_here}' "
                                          "doesn't correspond to any creatures in creatures_state store")
             self.creature_here = self._creatures_state.get(self.creature_here)
+
         # If a container_here attribute is set, that value is taken as an
         # internal_name, looked up in containers_state, and the matching container
         # is saved to container_here.
+
         if self.container_here:
             if not self._containers_state.contains(self.container_here):
                 raise excpt.Internal_Exception(f"room obj `{self.internal_name}` container_here value '{self.container_here}'"
                                          " doesn't correspond to any creatures in creatures_state store")
             self.container_here = self._containers_state.get(self.container_here)
+
         # If an items_here attribute is set, it's parsed as the
         # compact item quantity/internal_name as interpretable by
         # Ini_Entry._process_list_value(), and the resultant Items_Multi_State
         # object is assigned to items_here.
+
         if self.items_here:
             items_here_names_list = self._process_list_value(self.items_here)
             items_state = Items_Multi_State()
@@ -2260,9 +2330,12 @@ attributes.
             if sorted_pair[0].lower() == 'exit':
                 sorted_pair = tuple(reversed(sorted_pair))
 
-            # The Door objects stored in each Room object are not identical with the Door objects in
-            # self._doors_state because each Door gets a new title based on its compass direction; the same Door can
-            # be titled 'north door' in the southern of the two rooms it connects and 'south door' in the northern one.
+            # The Door objects stored in each Room object are not identical with
+            # the Door objects in self._doors_state because each Door gets a
+            # new title based on its compass direction; the same Door can be
+            # titled 'north door' in the southern of the two rooms it connects
+            # and 'south door' in the northern one.
+
             door = self._doors_state.get(*sorted_pair).copy()
             door.title = f'{compass_dir} doorway' if door.title == 'doorway' else f'{compass_dir} door'
             setattr(self, door_attr, door)
@@ -2276,8 +2349,10 @@ attached to this Room object.
 :return: A tuple of Door objects.
         """
         doors_tuple = ()
+
         # This method is just a shorthand for accessing the
         # has_(north|south|east|west)_door attributes.
+
         for compass_dir in ('north', 'east', 'south', 'west'):
             has_door_property = f'has_{compass_dir}_door'
             if not getattr(self, has_door_property):
@@ -2324,12 +2399,16 @@ from rooms.ini as furnished by an IniConfig's sections attribute.
         self._containers_state = containers_state
         self._doors_state = doors_state
         self._items_state = items_state
+
         # The Room objects contained by this object are initialized from
         # **dict_of_dicts.
+
         for room_internal_name, room_dict in dict_of_dicts.items():
             room = Room(creatures_state, containers_state, doors_state, items_state,
                             internal_name=room_internal_name, **room_dict)
+
             # The cursor is set to the room identifies by is_entrance=True
+
             if room.is_entrance:
                 self._room_cursor = room.internal_name
             self.set(room.internal_name, room)
@@ -2370,8 +2449,10 @@ current room to an adjacent room by the given compass direction.
          otherwise.
 :return: None.
         """
+
         # If more than one of north, east, south and west are True, raise an
         # exception.
+
         if ((north and west) or (north and south) or (north and east) or (west and south)
                 or (west and east) or (south and east)):
             raise excpt.Internal_Exception('move() must receive only *one* True argument of the four keys `north`, `south`, '
@@ -2388,12 +2469,15 @@ current room to an adjacent room by the given compass direction.
         elif east:
             exit_name = 'east_door'
             exit_key = 'EAST'
+
         # If the Room doesn't have a matching exit, an exception is raised.
+
         if not getattr(self.cursor, exit_name):
             raise excpt.Bad_Command_Exception('MOVE', f'This room has no <{exit_key}> exit.')
         door = getattr(self.cursor, exit_name)
 
         # If the Door object has is_locked=True, an exception is raised.
+
         if door.is_locked:
             raise excpt.Internal_Exception(f'exiting {self.cursor.internal_name} via the {exit_name.replace("_"," ")}: door '
                                       'is locked')
@@ -2401,6 +2485,7 @@ current room to an adjacent room by the given compass direction.
         # The Door object returns the other Room object it connects to; the
         # value for cursor is updated by setting _room_cursor to that Room
         # object's internal_name.
+
         other_room_internal_name = door.other_room_internal_name(self.cursor.internal_name)
         new_room_dest = self._rooms_objs[other_room_internal_name]
         self._room_cursor = new_room_dest.internal_name
@@ -2489,6 +2574,7 @@ object from its arguments.
     # initialization; so the `character_name` and `character_class` setters call
     # this method prospectively each time either is called to check if both have
     # been set and `Character` object instantiation can proceed.
+
     def _incept_character_obj_if_possible(self):
         """
 This private method is called by the character_name and character_class
