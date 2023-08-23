@@ -1,16 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 """
-This module consists solely of the Command_Processor class and its supporting
-data structures. Command_Processor is a monolithic class that has a process()
-method which accepts a natural language command and dispatches it to the
-appropriate command method. Every command in the game corresponds to a method of
-the Command_Processor class, and each method always returns a tuple of one or
-more adventuregame.statemsgs.Game_State_Message subclass objects. Typically, the
-bulk of the logic in a given command method is devoted to detecting player error
-and handling each error discretely. The logic that completes the command task is
-often a brief coda to a sophisticated conditional handling all the cases where
-the command can't complete.
+The CommandProcessor class which processes a natural-language command
+and executes it in the game object environment, modifying the game state
+and generating a natural-language response.
 """
 
 
@@ -27,6 +20,19 @@ import adventuregame.utility as util
 
 
 __name__ = 'adventuregame.processor'
+
+
+# This module consists solely of the CommandProcessor class and its supporting
+# data structures. CommandProcessor is a monolithic class that has a process()
+# method which accepts a natural language command and dispatches it to the
+# appropriate command method. Every command in the game corresponds to a method of
+# the CommandProcessor class, and each method always returns a tuple of one or
+# more adventuregame.statemsgs.GameStateMessage subclass objects. Typically, the
+# bulk of the logic in a given command method is devoted to detecting player error
+# and handling each error discretely. The logic that completes the command task is
+# often a brief coda to a sophisticated conditional handling all the cases where
+# the command can't complete.
+
 
 
 SPELL_DAMAGE = '3d8+5'
@@ -142,15 +148,9 @@ COMMANDS_HELP = {
 
 class Command_Processor(object):
     """
-This class implements an object which can be used to process natural language
-commands and return semantic objects which furnish computed messages that
-convey the results of those commands. It tracks the state of the game through a
-Game_State object and its subordinate objects, and furnishes a method for every
-command in the game. Each command method (with optional private subordinate
-methods) contains all the logic necessary to execute that command, detect any
-failure modes and notifying appropriately, or otherwise complete the effect of
-the command on the Game_State method and return an appropriate notification that
-indicates the command succeeded and what the outcome was.
+A processor that can parse a natural language command, modify the
+game state appropriately, and return a GameStateMessage object that
+stringifies to a natural language reply.
     """
     __slots__ = 'game_state', 'dispatch_table', 'game_ending_state_msg'
 
@@ -177,15 +177,12 @@ indicates the command succeeded and what the outcome was.
 
     def __init__(self, game_state):
         """
-This __init__ method initializes the Command_Processor before the beginning
-of the game. The object's dispatch table is created using introspection; each
-command method is stored associated with the command that it implements.
+Initialize the CommandProcessor before the beginning of the game.
 
-:game_state: A Game_State object, which by its nature contains and makes
-             available the Rooms_State, Creatures_State, Containers_State,
-             Doors_State, and Items_State objects that drive the game. Once
-             the character_name and character_class attributes are set on this
-             object, a Character object will be added and the game can begin.
+:gamestate: A GameState object, which is composited of the game's
+RoomsState, CreaturesState, ContainersState, DoorsState, and ItemsState
+objects. Once the character_name and character_class attributes are set
+on this object, a Character object will be added and the game can begin.
         """
         # This Game_State object contains & makes available Items_State,
         # Doors_State, Containers_State, Creatures_State, and Rooms_State
@@ -231,26 +228,25 @@ command method is stored associated with the command that it implements.
 
     def process(self, natural_language_str):
         """
-This method is used to process and dispatch commands during the game.
+Process and dispatch a natural language command string. The return value
+is always a tuple even when it's length 1.
 
-:natural_language_str: The player's command input as a natural language string.
+If the command is not recognized, returns a CommandNotRecognized object.
 
-* If the command is not recognized, a 1-tuple of a Command_Not_Recognized object
-  is returned.
-* If a ingame command is used during the pregame (before name and class have
-  been set and ability scores have been rolled and accepted) or a pregame
-  command is used during the ingame, a 1-tuple of a Command_Not_Allowed_Now
-  object is returned.
-* If this method is called after self.game_state.game_has_ended has
-  been set to True, the same Be_Attacked_by_Command_Character_Death,
-  Leave_Command_Won_The_Game, or Quit_Command_Have_Quit_The_Game object that was
-  returned when the game ended is returned in a 1-tuple again.
+If a ingame command is used during the pregame (before name and class
+have been set and ability scores have been rolled and accepted)
+or a pregame command is used during the game proper, returns a
+CommandNotAllowedNow object.
 
-Otherwise, the natural language command is tokenized, the appropriate command
-method is determined from the initial tokens, a shorter tokens tuple is formed
-from the remaining tokens, if the command is other than SET NAME or SET CLASS
-the tokens are lowercased, and the command method is tail called with the tokens
-as a * argument.
+If this method is called after self.game_state.game_has_ended has been
+set to True, the same object that was returned when the game ends is
+returned again.
+
+Otherwise, the command is processed and a state message object is
+returned.
+
+:natural_language_str: The player's command input as a natural language
+string.
         """
         if self.game_state.game_has_ended:
             return (self.game_ending_state_msg,)
@@ -312,29 +308,29 @@ as a * argument.
 
     def attack_command(self, tokens):
         """
-This method implements the ATTACK command. It accepts a tokens tuple that
-is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The ATTACK command
-has the following usage:
+Execute the ATTACK command. The return value is always in a tuple even
+when it's of length 1. The ATTACK command has the following usage:
 
 ATTACK <creature name>
 
-* If that syntax is not followed, this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
-* If self.character has no weapon (or, for Mages, wand) equipped, this method
-  returns a 1-tuple of a Attack_Command_You_Have_No_Weapon_or_Wand_Equipped
-  object.
-* If the creature name given doesn't match the title attribute of the room
-  object's creature_here attribute, or if that creature_here attribute is None,
-  a 1-tuple of a Attack_Command_Opponent_Not_Found object is returned.
-* If the attack misses, a tuple is returned starting with a
-  Attack_Command_Attack_Missed object followed by the return value of a
-  Command_Processor._be_attacked_by_command() call.
-* If the attack hits but doesn't kill the foe, a tuple is returned starting
-  with a Attack_Command_Attack_Hit object followed by the return value of a
-  Command_Processor._be_attacked_by_command() call.
-* If the attack hits and kills the foe, this method returns a 2-tuple of a
-  Attack_Command_Attack_Hit object and a Various_Commands_Foe_Death object.
+* If that syntax is not followed, returns a CommandBadSyntax object.
+
+* If self.character has no weapon (or, for Mages, wand) equipped,
+returns a AttackCommand_YouHaveNoWeaponOrWandEquipped object.
+
+* If the creature name given doesn't match the title attribute of
+the room object's creature_here attribute, or if that creature_here
+attribute is None, returns a AttackCommand_OpponentNotFound object.
+
+* If the attack misses, returns an AttackCommand_AttackMissed object
+followed by the object(s) generated by the creature's followup attack.
+
+* If the attack hits but doesn't kill the foe, returns an
+AttackCommand_AttackHit object followed by the object(s) generated by the
+creature's followup attack.
+
+* If the attack hits and kills the foe, an AttackCommand_AttackHit object
+and a VariousCommands_FoeDeath object are returned.
         """
 
         # If the player character has no weapon or wand equipped, an error is
@@ -416,15 +412,15 @@ ATTACK <creature name>
                 return (attack_hit_result,) + be_attacked_by_result
 
     def _be_attacked_by_command(self, creature):
-        """
-This private method is called whenever a self.attack_command() execution
-included a successful attack but didn't end in foe death. It acts like a command
-method so it's implemented as one, but it can only be called internally. An
-attack by the foe creature is calulcated, if it hits damage is assessed on the
-player character, and if character.is_dead becomes True, the game ends.
-
-:creature: The foe creature that was targeted by self.attack_command().
-        """
+        # Called when a self.attack_command() execution included a
+        # successful attack but didn't end in foe death. This is a
+        # pseudo-command-method that can only be called internally. An
+        # attack by the foe creature is calculated, if it hits damage
+        # is assessed on the player character, and if character.is_dead
+        # becomes True, the game ends.
+        # 
+        # :creature: The foe creature that was targeted by
+        # self.attack_command().
 
         # The attack is calculated.
         attack_roll_dice_expr = creature.attack_roll
@@ -460,22 +456,19 @@ player character, and if character.is_dead becomes True, the game ends.
 
     def begin_game_command(self, tokens):
         """
-This method implements the BEGIN GAME command. It accepts a tokens tuple that
-is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The BEGIN GAME
-command takes no arguments.
+Execute the BEGIN GAME command. The return value is always
+in a tuple even when it's of length 1. Returns one or more
+statemsgs.GameStateMessage subclass instances. Takes no arguments.
 
-* If any arguments are given,  this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
-* If the command is used before the character's name and class have been
-  set with SET NAME and SET CLASS, this method returns a 1-tupple of a
-  Begin_Game_Command_Name_or_Class_Not_Set object.
-* Otherwise, this method returns a tuple of several Game_State_Message
-  objects: a Begin_Game_Command_Game_Begins object, followed by
-  a Various_Commands_Item_Equipped for each item specified in
-  STARTER_GEAR[self.character.character_class], followed by a
-  Various_Commands_Entered_Room command describing the initial room of the
-  dungeon.
+* If any arguments are given, returns a CommandBadSyntax object.
+
+* If the command is used before the character's name and
+class have been set with SET NAME and SET CLASS, returns a
+BeginGameCommand_NameOrClassNotSet object.
+
+* Otherwise, returns a BeginGameCommand_GameBegins object, one or more
+VariousCommands_ItemEquipped objects, and a VariousCommands_EnteredRoom
+object.
         """
         # This command begins the game. Most of the work done is devoted to
         # creating the character's starting gear and equipping all of it.
@@ -550,33 +543,32 @@ command takes no arguments.
 
     def cast_spell_command(self, tokens):
         """
-This method implements the BEGIN GAME command. It accepts a tokens tuple that
-is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The CAST SPELL
-command takes no arguments.
+Execute the CAST SPELL command. The return value is always in a tuple
+even when it's of length 1. Takes no arguments.
 
-* If any arguments are given, this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
-* If the command is used when self.character.character_class equals 'Warrior' or
-  'Thief', a 1-tuple of a Command_Class_Restricted object is returned.
-* Casting a spell takes SPELL_MANA_COST mana points. If the self.character
-  object has less than SPELL_MANA_COST mana points, a 1-tuple of a
-  Cast_Spell_Command_Insufficient_Mana object is returned.
-* If self.character.character_class equals 'Mage' and
-  self.game_state.rooms_state.cursor.creature_here is None, a 1-tuple of a
-  Cast_Spell_Command_No_Creature_to_Target object is returned.
-* Otherwise, a damaging spell is cast and SPELL_DAMAGE damage is inflicted on
-  the .creature_here Creature object. If its hit points are not reduced to
-  zero, a tuple comprising a Cast_Spell_Command_Cast_Damaging_Spell object
-  concatenated with the return value of a self._be_attacked_by_command() is
-  returned.
-* If the Creature object's hit points are reduced to 0, a 2-tuple of a
-  Cast_Spell_Command_Cast_Damaging_Spell object and a Various_Commands_Foe_Death
-  object is returned.
-* If self.character.character_class equals 'Priest' a 2-tuple
-  of a Cast_Spell_Command_Cast_Healing_Spell object and a
-  Various_Commands_Underwent_Healing_Effect object is returned.
-        """
+* If any arguments are given, returns a CommandBadSyntax object.
+
+* If the character is a Warrior or a Thief, returns a
+CommandClassRestricted object.
+
+* This command costs mana points. If the character doesn't have enough,
+returns a CastSpellCommand_InsufficientMana object.
+
+* If the character is a Mage and there's no creature in the room,
+returns a CastSpellCommand_NoCreatureToTarget object.
+
+* If they're a Mage and there is a creature present, a damaging spell
+is cast and the creature is wounded. If they don't die, returns a
+CastSpellCommand_CastDamagingSpell object followed by the object(s)
+generated by the creature's followup attack.
+
+* If the creature is killed, returns a CastSpellCommand_CastDamagingSpell
+object and a VariousCommands_FoeDeath object.
+
+* If the character is a Priest, returns a
+CastSpellCommand_CastHealingSpell object and a
+VariousCommands_UnderwentHealingEffect object.
+"""
 
         # The first error check detects if the player has used this command
         # while playing a Warrior or Thief. Those classes can't cast spells, so
@@ -646,15 +638,14 @@ command takes no arguments.
                                                                     self.game_state.character.hit_point_total))
 
     def _matching_door(self, target_door):
-        """
-This private utility method is used to fetch the corresponding door object in
-the room linked to by a door object, so that an operation can be performed
-on both door objects representing the two sides of the same door element. It
-returns None if the door being tested is the exit door of the game.
+        # Fetches the corresponding door object in the room linked to by
+        # a door object, so an operation can be performed on both door
+        # objects representing the two sides of the same door element.
+        # Returns None if the door being tested is the exit door of the
+        # dungeon.
+        #
+        # :target_door: A door object. return: A door object, or None.
 
-:target_door: A door object.
-:return:      A door object, or None.
-        """
         # There's a limitation in the implementations of close_command(),
         # lock_command(), open_command(), pick_lock_command(), and
         # unlock_command(): when targetting a door, the door object that's
@@ -701,27 +692,27 @@ returns None if the door being tested is the exit door of the game.
 
     def close_command(self, tokens):
         """
-This method implements the CLOSE command. It accepts a tokens tuple that
-is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The CLOSE command
-has the following usage:
+Execute the CLOSE command. The return value is always in a tuple even
+when it's of length 1. The CLOSE command has the following usage:
 
 CLOSE <door name>
 CLOSE <chest name>
 
-* If that syntax is not followed, this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
-* If there is no chest or door in the room that matches the arguments, a 1-tuple
-  of a Close_Command_Element_to_Close_Not_Here object is returned.
-* If a door is specified and that door compass directory and/or title doesn't
-  match any door in self.game_state.rooms_state.cursor.doors, a 1-tuple of a
-  Various_Commands_Door_Not_Present object is returned.
-* If a door is specified but the specifier matches more than one
-  door in self.game_state.rooms_state.cursor.doors, a 1-tuple of a
-  Various_Commands_Ambiguous_Door_Specifier object is returned.
-* If the door or chest specified is already closed, a 1-tuple of a
-  Close_Command_Element_Is_Already_Closed object is returned.
-* Otherwise, a 1-tuple of a Close_Command_Element_Has_Been_Closed is returned.
+* If that syntax is not followed, returns a CommandBadSyntax object.
+
+* If there is no matching chest or door in the room, returns a
+CloseCommand_ElementToCloseNotHere object.
+
+* If there is no matching door, returns a
+VariousCommands_DoorNotPresent object.
+
+* If more than one door in the room matches, returns a
+VariousCommands_AmbiguousDoorSpecifier object.
+
+* If the door or chest specified is already closed, returns a
+CloseCommand_ElementIsAlreadyClosed object.
+
+* Otherwise, returns a CloseCommand_ElementHasBeenClosed object.
         """
 
         # The self.open_command(), self.close_command(),
@@ -758,39 +749,35 @@ CLOSE <chest name>
 
     def drink_command(self, tokens):
         """
-This method implements the DRINK command. It accepts a tokens tuple that
-is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The DRINK command
-has the following usage:
+Execute the DRINK command. The return value is always in a tuple even
+when it's of length 1. The DRINK command has the following usage:
 
 DRINK [THE] <potion name>
 DRINK <number> <potion name>[s]
 
-* If that syntax is not followed, this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
-* If the potion specified is not present in self.game_state.character.inventory,
-  a 1-tuple of a Drink_Command_Item_Not_in_Inventory object is returned.
-* If the item specifier used matches an undrinkable item, or a door, chest,
-  creature, or corpse, a 1-tuple of a Drink_Command_Item_Not_Drinkable object is
-  returned.
-* If the <number> argument is used, and the command specifies
-  a quantity of a potion greater than the quantity of that
-  potion in self.game_state.character.inventory, a 1-tuple of a
-  Drink_Command_Tried_to_Drink_More_than_Possessed object is returned.
-* If the command refers to a health potion in
-  self.game_state.character.inventory, that Potion object is deducted
-  from .inventory, self.game_state.character.heal_damage() is called
-  with its hit_points_recovered attribute, and a 1-tuple of a
-  Various_Commands_Underwent_Healing_Effect object is returned.
-* If the command refers to a mana potion in self.game_state.character.inventory,
-  but self.game_state.character.character_class is 'Warrior' or 'Thief',
-  that Potion object is deducted from .inventory, and a 1-tuple of a
-  Drink_Command_Drank_Mana_Potion_when_Not_A_Spellcaster object is returned.
-* Otherwise, if the command refers to a mana potion in
-  self.game_state.character.inventory, that Potion object is deducted
-  from .inventory, self.game_state.character.recover_mana() is called
-  with its mana_points_recovered attribute, and a 1-tuple of a
-  Drink_Command_Drank_Mana_Potion object is returned.
+* If that syntax is not followed, returns a CommandBadSyntax object.
+
+* If the potion specified is not in the character's inventory, returns a
+DrinkCommand_ItemNotInInventory object.
+
+* If the name matches an undrinkable item, or a door, chest, creature,
+or corpse, returns a DrinkCommand_ItemNotDrinkable object.
+
+* If the <number> argument is used, and there's not that many of the
+potion, returns a DrinkCommand_TriedToDrinkMoreThanPossessed
+object.
+
+* Otherwise, if it's a health potion, then that potion is
+removed from inventory, the character is healed, and returns a
+VariousCommands_UnderwentHealingEffect object.
+
+* If it's a mana potion, and the character is a Warrior
+or a Thief, the potion is removed from inventory, and returns a
+DrinkCommand_DrankManaPotionWhenNotASpellcaster object.
+
+* If it's a mana potion, and the character is a Mage or a Preist, then
+the potion is removed from inventory, the character has some mana
+restored, and a DrinkCommand_DrankManaPotion object is returned.
         """
         # This command requires an argument, which may include a direct or
         # indirect article. If that standard isn't met, a syntax error is
@@ -881,26 +868,26 @@ DRINK <number> <potion name>[s]
 
     def drop_command(self, tokens):
         """
-This method implements the DROP command. It accepts a tokens tuple that
-is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The DROP command
-has the following usage:
+Execute the DROP command. The return value is always in a tuple even
+when it's of length 1. The DROP command has the following usage:
 
 DROP <item name>
 DROP <number> <item name>
 
-* If the item specified isn't present in self.game_state.character.inventory, a
-  1-tuple of a Drop_Command_Trying_to_Drop_Item_You_Dont_Have object is returned.
-* If the <number> specifiers is used, and the quantity
-  specified is greater than the quantity of that Item subclass
-  object in self.game_state.character.inventory, a 1-tuple of a
-  Drop_Command_Trying_to_Drop_More_than_You_Have object is returned.
-* If the item specified is equipped in self.game_state.character.equipment,
-  and the quantity specified is equal to the quantity stored
-  in self.game_state.character.equipment, a 2-tuple of a
-  Various_Commands_Item_Unequipped object and a Drop_Command_Dropped_Item object
-  is returned.
-* Otherwise, a 1-tuple of a Drop_Command_Dropped_Item object is returned.
+* If the item specified isn't in inventory, returns a
+DropCommand_TryingToDropItemYouDontHave object.
+
+* If a number is specified, and that's more than how many of the item
+are in inventory, returns a
+DropCommand_TryingToDropMorethanYouHave object.
+
+* If no number is used and the item is equipped, returns a
+VariousCommands_ItemUnequipped object and a DropCommand_DroppedItem
+object.
+
+* Otherwise, the item is removed, or the specified number of the item
+are removed, from inventory and a DropCommand_DroppedItem object is
+returned.
         """
         # self.pick_up_command() and self.drop_command() share a lot of logic in
         # a private workhorse method self._pick_up_or_drop_preproc(). As with
@@ -1031,7 +1018,7 @@ DROP <number> <item name>
         # If there wasn't a Items_Multi_State set to items_here, I
         # instantiate one.
         if self.game_state.rooms_state.cursor.items_here is None:
-            self.game_state.rooms_state.cursor.items_here = elem.Items_Multi_State()
+            self.game_state.rooms_state.cursor.items_here = elem.ItemsMultiState()
 
         # The item is saved to items_here with the combined quantity of what was
         # already there (can be 0) and the quantity dropped.
@@ -1048,30 +1035,31 @@ DROP <number> <item name>
 
     def equip_command(self, tokens):
         """
-This method implements the EQUIP command. It accepts a tokens tuple that
-is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The EQUIP command
-has the following usage:
+Execute the EQUIP command. The return value is always in a tuple even
+when it's of length 1. The EQUIP command has the following usage:
 
 EQUIP <armor name>
 EQUIP <shield name>
 EQUIP <wand name>
 EQUIP <weapon name>
 
-* If that syntax is not followed, this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
-* If the item specified to equip is not present in
-  self.game_state.character.inventory, a 1-tuple of a
-  Equip_Command_No_Such_Item_in_Inventory object is returned.
-* If the item specified to equip is one that is not usable by the character
-  class specified in self.game_state.character.character_class, a 1-tuple of a
-  Equip_Command_Class_Cant_Use_Item object is returned.
-* If an item of the same type is already equipped in
-  self.game_state.character.equipment, that item is unequipped, the specified
-  item is equipped, and a 2-tuple of a Various_Commands_Item_Unequipped object
-  and a Various_Commands_Item_Equipped object is returned.
-* Otherwise, the specified item is equipped, and a 1-tuple of a
-  Various_Commands_Item_Equipped object is returned.
+* If that syntax is not followed, returns a CommandBadSyntax object.
+
+* If the item isn't in inventory, returns a
+EquipCommand_NoSuchItemInInventory object.
+
+* If the item can't be used by the character due to their class, returns
+a EquipCommand_ClassCantUseItem object.
+
+* If an item of the same kind is already equipped (for example
+trying to equip a suit of armor when the character is already
+wearing armor), that item is unequipped, the specified item is
+equipped, and a VariousCommands_ItemUnequipped object and a
+VariousCommands_ItemEquipped object are returned.
+
+* Otherwise, the item is equipped, and a VariousCommands_ItemEquipped
+object is returned.
+
         """
         # The equip command requires an argument; if none was given, a syntax
         # error is returned.
@@ -1192,23 +1180,22 @@ EQUIP <weapon name>
 
     def help_command(self, tokens):
         """
-This method implements the HELP command. It accepts a tokens tuple that
-is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The HELP command
-has the following usage:
+Execute the HELP command. The return value is always in a tuple even
+when it's of length 1. The HELP command has the following usage:
 
 HELP
 HELP <command name>
 
-* If that syntax is not followed, this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
-* If the command is used with no arguments, a 1-tuple of a
-  Help_Command_Display_Commands object is returned.
-* If the command is called with an argument that is not a recognized command, a
-  1-tuple of a Help_Command_Command_Not_Recognized object is returned.
-* Otherwise, syntax for the command is located in COMMANDS_SYNTAX,
-  help for the command is located in COMMANDS_HELP, and a 1-tuple of a
-  Help_Command_Display_Help_for_Command object is returned.
+* If that syntax is not followed, returns a CommandBadSyntax object.
+
+* If the command is used with no arguments, returns a
+HelpCommand_DisplayCommands object.
+
+* If the argument is not a recognized command, returns a
+HelpCommand_CommandNotRecognized object.
+
+* Otherwise, returns a HelpCommand_DisplayHelpForCommand object.
+
         """
         # An ordered tuple of all commands in uppercase is displayed in some
         # return values so it is computed.
@@ -1239,15 +1226,14 @@ HELP <command name>
 
     def inventory_command(self, tokens):
         """
-This method implements the INVENTORY command. It accepts a tokens tuple that
-is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The INVENTORY
-command takes no arguments.
+Execute the INVENTORY command. The return value is always in a tuple
+even when it's of length 1. The INVENTORY command takes no arguments.
 
-* If the command is used with any arguments, this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
-* Otherwise, a 1-tuple of a Inventory_Command_Display_Inventory object is
-  returned.
+* If the command is used with any arguments, returns a
+CommandBadSyntax object.
+
+* Otherwise, returns a InventoryCommand_DisplayInventory object.
+
         """
         # This command takes no arguments; if any are specified, a syntax error is returned.
         if len(tokens):
@@ -1261,30 +1247,27 @@ command takes no arguments.
 
     def leave_command(self, tokens):
         """
-This method implements the LEAVE command. It accepts a tokens tuple that
-is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The LEAVE command
-has the following usage:
+Execute the LEAVE command. The return value is always in a tuple even
+when it's of length 1. The LEAVE command has the following usage:
 
 LEAVE [USING or VIA] <compass direction> DOOR
 LEAVE [USING or VIA] <compass direction> DOORWAY
 LEAVE [USING or VIA] <door name>
 LEAVE [USING or VIA] <compass direction> <door name>
 
-* If that syntax is not followed, this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
-* If the arguments specify a door that is not present in the room, a 1-tuple of
-  a Various_Commands_Door_Not_Present object is returned.
-* If the arguments given match more than one door in the room, a 1-tuple of a
-  Various_Commands_Ambiguous_Door_Specifier object is returned.
-* If the door selected happens to be the exit door to the dungeon (if
-  the Door object has the is_exit attribute set to True) a 2-tuple of a
-  Leave_Command_Left_Room object and a Leave_Command_Won_The_Game object is
-  returned.
-* Otherwise, the self.game_state.rooms_state.cursor.move() method is
-  used to change which room is considered the current dungeon room by the
-  self.game_state.rooms_state object, and a 2-tuple of a Leave_Command_Left_Room
-  object and a Various_Commands_Entered_Room object is returned.
+* If that syntax is not followed, returns a CommandBadSyntax object.
+
+* If the door by that name is not present in the room, returns a
+VariousCommands_DoorNotPresent object.
+
+* If the door specifier is ambiguous and matches more than one door
+in the room, returns a VariousCommands_AmbiguousDoorSpecifier object.
+
+* If the door is the exit to the dungeon, returns a LeaveCommand_LeftRoom
+object and a LeaveCommand_WonTheGame object.
+
+* Otherwise, a LeaveCommand_LeftRoom object and a
+VariousCommands_EnteredRoom object are returned.
         """
         # This method takes arguments of a specific form; if the arguments don't
         # match it, a syntax error is returned.
@@ -1334,31 +1317,33 @@ LEAVE [USING or VIA] <compass direction> <door name>
 
     def lock_command(self, tokens):
         """
-This method implements the LOCK command. It accepts a tokens tuple that
-is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The LOCK command
-has the following usage:
+Execute the LOCK command. The return value is always in a tuple even
+when it's of length 1. The LOCK command has the following usage:
 
 LOCK <door name>
 LOCK <chest name>
 
-* If that syntax is not followed, this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
-* If the arguments specify a door that is not present in the room, a 1-tuple of
-  a Various_Commands_Door_Not_Present object is returned.
-* If the arguments given match more than one door in the room, a 1-tuple of a
-  Various_Commands_Ambiguous_Door_Specifier object is returned.
-* If the arguments specify an object to unlock that is not present, a 1-tuple of
-  a Lock_Command_Element_to_Lock_Not_Here object is returned.
-* If the arguments specify an object to unlock that is already locked, a 1-tuple
-  of a Lock_Command_Element_Is_Already_Locked object is returned.
-* If the arguments specify an object to unlock that is not present, a 1-tuple of
-  a Lock_Command_Element_Not_Lockable is returned.
-* If the character does not possess the requisite door or chest key to lock the
-  specified door or chest, a 1-tuple of a Lock_Command_Dont_Possess_Correct_Key
-  object is returned.
+* If that syntax is not followed, returns a CommandBadSyntax object.
+
+* If no such door is present in the room, returns a
+VariousCommands_DoorNotPresent object.
+
+* If the command is ambiguous and matches more than one door in the
+room, a VariousCommands_AmbiguousDoorSpecifier object is returned.
+
+* If the object to lock is not present, returns a
+LockCommand_ElementToLockNotHere object.
+
+* If the object to lock is already locked, returns a LockCommand_ElementIsAlreadyLocked object.
+
+* If the object to lock is not present, a LockCommand_ElementNotLockable is returned.
+
+* If the character does not possess the requisite door or
+chest key to lock the specified door or chest, returns a
+LockCommand_DontPossessCorrectKey object.
+
 * Otherwise, the object has its is_locked attribute set to True, If the
-  Lock_Command_Element_Has_Been_Locked
+LockCommand_ElementHasBeenLocked
         """
         # This command requires an argument, so if tokens is zero-length a
         # syntax error is returned.
@@ -1405,34 +1390,41 @@ LOCK <chest name>
         return stmsg.Lock_Command_Element_Has_Been_Locked(element_to_lock.title),
 
     # This private workhorse method handles the shared logic between lock,
-    # unlock, open or close: all four commands have the same type of game
-    # elements as their targets, and a player specifying such an element has the
-    # same failure modes.
+    # unlock, open or close: 
 
     def _preprocessing_for_lock_unlock_open_or_close(self, command, tokens):
-        """
-This private workhorse method handles the shared logic for lock_command(),
-unlock_command(), open_command() and close_command().
 
-:command: The command that the calling method was executing. One of LOCK,
-          UNLOCK, OPEN, or CLOSE.
-:tokens:  The arguments that the calling method was called with. Must be
-          non-null.
+        # This private workhorse method handles the shared logic
+        # for lock_command(), unlock_command(), open_command() and
+        # close_command(). All four commands have the same type of game
+        # elements as their targets, and a player specifying such an
+        # element has the same failure modes.
+        #
+        # :command: The command that the calling method was executing.
+        # One of LOCK, UNLOCK, OPEN, or CLOSE.
+        # :tokens: The arguments that the calling method was called
+        # with. Must be non-null.
+        #
+        # * If the calling command received a zero-length tokens
+        # argument, a syntax error is returned. The COMMANDS_SYNTAX used
+        # for the error uses the command argument iso t matches the
+        # calling method's context
+        #
+        # * If the specified game element is not present in the
+        # current room, one of UnlockCommand_ElementToUnlockNotHere,
+        # LockCommand_ElementToLockNotHere,
+        # OpenCommand_ElementtoOpenNotHere, or
+        # CloseCommand_ElementToCloseNotHere is returned, depending on
+        # the command argument
+        #
+        # * If the specified game element is a corpse, creature,
+        # doorway or item, it's an invalid element for any of the
+        # calling methods; one of LockCommand_ElementNotLockable,
+        # UnlockCommand_ElementNotUnlockable,
+        # OpenCommand_ElementNotOpenable, or
+        # CloseCommand_ElementNotClosable is returned, depending on the
+        # command argument.
 
-* If the calling command received a zero-length tokens argument, a syntax error
-  is returned. The COMMANDS_SYNTAX used for the error uses the command argument
-  iso t matches the calling method's context.
-* If the specified game element is not present in the current
-  room, one of Unlock_Command_Element_to_Unlock_Not_Here,
-  Lock_Command_Element_to_Lock_Not_Here, Open_Command_Element_to_Open_Not_Here,
-  or Close_Command_Element_to_Close_Not_Here is returned, depending on the
-  command argument.
-* If the specified game element is a corpse, creature, doorway or
-  item, it's an invalid element for any of the calling methods; one of
-  Lock_Command_Element_Not_Lockable, Unlock_Command_Element_Not_Unlockable,
-  Open_Command_Element_Not_Openable, or Close_Command_Element_Not_Closable is
-  returned, depending on the command argument.
-        """
         # If the command was used with no arguments, a syntax error is returned.
         if not len(tokens):
             return stmsg.Command_Bad_Syntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
@@ -1538,20 +1530,25 @@ unlock_command(), open_command() and close_command().
                 return stmsg.Close_Command_Element_to_Close_Not_Here(target_title),
 
     def _door_selector(self, tokens):
-        """
-This is a private workhorse method implementing a flexible door specifier
-syntax. The methods close_command(), leave_command(), lock_command(),
-look_at_command(), open_command(), pick_lock_command(), pick_up_command(),
-unlock_command() all use _door_selector() to apply that syntax. A door can be
-specified using any combination of its compass direction, title, or portal type.
 
-:tokens: The arguments token tuple pased to the calling method.
+        # This is a private workhorse method implementing a flexible
+        # door specifier syntax. The methods close_command(),
+        # leave_command(), lock_command(), look_at_command(),
+        # open_command(), pick_lock_command(), pick_up_command(),
+        # unlock_command() all use _door_selector() to apply that
+        # syntax. A door can be specified using any combination of its
+        # compass direction, title, or portal type.
+        #
+        # :tokens: The arguments token tuple pased to the calling
+        # method.
+        #
+        # * If the door specifier doesn't match any door in the room, a
+        # VariousCommands_DoorNotPresent object is returned
+        #
+        # * If the door specifier matches more than one door in the
+        # room, a VariousCommands_AmbiguousDoorSpecifier object is
+        # returned.
 
-* If the door specifier doesn't match any door in the room, a
-  Various_Commands_Door_Not_Present object is returned.
-* If the door specifier matches more than one door in the room, a
-  Various_Commands_Ambiguous_Door_Specifier object is returned.
-        """
         # These variables are initialized to None so they can be checked for
         # non-None values later.
         compass_dir = door_title = door_type = None
@@ -1627,10 +1624,8 @@ specified using any combination of its compass direction, title, or portal type.
 
     def look_at_command(self, tokens):
         """
-This method implements the LOOK AT command. It accepts a tokens tuple that
-is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The LOOK AT command
-has the following usage:
+Execute the LOOK AT command. The return value is always in a tuple even
+when it's of length 1. The LOOK AT command has the following usage:
 
 LOOK AT <item name>
 LOOK AT <item name> IN <chest name>
@@ -1639,33 +1634,33 @@ LOOK AT <item name> ON <corpse name>
 LOOK AT <compass direction> DOOR
 LOOK AT <compass direction> DOORWAY
 
-* If that syntax is not followed, this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
-* If the arguments specify a door, and that door is not present in the current
-  room, a 1-tuple of a Various_Commands_Door_Not_Present object is returned.
-* If the arguments specify a door, but that matches more than one door in the
-  current room, a 1-tuple of a Various_Commands_Ambiguous_Door_Specifier object
-  is returned.
-* If the arguments specify a chest or corpse, but the chest or corpse is not
-  present in the current room, a 1-tuple of a
-  Various_Commands_Container_Not_Found object is returned.
-* If the arguments specify an item, but that item isn't present (per the
-  arguments) on the floor, in self.game_state.rooms_state.cursor.container_here,
-  or in self.game_state.character.inventory, a 1-tuple of a
-  Look_At_Command_Found_Nothing object is returned.
-* If the arguments specify a chest or corpse, and
-  self.game_state.rooms_state.cursor.container_here matches, a 1-tuple of a
-  Look_At_Command_Found_Container_Here object is returned.
-* If the arguments specify a creature, and
-  self.game_state.rooms_state.cursor.creature_here matches, a 1-tuple of a
-  Look_At_Command_Found_Creature_Here object is returned.
-* If the arguments specify a door or doorway, and the door or doorway
-  is present in self.game_state.rooms_state.cursor.doors, a 1-tuple of a
-  Look_At_Command_Found_Door_or_Doorway object is returned.
-* If the arguments specify an item, and that item is present (per the
-  arguments) on the floor, in self.game_state.rooms_state.cursor.container_here,
-  or in self.game_state.character.inventory, a 1-tuple of a
-  Look_At_Command_Found_Item_or_Items_Here object is returned.
+* If that syntax is not followed, returns a CommandBadSyntax object.
+
+* If looking at a door which is not present in the room, returns a
+VariousCommands_DoorNotPresent object.
+
+* If looking at a door, but the arguments are ambiguous
+and match more than one door in the room, returns a
+VariousCommands_AmbiguousDoorSpecifier object.
+
+* If looking at a chest or corpse which is not present in the room,
+returns a VariousCommands_ContainerNotFound object.
+
+* If looking at an item which isn't present (per the arguments)
+on the floor, in a chest, on a corpse, or in inventory, a
+LookAtCommand_FoundNothing object is returned.
+
+* If looking at a chest or corpse which is present, returns a
+LookAtCommand_FoundCreatureHere object.
+
+* If looking at a creature which is present, returns a
+LookAtCommand_FoundCreatureHere object.
+
+* If looking at a door or doorway which is present, returns a
+LookAtCommand_FoundDoorOrDoorway object.
+
+* If looking at an item which is present, a
+LookAtCommand_FoundItemOrItemsHere object is returned.
         """
         # The LOOK AT command can target an item in a chest or on a corpse, so
         # the presence of either 'in' or 'on' in the tokens tuple indicates
@@ -1813,19 +1808,22 @@ LOOK AT <compass direction> DOORWAY
             return stmsg.Look_At_Command_Found_Nothing(target_title, 'floor'),
 
     def _look_at_item_detail(self, element):
-        """
-This private utility method handles the task of constructing a detailed
-description of an item, mentioning everything about it that the game data can
-show. It doesn't return any Game_State_Message subclass objects; it's a utility
-method that accomplishes a task that look_command() needs to execute in 3
-different places in its code, so it's refactored into its own method.
 
-:element: The Item subclass object to derive a detailed description of.
-        """
+        # This private utility method handles the task of constructing
+        # a detailed description of an item, mentioning everything
+        # about it that the game data can show. It doesn't return any
+        # Game_State_Message subclass objects; it's a utility method
+        # that accomplishes a task that look_command() needs to execute
+        # in 3 different places in its code, so it's refactored into its
+        # own method.
+        #
+        # :element: The Item subclass object to derive a detailed
+        # description of.
+
         descr_append_str = ''
         # If the item is equipment, its utility as an equippable item will be
         # detailed.
-        if isinstance(element, elem.Equippable_Item):
+        if isinstance(element, elem.EquippableItem):
             if isinstance(element, (elem.Wand, elem.Weapon)):
                 # If the item can be attacked with, its attack bonus and damage
                 # are mentioned.
@@ -1863,31 +1861,33 @@ different places in its code, so it's refactored into its own method.
 
     def open_command(self, tokens):
         """
-This method implements the OPEN command. It accepts a tokens tuple that
-is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The OPEN command
-has the following usage:
+Execute the OPEN command. The return value is always in a tuple even
+when it's of length 1. The OPEN command has the following usage:
 
 OPEN <door name>
 OPEN <chest name>
 
-* If that syntax is not followed, this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
-* If the arguments specify a door, and that door is not present in the current
-  room, a 1-tuple of a Various_Commands_Door_Not_Present object is returned.
-* If the arguments specify a door, and more than one door matches that
-  specification, a 1-tuple of a Various_Commands_Ambiguous_Door_Specifier object
-  is returned.
-* If the arguments specify an item, creature, corpse or doorway, a 1-tuple of a
-  Open_Command_Element_Not_Openable object is returned.
-* If the arguments specify a chest, and that chest is not present in the room, a
-  1-tuple of a Open_Command_Element_to_Open_Not_Here object is returned.
-* If the arguments specify a door or chest that is locked, a 1-tuple of a
-  Open_Command_Element_Is_Locked object is returned.
-* If the arguments specify a door or chest that is already open, a 1-tuple of a
-  Open_Command_Element_Is_Already_Open object is returned.
-* Otherwise, the chest or door has its is_closed attribute set to False, and a
-  1-tuple of a Open_Command_Element_Has_Been_Opened object is returned.
+* If that syntax is not followed, returns a CommandBadSyntax object.
+
+* If trying to open a door which is not present in the room, returns a
+VariousCommands_DoorNotPresent object.
+
+* If trying to open a door, but the command is ambiguous and matches
+more than one door, returns a VariousCommands_AmbiguousDoorSpecifier
+object.
+
+* If trying to open an item, creature, corpse or doorway, returns a
+OpenCommand_ElementNotOpenable object.
+
+* If trying to open a chest that is not present in the room, returns a OpenCommand_ElementtoOpenNotHere object.
+
+* If trying to open a door or chest that is locked, returns a OpenCommand_ElementIsLocked object.
+
+* If trying to open a door or chest that is already open, returns a OpenCommand_ElementIsAlreadyOpen object.
+
+* Otherwise, the chest or door has its is_closed attribute set to False,
+and returns returns a OpenCommand_ElementHasBeenOpened..
+
         """
         # The shared private workhorse method is called and it handles the
         # majority of the error-checking. If it returns an error that is passed
@@ -1922,32 +1922,33 @@ OPEN <chest name>
 
     def pick_lock_command(self, tokens):
         """
+Execute the PICK LOCK command. The return value is always in a tuple even when it's of length 1.
+
 This method implements the PICK LOCK command. (The command is only usable
 if the player is playing a Thief.) It accepts a tokens tuple that is
 the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The PICK LOCK
+adventuregame.statemsgs.GameStateMessage subclass objects. The PICK LOCK
 command has the following usage:
 
 PICK LOCK ON [THE] <chest name>
 PICK LOCK ON [THE] <door name>
 
-* If that syntax is not followed, this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
+* If that syntax is not followed, returns a CommandBadSyntax object. 
+
 * If the player tries to use this command while playing a Warrior, Mage or
-Priest, a 1-tuple of a Command_Class_Restricted object is returned.
-* If the arguments specify a door, and that door is not present in the current
-  room, a 1-tuple of a Various_Commands_Door_Not_Present object is returned.
-* If the arguments specify a door, and more than one door matches that
-  specification, a 1-tuple of a Various_Commands_Ambiguous_Door_Specifier object
-  is returned.
-* If the arguments specify a doorway, creature, item, or corpse, a 1-tuple of a
-  Pick_Lock_Command_Element_Not_Unlockable object is returned.
-* If the arguments specify a chest that is not present in the current room, a
-  1-tuple of a Pick_Lock_Command_Target_Not_Found object is returned.
-* If the arguments specify a door or chest is that is already unlocked, a
-  1-tuple of a Pick_Lock_Command_Target_Not_Locked object is returned.
-* Otherwise, the specified door or chest has its is_locked attribute set to
-  False, and a 1-tuple of a Pick_Lock_Command_Target_Has_Been_Unlocked object.
+Priest, returns a CommandClassRestricted object.
+
+* If the arguments specify a door, and that door is not present in the current room, returns a VariousCommands_DoorNotPresent object.
+
+* If the arguments specify a door, and more than one door matches that specification, returns a VariousCommands_AmbiguousDoorSpecifier object.
+
+* If the arguments specify a doorway, creature, item, or corpse, returns a PickLockCommand_ElementNotUnlockable object.
+
+* If the arguments specify a chest that is not present in the current room, returns a PickLockCommand_TargetNotFound object.
+
+* If the arguments specify a door or chest is that is already unlocked, returns a PickLockCommand_TargetNotLocked object.
+
+* Otherwise, the specified door or chest has its is_locked attribute set to False, and a PickLockCommand_TargetHasBeenUnlocked object is returned.
         """
         # These error booleans are initialized to False so they can be checked
         # for True values later.
@@ -2058,31 +2059,27 @@ Priest, a 1-tuple of a Command_Class_Restricted object is returned.
 
     def pick_up_command(self, tokens):
         """
+Execute the PICK UP command. The return value is always in a tuple even when it's of length 1.
+
 This method implements the PICK UP command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The PICK UP command
+adventuregame.statemsgs.GameStateMessage subclass objects. The PICK UP command
 has the following usage:
 
 PICK UP <item name>
 PICK UP <number> <item name>),
 
-* If that syntax is not followed, this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
-* If the arguments are ungrammatical and are unclear about the quantity to pick
-  up, a 1-tuple of a Pick_Up_Command_Quantity_Unclear object is returned.
-* If the arguments specify a chest, corpse, creature or door, a 1-tuple of a
-  Pick_Up_Command_Cant_Pick_Up_Chest_Corpse_Creature_or_Door object is returned.
-* If the arguments specify an item to pick up that is not present
-  in self.game_state.rooms_state.cursor.items_here, a 1-tuple of a
-  Pick_Up_Command_Item_Not_Found object is returned.
-* If the arguments specify a quantity to pick up that is greater than the
-  quantity present in self.game_state.rooms_state.cursor.items_here, a 1-tuple
-  of a Pick_Up_Command_Trying_to_Pick_Up_More_than_Is_Present object is
-  returned.
-* Otherwise, the specified quantity of the matching item is deducted
-  from self.game_state.rooms_state.cursor.items_here, and added to
-  self.game_state.character, and a 1-tuple of a Pick_Up_Command_Item_Picked_Up
-  object is returned.
+* If that syntax is not followed, returns a CommandBadSyntax object.
+
+* If the arguments are ungrammatical and are unclear about the quantity to pick up, returns a PickUpCommand_QuantityUnclear object.
+
+* If the arguments specify a chest, corpse, creature or door, returns a PickUpCommand_CantPickUpChestCorpseCreatureOrDoor object.
+
+* If the arguments specify an item to pick up that is not present in self.game_state.rooms_state.cursor.items_here, returns a PickUpCommand_ItemNotFound object.
+
+* If the arguments specify a quantity to pick up that is greater than the quantity present in self.game_state.rooms_state.cursor.items_here, returns a PickUpCommand_TryingToPickUpMoreThanIsPresent object.
+
+* Otherwise, the specified quantity of the matching item is deducted from self.game_state.rooms_state.cursor.items_here, and added to self.game_state.character, and a PickUpCommand_ItemPickedUp object is returned.
         """
         # The door var is set to None so later it can be checked for a non-None value.
         door = None
@@ -2208,12 +2205,9 @@ screens for ambiguous command arguments.
 :command: The command the calling method is executing.
 :tokens:  The tokenized command arguments.
 
-* If invalid arguments are sent, a 1-tuple of a Command_Bad_Syntax object is
-  returned.
-* If the player submitted an ungrammatical sentence which is ambiguous
-  as to the quantity intended, a 1-tuple of either a
-  Drop_Command_Quantity_Unclear object or a Pick_Up_Command_Quantity_Unclear
-  object is returned depending on the value in command.
+* If invalid arguments are sent, returns a CommandBadSyntax object.
+
+* If the player submitted an ungrammatical sentence which is ambiguous as to the quantity intended, a DropCommand_QuantityUnclear object or a PickUpCommand_QuantityUnclear object is returned depending on the value in command.
         """
         # This long boolean checks whether the first token in tokens can
         # indicate quantity.
@@ -2295,9 +2289,11 @@ screens for ambiguous command arguments.
 
     def put_command(self, tokens):
         """
+Execute the PUT command. The return value is always in a tuple even when it's of length 1.
+
 This method implements the PUT command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The PUT command has
+adventuregame.statemsgs.GameStateMessage subclass objects. The PUT command has
 the following usage:
 
 PUT <item name> IN <chest name>
@@ -2305,24 +2301,19 @@ PUT <number> <item name> IN <chest name>
 PUT <item name> ON <corpse name>
 PUT <number> <item name> ON <corpse name>
 
-* If that syntax is not followed, this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
-* If the arguments specify a chest or corpse that is not present in the current
-  room, a 1-tuple of a Various_Commands_Container_Not_Found object is returned.
-* If the arguments specify a chest that is closed, a 1-tuple of a
-  Various_Commands_Container_Is_Closed object is returned.
-* If the arguments are an ungrammatical sentence and are ambiguous about the
-  quantity to put, a 1-tuple with a Put_Command_Quantity_Unclear object is
-  returned.
-* If the arguments specify an item to put that is not present
-  in self.game_state.character.inventory, a 1-tuple with a
-  Put_Command_Item_Not_in_Inventory object is returned.
-* If the arguments specify a quantity of an item to put that is greater than the
-  quantity of that item in self.game_state.character.inventory, a 1-tuple with a
-  Put_Command_Trying_to_Put_More_than_You_Have object is returned.
-* Otherwise, the specified quantity of the item is deducted from
-  self.game_state.character, and put in the chest or on the corpse, and a
-  1-tuple of a Put_Command_Amount_Put object is returned.
+* If that syntax is not followed, returns a CommandBadSyntax object.
+
+* If the arguments specify a chest or corpse that is not present in the current room, returns a VariousCommands_ContainerNotFound object.
+
+* If the arguments specify a chest that is closed, returns a VariousCommands_ContainerIsClosed object.
+
+* If the arguments are an ungrammatical sentence and are ambiguous about the quantity to put, a PutCommand_QuantityUnclear object is returned.
+
+* If the arguments specify an item to put that is not present in self.game_state.character.inventory, a PutCommand_ItemNotInInventory object is returned.
+
+* If the arguments specify a quantity of an item to put that is greater than the quantity of that item in self.game_state.character.inventory, a PutCommand_TryingToPutMorethanYouHave object is returned.
+
+* Otherwise, the specified quantity of the item is deducted from self.game_state.character, and put in the chest or on the corpse, and a PutCommand_AmountPut object is returned.
         """
         # The shared private workhorse method is called and it handles the
         # majority of the error-checking. If it returns an error that is passed
@@ -2393,18 +2384,13 @@ title) from the tokens argument.
 :command: The command being executed by the calling method. Either 'PUT' or 'TAKE'.
 :tokens:  The tokens argument the calling method was called with.
 
-* If the tokens argument is zero-length or doesn't container the appropriate
-  joinword ('FROM' for TAKE, 'IN' for PUT with chests, or 'ON' for put with
-  corpses), a 1-tuple of a Command_Bad_Syntax object is returned.
-* If the arguments are an ungrammatical sentence and are ambiguous about the
-  quantity of the item, a 1-tuple with (depending on the value for command) a
-  Put_Command_Quantity_Unclear object or a Take_Command_Quantity_Unclear object
-  is returned.
-* If the arguments specify a container title that doesn't match
-  the title of the container in the current room, a 1-tuple of a
-  Various_Commands_Container_Not_Found object is returned.
-* If the arguments targeted a chest and the chest is closed, a 1-tuple of a
-  Various_Commands_Container_Is_Closed object is returned.
+* If the tokens argument is zero-length or doesn't container the appropriate joinword ('FROM' for TAKE, 'IN' for PUT with chests, or 'ON' for put with corpses), returns a CommandBadSyntax object.
+
+* If the arguments are an ungrammatical sentence and are ambiguous about the quantity of the item, returns a PutCommand_QuantityUnclear object or a TakeCommand_QuantityUnclear object.
+
+* If the arguments specify a container title that doesn't match the title of the container in the current room, returns a VariousCommands_ContainerNotFound object.
+
+* If the arguments targeted a chest and the chest is closed, returns a VariousCommands_ContainerIsClosed object.
         """
         # The current room's container_here value is assigned to a local variable.
         container = self.game_state.rooms_state.cursor.container_here
@@ -2531,15 +2517,16 @@ title) from the tokens argument.
 
     def quit_command(self, tokens):
         """
+Execute the QUIT command. The return value is always in a tuple even when it's of length 1.
+
 This method implements the QUIT command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The QUIT command
+adventuregame.statemsgs.GameStateMessage subclass objects. The QUIT command
 takes no arguments.
 
-* If the command is used with any arguments, this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
-* Otherwise, self.game_state.game_has_ended is set to True, and a 1-tuple of a
-  Quit_Command_Have_Quit_The_Game object is returned.
+* If the command is used with any arguments, returns a CommandBadSyntax object.
+
+* Otherwise, self.game_state.game_has_ended is set to True, and a QuitCommand_HaveQuitTheGame object is returned.
         """
         # This command takes no arguments, so if any were supplied, I return a syntax error.
         if len(tokens):
@@ -2555,17 +2542,18 @@ takes no arguments.
 
     def reroll_command(self, tokens):
         """
+Execute the REROLL command. The return value is always in a tuple even when it's of length 1.
+
 This method implements the REROLL command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The REROLL command
+adventuregame.statemsgs.GameStateMessage subclass objects. The REROLL command
 takes no arguments.
 
-* If the command is used with any arguments, this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
-* If the character's name or class has not been set yet, a 1-tuple of a
-  Reroll_Command_Name_or_Class_Not_Set object is returned.
-* Otherwise, self.game_state.character.roll_stats() is called, and a 1-tuple of
-  a Various_Commands_Display_Rolled_Stats is returned.
+* If the command is used with any arguments, this method returns a CommandBadSyntax object.
+
+* If the character's name or class has not been set yet, returns a RerollCommand_NameOrClassNotSet object.
+
+* Otherwise, self.game_state.character.roll_stats() is called, and a VariousCommands_DisplayRolledStats is returned.
         """
         # This command takes no arguments, so if any were supplied, I return a
         # syntax error.
@@ -2594,23 +2582,22 @@ takes no arguments.
 
     def set_class_command(self, tokens):
         """
+Execute the SET CLASS command. The return value is always in a tuple even when it's of length 1.
+
 This method implements the SET CLASS command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The SET CLASS
+adventuregame.statemsgs.GameStateMessage subclass objects. The SET CLASS
 command has the following usage:
 
 SET CLASS [TO] <Warrior, Thief, Mage or Priest>
 
-* If that syntax is not followed, this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
-* If a class other than Warrior, Thief, Mage or Priest is specified, a 1-tuple
-  of a Set_Class_Command_Invalid_Class object is returned.
-* If the name has not yet been set, then the class is set, and a 1-tuple of a
-  Set_Class_Command_Class_Set object is returned.
-* If the name has been set, then the class is set,
-  self.game_state.character.roll_stats() is called as a side effect,
-  and a 2-tuple of a Set_Class_Command_Class_Set object and a
-  Various_Commands_Display_Rolled_Stats object is returned.
+* If that syntax is not followed, returns a CommandBadSyntax object.
+
+* If a class other than Warrior, Thief, Mage or Priest is specified, returns a SetClassCommand_InvalidClass object.
+
+* If the name has not yet been set, then the class is set, and a SetClassCommand_ClassSet object is returned.
+
+* If the name has been set, then the class is set, self.game_state.character.roll_stats() is called as a side effect, and a 2-tuple of a SetClassCommand_ClassSet object and a Various_Commands_Display_Rolled_Stats object is returned.
         """
         # This command takes exactly one argument, so I return a syntax error if
         # I got 0 or more than 1.
@@ -2648,24 +2635,22 @@ SET CLASS [TO] <Warrior, Thief, Mage or Priest>
 
     def set_name_command(self, tokens):
         """
+Execute the SET NAME command. The return value is always in a tuple even when it's of length 1.
+
 This method implements the SET NAME command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The SET NAME
+adventuregame.statemsgs.GameStateMessage subclass objects. The SET NAME
 command has the following usage:
 
 SET NAME [TO] <character name>
 
-* If that syntax is not followed, this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
-* If a name is specified that doesn't match the pattern
-  [A-Z][a-z]+( [A-Z][a-z]+)*, a 1-tuple of a Set_Name_Command_Invalid_Part
-  object is returned.
-* If the class has not yet been set, then the name is set, and a 1-tuple of a
-  Set_Name_Command_Name_Set object is returned.
-* If the class has been set, then the name is set,
-  self.game_state.character.roll_stats() is called as a side effect,
-  and a 2-tuple of a Set_Name_Command_Name_Set object and a
-  Various_Commands_Display_Rolled_Stats object is returned.
+* If that syntax is not followed, returns a CommandBadSyntax object.
+
+* If a name is specified that doesn't match the pattern [A-Z][a-z]+( [A-Z][a-z]+)*, returns a SetNameCommand_InvalidPart object.
+
+* If the class has not yet been set, then the name is set, and a SetNameCommand_NameSet object is returned.
+
+* If the class has been set, then the name is set, self.game_state.character.roll_stats() is called as a side effect, and a 2-tuple of a SetNameCommand_NameSet object and a VariousCommands_DisplayRolledStats object is returned.
         """
         # This command requires one or more arguments, so if len(tokens) == 0 I
         # return a syntax error.
@@ -2708,14 +2693,17 @@ SET NAME [TO] <character name>
 
     def status_command(self, tokens):
         """
+Execute the STATUS command. The return value is always in a tuple even when it's of length 1.
+
 This method implements the STATUS command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The STATUS command
+adventuregame.statemsgs.GameStateMessage subclass objects. The STATUS command
 takes no arguments.
 
-* If the command is used with any arguments, this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
-* Otherwise, a 1-tuple of a Status_Command_Output object is returned.
+* If the command is used with any arguments, returns a CommandBadSyntax object.
+
+* Otherwise, returns a StatusCommand_Output object.
+
         """
         # This command takes no arguments so if any were supplied I return a
         # syntax error.
@@ -2769,33 +2757,29 @@ takes no arguments.
 
     def take_command(self, tokens):
         """
+Execute the TAKE command. The return value is always in a tuple even when it's of length 1.
+
 This method implements the TAKE command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The TAKE command
+adventuregame.statemsgs.GameStateMessage subclass objects. The TAKE command
 has the following usage:
 
 TAKE <item name> FROM <container name>
 TAKE <number> <item name> FROM <container name>
 
-* If that syntax is not followed, this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
-* If the specified container isn't present in the current room, a 1-tuple of a
-  Various_Commands_Container_Not_Found object is returned.
-* If the specified container is a chest and the chest is closed, a 1-tuple of a
-  Various_Commands_Container_Is_Closed object is returned.
-* If the arguments are an ungrammatical sentence and are ambiguous as to what
-  quantity the player means to take, a 1-tuple of a
-  Take_Command_Quantity_Unclear object is returned.
-* If the specified item is not present in the specified chest or on the
-  specified corpse, a 1-tuple of a Take_Command_Item_Not_Found_in_Container
-  object is returned.
-* If the specified quantity of the item is greater than the quantity of that
-  item in self.game_state.rooms_state.cursor.container_here, a 1-tuple of a
-  Take_Command_Trying_to_Take_More_than_Is_Present object is returned.
-* Otherwise, the specified quantity of the specified item is deduced
-  from self.game_state.rooms_state.cursor.container_here and added to
-  self.game_state.character, and a 1-tuple of a Take_Command_Item_or_Items_Taken
-  object is returned.
+* If that syntax is not followed, returns a CommandBadSyntax object.
+
+* If the specified container isn't present in the current room, returns a VariousCommands_ContainerNotFound object.
+
+* If the specified container is a chest and the chest is closed, returns a VariousCommands_ContainerIsClosed object.
+
+* If the arguments are an ungrammatical sentence and are ambiguous as to what quantity the player means to take, returns a TakeCommand_QuantityUnclear object.
+
+* If the specified item is not present in the specified chest or on the specified corpse, returns a TakeCommand_ItemNotFoundInContainer object.
+
+* If the specified quantity of the item is greater than the quantity of that item in self.game_state.rooms_state.cursor.container_here, returns a TakeCommand_TryingToTakeMoreThanIsPresent object.
+
+* Otherwise, the specified quantity of the specified item is deduced from self.game_state.rooms_state.cursor.container_here and added to self.game_state.character, and a TakeCommand_ItemOrItemsTaken object is returned.
         """
         # take_command() shares logic with put_command() in a private workhorse
         # method _put_or_take_preproc().
@@ -2849,9 +2833,11 @@ TAKE <number> <item name> FROM <container name>
 
     def unequip_command(self, tokens):
         """
+Execute the UNEQUIP command. The return value is always in a tuple even when it's of length 1.
+
 This method implements the UNEQUIP command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The UNEQUIP command
+adventuregame.statemsgs.GameStateMessage subclass objects. The UNEQUIP command
 has the following usage:
 
 UNEQUIP <armor name>
@@ -2859,14 +2845,11 @@ UNEQUIP <shield name>
 UNEQUIP <wand name>
 UNEQUIP <weapon name>
 
-* If that syntax is not followed, this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
-* If the specified item is not equipped in
-  self.game_state.rooms_state.character, a 1-tuple of a
-  Unequip_Command_Item_Not_Equipped object is returned.
-* Otherwise, the specified item is unequipped in
-  self.game_state.rooms_state.character, and a 1-tuple of a
-  Various_Commands_Item_Unequipped is returned.
+* If that syntax is not followed, returns a CommandBadSyntax object.
+
+* If the specified item is not equipped in self.game_state.rooms_state.character, returns a UnequipCommand_ItemNotEquipped object.
+
+* Otherwise, the specified item is unequipped in self.game_state.rooms_state.character, and a VariousCommands_ItemUnequipped is returned.
         """
         # This command requires an argument so if none was supplied I return a
         # syntax error.
@@ -2989,32 +2972,31 @@ UNEQUIP <weapon name>
 
     def unlock_command(self, tokens):
         """
+Execute the UNLOCK command. The return value is always in a tuple even when it's of length 1.
+
 This method implements the UNLOCK command. It accepts a tokens tuple that
 is the command's arguments, tokenized. It returns a tuple of one or more
-adventuregame.statemsgs.Game_State_Message subclass objects. The UNLOCK command
+adventuregame.statemsgs.GameStateMessage subclass objects. The UNLOCK command
 has the following usage:
 
 UNLOCK <door\u00A0name>
 UNLOCK <chest\u00A0name>
 
-* If that syntax is not followed, this method returns a 1-tuple of a
-  Command_Bad_Syntax object.
-* If the arguments specify a door that is not present in the room, a 1-tuple of
-  a Various_Commands_Door_Not_Present object is returned.
-* If the arguments given match more than one door in the room, a 1-tuple of a
-  Various_Commands_Ambiguous_Door_Specifier object is returned.
-* If the specified door or chest is not present in the current room, a 1-tuple
-  of an Unlock_Command_Element_to_Unlock_Not_Here object is returned.
-* If the specified element is a doorway, item, creature or corpse, a 1-tuple of
-  an Unlock_Command_Element_Not_Unlockable object is returned.
-* If the character does not possess the requisite door or chest key to lock the
-  specified door or chest, a 1-tuple of an
-  Unlock_Command_Dont_Possess_Correct_Key object is returned.
-* If the specified door or chest is already unlocked, a 1-tuple of a
-  Unlock_Command_Element_Is_Already_Unlocked object is returned.
-* Otherwise, the specified door's or chest's is_locked attribute is set to
-  False, and a 1-tuple of an Unlock_Command_Element_Has_Been_Unlocked object is
-  returned.
+* If that syntax is not followed, returns a CommandBadSyntax object.
+
+* If the arguments specify a door that is not present in the room, returns a VariousCommands_DoorNotPresent object.
+
+* If the arguments given match more than one door in the room, returns a VariousCommands_AmbiguousDoorSpecifier object.
+
+* If the specified door or chest is not present in the current room, returns an UnlockCommand_ElementToUnlockNotHere object.
+
+* If the specified element is a doorway, item, creature or corpse, returns an UnlockCommand_ElementNotUnlockable object.
+
+* If the character does not possess the requisite door or chest key to lock the specified door or chest, returns an UnlockCommand_DontPossessCorrectKey object.
+
+* If the specified door or chest is already unlocked, returns a UnlockCommand_ElementIsAlreadyUnlocked object.
+
+* Otherwise, the specified door's or chest's is_locked attribute is set to False, and an UnlockCommand_ElementHasBeenUnlocked object is returned.
         """
         # This command requires an argument; so if it was called with no
         # arguments, I return a syntax error.
