@@ -7,7 +7,7 @@ This module stores the exceptions used by other adventuregame modules.
 __name__ = 'adventuregame.exceptions'
 
 
-class Internal_Exception(Exception):
+class InternalError(Exception):
     """
 This Exception subclass represents an internal error.
     """

@@ -3,7 +3,7 @@
 from ._common import *
 
 
-__all__ = "various",
+__all__ = "various", "unlock", "unequip", "take", "status", "setname"
 
 __all__ += ("GameStateMessage", "Stmsg_CommandBadSyntax", "Stmsg_CommandClassRestricted", "Stmsg_CommandNotAllowedNow",
             "Stmsg_CommandNotRecognized", "Stmsg_Attack_AttackHit", "Stmsg_Attack_AttackMissed",
@@ -37,10 +37,4 @@ __all__ += ("GameStateMessage", "Stmsg_CommandBadSyntax", "Stmsg_CommandClassRes
             "Stmsg_PickUp_TryingToPickUpMoreThanIsPresent", "Stmsg_Put_PutAmountOfItem",
             "Stmsg_Put_ItemNotInInventory", "Stmsg_Put_QuantityUnclear",
             "Stmsg_Put_TryingToPutMoreThanYouHave", "Stmsg_Quit_HaveQuitTheGame",
-            "Stmsg_Reroll_NameOrClassNotSet", "Stmsg_SetCls_ClassSet", "Stmsg_SetCls_InvalidClass",
-            "Stmsg_SetNm_InvalidPart", "Stmsg_SetNm_NameSet", "Stmsg_Status_StatusOutput",
-            "Stmsg_Take_ItemNotFoundInContainer", "Stmsg_Take_ItemOrItemsTaken",
-            "Stmsg_Take_QuantityUnclear", "Stmsg_Take_TryingToTakeMoreThanIsPresent",
-            "Stmsg_Unequip_ItemNotEquipped", "Stmsg_Unlock_DontPossessCorrectKey",
-            "Stmsg_Unlock_ElementNotLockable", "Stmsg_Unlock_ElementHasBeenLocked",
-            "Stmsg_Unlock_ElementIsAlreadyLocked", "Stmsg_Unlock_ElementToLockNotHere")
+            "Stmsg_Reroll_NameOrClassNotSet", "Stmsg_SetCls_ClassSet", "Stmsg_SetCls_InvalidClass")

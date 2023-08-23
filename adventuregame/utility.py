@@ -190,7 +190,7 @@ rolls with the given modifier, and returns the computed random value>
     """
     match = _dice_expression_re.match(dice_expr)
     if not match:
-        raise excpt.Internal_Exception('invalid dice expression: ' + dice_expr)
+        raise excpt.InternalError('invalid dice expression: ' + dice_expr)
     number_of_dice, sidedness_of_dice, modifier_to_roll = match.groups()
     number_of_dice = int(number_of_dice)
     sidedness_of_dice = int(sidedness_of_dice)

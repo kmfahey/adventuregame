@@ -1077,7 +1077,7 @@ the chest are conveyed. If it's a corpse, the corpse's possessions are conveyed.
             elif self.is_locked is False and self.is_closed is False:
                 return f'{self.container_description} It is unlocked and open. {self._contents}'
             elif self.is_locked is True and self.is_closed is False:
-                raise excpt.Internal_Exception('Look_At_Command_Found_Container_Here.message accessed to describe a chest '
+                raise excpt.InternalError('Look_At_Command_Found_Container_Here.message accessed to describe a chest '
                                          'with the impossible combination of is_locked = True and is_closed = False.')
             elif self.is_locked is None and self.is_closed is True:
                 return f'{self.container_description} It is closed.'
@@ -1122,7 +1122,7 @@ the chest are conveyed. If it's a corpse, the corpse's possessions are conveyed.
         self.is_closed = container.is_closed
         self.container_type = container.container_type
         if self.is_locked is True and self.is_closed is False:
-            raise excpt.Internal_Exception(f'Container {container.internal_name} has is_locked = True and is_open = '
+            raise excpt.InternalError(f'Container {container.internal_name} has is_locked = True and is_open = '
                                       'False, invalid combination of parameters.')
 
 
@@ -1219,7 +1219,7 @@ targets an item that can't be found where they said it was.
             elif self.item_location == 'inventory':
                 return f'You have no {self.item_title} in your inventory.'
             else:
-                raise excpt.Internal_Exception(f'Location type {self.location_type} not recognized.')
+                raise excpt.InternalError(f'Location type {self.location_type} not recognized.')
         else:
             return f'You see no {self.item_title} here.'
 

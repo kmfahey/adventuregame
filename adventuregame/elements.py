@@ -220,7 +220,7 @@ subclass object with.
         elif item_dict["item_type"] == "oddment":
             item = Oddment(**item_dict)
         else:
-            raise excpt.Internal_Exception(
+            raise excpt.InternalError(
                 "couldn't instance Item subclass, unrecognized item "
                 f"type '{item_dict['item_type']}'.")
         return item
@@ -238,7 +238,7 @@ attributes.
 :return: A boolean.
         """
         if character_class not in ("Warrior", "Thief", "Mage", "Priest"):
-            raise excpt.Internal_Exception(
+            raise excpt.InternalError(
                 f"character class {character_class} not recognized")
         return bool(getattr(self, character_class.lower() + "_can_use", None))
 
@@ -440,7 +440,7 @@ reading the door_type value.
         elif door_dict['door_type'] == 'iron_door':
             door = IronDoor(**door_dict)
         else:
-            raise excpt.Internal_Exception(
+            raise excpt.InternalError(
                 f'unrecognized door type: {door_dict["door_type"]}')
         return door
 
@@ -455,7 +455,7 @@ room in the linkage.
         """
 
         if room_internal_name not in self._linked_rooms_internal_names:
-            raise excpt.Internal_Exception(
+            raise excpt.InternalError(
                 f"room internal name {room_internal_name} not one of the "
                 f"two rooms linked by this door object")
 
@@ -873,7 +873,7 @@ an arbitrary ability score.
 :return:        An int.
         """
         if not hasattr(self, ability_score):
-            raise excpt.Internal_Exception(
+            raise excpt.InternalError(
                 f"unrecognized ability {ability_score}")
         return math.floor((getattr(self, ability_score) - 10) / 2)
 
@@ -887,7 +887,7 @@ class; each class has a different ability priority ordering.
 :character_class_str: One of 'Warrior', 'Thief', 'Priest' or 'Mage'.
         """
         if character_class_str not in self.weightings:
-            raise excpt.Internal_Exception(
+            raise excpt.InternalError(
                 f"character class {character_class_str} not recognized, "
                 "should be one of 'Warrior', 'Thief', 'Priest' or 'Mage'")
         self.character_class = character_class_str
@@ -986,7 +986,7 @@ This method equips the given Armor object.
 :returns: None.
         """
         if not isinstance(item, Armor):
-            raise excpt.Internal_Exception(
+            raise excpt.InternalError(
                 "the method 'equip_armor()' only accepts 'armor' objects "
                 "for its argument")
         self._equip("armor", item)
@@ -999,7 +999,7 @@ This method equips the given Shield object.
 :returns: None.
         """
         if not isinstance(item, Shield):
-            raise excpt.Internal_Exception(
+            raise excpt.InternalError(
                 "the method 'equip_shield()' only accepts 'shield' "
                 "objects for its argument")
         self._equip("shield", item)
@@ -1012,7 +1012,7 @@ This method equips the given Weapon object.
 :returns: None.
         """
         if not isinstance(item, Weapon):
-            raise excpt.Internal_Exception(
+            raise excpt.InternalError(
                 "the method 'equip_weapon()' only accepts 'weapon' "
                 "objects for its argument")
         self._equip("weapon", item)
@@ -1025,7 +1025,7 @@ This method equips the given Wand object.
 :returns: None.
         """
         if not isinstance(item, Wand):
-            raise excpt.Internal_Exception(
+            raise excpt.InternalError(
                 "the method 'equip_wand()' only accepts 'wand' objects "
                 "for its argument")
         self._equip("wand", item)
@@ -1072,7 +1072,7 @@ the given slot.
 :return:         None.
         """
         if equipment_slot not in ("armor", "shield", "weapon", "wand"):
-            raise excpt.Internal_Exception(
+            raise excpt.InternalError(
                 f"equipment slot {equipment_slot} not recognized")
         if equipment_slot == "armor":
             self.armor = item
@@ -1092,7 +1092,7 @@ This private method unequips the given EquippableItem subclass object.
 :return:         None.
         """
         if equipment_slot not in ("armor", "shield", "weapon", "wand"):
-            raise excpt.Internal_Exception(
+            raise excpt.InternalError(
                 f"equipment slot {equipment_slot} not recognized")
         if equipment_slot == "armor":
             self.armor = None
@@ -1220,7 +1220,7 @@ the magic key stat if any.
                       Charisma score (optional).
         """
         if character_class_str not in {"Warrior", "Thief", "Priest", "Mage"}:
-            raise excpt.Internal_Exception(
+            raise excpt.InternalError(
                 f"character class argument {character_class_str} not one "
                 "of Warrior, Thief, Priest or Mage")
         self.character_name = character_name_str
@@ -1272,7 +1272,7 @@ arguments if furnished.
             self.ability_scores.charisma = charisma
         elif any((strength, dexterity, constitution,
                   intelligence, wisdom, charisma)):
-            raise excpt.Internal_Exception(
+            raise excpt.InternalError(
                 "The constructor for 'character' must be supplied with "
                 "either all of the arguments 'strength', 'dexterity', "
                 "'constitution', 'intelligence', 'wisdom', and 'charisma' "
@@ -1318,7 +1318,7 @@ for Mages, and Wisdom for Priests).
 
         if magic_key_stat:
             if magic_key_stat not in ("intelligence", "wisdom", "charisma"):
-                raise excpt.Internal_Exception(
+                raise excpt.InternalError(
                     f"`magic_key_stat` argument '{magic_key_stat}' not "
                     "recognized")
             self.magic_key_stat = magic_key_stat
@@ -1897,7 +1897,7 @@ object with the given argument.
 :return: None.
         """
         if not self.inventory.contains(item.internal_name):
-            raise excpt.Internal_Exception(
+            raise excpt.InternalError(
                 "equipping an `item` object that is not in the "
                 "character's `inventory` object is not allowed")
         return self._equipment.equip_armor(item)
@@ -1911,7 +1911,7 @@ object with the given argument.
 :return: None.
         """
         if not self.inventory.contains(item.internal_name):
-            raise excpt.Internal_Exception(
+            raise excpt.InternalError(
                 "equipping an `item` object that is not in the "
                 "character's `inventory` object is not allowed")
         return self._equipment.equip_shield(item)
@@ -1925,7 +1925,7 @@ object with the given argument.
 :return: None.
         """
         if not self.inventory.contains(item.internal_name):
-            raise excpt.Internal_Exception(
+            raise excpt.InternalError(
                 "equipping an `item` object that is not in the "
                 "character's `inventory` object is not allowed")
         return self._equipment.equip_weapon(item)
@@ -1939,7 +1939,7 @@ object with the given argument.
 :return: None.
         """
         if not self.inventory.contains(item.internal_name):
-            raise excpt.Internal_Exception(
+            raise excpt.InternalError(
                 "equipping an `item` object that is not in the "
                 "character's `inventory` object is not allowed")
         return self._equipment.equip_wand(item)
@@ -2019,7 +2019,7 @@ Dexterity for Thieves; and Intelligence for Mages wielding a wand).
         if (not (self._equipment.weapon_equipped
                  or self.character_class == "Mage"
                  and self._equipment.wand_equipped)):
-            raise excpt.Internal_Exception(
+            raise excpt.InternalError(
                 "The character does not have a weapon equipped; no valid "
                 "value for `attack_bonus` can be computed.")
         stat_dependency = self._attack_or_damage_stat_dependency()
@@ -2157,7 +2157,7 @@ inventory quantity-internal name pairs, and an equipment dict.
                                   in invent_qty_name_pairs
                                   if not items_state.contains(item_intrn_name))
             pluralizer = "s" if len(missing_names) > 1 else ""
-            raise excpt.Internal_Exception(
+            raise excpt.InternalError(
                 f"bad creatures.ini specification for creature "
                 f"{intrn_name}: creature ini config dict "
                 f"`inventory_items` value indicated item{pluralizer} not "
@@ -2198,7 +2198,7 @@ creature's inventory and equipped items.
 
         for equip_key, item_internal_name in equip_argd.items():
             if not items_state.contains(item_internal_name):
-                raise excpt.Internal_Exception(
+                raise excpt.InternalError(
                     "bad creatures.ini specification for creature "
                     f"{self.internal_name}: items index object does not "
                     f"contain an item named {item_internal_name}")
@@ -2345,7 +2345,7 @@ attributes.
 
         if self.creature_here:
             if not self._creatures_state.contains(self.creature_here):
-                raise excpt.Internal_Exception(
+                raise excpt.InternalError(
                     f"room obj `{self.internal_name}` creature_here value "
                     f"'{self.creature_here}' doesn't correspond to any "
                     "creatures in creatures_state store")
@@ -2357,7 +2357,7 @@ attributes.
 
         if self.container_here:
             if not self._containers_state.contains(self.container_here):
-                raise excpt.Internal_Exception(
+                raise excpt.InternalError(
                     f"room obj `{self.internal_name}` container_here "
                     f"value '{self.container_here}' doesn't correspond to "
                     "any creatures in creatures_state store")
@@ -2515,7 +2515,7 @@ current room to an adjacent room by the given compass direction.
 
         if ((north and west) or (north and south) or (north and east)
                 or (west and south) or (west and east) or (south and east)):
-            raise excpt.Internal_Exception(
+            raise excpt.InternalError(
                 "move() must receive only *one* True argument of the four "
                 "keys `north`, `south`, `east` and `west`")
         if north:
@@ -2542,7 +2542,7 @@ current room to an adjacent room by the given compass direction.
         # If the Door object has is_locked=True, an exception is raised.
 
         if door.is_locked:
-            raise excpt.Internal_Exception(
+            raise excpt.InternalError(
                 f"exiting {self.cursor.internal_name} via the "
                 f"{exit_name.replace('_',' ')}: door is locked")
 

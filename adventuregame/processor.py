@@ -214,7 +214,7 @@ on this object, a Character object will be added and the game can begin.
             # This exception catches a programmer error if the pregame_commands
             # or ingame_commands wasn't updated with a new command.
             if command not in commands_set:
-                raise excpt.Internal_Exception('Inconsistency between set list of commands and command methods found '
+                raise excpt.InternalError('Inconsistency between set list of commands and command methods found '
                                                f'by introspection: method {method_name}() does not correspond to a '
                                                'command in pregame_commands or ingame_commands.')
             commands_set.remove(command)
@@ -222,7 +222,7 @@ on this object, a Character object will be added and the game can begin.
         # to pregame_commands or ingame_commands but the corresponding method
         # hasn't been written or was misnamed.
         if len(commands_set):
-            raise excpt.Internal_Exception('Inconsistency between set list of commands and command methods found by '
+            raise excpt.InternalError('Inconsistency between set list of commands and command methods found by '
                                            f"introspection: command '{commands_set.pop()} does not correspond to a command "
                                            'in pregame_commands or ingame_commands.')
 
@@ -1509,7 +1509,7 @@ LockCommand_ElementHasBeenLocked
                                    else 'creature' if tried_to_operate_on_creature
                                    else item_targetted.__class__.__name__.lower()}
             if command.lower() == 'unlock':
-                return stmsg.Stmsg_Unlock_ElementNotLockable(target_title, **argd),
+                return stmsg.unlock.ElementNotLockable(target_title, **argd),
             elif command.lower() == 'lock':
                 return stmsg.Stmsg_Lock_ElementNotUnlockable(target_title, **argd),
             elif command.lower() == 'open':
@@ -1521,7 +1521,7 @@ LockCommand_ElementHasBeenLocked
             # the player's reach, so the appropriate error value is returned
             # indicating the target isn't present.
             if command.lower() == 'unlock':
-                return stmsg.Stmsg_Unlock_ElementToLockNotHere(target_title),
+                return stmsg.ElementToLockNotHere(target_title),
             elif command.lower() == 'lock':
                 return stmsg.Stmsg_Lock_ElementToUnlockNotHere(target_title),
             elif command.lower() == 'open':
@@ -2466,7 +2466,7 @@ title) from the tokens argument.
             if quantity == 1:
                 # quantity is 1 but the item title is plural, so I return a
                 # syntax error.
-                return ((stmsg.Stmsg_Take_QuantityUnclear(),) if command == 'take'
+                return ((stmsg.take.QuantityUnclear(),) if command == 'take'
                         else (stmsg.Stmsg_Put_QuantityUnclear(),))
 
             # I strip the plural s.
@@ -2667,7 +2667,7 @@ SET NAME [TO] <character name>
                 continue
             invalid_name_parts.append(name_part)
         if len(invalid_name_parts):
-            return tuple(map(stmsg.Stmsg_SetNm_InvalidPart, invalid_name_parts))
+            return tuple(map(stmsg.setname.InvalidPart, invalid_name_parts))
 
         # If the name wasn't set before this call, I save that fact, then set the character name.
         name_was_none = self.game_state.character_name is None
@@ -2679,7 +2679,7 @@ SET NAME [TO] <character name>
         # Character object as a side effect, so I return a 2-tuple of a name-set
         # value and a display-rolled-stats value.
         if self.game_state.character_class is not None and name_was_none:
-            return (stmsg.Stmsg_SetNm_NameSet(name_str), stmsg.various.DisplayRolledStats(
+            return (stmsg.setname.NameSet(name_str), stmsg.various.DisplayRolledStats(
                         strength=self.game_state.character.strength,
                         dexterity=self.game_state.character.dexterity,
                         constitution=self.game_state.character.constitution,
@@ -2689,7 +2689,7 @@ SET NAME [TO] <character name>
             ))
         else:
             # Otherwise I just return a name-set value.
-            return stmsg.Stmsg_SetNm_NameSet(self.game_state.character_name),
+            return stmsg.setname.NameSet(self.game_state.character_name),
 
     def status_command(self, tokens):
         """
@@ -2753,7 +2753,7 @@ takes no arguments.
         status_gsm_argd['character_class'] = character.character_class
 
         # The entire argd has been assembled so I return a status-ouput value.
-        return stmsg.Stmsg_Status_StatusOutput(**status_gsm_argd),
+        return stmsg.status.StatusOutput(**status_gsm_argd),
 
     def take_command(self, tokens):
         """
@@ -2800,7 +2800,7 @@ TAKE <number> <item name> FROM <container name>
         # Container.
         matching_item = tuple(filter(lambda argl: argl[1][1].title == item_title, container.items()))
         if len(matching_item) == 0:
-            return stmsg.Stmsg_Take_ItemNotFoundInContainer(
+            return stmsg.take.ItemNotFoundInContainer(
                        container_title, quantity_to_take, container.container_type, item_title),
 
         (item_internal_name, (item_quantity, item)), = matching_item
@@ -2813,7 +2813,7 @@ TAKE <number> <item name> FROM <container name>
         if quantity_to_take > item_quantity:
             # The amount specified is more than how much is in the Container, so
             # I return a trying-to-take-more-than-is-present error.
-            return stmsg.Stmsg_Take_TryingToTakeMoreThanIsPresent(
+            return stmsg.take.TryingToTakeMoreThanIsPresent(
                              container_title, container.container_type,
                              item_title, item.item_type, quantity_to_take, item_quantity),
 
@@ -2829,7 +2829,7 @@ TAKE <number> <item name> FROM <container name>
         # I add the item in the given quantity to the player character's
         # inventory and return an item-or-items-taken value.
         self.game_state.character.pick_up_item(item, qty=quantity_to_take)
-        return stmsg.Stmsg_Take_ItemOrItemsTaken(container_title, item_title, quantity_to_take),
+        return stmsg.take.ItemOrItemsTaken(container_title, item_title, quantity_to_take),
 
     def unequip_command(self, tokens):
         """
@@ -2870,9 +2870,9 @@ UNEQUIP <weapon name>
                                         if item.title == item_title)
             if matching_item_tuple:
                 item, = matching_item_tuple[0:1]
-                return stmsg.Stmsg_Unequip_ItemNotEquipped(item.title, item.item_type),
+                return stmsg.unequip.ItemNotEquipped(item.title, item.item_type),
             else:
-                return stmsg.Stmsg_Unequip_ItemNotEquipped(item_title),
+                return stmsg.unequip.ItemNotEquipped(item_title),
 
         # I extract the matched item.
         item, = matching_item_tuple[0:1]
@@ -2884,12 +2884,12 @@ UNEQUIP <weapon name>
             if self.game_state.character.armor_equipped is None:
                 # If I'm unequipping armor but the player character has no armor
                 # equipped I return a item-not-equipped error.
-                return stmsg.Stmsg_Unequip_ItemNotEquipped(item_title, 'armor'),
+                return stmsg.unequip.ItemNotEquipped(item_title, 'armor'),
             else:
                 if self.game_state.character.armor_equipped.title != item_title:
                     # If armor_equipped's title doesn't match the argument
                     # item_title, I return an item-not-equipped error.
-                    return stmsg.Stmsg_Unequip_ItemNotEquipped(item_title, 'armor',
+                    return stmsg.unequip.ItemNotEquipped(item_title, 'armor',
                                                                    self.game_state.character.armor_equipped.title),
                 else:
                     # Otherwise, the title matches, so I unequip the armor and
@@ -2901,12 +2901,12 @@ UNEQUIP <weapon name>
             if self.game_state.character.shield_equipped is None:
                 # If I'm unequipping a shield but the player character has no shield
                 # equipped I return a item-not-equipped error.
-                return stmsg.Stmsg_Unequip_ItemNotEquipped(item_title, 'shield'),
+                return stmsg.unequip.ItemNotEquipped(item_title, 'shield'),
             else:
                 if self.game_state.character.shield_equipped.title != item_title:
                     # If shield_equipped's title doesn't match the argument
                     # item_title, I return an item-not-equipped error.
-                    return stmsg.Stmsg_Unequip_ItemNotEquipped(item_title, 'shield',
+                    return stmsg.unequip.ItemNotEquipped(item_title, 'shield',
                                                                    self.game_state.character.shield_equipped.title),
                 else:
                     # Otherwise, the title matches, so I unequip the shield and
@@ -2918,12 +2918,12 @@ UNEQUIP <weapon name>
             if self.game_state.character.wand_equipped is None:
                 # If I'm unequipping a wand but the player character has no wand
                 # equipped I return a item-not-equipped error.
-                return stmsg.Stmsg_Unequip_ItemNotEquipped(item_title, 'wand'),
+                return stmsg.unequip.ItemNotEquipped(item_title, 'wand'),
             else:
                 if self.game_state.character.wand_equipped.title != item_title:
                     # If wand_equipped's title doesn't match the argument
                     # item_title, I return an item-not-equipped error.
-                    return stmsg.Stmsg_Unequip_ItemNotEquipped(item_title, 'wand'),
+                    return stmsg.unequip.ItemNotEquipped(item_title, 'wand'),
                 else:
                     # Otherwise, the title matches, so I unequip the wand.
                     self.game_state.character.unequip_wand()
@@ -2945,12 +2945,12 @@ UNEQUIP <weapon name>
             # If I'm unequipping a weapon but the player character has no weapon
             # equipped I return a item-not-equipped error.
             if self.game_state.character.weapon_equipped is None:
-                return stmsg.Stmsg_Unequip_ItemNotEquipped(item.title, 'weapon'),
+                return stmsg.unequip.ItemNotEquipped(item.title, 'weapon'),
             else:
                 if self.game_state.character.weapon_equipped.title != item_title:
                     # If weapon_equipped's title doesn't match the argument
                     # item_title, I return an item-not-equipped error.
-                    return stmsg.Stmsg_Unequip_ItemNotEquipped(item.title, 'weapon'),
+                    return stmsg.unequip.ItemNotEquipped(item.title, 'weapon'),
                 else:
                     # Otherwise, the title matches, so I unequip the weapon.
                     self.game_state.character.unequip_weapon()
@@ -3022,11 +3022,11 @@ UNLOCK <chest\u00A0name>
         if not any(item.title == key_required for _, item in self.game_state.character.list_items()):
             # If the required key is not present, I return a
             # don't-possess-correct-key error.
-            return stmsg.Stmsg_Unlock_DontPossessCorrectKey(element_to_unlock.title, key_required),
+            return stmsg.unlock.DontPossessCorrectKey(element_to_unlock.title, key_required),
         elif element_to_unlock.is_locked is False:
             # Otherwise, if the item is already unlocked, I return an
             # element-is-already-unlocked error.
-            return stmsg.Stmsg_Unlock_ElementIsAlreadyLocked(element_to_unlock.title),
+            return stmsg.unlock.ElementIsAlreadyLocked(element_to_unlock.title),
         elif isinstance(element_to_unlock, elem.Door):
             # This is a door object, and it only represents _this side_ of the
             # door game element; I use _matching_door() to fetch the door object
@@ -3038,4 +3038,4 @@ UNLOCK <chest\u00A0name>
 
         # I unlock the element, and return an element-has-been-unlocked value.
         element_to_unlock.is_locked = False
-        return stmsg.Stmsg_Unlock_ElementHasBeenLocked(element_to_unlock.title),
+        return stmsg.unlock.ElementHasBeenLocked(element_to_unlock.title),

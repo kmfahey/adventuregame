@@ -62,7 +62,7 @@ class Test_Character(unittest.TestCase):
         longsword = self.items_state.get('Longsword')
         scale_mail = self.items_state.get('Scale_Mail')
         shield = self.items_state.get('Steel_Shield')
-        with self.assertRaises(advg.Internal_Exception):
+        with self.assertRaises(advg.InternalError):
             character.equip_weapon(longsword)
         character.pick_up_item(longsword)
         character.pick_up_item(scale_mail)
@@ -291,7 +291,7 @@ class Test_Equipment(unittest.TestCase):
         self.assertTrue(equipment.armor_equipped)
         self.assertTrue(equipment.shield_equipped)
         self.assertTrue(equipment.weapon_equipped)
-        with self.assertRaises(advg.Internal_Exception):
+        with self.assertRaises(advg.InternalError):
             equipment.equip_armor(self.items_state.get('Steel_Shield'))
         self.assertEqual(equipment.armor_class, 16)
         self.assertEqual(equipment.attack_bonus, 3)
@@ -319,7 +319,7 @@ class Test_AbilityScores(unittest.TestCase):
         self.maxDiff = None
 
     def test_ability_scores_args_exception(self):
-        with self.assertRaises(advg.Internal_Exception):
+        with self.assertRaises(advg.InternalError):
             advg.AbilityScores('Ranger')
 
     def test_roll_stats(self):
