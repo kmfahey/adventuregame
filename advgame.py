@@ -899,21 +899,21 @@ for temp_file in ini_file_tempfiles.values():
 # objects require other ones as arguments to initialize properly, so this
 # proceeds in order from simple to complex.
 
-items_state = advg.Items_State(**items_ini_config.sections)
-doors_state = advg.Doors_State(**doors_ini_config.sections)
-containers_state = advg.Containers_State(items_state, 
+items_state = advg.ItemsState(**items_ini_config.sections)
+doors_state = advg.DoorsState(**doors_ini_config.sections)
+containers_state = advg.ContainersState(items_state, 
                                          **containers_ini_config.sections)
-creatures_state = advg.Creatures_State(items_state, 
+creatures_state = advg.CreaturesState(items_state, 
                                        **creatures_ini_config.sections)
-rooms_state = advg.Rooms_State(creatures_state, containers_state, doors_state, 
+rooms_state = advg.RoomsState(creatures_state, containers_state, doors_state, 
                               items_state, **rooms_ini_config.sections)
-game_state = advg.Game_State(rooms_state, creatures_state, containers_state, 
+game_state = advg.GameState(rooms_state, creatures_state, containers_state, 
                              doors_state, items_state)
 
 
 # Stage 3: instancing the Command_Processor object.
 # 
-# The state objects are summarized by a Game_State object, which is the
+# The state objects are summarized by a GameState object, which is the
 # sole argument to Command_Processor.__init__. Its methods will consult the
 # game_state object to interact with the game's object environment.
 command_processor = advg.Command_Processor(game_state)
@@ -956,7 +956,7 @@ that, enter BEGIN GAME and enter the dungeon!
 # input() builtin, and Command_Processor.process() is used to interpret &
 # execute them.
 #
-# process() returns a tuple of adventuregame.statemsgs.Game_State_Message
+# process() returns a tuple of adventuregame.statemsgs.GameStateMessage
 # subclass objects; they always have a message property which returns a natural
 # language response to the command. It is either an error message or it
 # describes the results of a successful command.
@@ -973,18 +973,18 @@ while True:
 
     result = command_processor.process(command)
 
-    # Game_State_Message subclass objects' message properties return one or more
+    # GameStateMessage subclass objects' message properties return one or more
     # long lines of text, so adventuregame.utility.textwrapper is used to wrap
     # the messages to 80 columns.
     for game_state_message in result:
         print(advg.textwrapper(game_state_message.message))
 
-    # Any one of these three Game_State_Message subclass objects signifies the
+    # Any one of these three GameStateMessage subclass objects signifies the
     # end of the game. If one of them occurs at the end of a list of state
     # messages, the game exits.
-    if isinstance(result[-1], (advg.Quit_Command_Have_Quit_The_Game,
-                               advg.Be_Attacked_by_Command_Character_Death,
-                               advg.Leave_Command_Won_The_Game)):
+    if isinstance(result[-1], (advg.Stmsg_Quit_HaveQuitTheGame,
+                               advg.Stmsg_Batkby_CharacterDeath,
+                               advg.Stmsg_Leave_WonTheGame)):
         exit(0)
 
     print()

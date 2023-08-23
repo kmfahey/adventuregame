@@ -37,7 +37,7 @@ from .ini file entries.
 
     # This regular expression is used to parse the contents= attributes
     # used by rooms.ini and containers.ini to encode initializing data
-    # for an Items_Multi_State object into a single line of text. Used
+    # for an ItemsMultiState object into a single line of text. Used
     # in IniEntry._process_list_value().
 
     inventory_list_value_re = re.compile(r"""^\[(
@@ -314,17 +314,17 @@ dict.
 
 class ItemsMultiState(ItemsState):
     """
-This subclass of Items_State extends its functionality to track the
+This subclass of ItemsState extends its functionality to track the
 quantity of each Item subclass object it contains.
     """
 
     def __init__(self, **argd):
         """
 The __init__ method of this class uses super() to call
-Items_State.__init__() with the **dict-of-dicts argd. It then resets
+ItemsState.__init__() with the **dict-of-dicts argd. It then resets
 each key's value to a tuple of the quantity 1 and the Item subclass
 object. Quantities can be altered with subsequent method use but setting
-quantities above 1 in Items_Multi_State.__init__ is not supported.
+quantities above 1 in ItemsMultiState.__init__ is not supported.
         """
         super().__init__(**argd)
 
@@ -658,7 +658,7 @@ in this container.
 class Container(IniEntry, ItemsMultiState):
     """
 This class uses multiple inheritance to inherit from both IniEntry and
-Items_Multi_State: it is an object that's instantiated from an entry in
+ItemsMultiState: it is an object that's instantiated from an entry in
 items.ini, but also can contain Item subclass objects.
     """
     __slots__ = ("internal_name", "title", "description", "is_locked",
@@ -723,7 +723,7 @@ This factory accepts an items_state object and a **dict-of-dicts as
 featured in an IniConfig object's section attribute, and determines
 which Container subclass is appropriate to instantiate from the data.
 
-:items_state:      An Items_State object.
+:items_state:      An ItemsState object.
 :**container_dict: A dict of key-value pairs to instantiate the
                    Container subclass with.
         """
@@ -754,7 +754,7 @@ objects by type testing.
 
 class ContainersState(ItemsState):
     """
-This Items_State subclass is instantiated from the sections attribute of
+This ItemsState subclass is instantiated from the sections attribute of
 an IniConfig object instantiated from containers.ini.
     """
     __slots__ = "_contents",
@@ -765,7 +765,7 @@ This __init__ method accepts an items_state object and a
 **dict-of-dicts, which it iterates down to instantiate the Container
 subclass objects that the container is populated with.
 
-:items_state:     An Items_State object.
+:items_state:     An ItemsState object.
 :**dict_of_dicts: A structure of internal name keys corresponding to
                   dict values which are key-value pairs to initialize an
                   individual Container subclass object with.
@@ -1190,10 +1190,10 @@ points if a spellcaster, and inventory.
                  intelligence=0, wisdom=0, charisma=0):
         """
 This __init__ method sets the character's name and class. It
-instantiates a subordinate Ability_Scores object, and initialized
+instantiates a subordinate AbilityScores object, and initialized
 it with the ability scores arguments (which does nothing if they
 are the default of zero). It instantiates the subordinate inventory
-Items_Multi_State() object and the subordinate Equipment object, and
+ItemsMultiState() object and the subordinate Equipment object, and
 sets up the hit point and (optionally) mana point values. It also sets
 the magic key stat if any.
                                                                        |
@@ -1296,7 +1296,7 @@ for Mages, and Wisdom for Priests).
 :return:           None.
         """
 
-        # When the Character is instanced by a Game_State object, none
+        # When the Character is instanced by a GameState object, none
         # of these values are supplied to __init__. But the Creature
         # object that subclasses Character draws its values from an .ini
         # entry, and it does have all these values supplied to __init__.
@@ -1606,14 +1606,14 @@ wand or weapon, and the relevant ability score modifier.
 
         return dmg_str
 
-    # This class keeps its `Ability_Scores`, `Equipment` and
-    # `Items_Multi_State` (Inventory) objects in private attributes,
+    # This class keeps its `AbilityScores`, `Equipment` and
+    # `ItemsMultiState` (Inventory) objects in private attributes,
     # just as a matter of good OOP design. In the cases of the
-    # `Ability_Scores` and `Equipment` objects, these passthrough
+    # `AbilityScores` and `Equipment` objects, these passthrough
     # methods are necessary so the concealed objects' functionality can
     # be accessed from code that only has the `Character` object.
     #
-    # The `Items_Multi_State` inventory object presents a customized
+    # The `ItemsMultiState` inventory object presents a customized
     # mapping interface that Character action management code doesn't
     # need to access, so only a few methods are offered.
 
@@ -1685,12 +1685,12 @@ by the Item subclass object's title attributes.
         return list(sorted(self.inventory.values(),
                            key=lambda *argl: argl[0][1].title))
 
-    # BEGIN passthrough methods for private Ability_Scores
+    # BEGIN passthrough methods for private AbilityScores
     @property
     def strength(self):
         """
 This property returns the value for the Strength score stored in the
-subordinate Ability_Scores object.
+subordinate AbilityScores object.
 
 :return: An int.
         """
@@ -1700,7 +1700,7 @@ subordinate Ability_Scores object.
     def dexterity(self):
         """
 This property returns the value for the Dexterity score stored in the
-subordinate Ability_Scores object.
+subordinate AbilityScores object.
 
 :return: An int.
         """
@@ -1710,7 +1710,7 @@ subordinate Ability_Scores object.
     def constitution(self):
         """
 This property returns the value for the Constitution score stored in the
-subordinate Ability_Scores object.
+subordinate AbilityScores object.
 
 :return: An int.
         """
@@ -1720,7 +1720,7 @@ subordinate Ability_Scores object.
     def intelligence(self):
         """
 This property returns the value for the Intelligence score stored in the
-subordinate Ability_Scores object.
+subordinate AbilityScores object.
 
 :return: An int.
         """
@@ -1730,7 +1730,7 @@ subordinate Ability_Scores object.
     def wisdom(self):
         """
 This property returns the value for the Wisdom score stored in the
-subordinate Ability_Scores object.
+subordinate AbilityScores object.
 
 :return: An int.
         """
@@ -1740,7 +1740,7 @@ subordinate Ability_Scores object.
     def charisma(self):
         """
 This property returns the value for the Charisma score stored in the
-subordinate Ability_Scores object.
+subordinate AbilityScores object.
 
 :return: An int.
         """
@@ -1750,7 +1750,7 @@ subordinate Ability_Scores object.
     def strength_mod(self):
         """
 This property returns the Strength ability score modifier from the
-subordinate Ability_Scores object.
+subordinate AbilityScores object.
 
 :return: An int.
         """
@@ -1760,7 +1760,7 @@ subordinate Ability_Scores object.
     def dexterity_mod(self):
         """
 This property returns the Dexterity ability score modifier from the
-subordinate Ability_Scores object.
+subordinate AbilityScores object.
 
 :return: An int.
         """
@@ -1770,7 +1770,7 @@ subordinate Ability_Scores object.
     def constitution_mod(self):
         """
 This property returns the Constitution ability score modifier from the
-subordinate Ability_Scores object.
+subordinate AbilityScores object.
 
 :return: An int.
         """
@@ -1780,7 +1780,7 @@ subordinate Ability_Scores object.
     def intelligence_mod(self):
         """
 This property returns the Intelligence ability score modifier from the
-subordinate Ability_Scores object.
+subordinate AbilityScores object.
 
 :return: An int.
         """
@@ -1790,7 +1790,7 @@ subordinate Ability_Scores object.
     def wisdom_mod(self):
         """
 This property returns the Wisdom ability score modifier from the
-subordinate Ability_Scores object.
+subordinate AbilityScores object.
 
 :return: An int.
         """
@@ -1800,12 +1800,12 @@ subordinate Ability_Scores object.
     def charisma_mod(self):
         """
 This property returns the Charisma ability score modifier from the
-subordinate Ability_Scores object.
+subordinate AbilityScores object.
 
 :return: An int.
         """
         return self.ability_scores._stat_mod("charisma")
-    # END passthrough methods for private Ability_Scores
+    # END passthrough methods for private AbilityScores
 
     # BEGIN passthrough methods for private _equipment
     @property
@@ -1985,7 +1985,7 @@ object.
     # values for these Character parameters that are informed only by
     # the Equipment it stores. At the level of the `Character` object,
     # these values should also be informed by the character's ability
-    # scores stores in the `Ability_Scores`. A character's armor class
+    # scores stores in the `AbilityScores`. A character's armor class
     # is modified by their dexterity modifier; and their attack & damage
     # values are modified by either their strength score (for Warriors,
     # Priests, and Mages using a Weapon), or Dexterity (for Thieves), or
@@ -2062,7 +2062,7 @@ __init__ methods from both IniEntry and Character. It sets the ability
 scores, populates its inventory, and sets up its equipment from its ini
 file data.
 
-:items_state:   An Items_State object.
+:items_state:   An ItemsState object.
 :internal_name: A string, the internal name of the creature.
 :**argd:        A dict, the key-value pairs to instantiate the
                 Creature object from.
@@ -2105,7 +2105,7 @@ This private method takes the argd supplied to __init__ and separates
 it into Character.__init__() arguments, IniEntry.__init__() arguments,
 inventory quantity-internal name pairs, and an equipment dict.
 
-:items_state:   An Items_State object.
+:items_state:   An ItemsState object.
 :intrn_name: A string, the creature's internal name.
 :**argd:        The key-value pairs to differentiate into different
                 sets of arguments.
@@ -2161,7 +2161,7 @@ inventory quantity-internal name pairs, and an equipment dict.
                 f"bad creatures.ini specification for creature "
                 f"{intrn_name}: creature ini config dict "
                 f"`inventory_items` value indicated item{pluralizer} not "
-                "present in `Items_State` argument: "
+                "present in `ItemsState` argument: "
                 + (", ".join(missing_names)))
 
         # The remaining argd is for IniEntry.__init__. And the four
@@ -2178,7 +2178,7 @@ This private method accepts an items state, inventory quantity-internal
 name pairs, and the equipment dict, and uses them to initialize the
 creature's inventory and equipped items.
 
-:items_state:              An Items_State object.
+:items_state:              An ItemsState object.
 :invent_qty_name_pairs: A tuple of 2-tuples of item quantity ints
                            and internal name strings.
 :equip_argd:           A dictionary of equipment assignments.
@@ -2250,7 +2250,7 @@ Unlike other *_State classes it doesn't use a subclassing_factory
 because the Creature class is not subclassed to delineate different
 types of creature.
 
-:items_state:     An Items_State object.
+:items_state:     An ItemsState object.
 :**dict_of_dicts: A structure of internal name keys corresponding to
                   dict values which are key-value pairs to initialize an
                   individual Creature object with.
@@ -2325,10 +2325,10 @@ the object from its argd, drawing on the state objects to set the
 creature_here, container_here, items_here and the {compass_dir}_door
 attributes.
 
-:creatures_state:  A Creatures_State object.
-:containers_state: A Containers_State object.
-:doors_state:      A Doors_State object.
-:items_state:      An Items_State object.
+:creatures_state:  A CreaturesState object.
+:containers_state: A ContainersState object.
+:doors_state:      A DoorsState object.
+:items_state:      An ItemsState object.
 :**argd:           A dict of key-value pairs to instantiate the Room
                    object with.
         """
@@ -2367,7 +2367,7 @@ attributes.
         # If an items_here attribute is set, it's parsed as the
         # compact item quantity/internal_name as interpretable
         # by IniEntry._process_list_value(), and the resultant
-        # Items_Multi_State object is assigned to items_here.
+        # ItemsMultiState object is assigned to items_here.
 
         if self.items_here:
             items_here_names_list = self._process_list_value(self.items_here)
@@ -2429,7 +2429,7 @@ layout.
     @property
     def cursor(self):
         """
-This property returns the Room object that the Rooms_State object
+This property returns the Room object that the RoomsState object
 considers the player to currently be occupying.
 
 :return: A Room object.
@@ -2444,10 +2444,10 @@ creatures_state object, a containers_state object, a doors_state object
 and an items_state object to initialize them with, and a **dict-of-dicts
 from rooms.ini as furnished by an IniConfig's sections attribute.
 
-:creatures_state:  A Creatures_State object.
-:containers_state: A Containers_State object.
-:doors_state:      A Doors_State object.
-:items_state:      A Items_State object.
+:creatures_state:  A CreaturesState object.
+:containers_state: A ContainersState object.
+:doors_state:      A DoorsState object.
+:items_state:      A ItemsState object.
 :**dict_of_dicts:  A structure of internal name keys corresponding to
                    dict values which are key-value pairs to initialize
                    an individual Creature object with.
@@ -2496,7 +2496,7 @@ given internal name.
 
     def move(self, north=False, west=False, south=False, east=False):
         """
-This method directs the Rooms_State object to move the cursor from the
+This method directs the RoomsState object to move the cursor from the
 current room to an adjacent room by the given compass direction.
 
 :north:  A boolean, True if movement to the north is intended, False
@@ -2558,7 +2558,7 @@ current room to an adjacent room by the given compass direction.
 
 class GameState(object):
     """
-This class represents the entire Game_State needed to run a
+This class represents the entire GameState needed to run a
 session of AdventureGame. It is the top-level object, and stores an
 items_state object, a doors_state object, a containers_state object,
 a creatures_state object, a rooms_state object, and (once it can be
@@ -2620,11 +2620,11 @@ This __init__ method stores an items_state object, a doors_state object,
 a containers_state object, a creatures_state object, and a rooms_state
 object from its arguments.
 
-:rooms_state:      A Rooms_State object.
-:creatures_state:  A Creatures_State object.
-:containers_state: A Containers_State object.
-:doors_state:      A Doors_State object.
-:items_state:      An Items_State object.
+:rooms_state:      A RoomsState object.
+:creatures_state:  A CreaturesState object.
+:containers_state: A ContainersState object.
+:doors_state:      A DoorsState object.
+:items_state:      An ItemsState object.
         """
         self.items_state = items_state
         self.doors_state = doors_state
