@@ -16,15 +16,15 @@ the dungeon (which is the win condition).
   environment used by the package, featureing OO representations of game
   elements such as rooms, doors, items, creatures, containers and the character
   themself.
-* advgame.processor comprises a higher-level layer that handles processing
+* advgame.process comprises a higher-level layer that handles processing
   commands entered by the player and returning semantic return values.
 * advgame.stmsg comprises the return values used in
-  advgame.processor; an abstract base class and a large collection of
+  advgame.process; an abstract base class and a large collection of
   subclasses each of which implements a specific result case of one or more
   specific commands.
 """
 
-from advgame.processor import *
+from advgame.process import *
 from advgame.elements import *
 from advgame.stmsg import *
 from advgame.utils import *

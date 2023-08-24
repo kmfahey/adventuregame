@@ -11,7 +11,7 @@ __all__ = ("DontPossessCorrectKey", "ElementNotLockable",
 class DontPossessCorrectKey(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.unlock_command() when the player tries
+advgame.process.Command_Processor.unlock_command() when the player tries
 to unlock a door while not possessing the door key, or unlock a chest while not
 possessing the chest key.
     """
@@ -29,7 +29,7 @@ possessing the chest key.
 class ElementNotLockable(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.unlock_command() when the player
+advgame.process.Command_Processor.unlock_command() when the player
 attempts to unlock a corpse, creature, doorway or item.
     """
     __slots__ = 'target_title', 'target_type'
@@ -48,7 +48,7 @@ attempts to unlock a corpse, creature, doorway or item.
 class ElementHasBeenLocked(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.unlock_command() when the player
+advgame.process.Command_Processor.unlock_command() when the player
 successfully unlocks a chest or door.
     """
     __slots__ = 'target',
@@ -64,7 +64,7 @@ successfully unlocks a chest or door.
 class ElementIsAlreadyLocked(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.unlock_command() when the player tries
+advgame.process.Command_Processor.unlock_command() when the player tries
 to unlock a door or chest that is already unlocked.
     """
     __slots__ = 'target',
@@ -80,7 +80,7 @@ to unlock a door or chest that is already unlocked.
 class ElementToLockNotHere(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.unlock_command() when the player tries
+advgame.process.Command_Processor.unlock_command() when the player tries
 to unlock a door or chest that is not present in the current dungeon room.
     """
     __slots__ = 'target_title',

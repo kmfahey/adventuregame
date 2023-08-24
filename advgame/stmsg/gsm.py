@@ -2,9 +2,9 @@
 
 """
 This module contains GameStateMessage and its numerous subclasses.
-advgame.processor.Command_Processor.process() processes a natural
+advgame.process.Command_Processor.process() processes a natural
 language command from the player and tail calls a command method of the
-advgame.processor.Command_Processor object. It always returns a tuple
+advgame.process.Command_Processor object. It always returns a tuple
 of GameStateMessage subclass objects; each one represents a single possible
 outcome of a command. A GameStateMessage subclass has an __init__ method that
 assigns keyword arguments to object attributes and a message property which

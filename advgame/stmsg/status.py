@@ -9,7 +9,7 @@ __all__ = "StatusOutput",
 class StatusOutput(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.status_command() when the player
+advgame.process.Command_Processor.status_command() when the player
 executes it. The status line conveyed by the message property includes the
 player's current and total hit points, current and total mana points if they're
 a spellcaster, their attack and damage, their armor class, their armor equipped

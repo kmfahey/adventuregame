@@ -197,7 +197,7 @@ rolls with the given modifier, and returns the computed random value>
     return sum(random.randint(1, sidedness_of_dice) for _ in range(0, number_of_dice)) + modifier_to_roll
 
 
-# The return values from advgame.processor.Command_Processor.process() are
+# The return values from advgame.process.Command_Processor.process() are
 # not wrapped; the wrapping is done at the UI level in advgame.py. Python comes
 # with a text wrapping library, textwrap, but it has a limitation: if it's fed a
 # multi-paragraph string, the paragraphs are run together and a single wrapped

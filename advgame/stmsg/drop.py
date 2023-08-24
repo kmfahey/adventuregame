@@ -9,7 +9,7 @@ __all__ = ("DroppedItem", "QuantityUnclear", "TryingToDropItemYouDontHave", "Try
 class DroppedItem(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.drop_command() when the player
+advgame.process.Command_Processor.drop_command() when the player
 successfully drops an item on the floor.
     """
     __slots__ = 'item_title', 'item_type', 'amount_dropped', 'amount_on_floor', 'amount_left'
@@ -61,7 +61,7 @@ successfully drops an item on the floor.
 class QuantityUnclear(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.drop_command() when the player writes
+advgame.process.Command_Processor.drop_command() when the player writes
 an ungrammatical sentence that is ambiguous as to how many of the item they
 intend to target.
     """
@@ -77,7 +77,7 @@ intend to target.
 class TryingToDropItemYouDontHave(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.drop_command() when the player
+advgame.process.Command_Processor.drop_command() when the player
 specifies an item to drop that is not in their inventory.
     """
     __slots__ = 'item_title', 'amount_attempted'
@@ -99,7 +99,7 @@ specifies an item to drop that is not in their inventory.
 class TryingToDropMoreThanYouHave(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.drop_command() when the player
+advgame.process.Command_Processor.drop_command() when the player
 specifies a quantity of a certain item to drop that is more than the quantity of
 that item that they actually possess.
     """

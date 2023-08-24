@@ -12,7 +12,7 @@ __all__ = ("FoundContainerHere", "FoundCreatureHere", "FoundDoorOrDoorway",
 class FoundContainerHere(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.look_at_command() when the player
+advgame.process.Command_Processor.look_at_command() when the player
 targets a chest or a corpse. If it's a chest and it's unlocked, the contents of
 the chest are conveyed. If it's a corpse, the corpse's possessions are conveyed.
     """
@@ -87,7 +87,7 @@ the chest are conveyed. If it's a corpse, the corpse's possessions are conveyed.
 class FoundCreatureHere(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.look_command() when the player targets
+advgame.process.Command_Processor.look_command() when the player targets
 a creature in the dungeon's current room.
     """
     __slots__ = 'creature_description',
@@ -103,7 +103,7 @@ a creature in the dungeon's current room.
 class FoundDoorOrDoorway(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.look_at_command() when the player
+advgame.process.Command_Processor.look_at_command() when the player
 targets a door or doorway in the current dungeon room.
     """
     __slots__ = 'compass_dir', 'door'
@@ -126,7 +126,7 @@ targets a door or doorway in the current dungeon room.
 class FoundItemOrItemsHere(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.look_at_command() when the player
+advgame.process.Command_Processor.look_at_command() when the player
 targets an item that is present on the floor of current room or in their
 inventory or in a chest or on a corpse's person as specified by the player. It
 conveys the item's description attribute and specifies how many are present.
@@ -156,7 +156,7 @@ conveys the item's description attribute and specifies how many are present.
 class FoundNothing(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.look_at_command() when the player
+advgame.process.Command_Processor.look_at_command() when the player
 targets an item that can't be found where they said it was.
     """
     __slots__ = 'item_title', 'item_location', 'location_type'

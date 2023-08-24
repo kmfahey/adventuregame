@@ -9,7 +9,7 @@ __all__ = ("DrankManaPotion", "DrankManaPotionWhenNotASpellcaster", "ItemNotDrin
 class DrankManaPotion(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.drink_coomand() when the player
+advgame.process.Command_Processor.drink_coomand() when the player
 uses it to drink a mana potion. It is only returned if the player's
 character is a Mage or Priest. If they're playing a Warrior or Thief, a
 Stmsg_Drink_DrankManaPotionWhenNotASpellcaster object is returned
@@ -40,7 +40,7 @@ instead.
 class DrankManaPotionWhenNotASpellcaster(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.drink_command() when the player drinks
+advgame.process.Command_Processor.drink_command() when the player drinks
 a mana potion but they're playing a Warrior or Thief and have no mana points to
 restore.
     """
@@ -57,7 +57,7 @@ restore.
 class ItemNotDrinkable(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.drink_command() when the player
+advgame.process.Command_Processor.drink_command() when the player
 targets an item that is not a potion.
     """
     __slots__ = 'item_title',
@@ -73,7 +73,7 @@ targets an item that is not a potion.
 class ItemNotInInventory(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.drink_command() when the player tries
+advgame.process.Command_Processor.drink_command() when the player tries
 to drink a potion that isn't in their inventory.
     """
     __slots__ = 'item_title',
@@ -89,7 +89,7 @@ to drink a potion that isn't in their inventory.
 class TriedToDrinkMoreThanPossessed(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.drink_command() when the player
+advgame.process.Command_Processor.drink_command() when the player
 specifies drinking a quantity of potions that is greater than the number they
 have in their inventory.
     """
@@ -108,7 +108,7 @@ have in their inventory.
 class QuantityUnclear(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.drink_command() when the player writes
+advgame.process.Command_Processor.drink_command() when the player writes
 an ungrammatical sentence that is ambiguous as to how many of the item they
 intend to target.
     """

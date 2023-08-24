@@ -9,7 +9,7 @@ __all__ = ("NameOrClassNotSet",)
 class NameOrClassNotSet(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.reroll_command() when the player tries
+advgame.process.Command_Processor.reroll_command() when the player tries
 to use it before they have set their name and class. The player's ability scores
 aren't rolled until they've chosen a name and class, and therefore can't be
 rerolled yet.

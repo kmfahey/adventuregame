@@ -10,7 +10,7 @@ __all__ = ("ItemNotFoundInContainer", "ItemOrItemsTaken", "QuantityUnclear",
 class ItemNotFoundInContainer(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.take_command() if the player specifies
+advgame.process.Command_Processor.take_command() if the player specifies
 an item to take from a chest that is not in that chest or from a corpse that is
 not on the corpse.
     """
@@ -38,7 +38,7 @@ not on the corpse.
 class ItemOrItemsTaken(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.take_command() when the player
+advgame.process.Command_Processor.take_command() when the player
 successfully acquires an item from a chest or corpse.
     """
     __slots__ = 'container_title', 'item_title', 'amount_taken'
@@ -62,7 +62,7 @@ successfully acquires an item from a chest or corpse.
 class QuantityUnclear(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.take_command() when the player writes
+advgame.process.Command_Processor.take_command() when the player writes
 an ungrammatical sentence that is ambiguous as to how many of the item the
 player means to take.
     """
@@ -78,7 +78,7 @@ player means to take.
 class TryingToTakeMoreThanIsPresent(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.take_command() when the player
+advgame.process.Command_Processor.take_command() when the player
 specifies a quantity of an item to take from a chest that is more than is
 present in that chest, or from a corpse that is more than is present on that
 corpse.

@@ -12,7 +12,7 @@ __all__ = ("AmbiguousDoorSpecifier", "ContainerIsClosed", "ContainerNotFound", "
 class AmbiguousDoorSpecifier(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.lock_command(), .unlock_command(),
+advgame.process.Command_Processor.lock_command(), .unlock_command(),
 .open_command() and .close_command() when the player has used a specifier for a
 door that matches more than one door in the current dungeon room; for example,
 saying 'unlock wooden door' when there's two wooden doors.
@@ -42,7 +42,7 @@ saying 'unlock wooden door' when there's two wooden doors.
 class ContainerIsClosed(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.put_command() or .take_command() when
+advgame.process.Command_Processor.put_command() or .take_command() when
 the player tries to access a chest that is closed.
     """
     __slots__ = 'target',
@@ -58,7 +58,7 @@ the player tries to access a chest that is closed.
 class ContainerNotFound(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.put_command(), .take_command(), or
+advgame.process.Command_Processor.put_command(), .take_command(), or
 .look_at_command() when trying to look in a chest that isn't present in the
 current dungeon room, or check a corpse that isn't present in the current
 dungeon room.
@@ -80,7 +80,7 @@ dungeon room.
 class DisplayRolledStats(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.set_name_command() or
+advgame.process.Command_Processor.set_name_command() or
 .set_class_command() when both name and class have been set, or by
 .reroll_command(). It displays the character's randomly generated ability
 scores.
@@ -110,7 +110,7 @@ scores.
 class DoorNotPresent(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.close_command(), .leave_command(),
+advgame.process.Command_Processor.close_command(), .leave_command(),
 .lock_command(), .look_at_command(), .open_command(), .pick_lock_command(), or
 .unlock_command() when the player specifies a door that is not present in the
 current dungeon room.
@@ -145,7 +145,7 @@ current dungeon room.
 class EnteredRoom(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.leave_command() when the player leaves
+advgame.process.Command_Processor.leave_command() when the player leaves
 a room and enters a new one, or by .begin_command() when the player starts the
 game in the first room. It prints the room description, lists the items on the
 floor if any, mentions any chest or creature, and lists the exits to the room by
@@ -221,7 +221,7 @@ class FoeDeath(GameStateMessage):
 class ItemEquipped(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.begin_game() or .equip_command() when
+advgame.process.Command_Processor.begin_game() or .equip_command() when
 the player equips an item. It lists the item equipped and mentions how the
 relevant game parameters have changed as a result.
     """
@@ -265,7 +265,7 @@ relevant game parameters have changed as a result.
 class ItemUnequipped(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.equip_command(), .unequip_command(),
+advgame.process.Command_Processor.equip_command(), .unequip_command(),
 or .drop_command(). It's returned by .unequip_command() when the player unequips
 an item; .equip_command() returns it if the player already had an item equipped
 in that slot to convey the previous item's removal; and .drop_command() returns
@@ -328,7 +328,7 @@ the item in their inventory.
 class UnderwentHealingEffect(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.drink_command() or
+advgame.process.Command_Processor.drink_command() or
 .cast_spell_command(). It's returned by .drink_command() if the player drinks a
 health potion; and it's returned by the .cast_spell_command() if the player is a
 Priest and they successfully cast a healing spell.

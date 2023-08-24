@@ -9,7 +9,7 @@ __all__ = ("PutAmountOfItem", "ItemNotInInventory", "QuantityUnclear", "TryingTo
 class PutAmountOfItem(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.put_command() when the player
+advgame.process.Command_Processor.put_command() when the player
 successfully places one or more items in a chest or on a corpse's person.
     """
     __slots__ = 'item_title', 'container_title', 'container_type', 'amount_put', 'amount_left'
@@ -39,7 +39,7 @@ successfully places one or more items in a chest or on a corpse's person.
 class ItemNotInInventory(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.put_command() when the player attempts
+advgame.process.Command_Processor.put_command() when the player attempts
 to put an item in a chest or on a corpse that is not in their inventory.
     """
     __slots__ = 'amount_attempted', 'item_title'
@@ -59,7 +59,7 @@ to put an item in a chest or on a corpse that is not in their inventory.
 class QuantityUnclear(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.put_command() when the player writes
+advgame.process.Command_Processor.put_command() when the player writes
 an ungrammatical sentence that is ambiguous as to how many of the item they mean
 to put in the chest or on the corpse.
     """
@@ -75,7 +75,7 @@ to put in the chest or on the corpse.
 class TryingToPutMoreThanYouHave(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.put_command() when the player tries to
+advgame.process.Command_Processor.put_command() when the player tries to
 put a quantity of an item in a chest or on a corpse that that is more than they
 have in their inventory.
     """

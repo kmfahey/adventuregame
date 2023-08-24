@@ -11,7 +11,7 @@ __all__ = ("ClassCantUseItem", "NoSuchItemInInventory",)
 class ClassCantUseItem(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.equip_command() when the player tries
+advgame.process.Command_Processor.equip_command() when the player tries
 to equip an item that is not allowed for their class. As an example, a Mage
 would get this result if they tried to equip a suit of armor or a shield, and
 anyone besides a Mage would get this result if they tried to equip a wand.
@@ -37,7 +37,7 @@ anyone besides a Mage would get this result if they tried to equip a wand.
 class NoSuchItemInInventory(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.equip_command() when the player tries
+advgame.process.Command_Processor.equip_command() when the player tries
 to equip an item that they don't have in their inventory.
     """
     __slots__ = 'item_title',

@@ -13,14 +13,14 @@ class BadSyntax(GameStateMessage):
 
     """
 This class implements an error object that is returned by command methods of
-advgame.processor.Command_Processor when incorrect syntax for a command
+advgame.process.Command_Processor when incorrect syntax for a command
 has been used.
     """
 
     @property
     def message(self):
         # The proper_syntax_options tuple is drawn from
-        # advgame.processor.COMMANDS_SYNTAX; it is comprised
+        # advgame.process.COMMANDS_SYNTAX; it is comprised
         # of strings which spell out valid command arguments. \u00A0
         # (a nonbreaking space) is used in place of normal spaces to
         # ensure that a syntax line is never broken across a newline by
@@ -46,7 +46,7 @@ has been used.
 class ClassRestricted(GameStateMessage):
     """
 This class implements an error object that is returned by
-advgame.processor.Command_Processor.processor() when the player has used a
+advgame.process.Command_Processor.process() when the player has used a
 command that is restricted to a class other than their own. (For example, only
 thieves can use PICK LOCK.)
     """
@@ -68,12 +68,12 @@ thieves can use PICK LOCK.)
 class NotAllowedNow(GameStateMessage):
     """
 This class implements an error object that is returned by
-advgame.processor.Command_Processor.processor() when the player has used
+advgame.process.Command_Processor.process() when the player has used
 a command that is not allowed in the current game mode. The game has two modes:
 pregame, when name and class are chosen and ability scores are rolled, and
 in-game, when the player plays the game. Different command sets are allowed in
-each mode. See advgame.processor.Command_Processor.pregame_commands and
-advgame.processor.Command_Processor.ingame_commands for the lists.
+each mode. See advgame.process.Command_Processor.pregame_commands and
+advgame.process.Command_Processor.ingame_commands for the lists.
     """
     __slots__ = 'command', 'allowed_commands', 'game_has_begun'
 
@@ -103,7 +103,7 @@ advgame.processor.Command_Processor.ingame_commands for the lists.
 class NotRecognized(GameStateMessage):
     """
 This class implements an error object that is returned by
-advgame.processor.Command_Processor.processor() when a command was entered
+advgame.process.Command_Processor.process() when a command was entered
 that is not known to the command processor.
     """
     __slots__ = 'command', 'allowed_commands', 'game_has_begun'

@@ -9,7 +9,7 @@ __all__ = ("AttackedAndHit", "AttackedAndNotHit", "CharacterDeath",)
 class AttackedAndHit(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor._be_attacked_by_command() when the
+advgame.process.Command_Processor._be_attacked_by_command() when the
 foe's counterattack connects. It conveys the damage done and how many hit points
 the player's character has left.
     """
@@ -31,7 +31,7 @@ the player's character has left.
 class AttackedAndNotHit(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor._be_attacked_by_command() when the
+advgame.process.Command_Processor._be_attacked_by_command() when the
 foe's counterattack did not connect.
     """
     __slots__ = 'creature_title',
@@ -47,7 +47,7 @@ foe's counterattack did not connect.
 class CharacterDeath(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor._be_attacked_by_command() when the
+advgame.process.Command_Processor._be_attacked_by_command() when the
 foe's counter attack killed the player's character. The game is now over, and
 advgame.py responds to receiving this object by printing its message and then
 exiting the program.

@@ -10,7 +10,7 @@ __all__ = ("ElementNotOpenable", "ElementHasBeenOpened",
 class ElementNotOpenable(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.open_command() when the player
+advgame.process.Command_Processor.open_command() when the player
 attempts to open a corpse, creature, doorway or item.
     """
     __slots__ = 'target_title', 'target_type'
@@ -33,7 +33,7 @@ attempts to open a corpse, creature, doorway or item.
 class ElementHasBeenOpened(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.open_command() when the player
+advgame.process.Command_Processor.open_command() when the player
 successfully opens a chest or door.
     """
     __slots__ = 'target',
@@ -49,7 +49,7 @@ successfully opens a chest or door.
 class ElementIsAlreadyOpen(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.open_command() when the player targets
+advgame.process.Command_Processor.open_command() when the player targets
 a door or chest that is already open.
     """
     __slots__ = 'target',
@@ -65,7 +65,7 @@ a door or chest that is already open.
 class ElementIsLocked(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.open_command() when the player targets
+advgame.process.Command_Processor.open_command() when the player targets
 a door or chest that is locked.
     """
     __slots__ = 'target',
@@ -81,7 +81,7 @@ a door or chest that is locked.
 class ElementToOpenNotHere(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.open_command() when the player targets
+advgame.process.Command_Processor.open_command() when the player targets
 a door or chest that is not present in the current dungeon room.
     """
     __slots__ = 'target_title',

@@ -11,7 +11,7 @@ __all__ = "ItemNotEquipped",
 class ItemNotEquipped(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.unequip_command() when the player
+advgame.process.Command_Processor.unequip_command() when the player
 tries to unequip an item that is not equipped.
     """
     __slots__ = 'item_specified_title', 'item_specified_type', 'item_present_title'

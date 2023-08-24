@@ -10,7 +10,7 @@ __all__ = ("NotRecognized", "DisplayCommands", "DisplayHelpForCommand",)
 class NotRecognized(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.help_command() when the player tries
+advgame.process.Command_Processor.help_command() when the player tries
 to get help with a command that is not in the game.
     """
     __slots__ = 'command_attempted', 'commands_available',
@@ -31,7 +31,7 @@ to get help with a command that is not in the game.
 class DisplayCommands(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.help_command() when the player calls
+advgame.process.Command_Processor.help_command() when the player calls
 it with no arguments; it displays all the commands in the game and prompts the
 player to ask for help with one of them.
     """
@@ -55,7 +55,7 @@ player to ask for help with one of them.
 class DisplayHelpForCommand(GameStateMessage):
     """
 This class implements an object that is returned by
-advgame.processor.Command_Processor.help_command() when the player asks
+advgame.process.Command_Processor.help_command() when the player asks
 for help with a specific command. It summarizes the syntax for them and prints
 an informative blurb about the command.
     """
@@ -64,7 +64,7 @@ an informative blurb about the command.
     @property                   #
     def message(self):          #
         # Like BadSyntax, this message property accepts syntax
-        # outlines from advgame.processor.COMMANDS_SYNTAX and assembles
+        # outlines from advgame.process.COMMANDS_SYNTAX and assembles
         # them into a list of valid usages, using unicode nonbreaking
         # spaces so the usage examples aren't broken across lines by
         # advgame.utilsities.textwrapper().
