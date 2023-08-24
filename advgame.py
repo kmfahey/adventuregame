@@ -983,7 +983,7 @@ while True:
     # end of the game. If one of them occurs at the end of a list of state
     # messages, the game exits.
     if isinstance(result[-1], (advg.statemsgs.quit.HaveQuitTheGame,
-                               advg.Stmsg_Batkby_CharacterDeath,
+                               advg.statemsgs.be_atkd.CharacterDeath,
                                advg.statemsgs.leave.WonTheGame)):
         exit(0)
 

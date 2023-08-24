@@ -2,8 +2,8 @@
 
 from operator import itemgetter
 
-from adventuregame.statemsgs._common import GameStateMessage
-from adventuregame.utility import join_str_seq_w_commas_and_conjunction, usage_verb
+from adventuregame.statemsgs.gsm import GameStateMessage
+from adventuregame.utility import join_str_seq_w_commas_and_conjunction
 
 
 __all__ = ("CantPickUpChestCorpseCreatureOrDoor", "ItemNotFound", "ItemPickedUp", "QuantityUnclear", "TryingToPickUpMoreThanIsPresent",)

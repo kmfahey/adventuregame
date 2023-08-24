@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 
-
-from adventuregame.statemsgs._common import GameStateMessage
-from adventuregame.utility import join_str_seq_w_commas_and_conjunction, usage_verb
+from adventuregame.statemsgs.gsm import GameStateMessage
+from adventuregame.utility import join_str_seq_w_commas_and_conjunction
 
 
 __all__ = ("CommandNotRecognized", "DisplayCommands", "DisplayHelpForCommand",)
+
 
 class CommandNotRecognized(GameStateMessage):
     """
@@ -63,7 +63,7 @@ an informative blurb about the command.
 
     @property                   #
     def message(self):          #
-        # Like Stmsg_CommandBadSyntax, this message property accepts syntax
+        # Like CommandBadSyntax, this message property accepts syntax
         # outlines from adventuregame.processor.COMMANDS_SYNTAX and assembles
         # them into a list of valid usages, using unicode nonbreaking
         # spaces so the usage examples aren't broken across lines by

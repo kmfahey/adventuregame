@@ -46,7 +46,7 @@ STARTER_GEAR = dict(Warrior=dict(weapon='Longsword', armor='Studded_Leather', sh
 
 
 # The COMMAND_SYNTAX dict is a compendium of usage examples for every command in
-# the game. When a command method needs to return Stmsg_CommandBadSyntax object, it
+# the game. When a command method needs to return CommandBadSyntax object, it
 # consults this dict for the second argument to its constructor.
 #
 # \u00A0 is a unicode nonbreaking space. I use it in the syntax examples so that
@@ -231,12 +231,12 @@ on this object, a Character object will be added and the game can begin.
 Process and dispatch a natural language command string. The return value
 is always a tuple even when it's length 1.
 
-If the command is not recognized, returns a Stmsg_CommandNotRecognized object.
+If the command is not recognized, returns a CommandNotRecognized object.
 
 If a ingame command is used during the pregame (before name and class
 have been set and ability scores have been rolled and accepted)
 or a pregame command is used during the game proper, returns a
-Stmsg_CommandNotAllowedNow object.
+CommandNotAllowedNow object.
 
 If this method is called after self.game_state.game_has_ended has been
 set to True, the same object that was returned when the game ends is
@@ -286,20 +286,20 @@ string.
                                                             #  the rest of the commands are not.
 
         # With the command normalized, I check for it in the dispatch table.
-        # If it's not present, a Stmsg_CommandNotRecognized error is returned. The
+        # If it's not present, a CommandNotRecognized error is returned. The
         # commands allowed in the current game mode are included.
         if command not in self.dispatch_table and not self.game_state.game_has_begun:
-            return stmsg.Stmsg_CommandNotRecognized(command, self.pregame_commands, self.game_state.game_has_begun),
+            return stmsg.command.CommandNotRecognized(command, self.pregame_commands, self.game_state.game_has_begun),
         elif command not in self.dispatch_table and self.game_state.game_has_begun:
-            return stmsg.Stmsg_CommandNotRecognized(command, self.ingame_commands, self.game_state.game_has_begun),
+            return stmsg.command.CommandNotRecognized(command, self.ingame_commands, self.game_state.game_has_begun),
 
         # If the player used an ingame command during the pregame, or a pregame
-        # command during the ingame, a Stmsg_CommandNotAllowedNow error is returned
+        # command during the ingame, a CommandNotAllowedNow error is returned
         # with a list of the currently allowed commands included.
         elif not self.game_state.game_has_begun and command not in self.pregame_commands:
-            return stmsg.Stmsg_CommandNotAllowedNow(command, self.pregame_commands, self.game_state.game_has_begun),
+            return stmsg.command.CommandNotAllowedNow(command, self.pregame_commands, self.game_state.game_has_begun),
         elif self.game_state.game_has_begun and command not in self.ingame_commands:
-            return stmsg.Stmsg_CommandNotAllowedNow(command, self.ingame_commands, self.game_state.game_has_begun),
+            return stmsg.command.CommandNotAllowedNow(command, self.ingame_commands, self.game_state.game_has_begun),
 
         # Having completed all the checks, I have a valid command and there is
         # a matching command method. The command method is tail called with the
@@ -313,7 +313,7 @@ when it's of length 1. The ATTACK command has the following usage:
 
 ATTACK <creature name>
 
-* If that syntax is not followed, returns a Stmsg_CommandBadSyntax object.
+* If that syntax is not followed, returns a CommandBadSyntax object.
 
 * If self.character has no weapon (or, for Mages, wand) equipped,
 returns a AttackCommand_YouHaveNoWeaponOrWandEquipped object.
@@ -337,11 +337,11 @@ and a VariousCommands_FoeDeath object are returned.
         # returned right away.
         if (not self.game_state.character.weapon_equipped
                 and (self.game_state.character_class != 'Mage' or not self.game_state.character.wand_equipped)):
-            return stmsg.Stmsg_Attack_YouHaveNoWeaponOrWandEquipped(self.game_state.character_class),
+            return stmsg.attack.YouHaveNoWeaponOrWandEquipped(self.game_state.character_class),
 
         # Using this command with no argument is a syntax error.
         elif not tokens:
-            return stmsg.Stmsg_CommandBadSyntax('ATTACK', COMMANDS_SYNTAX['ATTACK']),
+            return stmsg.command.CommandBadSyntax('ATTACK', COMMANDS_SYNTAX['ATTACK']),
 
         # This var is used by some return values.
         weapon_type = 'wand' if self.game_state.character.wand_equipped else 'weapon'
@@ -349,11 +349,11 @@ and a VariousCommands_FoeDeath object are returned.
 
         # If there's no creature in the current room, an error is returned.
         if not self.game_state.rooms_state.cursor.creature_here:
-            return stmsg.Stmsg_Attack_OpponentNotFound(creature_title),
+            return stmsg.attack.OpponentNotFound(creature_title),
         # If the arguments don't match the title of the creature in the current
         # room, an error is returned.
         elif self.game_state.rooms_state.cursor.creature_here.title.lower() != creature_title:
-            return stmsg.Stmsg_Attack_OpponentNotFound(creature_title,
+            return stmsg.attack.OpponentNotFound(creature_title,
                                                            self.game_state.rooms_state.cursor.creature_here.title),
 
         # All possible errors have been handles, so the actual attack is figured
@@ -367,7 +367,7 @@ and a VariousCommands_FoeDeath object are returned.
         if attack_result < creature.armor_class:
 
             # So a attack-missed return value is prepared.
-            attack_missed_result = stmsg.Stmsg_Attack_AttackMissed(creature.title, weapon_type)
+            attack_missed_result = stmsg.attack.AttackMissed(creature.title, weapon_type)
 
             # The _be_attacked_by_command() pseudo-command is triggered
             # by any attack command that doesn't kill the creature. Its
@@ -398,7 +398,7 @@ and a VariousCommands_FoeDeath object are returned.
 
                 # The return tuple is comprised of an attack-hit value and a
                 # foe-death value.
-                return (stmsg.Stmsg_Attack_AttackHit(creature.title, damage_result, True, weapon_type),
+                return (stmsg.attack.AttackHit(creature.title, damage_result, True, weapon_type),
                         stmsg.various.FoeDeath(creature.title))
             else:  # creature.is_alive == True
                 # The attack hit but didn't kill, so the return tuple
@@ -407,7 +407,7 @@ and a VariousCommands_FoeDeath object are returned.
                 # is appended and the entire sequence is returned. Again, the
                 # counterattack might kill the player character, so the game
                 # might end right here.
-                attack_hit_result = stmsg.Stmsg_Attack_AttackHit(creature.title, damage_result, False, weapon_type)
+                attack_hit_result = stmsg.attack.AttackHit(creature.title, damage_result, False, weapon_type)
                 be_attacked_by_result = self._be_attacked_by_command(creature)
                 return (attack_hit_result,) + be_attacked_by_result
 
@@ -430,7 +430,7 @@ and a VariousCommands_FoeDeath object are returned.
         # If the attack roll didn't meet or exceed the player character's armor
         # class, an attacked-and-not-hit value is returned.
         if attack_result < self.game_state.character.armor_class:
-            return stmsg.Stmsg_Batkby_AttackedAndNotHit(creature.title),
+            return stmsg.be_atkd.AttackedAndNotHit(creature.title),
         else:  # attack_result >= self.game_state.character.armor_class
             # The attack hit, so damage is rolled and inflicted.
             damage_done = util.roll_dice(damage_roll_dice_expr)
@@ -439,8 +439,8 @@ and a VariousCommands_FoeDeath object are returned.
                 # The attack killed the player character, so an attacked-and-hit
                 # value and a character-death value are returned. Game over,
                 # it's that easy. Combat comes with risk.
-                return_tuple = (stmsg.Stmsg_Batkby_AttackedAndHit(creature.title, damage_done, 0),
-                                stmsg.Stmsg_Batkby_CharacterDeath())
+                return_tuple = (stmsg.be_atkd.AttackedAndHit(creature.title, damage_done, 0),
+                                stmsg.be_atkd.CharacterDeath())
 
                 # The game_has_ended boolean is set True, and the game-ending
                 # return value is saved so that self.process() can return it if
@@ -451,7 +451,7 @@ and a VariousCommands_FoeDeath object are returned.
             else:  # self.game_state.character.is_alive == True
                 # The player character survived, so just an attacked-and-hit
                 # value is returned.
-                return (stmsg.Stmsg_Batkby_AttackedAndHit(creature.title, damage_done,
+                return (stmsg.be_atkd.AttackedAndHit(creature.title, damage_done,
                                                                       self.game_state.character.hit_points),)
 
     def begin_game_command(self, tokens):
@@ -460,7 +460,7 @@ Execute the BEGIN GAME command. The return value is always
 in a tuple even when it's of length 1. Returns one or more
 statemsgs.GameStateMessage subclass instances. Takes no arguments.
 
-* If any arguments are given, returns a Stmsg_CommandBadSyntax object.
+* If any arguments are given, returns a CommandBadSyntax object.
 
 * If the command is used before the character's name and
 class have been set with SET NAME and SET CLASS, returns a
@@ -476,7 +476,7 @@ object.
         # This command takes no argument; if any were used, a syntax error is
         # returned.
         if len(tokens):
-            return stmsg.Stmsg_CommandBadSyntax('BEGIN GAME', COMMANDS_SYNTAX['BEGIN GAME']),
+            return stmsg.command.CommandBadSyntax('BEGIN GAME', COMMANDS_SYNTAX['BEGIN GAME']),
 
         # The game can't begin if the player hasn't used both SET NAME and SET
         # CLASS yet, so I check for that. If not, a name-or-class-not-set error
@@ -484,13 +484,13 @@ object.
         character_name = getattr(self.game_state, 'character_name', None)
         character_class = getattr(self.game_state, 'character_class', None)
         if not character_name or not character_class:
-            return stmsg.Stmsg_Begin_NameOrClassNotSet(character_name, character_class),
+            return stmsg.begin.NameOrClassNotSet(character_name, character_class),
 
         # The error checking is done, so GameState.game_has_begun is set to
         # True, and a game-begins value is used to initialiZe the return_values
         # tuple.
         self.game_state.game_has_begun = True
-        return_values = stmsg.Stmsg_Begin_GameBegins(),
+        return_values = stmsg.begin.GameBegins(),
 
         # A player character receives starting equipment appropriate to their
         # class, as laid out in the STARTER_GEAR dict. The value there is a dict
@@ -546,10 +546,10 @@ object.
 Execute the CAST SPELL command. The return value is always in a tuple
 even when it's of length 1. Takes no arguments.
 
-* If any arguments are given, returns a Stmsg_CommandBadSyntax object.
+* If any arguments are given, returns a CommandBadSyntax object.
 
 * If the character is a Warrior or a Thief, returns a
-Stmsg_CommandClassRestricted object.
+CommandClassRestricted object.
 
 * This command costs mana points. If the character doesn't have enough,
 returns a CastSpellCommand_InsufficientMana object.
@@ -574,12 +574,12 @@ VariousCommands_UnderwentHealingEffect object.
         # while playing a Warrior or Thief. Those classes can't cast spells, so
         # a command-class-restricted error is returned.
         if self.game_state.character_class not in ('Mage', 'Priest'):
-            return stmsg.Stmsg_CommandClassRestricted('CAST SPELL', 'mage', 'priest'),
+            return stmsg.command.CommandClassRestricted('CAST SPELL', 'mage', 'priest'),
 
         # This command takes no arguments, so if any were used a syntax error is
         # returned.
         elif len(tokens):
-            return stmsg.Stmsg_CommandBadSyntax('CAST SPELL', COMMANDS_SYNTAX['CAST SPELL']),
+            return stmsg.command.CommandBadSyntax('CAST SPELL', COMMANDS_SYNTAX['CAST SPELL']),
 
         # If the player character's mana is less than SPELL_MANA_COST, an
         # insufficient-mana error is returned.
@@ -698,7 +698,7 @@ when it's of length 1. The CLOSE command has the following usage:
 CLOSE <door name>
 CLOSE <chest name>
 
-* If that syntax is not followed, returns a Stmsg_CommandBadSyntax object.
+* If that syntax is not followed, returns a CommandBadSyntax object.
 
 * If there is no matching chest or door in the room, returns a
 CloseCommand_ElementToCloseNotHere object.
@@ -755,7 +755,7 @@ when it's of length 1. The DRINK command has the following usage:
 DRINK [THE] <potion name>
 DRINK <number> <potion name>[s]
 
-* If that syntax is not followed, returns a Stmsg_CommandBadSyntax object.
+* If that syntax is not followed, returns a CommandBadSyntax object.
 
 * If the potion specified is not in the character's inventory, returns a
 DrinkCommand_ItemNotInInventory object.
@@ -783,7 +783,7 @@ restored, and a DrinkCommand_DrankManaPotion object is returned.
         # indirect article. If that standard isn't met, a syntax error is
         # returned.
         if not len(tokens) or len(tokens) == 1 and tokens[0] in ('the', 'a', 'an'):
-            return stmsg.Stmsg_CommandBadSyntax('DRINK', COMMANDS_SYNTAX['DRINK']),
+            return stmsg.command.CommandBadSyntax('DRINK', COMMANDS_SYNTAX['DRINK']),
 
         # Any leading article is stripped, but it signals that the quantity to
         # drink is 1, so qty_to_drink is set.
@@ -799,7 +799,7 @@ restored, and a DrinkCommand_DrankManaPotion object is returned.
             # transform a number word to an int.
             qty_to_drink = int(tokens[0]) if tokens[0].isdigit() else util.lexical_number_to_digits(tokens[0])
             if (qty_to_drink > 1 and not tokens[-1].endswith('s')) or (qty_to_drink == 1 and tokens[-1].endswith('s')):
-                return stmsg.Stmsg_CommandBadSyntax('DRINK', COMMANDS_SYNTAX['DRINK']),
+                return stmsg.command.CommandBadSyntax('DRINK', COMMANDS_SYNTAX['DRINK']),
 
             # The first token is dropped off the tokens tuple.
             tokens = tokens[1:]
@@ -1043,7 +1043,7 @@ EQUIP <shield name>
 EQUIP <wand name>
 EQUIP <weapon name>
 
-* If that syntax is not followed, returns a Stmsg_CommandBadSyntax object.
+* If that syntax is not followed, returns a CommandBadSyntax object.
 
 * If the item isn't in inventory, returns a
 EquipCommand_Stmsg_Equip_NoSuchItemInInventory object.
@@ -1064,7 +1064,7 @@ object is returned.
         # The equip command requires an argument; if none was given, a syntax
         # error is returned.
         if not tokens or len(tokens) == 1 and tokens[0] == 'the':
-            return stmsg.Stmsg_CommandBadSyntax('EQUIP', COMMANDS_SYNTAX['EQUIP']),
+            return stmsg.command.CommandBadSyntax('EQUIP', COMMANDS_SYNTAX['EQUIP']),
         if tokens[0] == 'the':
             tokens = tokens[1:]
 
@@ -1186,13 +1186,13 @@ when it's of length 1. The HELP command has the following usage:
 HELP
 HELP <command name>
 
-* If that syntax is not followed, returns a Stmsg_CommandBadSyntax object.
+* If that syntax is not followed, returns a CommandBadSyntax object.
 
 * If the command is used with no arguments, returns a
 HelpCommand_DisplayCommands object.
 
 * If the argument is not a recognized command, returns a
-HelpCommand_Stmsg_CommandNotRecognized object.
+HelpCommand_CommandNotRecognized object.
 
 * Otherwise, returns a HelpCommand_DisplayHelpForCommand object.
 
@@ -1230,14 +1230,14 @@ Execute the INVENTORY command. The return value is always in a tuple
 even when it's of length 1. The INVENTORY command takes no arguments.
 
 * If the command is used with any arguments, returns a
-Stmsg_CommandBadSyntax object.
+CommandBadSyntax object.
 
 * Otherwise, returns a InventoryCommand_DisplayInventory object.
 
         """
         # This command takes no arguments; if any are specified, a syntax error is returned.
         if len(tokens):
-            return stmsg.Stmsg_CommandBadSyntax('INVENTORY', COMMANDS_SYNTAX['INVENTORY']),
+            return stmsg.command.CommandBadSyntax('INVENTORY', COMMANDS_SYNTAX['INVENTORY']),
 
         # There's not really any other error case, for once. The inventory
         # contents are stored in a tuple, and a display-inventory value is
@@ -1255,7 +1255,7 @@ LEAVE [USING or VIA] <compass direction> DOORWAY
 LEAVE [USING or VIA] <door name>
 LEAVE [USING or VIA] <compass direction> <door name>
 
-* If that syntax is not followed, returns a Stmsg_CommandBadSyntax object.
+* If that syntax is not followed, returns a CommandBadSyntax object.
 
 * If the door by that name is not present in the room, returns a
 VariousCommands_DoorNotPresent object.
@@ -1272,7 +1272,7 @@ VariousCommands_EnteredRoom object are returned.
         # This method takes arguments of a specific form; if the arguments don't
         # match it, a syntax error is returned.
         if (not len(tokens) or not 2 <= len(tokens) <= 4 or tokens[-1] not in ('door', 'doorway')):
-            return stmsg.Stmsg_CommandBadSyntax('LEAVE', COMMANDS_SYNTAX['LEAVE']),
+            return stmsg.command.CommandBadSyntax('LEAVE', COMMANDS_SYNTAX['LEAVE']),
 
         # The format for specifying doors is flexible, and is implemented by a
         # private workhorse method.
@@ -1323,7 +1323,7 @@ when it's of length 1. The LOCK command has the following usage:
 LOCK <door name>
 LOCK <chest name>
 
-* If that syntax is not followed, returns a Stmsg_CommandBadSyntax object.
+* If that syntax is not followed, returns a CommandBadSyntax object.
 
 * If no such door is present in the room, returns a
 VariousCommands_DoorNotPresent object.
@@ -1348,7 +1348,7 @@ LockCommand_ElementHasBeenLocked
         # This command requires an argument, so if tokens is zero-length a
         # syntax error is returned.
         if not len(tokens):
-            return stmsg.Stmsg_CommandBadSyntax('LOCK', COMMANDS_SYNTAX['LOCK']),
+            return stmsg.command.CommandBadSyntax('LOCK', COMMANDS_SYNTAX['LOCK']),
 
         # A private workhorse method is used for logic shared with
         # self.unlock_command(), self.open_command(), self.close_command().
@@ -1427,7 +1427,7 @@ LockCommand_ElementHasBeenLocked
 
         # If the command was used with no arguments, a syntax error is returned.
         if not len(tokens):
-            return stmsg.Stmsg_CommandBadSyntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
+            return stmsg.command.CommandBadSyntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
 
         # door is initialized to None so whether it's non-None later can be a
         # signal.
@@ -1634,7 +1634,7 @@ LOOK AT <item name> ON <corpse name>
 LOOK AT <compass direction> DOOR
 LOOK AT <compass direction> DOORWAY
 
-* If that syntax is not followed, returns a Stmsg_CommandBadSyntax object.
+* If that syntax is not followed, returns a CommandBadSyntax object.
 
 * If looking at a door which is not present in the room, returns a
 VariousCommands_DoorNotPresent object.
@@ -1669,12 +1669,12 @@ LookAtCommand_FoundItemOrItemsHere object is returned.
         if (not tokens or tokens[0] in ('in', 'on') or tokens[-1] in ('in', 'on')
                 or ('in' in tokens and tokens[-1] == 'corpse')
                 or ('on' in tokens and tokens[-1] == 'chest')):
-            return stmsg.Stmsg_CommandBadSyntax('LOOK AT', COMMANDS_SYNTAX['LOOK AT']),
+            return stmsg.command.CommandBadSyntax('LOOK AT', COMMANDS_SYNTAX['LOOK AT']),
 
         # This conditional is more easily accomplished with a regex than a multi-line boolean chain.
         # `look_at_door_re` is defined above.
         elif tokens[-1] in ('door', 'doorway') and not self.look_at_door_re.match(' '.join(tokens)):
-            return stmsg.Stmsg_CommandBadSyntax('LOOK AT', COMMANDS_SYNTAX['LOOK AT']),
+            return stmsg.command.CommandBadSyntax('LOOK AT', COMMANDS_SYNTAX['LOOK AT']),
 
         # These four booleans are initialized to False so they can be tested for
         # True values later.
@@ -1732,7 +1732,7 @@ LookAtCommand_FoundItemOrItemsHere object is returned.
         # returned.
         if (item_in_chest and isinstance(container_here, elem.Corpse)
                 or item_on_corpse and isinstance(container_here, elem.Chest)):
-            return stmsg.Stmsg_CommandBadSyntax('look at', COMMANDS_SYNTAX['LOOK AT']),
+            return stmsg.command.CommandBadSyntax('look at', COMMANDS_SYNTAX['LOOK AT']),
 
         # If the target_title matches the creature in this room, a
         # found-creature-here value is returned.
@@ -1867,7 +1867,7 @@ when it's of length 1. The OPEN command has the following usage:
 OPEN <door name>
 OPEN <chest name>
 
-* If that syntax is not followed, returns a Stmsg_CommandBadSyntax object.
+* If that syntax is not followed, returns a CommandBadSyntax object.
 
 * If trying to open a door which is not present in the room, returns a
 VariousCommands_DoorNotPresent object.
@@ -1933,10 +1933,10 @@ command has the following usage:
 PICK LOCK ON [THE] <chest name>
 PICK LOCK ON [THE] <door name>
 
-* If that syntax is not followed, returns a Stmsg_CommandBadSyntax object. 
+* If that syntax is not followed, returns a CommandBadSyntax object. 
 
 * If the player tries to use this command while playing a Warrior, Mage or
-Priest, returns a Stmsg_CommandClassRestricted object.
+Priest, returns a CommandClassRestricted object.
 
 * If the arguments specify a door, and that door is not present in the current room, returns a VariousCommands_DoorNotPresent object.
 
@@ -1958,12 +1958,12 @@ Priest, returns a Stmsg_CommandClassRestricted object.
         # This command is restricted to Thieves; if the player character is of
         # another class, a command-class-restricted error is returned.
         if self.game_state.character_class != 'Thief':
-            return stmsg.Stmsg_CommandClassRestricted('PICK LOCK', 'thief'),
+            return stmsg.command.CommandClassRestricted('PICK LOCK', 'thief'),
 
         # This command requires an argument. If called with no argument or a
         # patently invalid one, a syntax error is returned.
         if not len(tokens) or tokens[0] != 'on' or tokens == ('on',) or tokens == ('on', 'the',):
-            return stmsg.Stmsg_CommandBadSyntax('PICK LOCK', COMMANDS_SYNTAX['PICK LOCK']),
+            return stmsg.command.CommandBadSyntax('PICK LOCK', COMMANDS_SYNTAX['PICK LOCK']),
         elif tokens[:2] == ('on', 'the'):
             tokens = tokens[2:]
         elif tokens[0] == 'on':
@@ -2069,7 +2069,7 @@ has the following usage:
 PICK UP <item name>
 PICK UP <number> <item name>),
 
-* If that syntax is not followed, returns a Stmsg_CommandBadSyntax object.
+* If that syntax is not followed, returns a CommandBadSyntax object.
 
 * If the arguments are ungrammatical and are unclear about the quantity to pick up, returns a PickUpCommand_QuantityUnclear object.
 
@@ -2205,7 +2205,7 @@ screens for ambiguous command arguments.
 :command: The command the calling method is executing.
 :tokens:  The tokenized command arguments.
 
-* If invalid arguments are sent, returns a Stmsg_CommandBadSyntax object.
+* If invalid arguments are sent, returns a CommandBadSyntax object.
 
 * If the player submitted an ungrammatical sentence which is ambiguous as to the quantity intended, a DropCommand_QuantityUnclear object or a PickUpCommand_QuantityUnclear object is returned depending on the value in command.
         """
@@ -2215,7 +2215,7 @@ screens for ambiguous command arguments.
             # If the quantity indicator is all there is, a syntax error is
             # returned.
             if len(tokens) == 1:
-                return stmsg.Stmsg_CommandBadSyntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
+                return stmsg.command.CommandBadSyntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
             # The item title is formed from the rest of the tokens.
             item_title = ' '.join(tokens[1:])
 
@@ -2259,7 +2259,7 @@ screens for ambiguous command arguments.
                 # it returns that value if the lexical number was outside the
                 # range of one to ninety-nine. If so, I return a syntax error.
                 if item_quantity is math.nan:
-                    return stmsg.Stmsg_CommandBadSyntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
+                    return stmsg.command.CommandBadSyntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
             if item_quantity == 1 and item_title.endswith('s'):
                 # Repeating an earlier check on a wider set. If the
                 # item_quantity is 1 but the last token ends in a pluralizing
@@ -2301,7 +2301,7 @@ PUT <number> <item name> IN <chest name>
 PUT <item name> ON <corpse name>
 PUT <number> <item name> ON <corpse name>
 
-* If that syntax is not followed, returns a Stmsg_CommandBadSyntax object.
+* If that syntax is not followed, returns a CommandBadSyntax object.
 
 * If the arguments specify a chest or corpse that is not present in the current room, returns a VariousCommands_ContainerNotFound object.
 
@@ -2384,7 +2384,7 @@ title) from the tokens argument.
 :command: The command being executed by the calling method. Either 'PUT' or 'TAKE'.
 :tokens:  The tokens argument the calling method was called with.
 
-* If the tokens argument is zero-length or doesn't container the appropriate joinword ('FROM' for TAKE, 'IN' for PUT with chests, or 'ON' for put with corpses), returns a Stmsg_CommandBadSyntax object.
+* If the tokens argument is zero-length or doesn't container the appropriate joinword ('FROM' for TAKE, 'IN' for PUT with chests, or 'ON' for put with corpses), returns a CommandBadSyntax object.
 
 * If the arguments are an ungrammatical sentence and are ambiguous about the quantity of the item, returns a PutCommand_QuantityUnclear object or a TakeCommand_QuantityUnclear object.
 
@@ -2427,7 +2427,7 @@ title) from the tokens argument.
         # If the joinword wasn't found, or if it's at the beginning or end of
         # the tokens tuple, I return a syntax error.
         if joinword_index == -1 or joinword_index == 0 or joinword_index + 1 == len(tokens):
-            return stmsg.Stmsg_CommandBadSyntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
+            return stmsg.command.CommandBadSyntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
 
         # I use the joinword_index to break the tokens tuple into an item_tokens
         # tuple and a container_tokens tuple.
@@ -2449,7 +2449,7 @@ title) from the tokens argument.
             if len(item_tokens) == 1:
                 # item_tokens is *just* ('a',) or ('an',) or ('the',) which is a
                 # syntax error.
-                return stmsg.Stmsg_CommandBadSyntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
+                return stmsg.command.CommandBadSyntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
             else:
                 # Otherwise quantity is 1.
                 quantity = 1
@@ -2474,13 +2474,13 @@ title) from the tokens argument.
 
         if container_tokens[-1].endswith('s'):
             # The container title is plural, which is a syntax error.
-            return stmsg.Stmsg_CommandBadSyntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
+            return stmsg.command.CommandBadSyntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
 
         if container_tokens[0] == 'a' or container_tokens[0] == 'an' or container_tokens[0] == 'the':
             if len(container_tokens) == 1:
                 # The container title is *just* ('a',) or ('an',) or ('the',),
                 # so I return a syntax error.
-                return stmsg.Stmsg_CommandBadSyntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
+                return stmsg.command.CommandBadSyntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
 
             # I strip the article from the container tokens.
             container_tokens = container_tokens[1:]
@@ -2504,7 +2504,7 @@ title) from the tokens argument.
 
             # The joinword used doesn't match the one appropriate to the type of
             # container here, so I return a syntax error.
-            return stmsg.Stmsg_CommandBadSyntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
+            return stmsg.command.CommandBadSyntax(command.upper(), COMMANDS_SYNTAX[command.upper()]),
 
         elif container.is_closed:
 
@@ -2524,13 +2524,13 @@ is the command's arguments, tokenized. It returns a tuple of one or more
 adventuregame.statemsgs.GameStateMessage subclass objects. The QUIT command
 takes no arguments.
 
-* If the command is used with any arguments, returns a Stmsg_CommandBadSyntax object.
+* If the command is used with any arguments, returns a CommandBadSyntax object.
 
 * Otherwise, self.game_state.game_has_ended is set to True, and a QuitCommand_HaveQuitTheGame object is returned.
         """
         # This command takes no arguments, so if any were supplied, I return a syntax error.
         if len(tokens):
-            return stmsg.Stmsg_CommandBadSyntax('QUIT', COMMANDS_SYNTAX['QUIT']),
+            return stmsg.command.CommandBadSyntax('QUIT', COMMANDS_SYNTAX['QUIT']),
 
         # I devise the quit-the-game return value, set game_has_ended to True,
         # store the return value in game_ending_state_msg so process() can reuse
@@ -2549,7 +2549,7 @@ is the command's arguments, tokenized. It returns a tuple of one or more
 adventuregame.statemsgs.GameStateMessage subclass objects. The REROLL command
 takes no arguments.
 
-* If the command is used with any arguments, this method returns a Stmsg_CommandBadSyntax object.
+* If the command is used with any arguments, this method returns a CommandBadSyntax object.
 
 * If the character's name or class has not been set yet, returns a RerollCommand_NameOrClassNotSet object.
 
@@ -2558,7 +2558,7 @@ takes no arguments.
         # This command takes no arguments, so if any were supplied, I return a
         # syntax error.
         if len(tokens):
-            return stmsg.Stmsg_CommandBadSyntax('REROLL', COMMANDS_SYNTAX['REROLL']),
+            return stmsg.command.CommandBadSyntax('REROLL', COMMANDS_SYNTAX['REROLL']),
 
         # This command is only valid during the pregame after the character's
         # name and class have been set (and, therefore, their stats have been
@@ -2591,7 +2591,7 @@ command has the following usage:
 
 SET CLASS [TO] <Warrior, Thief, Mage or Priest>
 
-* If that syntax is not followed, returns a Stmsg_CommandBadSyntax object.
+* If that syntax is not followed, returns a CommandBadSyntax object.
 
 * If a class other than Warrior, Thief, Mage or Priest is specified, returns a SetClassCommand_InvalidClass object.
 
@@ -2602,7 +2602,7 @@ SET CLASS [TO] <Warrior, Thief, Mage or Priest>
         # This command takes exactly one argument, so I return a syntax error if
         # I got 0 or more than 1.
         if len(tokens) == 0 or len(tokens) > 1:
-            return stmsg.Stmsg_CommandBadSyntax('SET CLASS', COMMANDS_SYNTAX['SET CLASS']),
+            return stmsg.command.CommandBadSyntax('SET CLASS', COMMANDS_SYNTAX['SET CLASS']),
 
         # If the user specified something other than one of the four classes, I
         # return an invalid-class error.
@@ -2644,7 +2644,7 @@ command has the following usage:
 
 SET NAME [TO] <character name>
 
-* If that syntax is not followed, returns a Stmsg_CommandBadSyntax object.
+* If that syntax is not followed, returns a CommandBadSyntax object.
 
 * If a name is specified that doesn't match the pattern [A-Z][a-z]+( [A-Z][a-z]+)*, returns a SetNameCommand_InvalidPart object.
 
@@ -2655,7 +2655,7 @@ SET NAME [TO] <character name>
         # This command requires one or more arguments, so if len(tokens) == 0 I
         # return a syntax error.
         if len(tokens) == 0:
-            return stmsg.Stmsg_CommandBadSyntax('SET NAME', COMMANDS_SYNTAX['SET NAME']),
+            return stmsg.command.CommandBadSyntax('SET NAME', COMMANDS_SYNTAX['SET NAME']),
 
         # valid_name_re.pattern == '^[A-Z][a-z]+$'. I test each token for a
         # match, and non-matching name parts are saved. If invalid_name_parts is
@@ -2700,7 +2700,7 @@ is the command's arguments, tokenized. It returns a tuple of one or more
 adventuregame.statemsgs.GameStateMessage subclass objects. The STATUS command
 takes no arguments.
 
-* If the command is used with any arguments, returns a Stmsg_CommandBadSyntax object.
+* If the command is used with any arguments, returns a CommandBadSyntax object.
 
 * Otherwise, returns a StatusCommand_Output object.
 
@@ -2708,7 +2708,7 @@ takes no arguments.
         # This command takes no arguments so if any were supplied I return a
         # syntax error.
         if len(tokens):
-            return stmsg.Stmsg_CommandBadSyntax('STATUS', COMMANDS_SYNTAX['STATUS']),
+            return stmsg.command.CommandBadSyntax('STATUS', COMMANDS_SYNTAX['STATUS']),
 
         # A lot of data goes into a status command so I build the argd to
         # Stmsg_Status_StatusOutput key by key.
@@ -2767,7 +2767,7 @@ has the following usage:
 TAKE <item name> FROM <container name>
 TAKE <number> <item name> FROM <container name>
 
-* If that syntax is not followed, returns a Stmsg_CommandBadSyntax object.
+* If that syntax is not followed, returns a CommandBadSyntax object.
 
 * If the specified container isn't present in the current room, returns a VariousCommands_ContainerNotFound object.
 
@@ -2845,7 +2845,7 @@ UNEQUIP <shield name>
 UNEQUIP <wand name>
 UNEQUIP <weapon name>
 
-* If that syntax is not followed, returns a Stmsg_CommandBadSyntax object.
+* If that syntax is not followed, returns a CommandBadSyntax object.
 
 * If the specified item is not equipped in self.game_state.rooms_state.character, returns a UnequipCommand_ItemNotEquipped object.
 
@@ -2854,7 +2854,7 @@ UNEQUIP <weapon name>
         # This command requires an argument so if none was supplied I return a
         # syntax error.
         if not tokens:
-            return stmsg.Stmsg_CommandBadSyntax('UNEQUIP', COMMANDS_SYNTAX['UNEQUIP']),
+            return stmsg.command.CommandBadSyntax('UNEQUIP', COMMANDS_SYNTAX['UNEQUIP']),
 
         # I construct the item title and search for it in the player character's
         # inventory.
@@ -2982,7 +2982,7 @@ has the following usage:
 UNLOCK <door\u00A0name>
 UNLOCK <chest\u00A0name>
 
-* If that syntax is not followed, returns a Stmsg_CommandBadSyntax object.
+* If that syntax is not followed, returns a CommandBadSyntax object.
 
 * If the arguments specify a door that is not present in the room, returns a VariousCommands_DoorNotPresent object.
 
@@ -3001,7 +3001,7 @@ UNLOCK <chest\u00A0name>
         # This command requires an argument; so if it was called with no
         # arguments, I return a syntax error.
         if len(tokens) == 0:
-            return stmsg.Stmsg_CommandBadSyntax('UNLOCK', COMMANDS_SYNTAX['UNLOCK']),
+            return stmsg.command.CommandBadSyntax('UNLOCK', COMMANDS_SYNTAX['UNLOCK']),
 
         # unlock_command() shares preprocessing logic with lock_command(),
         # open_command() and close_command(), so a private workhorse method is

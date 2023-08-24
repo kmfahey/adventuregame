@@ -2,7 +2,7 @@
 
 
 from adventuregame.utility import usage_verb
-from adventuregame.statemsgs._common import GameStateMessage
+from adventuregame.statemsgs.gsm import GameStateMessage
 
 
 __all__ = "ItemNotEquipped",

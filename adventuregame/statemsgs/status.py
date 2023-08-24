@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 
-from adventuregame.statemsgs._common import GameStateMessage
+from adventuregame.statemsgs.gsm import GameStateMessage
 
 
 __all__ = "StatusOutput",
+
 
 class StatusOutput(GameStateMessage):
     """
