@@ -9,13 +9,12 @@ __all__ = ("BadSyntax", "ClassRestricted", "NotAllowedNow",
 
 
 class BadSyntax(GameStateMessage):
-    __slots__ = 'command', 'proper_syntax_options'
+    """
+Returned by command methods of advgame.process.CommandProcessor when
+incorrect syntax for a command has been used.
+    """
 
-    """
-This class implements an error object that is returned by command methods of
-advgame.process.Command_Processor when incorrect syntax for a command
-has been used.
-    """
+    __slots__ = 'command', 'proper_syntax_options'
 
     @property
     def message(self):
@@ -45,10 +44,9 @@ has been used.
 
 class ClassRestricted(GameStateMessage):
     """
-This class implements an error object that is returned by
-advgame.process.Command_Processor.process() when the player has used a
-command that is restricted to a class other than their own. (For example, only
-thieves can use PICK LOCK.)
+Returned by advgame.process.CommandProcessor.process() when the player
+has used a command that is restricted to a class other than their own.
+(For example, only thieves can use PICK LOCK.)
     """
     __slots__ = 'command', 'classes',
 
@@ -67,13 +65,13 @@ thieves can use PICK LOCK.)
 
 class NotAllowedNow(GameStateMessage):
     """
-This class implements an error object that is returned by
-advgame.process.Command_Processor.process() when the player has used
-a command that is not allowed in the current game mode. The game has two modes:
-pregame, when name and class are chosen and ability scores are rolled, and
-in-game, when the player plays the game. Different command sets are allowed in
-each mode. See advgame.process.Command_Processor.pregame_commands and
-advgame.process.Command_Processor.ingame_commands for the lists.
+Returned by advgame.process.CommandProcessor.process() when the
+player has used a command that is not allowed in the current
+game mode. The game has two modes: pregame, when name and class
+are chosen and ability scores are rolled, and in-game, when the
+player plays the game. Different command sets are allowed in each
+mode. See advgame.process.CommandProcessor.pregame_commands and
+advgame.process.CommandProcessor.ingame_commands for the lists.
     """
     __slots__ = 'command', 'allowed_commands', 'game_has_begun'
 
@@ -102,9 +100,8 @@ advgame.process.Command_Processor.ingame_commands for the lists.
 
 class NotRecognized(GameStateMessage):
     """
-This class implements an error object that is returned by
-advgame.process.Command_Processor.process() when a command was entered
-that is not known to the command processor.
+Returned by advgame.process.CommandProcessor.process() when a command
+was entered that is not known to the command processor.
     """
     __slots__ = 'command', 'allowed_commands', 'game_has_begun'
 
@@ -125,4 +122,3 @@ that is not known to the command processor.
         self.command = command
         self.allowed_commands = allowed_commands
         self.game_has_begun = game_has_begun
-

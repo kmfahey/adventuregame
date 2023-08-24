@@ -10,10 +10,9 @@ __all__ = ("DontPossessCorrectKey", "ElementNotUnlockable",
 
 class DontPossessCorrectKey(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.lock_command() when the player tries
-to lock a chest while they don't possess the chest key, or a door while they
-don't possess the door key.
+Returned by advgame.process.CommandProcessor.lock_command() when the
+player tries to lock a chest while they don't possess the chest key, or
+a door while they don't possess the door key.
     """
     __slots__ = 'object_to_lock_title', 'key_needed',
 
@@ -46,9 +45,8 @@ class ElementNotUnlockable(GameStateMessage):
 
 class ElementHasBeenUnlocked(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.lock_command() when the player
-successfully locks a chest or door.
+Returned by advgame.process.CommandProcessor.lock_command() when the
+player successfully locks a chest or door.
     """
     __slots__ = 'target',
 
@@ -62,9 +60,8 @@ successfully locks a chest or door.
 
 class ElementIsAlreadyUnlocked(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.lock_command() when the player tries
-to lock a chest or door that is already locked.
+Returned by advgame.process.CommandProcessor.lock_command() when the
+player tries to lock a chest or door that is already locked.
     """
     __slots__ = 'target',
 
@@ -78,9 +75,9 @@ to lock a chest or door that is already locked.
 
 class ElementToUnlockNotHere(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.lock_command() when the player
-specifies an object to lock that is not present in the current dungeon room.
+Returned by advgame.process.CommandProcessor.lock_command() when the
+player specifies an object to lock that is not present in the current
+dungeon room.
     """
     __slots__ = 'target_title',
 
@@ -90,4 +87,3 @@ specifies an object to lock that is not present in the current dungeon room.
 
     def __init__(self, target_title):
         self.target_title = target_title
-

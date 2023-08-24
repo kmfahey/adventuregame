@@ -32,7 +32,7 @@ class Test_Attack_1(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
         self.game_state.character_name = 'Niath'
         self.game_state.character_class = 'Warrior'
         self.game_state.game_has_begun = True
@@ -150,7 +150,7 @@ class Test_Attack_2(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
         self.game_state.character_name = 'Mialee'
         self.game_state.character_class = 'Mage'
         self.game_state.game_has_begun = True
@@ -207,7 +207,7 @@ class Test_Begin_Game(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
 
     def test_begin_game_1(self):
         result = self.command_processor.process('begin game')
@@ -366,7 +366,7 @@ class Test_Cast_Spell(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
 
     def test_cast_spell1(self):
         self.command_processor.game_state.character_name = 'Niath'
@@ -458,7 +458,7 @@ class Test_Close(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
         self.command_processor.game_state.character_name = 'Lidda'
         self.command_processor.game_state.character_class = 'Thief'
         self.game_state.game_has_begun = True
@@ -590,7 +590,7 @@ class Test_Drink(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
 
     def test_drink1(self):
         self.command_processor.game_state.character_name = 'Niath'
@@ -756,7 +756,7 @@ class Test_Drop(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
 
     def test_drop_1(self):
         self.command_processor.game_state.character_name = 'Niath'
@@ -1031,7 +1031,7 @@ class Test_Equip_1(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
         self.longsword = self.command_processor.game_state.items_state.get('Longsword')
         self.scale_mail = self.command_processor.game_state.items_state.get('Scale_Mail')
         self.shield = self.command_processor.game_state.items_state.get('Steel_Shield')
@@ -1139,7 +1139,7 @@ class Test_Equip_2(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
         self.buckler = self.command_processor.game_state.items_state.get('Buckler')
         self.longsword = self.command_processor.game_state.items_state.get('Longsword')
         self.mace = self.command_processor.game_state.items_state.get('Heavy_Mace')
@@ -1228,7 +1228,7 @@ class Test_Help_1(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
         self.command_processor.process('set name to Niath')
         self.command_processor.process('set class to Warrior')
         self.command_processor.process('begin game')
@@ -1337,7 +1337,7 @@ class Test_Help_2(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
 
     def test_help_1(self):
         result = self.command_processor.process('help')
@@ -1444,7 +1444,7 @@ class Test_Inventory(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
         self.command_processor.game_state.character_name = 'Niath'
         self.command_processor.game_state.character_class = 'Warrior'
         self.game_state.game_has_begun = True
@@ -1498,7 +1498,7 @@ class Test_Leave(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
         self.command_processor.game_state.character_name = 'Niath'
         self.command_processor.game_state.character_class = 'Warrior'
         self.game_state.game_has_begun = True
@@ -1553,7 +1553,7 @@ class Test_Leave(unittest.TestCase):
                                             'south.')
 
     def test_leave_5(self):
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
         self.command_processor.game_state.character_name = 'Lidda'
         self.command_processor.game_state.character_class = 'Thief'
         self.game_state.game_has_begun = True
@@ -1591,7 +1591,7 @@ class Test_Lock(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
         self.command_processor.game_state.character_name = 'Lidda'
         self.command_processor.game_state.character_class = 'Thief'
         self.game_state.game_has_begun = True
@@ -1757,7 +1757,7 @@ class Test_Look_At_1(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
         self.game_state.character_name = 'Niath'
         self.game_state.character_class = 'Warrior'
         self.game_state.game_has_begun = True
@@ -1926,7 +1926,7 @@ class Test_Look_At_2(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
         self.command_processor.game_state.character_name = 'Lidda'
         self.command_processor.game_state.character_class = 'Thief'
         self.game_state.game_has_begun = True
@@ -2156,7 +2156,7 @@ class Test_Open(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
         self.command_processor.game_state.character_name = 'Niath'
         self.command_processor.game_state.character_class = 'Warrior'
         self.game_state.game_has_begun = True
@@ -2312,7 +2312,7 @@ class Test_Pick_Lock(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
 
     def test_pick_lock_1(self):
         self.command_processor.game_state.character_name = 'Niath'
@@ -2510,7 +2510,7 @@ class Test_Pick_Up(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
         self.command_processor.game_state.character_name = 'Niath'
         self.command_processor.game_state.character_class = 'Warrior'
         self.game_state.game_has_begun = True
@@ -2651,7 +2651,7 @@ class Test_Processor_Process(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
 
     def test_command_not_recognized_in_pregame(self):
         result = self.command_processor.process('juggle')
@@ -2717,7 +2717,7 @@ class Test_Put(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
         self.game_state.character_name = 'Niath'
         self.game_state.character_class = 'Warrior'
         self.game_state.game_has_begun = True
@@ -2859,7 +2859,7 @@ class Test_Quit(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
 
     def test_quit_1(self):
         result = self.command_processor.process('quit the game now')  # check
@@ -2889,7 +2889,7 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Games(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
 
     def test_reroll_1(self):
         self.command_processor.process('set class to Warrior')
@@ -3103,7 +3103,7 @@ class Test_Status(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
 
     def test_status1(self):
         self.command_processor.game_state.character_name = 'Niath'
@@ -3213,7 +3213,7 @@ class Test_Take(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
         self.game_state.character_name = 'Niath'
         self.game_state.character_class = 'Warrior'
         self.game_state.game_has_begun = True
@@ -3612,7 +3612,7 @@ class Test_Unequip_1(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
         self.buckler = self.command_processor.game_state.items_state.get('Buckler')
         self.longsword = self.command_processor.game_state.items_state.get('Longsword')
         self.mace = self.command_processor.game_state.items_state.get('Heavy_Mace')
@@ -3701,7 +3701,7 @@ class Test_Unequip_2(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
         self.staff = self.command_processor.game_state.items_state.get('Staff')
         self.magic_wand = self.command_processor.game_state.items_state.get('Magic_Wand')
         self.command_processor.game_state.character_name = 'Mialee'
@@ -3746,7 +3746,7 @@ class Test_Unlock(unittest.TestCase):
                                            self.items_state, **rooms_ini_config.sections)
         self.game_state = advg.GameState(self.rooms_state, self.creatures_state, self.containers_state,
                                          self.doors_state, self.items_state)
-        self.command_processor = advg.Command_Processor(self.game_state)
+        self.command_processor = advg.CommandProcessor(self.game_state)
         self.command_processor.game_state.character_name = 'Lidda'
         self.command_processor.game_state.character_class = 'Thief'
         self.game_state.game_has_begun = True

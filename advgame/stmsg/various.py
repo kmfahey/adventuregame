@@ -11,11 +11,11 @@ __all__ = ("AmbiguousDoorSpecifier", "ContainerIsClosed", "ContainerNotFound", "
 
 class AmbiguousDoorSpecifier(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.lock_command(), .unlock_command(),
-.open_command() and .close_command() when the player has used a specifier for a
-door that matches more than one door in the current dungeon room; for example,
-saying 'unlock wooden door' when there's two wooden doors.
+Returned by advgame.process.CommandProcessor.lock_command(),
+.unlock_command(), .open_command() and .close_command() when the player
+has used a specifier for a door that matches more than one door in the
+current dungeon room; for example, saying 'unlock wooden door' when
+there's two wooden doors.
     """
     __slots__ = 'compass_dirs', 'door_or_doorway', 'door_type'
 
@@ -41,9 +41,8 @@ saying 'unlock wooden door' when there's two wooden doors.
 
 class ContainerIsClosed(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.put_command() or .take_command() when
-the player tries to access a chest that is closed.
+Returned by advgame.process.CommandProcessor.put_command() or
+.take_command() when the player tries to access a chest that is closed.
     """
     __slots__ = 'target',
 
@@ -57,11 +56,10 @@ the player tries to access a chest that is closed.
 
 class ContainerNotFound(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.put_command(), .take_command(), or
-.look_at_command() when trying to look in a chest that isn't present in the
-current dungeon room, or check a corpse that isn't present in the current
-dungeon room.
+Returned by advgame.process.CommandProcessor.put_command(),
+.take_command(), or .look_at_command() when trying to look in a chest
+that isn't present in the current dungeon room, or check a corpse that
+isn't present in the current dungeon room.
     """
     __slots__ = 'container_not_found_title', 'container_present_title'
 
@@ -79,11 +77,10 @@ dungeon room.
 
 class DisplayRolledStats(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.set_name_command() or
+Returned by advgame.process.CommandProcessor.set_name_command() or
 .set_class_command() when both name and class have been set, or by
-.reroll_command(). It displays the character's randomly generated ability
-scores.
+.reroll_command(). It displays the character's randomly generated
+ability scores.
     """
     __slots__ = 'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'
 
@@ -109,11 +106,10 @@ scores.
 
 class DoorNotPresent(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.close_command(), .leave_command(),
-.lock_command(), .look_at_command(), .open_command(), .pick_lock_command(), or
-.unlock_command() when the player specifies a door that is not present in the
-current dungeon room.
+Returned by advgame.process.CommandProcessor.close_command(),
+.leave_command(), .lock_command(), .look_at_command(), .open_command(),
+.pick_lock_command(), or .unlock_command() when the player specifies a
+door that is not present in the current dungeon room.
     """
     __slots__ = 'compass_dir', 'portal_type'
 
@@ -144,12 +140,11 @@ current dungeon room.
 
 class EnteredRoom(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.leave_command() when the player leaves
-a room and enters a new one, or by .begin_command() when the player starts the
-game in the first room. It prints the room description, lists the items on the
-floor if any, mentions any chest or creature, and lists the exits to the room by
-compass direction.
+Returned by advgame.process.CommandProcessor.leave_command() when the
+player leaves a room and enters a new one, or by .begin_command()
+when the player starts the game in the first room. It prints the room
+description, lists the items on the floor if any, mentions any chest or
+creature, and lists the exits to the room by compass direction.
     """
     __slots__ = 'room',
 
@@ -220,10 +215,10 @@ class FoeDeath(GameStateMessage):
 
 class ItemEquipped(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.begin_game() or .equip_command() when
-the player equips an item. It lists the item equipped and mentions how the
-relevant game parameters have changed as a result.
+Returned by advgame.process.CommandProcessor.begin_game() or
+.equip_command() when the player equips an item. It lists the item
+equipped and mentions how the relevant game parameters have changed as a
+result.
     """
     __slots__ = ('item_title', 'item_type', 'attack_bonus', 'damage', 'armor_class'
                 'change_text')
@@ -264,13 +259,13 @@ relevant game parameters have changed as a result.
 
 class ItemUnequipped(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.equip_command(), .unequip_command(),
-or .drop_command(). It's returned by .unequip_command() when the player unequips
-an item; .equip_command() returns it if the player already had an item equipped
-in that slot to convey the previous item's removal; and .drop_command() returns
-it if the item the character dropped was equipped and they no longer have any of
-the item in their inventory.
+Returned by advgame.process.CommandProcessor.equip_command(),
+.unequip_command(), or .drop_command(). It's returned by
+.unequip_command() when the player unequips an item; .equip_command()
+returns it if the player already had an item equipped in that slot to
+convey the previous item's removal; and .drop_command() returns it if
+the item the character dropped was equipped and they no longer have any
+of the item in their inventory.
     """
     __slots__ = ('item_title', 'item_type', 'changed_value_1', 'value_type_1', 'changed_value_2', 'value_type_2',
                 'change_text')
@@ -327,11 +322,10 @@ the item in their inventory.
 
 class UnderwentHealingEffect(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.drink_command() or
-.cast_spell_command(). It's returned by .drink_command() if the player drinks a
-health potion; and it's returned by the .cast_spell_command() if the player is a
-Priest and they successfully cast a healing spell.
+Returned by advgame.process.CommandProcessor.drink_command() or
+.cast_spell_command(). It's returned by .drink_command() if the player
+drinks a health potion; and it's returned by the .cast_spell_command()
+if the player is a Priest and they successfully cast a healing spell.
     """
     __slots__ = 'amount_healed', 'current_hit_points', 'hit_point_total',
 

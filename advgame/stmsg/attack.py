@@ -9,13 +9,13 @@ __all__ = ("AttackHit", "AttackMissed", "OpponentNotFound",
 
 class AttackHit(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.attack_command() when the player's
-attack connected with their foe. Because attack_command() always triggers the
-hidden _be_attacked_by_command() pseudo-command, an Stmsg_Attack_AttackHit
-object tracks if the foe was slain. If so, nothing relating to foe death is
-conveyed; describing foe death is handled by the Stmsg_Various_FoeDeath
-class. If not, its message includes a clause about the foe turning to attack.
+Returned by advgame.process.CommandProcessor.attack_command() when
+the player's attack connected with their foe. attack_command() always
+triggers the hidden _be_attacked_by_command() pseudo-command, an
+.stmsg.attack.AttackHit object tracks if the foe was slain. If so,
+nothing relating to foe death is conveyed; describing foe death is
+handled by the .stmsg.various.FoeDeath class. If not, its message
+includes a clause about the foe turning to attack.
     """
     __slots__ = 'creature_title', 'damage_done', 'creature_slain'
 
@@ -51,10 +51,10 @@ class. If not, its message includes a clause about the foe turning to attack.
 
 class AttackMissed(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.attack_command() when the player's
-attack missed. Like Stmsg_Attack_AttackHit, it mentions the foe turning to
-attack, because an attack on a foe always leads to a counterattack if they live.
+Returned by advgame.process.CommandProcessor.attack_command() when the
+player's attack missed. Like .stmsg.attack.AttackHit, it mentions the
+foe turning to attack, because an attack on a foe always leads to a
+counterattack if they live.
     """
     __slots__ = 'creature_title', 'weapon_type'
 
@@ -77,10 +77,9 @@ attack, because an attack on a foe always leads to a counterattack if they live.
 
 class OpponentNotFound(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.attack_command() when the player has
-used an attack command that refers to a foe that is not present in the game's
-current room.
+Returned by advgame.process.CommandProcessor.attack_command() when
+the player has used an attack command that refers to a foe that is not
+present in the game's current room.
     """
     __slots__ = 'creature_title_given', 'opponent_present'
 
@@ -103,11 +102,10 @@ current room.
 
 class YouHaveNoWeaponOrWandEquipped(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.attack_method() when the player
-has used the attack command while having no weapon (or, for Mages, no wand)
-equipped. It tracks player class so it knows to display the wand option for
-Mages.
+Returned by advgame.process.CommandProcessor.attack_method() when the
+player has used the attack command while having no weapon (or, for
+Mages, no wand) equipped. It tracks player class so it knows to display
+the wand option for Mages.
     """
     __slots__ = 'character_class',
 
@@ -126,5 +124,3 @@ Mages.
 
     def __init__(self, character_class):
         self.character_class = character_class
-
-

@@ -9,9 +9,8 @@ __all__ = ("NotRecognized", "DisplayCommands", "DisplayHelpForCommand",)
 
 class NotRecognized(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.help_command() when the player tries
-to get help with a command that is not in the game.
+Returned by advgame.process.CommandProcessor.help_command() when the
+player tries to get help with a command that is not in the game.
     """
     __slots__ = 'command_attempted', 'commands_available',
 
@@ -30,10 +29,9 @@ to get help with a command that is not in the game.
 
 class DisplayCommands(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.help_command() when the player calls
-it with no arguments; it displays all the commands in the game and prompts the
-player to ask for help with one of them.
+Returned by advgame.process.CommandProcessor.help_command() when the
+player calls it with no arguments; it displays all the commands in the
+game and prompts the player to ask for help with one of them.
     """
     __slots__ = 'commands_available', 'game_started'
 
@@ -54,10 +52,9 @@ player to ask for help with one of them.
 
 class DisplayHelpForCommand(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.help_command() when the player asks
-for help with a specific command. It summarizes the syntax for them and prints
-an informative blurb about the command.
+Returned by advgame.process.CommandProcessor.help_command() when the
+player asks for help with a specific command. It summarizes the syntax
+for them and prints an informative blurb about the command.
     """
     __slots__ = 'command', 'syntax_tuple', 'instructions',
 
@@ -79,4 +76,3 @@ an informative blurb about the command.
         self.command = command
         self.syntax_tuple = syntax_tuple
         self.instructions = instructions
-

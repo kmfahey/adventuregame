@@ -8,9 +8,9 @@ __all__ = ("ClassSet", "InvalidClass")
 
 class ClassSet(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.set_class_command() when the player
-selects a class from the choices Warrior, Thief, Mage and Priest.
+Returned by advgame.process.CommandProcessor.set_class_command() when
+the player selects a class from the choices Warrior, Thief, Mage and
+Priest.
     """
     __slots__ = 'class_str',
 
@@ -24,9 +24,9 @@ selects a class from the choices Warrior, Thief, Mage and Priest.
 
 class InvalidClass(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.set_class_command() when the player
-specifies a class that is not one of Warrior, Thief, Mage or Priest.
+Returned by advgame.process.CommandProcessor.set_class_command() when
+the player specifies a class that is not one of Warrior, Thief, Mage or
+Priest.
     """
     __slots__ = 'bad_class',
 
@@ -36,4 +36,3 @@ specifies a class that is not one of Warrior, Thief, Mage or Priest.
 
     def __init__(self, bad_class):
         self.bad_class = bad_class
-

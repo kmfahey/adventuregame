@@ -9,10 +9,9 @@ __all__ = ("ItemNotFoundInContainer", "ItemOrItemsTaken", "QuantityUnclear",
 
 class ItemNotFoundInContainer(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.take_command() if the player specifies
-an item to take from a chest that is not in that chest or from a corpse that is
-not on the corpse.
+Returned by advgame.process.CommandProcessor.take_command() if the
+player specifies an item to take from a chest that is not in that chest
+or from a corpse that is not on the corpse.
     """
     __slots__ = 'container_title', 'amount_attempted', 'container_type', 'item_title'
 
@@ -37,9 +36,8 @@ not on the corpse.
 
 class ItemOrItemsTaken(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.take_command() when the player
-successfully acquires an item from a chest or corpse.
+Returned by advgame.process.CommandProcessor.take_command() when the
+player successfully acquires an item from a chest or corpse.
     """
     __slots__ = 'container_title', 'item_title', 'amount_taken'
 
@@ -61,10 +59,9 @@ successfully acquires an item from a chest or corpse.
 
 class QuantityUnclear(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.take_command() when the player writes
-an ungrammatical sentence that is ambiguous as to how many of the item the
-player means to take.
+Returned by advgame.process.CommandProcessor.take_command() when the
+player writes an ungrammatical sentence that is ambiguous as to how many
+of the item the player means to take.
     """
 
     @property
@@ -77,11 +74,10 @@ player means to take.
 
 class TryingToTakeMoreThanIsPresent(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.take_command() when the player
-specifies a quantity of an item to take from a chest that is more than is
-present in that chest, or from a corpse that is more than is present on that
-corpse.
+Returned by advgame.process.CommandProcessor.take_command() when the
+player specifies a quantity of an item to take from a chest that is more
+than is present in that chest, or from a corpse that is more than is
+present on that corpse.
     """
     __slots__ = 'container_title', 'container_type', 'item_title', 'amount_attempted', 'amount_present'
 

@@ -111,7 +111,7 @@ COMMANDS_SYNTAX = {
 
 
 # The COMMANDS_HELP dict is a compendium of help blurbs for use by
-# Command_Processor.help_command(). Where the blurb explicitly suggests
+# CommandProcessor.help_command(). Where the blurb explicitly suggests
 # another command, a nonbreaking space is used again to ensure the
 # command doesn't get wrapped and is readable.
 
@@ -190,7 +190,7 @@ COMMANDS_HELP = {
               'chests.'}
 
 
-class Command_Processor(object):
+class CommandProcessor(object):
     """
 A processor that can parse a natural language command, modify the
 game state appropriately, and return a GameStateMessage object that
@@ -206,7 +206,7 @@ stringifies to a natural language reply.
     # For example, an ATTACK action that doesn't kill the foe
     # will prompt the foe to attack. The foe's attack might lead
     # to the character's death. So the return value might be a
-    # `Stmsg_Attack_AttackHit` object, a `Stmsg_Batkby_AttackedAndHit`
+    # `.stmsg.attack.AttackHit` object, a `Stmsg_Batkby_AttackedAndHit`
     # object, and a `Stmsg_Batkby_CharacterDeath` object, each bearing a
     # message in its `message` property. The frontend code will iterate
     # through the tuple printing each message in turn.
@@ -235,7 +235,7 @@ on this object, a Character object will be added and the game can begin.
         # objects. It will later furnish a Character object when one
         # can be initialized. These comprise the game data that the
         # player interacts with during the game, and have already been
-        # initialized by the frontend script before a Command_Processor
+        # initialized by the frontend script before a CommandProcessor
         # object is instantiated.
         self.game_state = game_state
 

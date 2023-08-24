@@ -9,10 +9,10 @@ __all__ = ("DisplayInventory",)
 
 class DisplayInventory(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.inventory_command(). It lists all the
-items in the character's inventory by title and quantity. If they want more
-information they need to say 'LOOK AT <item title> IN INVENTORY'.
+Returned by advgame.process.CommandProcessor.inventory_command(). It
+lists all the items in the character's inventory by title and quantity.
+If they want more information they need to say 'LOOK AT <item title> IN
+INVENTORY'.
     """
     __slots__ = 'inventory_contents',
 
@@ -30,4 +30,3 @@ information they need to say 'LOOK AT <item title> IN INVENTORY'.
 
     def __init__(self, inventory_contents_list):
         self.inventory_contents = inventory_contents_list
-

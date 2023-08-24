@@ -9,9 +9,8 @@ __all__ = ("ElementNotCloseable", "ElementHasBeenClosed",
 
 class ElementNotCloseable(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.close_command() when the player
-attempts to close a corpse, creature, doorway or item.
+Returned by advgame.process.CommandProcessor.close_command() when the
+player attempts to close a corpse, creature, doorway or item.
     """
     __slots__ = 'target_title', 'target_type'
 
@@ -29,9 +28,8 @@ attempts to close a corpse, creature, doorway or item.
 
 class ElementHasBeenClosed(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.close_command() when the player
-succeeds in closing a door or chest.
+Returned by advgame.process.CommandProcessor.close_command() when the
+player succeeds in closing a door or chest.
     """
     __slots__ = 'target',
 
@@ -45,9 +43,8 @@ succeeds in closing a door or chest.
 
 class ElementIsAlreadyClosed(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.close_command() when the closable
-object the player targeted is already closed.
+Returned by advgame.process.CommandProcessor.close_command() when the
+closable object the player targeted is already closed.
     """
     __slots__ = 'target',
 
@@ -61,8 +58,8 @@ object the player targeted is already closed.
 
 class ElementToCloseNotHere(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.close_command() when the player
+Returned by
+advgame.process.CommandProcessor.close_command() when the player
 specifies a target to the command that is not present in the current room of the
 game.
     """
@@ -74,4 +71,3 @@ game.
 
     def __init__(self, target_title):
         self.target_title = target_title
-

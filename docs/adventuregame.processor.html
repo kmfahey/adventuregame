@@ -9,11 +9,11 @@
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="adventuregame.html"><font color="#ffffff">adventuregame</font></a>.processor</strong></big></big></font></td
 ><td align=right valign=bottom
 ><font color="#ffffff" face="helvetica, arial"><a href="adventuregame.html">index</a><br></font></td></tr></table>
-    <p><tt>This&nbsp;module&nbsp;consists&nbsp;solely&nbsp;of&nbsp;the&nbsp;<a href="#Command_Processor">Command_Processor</a>&nbsp;class&nbsp;and&nbsp;its&nbsp;supporting<br>
-data&nbsp;structures.&nbsp;<a href="#Command_Processor">Command_Processor</a>&nbsp;is&nbsp;a&nbsp;monolithic&nbsp;class&nbsp;that&nbsp;has&nbsp;a&nbsp;process()<br>
+    <p><tt>This&nbsp;module&nbsp;consists&nbsp;solely&nbsp;of&nbsp;the&nbsp;<a href="#CommandProcessor">CommandProcessor</a>&nbsp;class&nbsp;and&nbsp;its&nbsp;supporting<br>
+data&nbsp;structures.&nbsp;<a href="#CommandProcessor">CommandProcessor</a>&nbsp;is&nbsp;a&nbsp;monolithic&nbsp;class&nbsp;that&nbsp;has&nbsp;a&nbsp;process()<br>
 method&nbsp;which&nbsp;accepts&nbsp;a&nbsp;natural&nbsp;language&nbsp;command&nbsp;and&nbsp;dispatches&nbsp;it&nbsp;to&nbsp;the<br>
 appropriate&nbsp;command&nbsp;method.&nbsp;Every&nbsp;command&nbsp;in&nbsp;the&nbsp;game&nbsp;corresponds&nbsp;to&nbsp;a&nbsp;method&nbsp;of<br>
-the&nbsp;<a href="#Command_Processor">Command_Processor</a>&nbsp;class,&nbsp;and&nbsp;each&nbsp;method&nbsp;always&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or<br>
+the&nbsp;<a href="#CommandProcessor">CommandProcessor</a>&nbsp;class,&nbsp;and&nbsp;each&nbsp;method&nbsp;always&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or<br>
 more&nbsp;adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;Typically,&nbsp;the<br>
 bulk&nbsp;of&nbsp;the&nbsp;logic&nbsp;in&nbsp;a&nbsp;given&nbsp;command&nbsp;method&nbsp;is&nbsp;devoted&nbsp;to&nbsp;detecting&nbsp;player&nbsp;error<br>
 and&nbsp;handling&nbsp;each&nbsp;error&nbsp;discretely.&nbsp;The&nbsp;logic&nbsp;that&nbsp;completes&nbsp;the&nbsp;command&nbsp;task&nbsp;is<br>
@@ -46,7 +46,7 @@ the&nbsp;command&nbsp;can't&nbsp;complete.</tt></p>
 <dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
 </font></dt><dd>
 <dl>
-<dt><font face="helvetica, arial"><a href="adventuregame.processor.html#Command_Processor">Command_Processor</a>
+<dt><font face="helvetica, arial"><a href="adventuregame.processor.html#CommandProcessor">CommandProcessor</a>
 </font></dt></dl>
 </dd>
 </dl>
@@ -54,10 +54,10 @@ the&nbsp;command&nbsp;can't&nbsp;complete.</tt></p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="Command_Processor">class <strong>Command_Processor</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="CommandProcessor">class <strong>CommandProcessor</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#Command_Processor">Command_Processor</a>(game_state)<br>
+<td colspan=2><tt><a href="#CommandProcessor">CommandProcessor</a>(game_state)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;which&nbsp;can&nbsp;be&nbsp;used&nbsp;to&nbsp;process&nbsp;natural&nbsp;language<br>
 commands&nbsp;and&nbsp;return&nbsp;semantic&nbsp;objects&nbsp;which&nbsp;furnish&nbsp;computed&nbsp;messages&nbsp;that<br>
@@ -70,7 +70,7 @@ the&nbsp;command&nbsp;on&nbsp;the&nbsp;Game_State&nbsp;method&nbsp;and&nbsp;retu
 indicates&nbsp;the&nbsp;command&nbsp;succeeded&nbsp;and&nbsp;what&nbsp;the&nbsp;outcome&nbsp;was.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="Command_Processor-__init__"><strong>__init__</strong></a>(self, game_state)</dt><dd><tt>This&nbsp;__init__&nbsp;method&nbsp;initializes&nbsp;the&nbsp;<a href="#Command_Processor">Command_Processor</a>&nbsp;before&nbsp;the&nbsp;beginning<br>
+<dl><dt><a name="CommandProcessor-__init__"><strong>__init__</strong></a>(self, game_state)</dt><dd><tt>This&nbsp;__init__&nbsp;method&nbsp;initializes&nbsp;the&nbsp;<a href="#CommandProcessor">CommandProcessor</a>&nbsp;before&nbsp;the&nbsp;beginning<br>
 of&nbsp;the&nbsp;game.&nbsp;The&nbsp;object's&nbsp;dispatch&nbsp;table&nbsp;is&nbsp;created&nbsp;using&nbsp;introspection;&nbsp;each<br>
 command&nbsp;method&nbsp;is&nbsp;stored&nbsp;associated&nbsp;with&nbsp;the&nbsp;command&nbsp;that&nbsp;it&nbsp;implements.<br>
 &nbsp;<br>
@@ -80,7 +80,7 @@ command&nbsp;method&nbsp;is&nbsp;stored&nbsp;associated&nbsp;with&nbsp;the&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;character_name&nbsp;and&nbsp;character_class&nbsp;attributes&nbsp;are&nbsp;set&nbsp;on&nbsp;this<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;object,&nbsp;a&nbsp;Character&nbsp;object&nbsp;will&nbsp;be&nbsp;added&nbsp;and&nbsp;the&nbsp;game&nbsp;can&nbsp;begin.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-attack_command"><strong>attack_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;ATTACK&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-attack_command"><strong>attack_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;ATTACK&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;ATTACK&nbsp;command<br>
 has&nbsp;the&nbsp;following&nbsp;usage:<br>
@@ -97,14 +97,14 @@ ATTACK&nbsp;&lt;creature&nbsp;name&gt;<br>
 &nbsp;&nbsp;a&nbsp;1-tuple&nbsp;of&nbsp;a&nbsp;Attack_Command_Opponent_Not_Found&nbsp;object&nbsp;is&nbsp;returned.<br>
 *&nbsp;If&nbsp;the&nbsp;attack&nbsp;misses,&nbsp;a&nbsp;tuple&nbsp;is&nbsp;returned&nbsp;starting&nbsp;with&nbsp;a<br>
 &nbsp;&nbsp;Attack_Command_Attack_Missed&nbsp;object&nbsp;followed&nbsp;by&nbsp;the&nbsp;return&nbsp;value&nbsp;of&nbsp;a<br>
-&nbsp;&nbsp;<a href="#Command_Processor">Command_Processor</a>._be_attacked_by_command()&nbsp;call.<br>
+&nbsp;&nbsp;<a href="#CommandProcessor">CommandProcessor</a>._be_attacked_by_command()&nbsp;call.<br>
 *&nbsp;If&nbsp;the&nbsp;attack&nbsp;hits&nbsp;but&nbsp;doesn't&nbsp;kill&nbsp;the&nbsp;foe,&nbsp;a&nbsp;tuple&nbsp;is&nbsp;returned&nbsp;starting<br>
 &nbsp;&nbsp;with&nbsp;a&nbsp;Attack_Command_Attack_Hit&nbsp;object&nbsp;followed&nbsp;by&nbsp;the&nbsp;return&nbsp;value&nbsp;of&nbsp;a<br>
-&nbsp;&nbsp;<a href="#Command_Processor">Command_Processor</a>._be_attacked_by_command()&nbsp;call.<br>
+&nbsp;&nbsp;<a href="#CommandProcessor">CommandProcessor</a>._be_attacked_by_command()&nbsp;call.<br>
 *&nbsp;If&nbsp;the&nbsp;attack&nbsp;hits&nbsp;and&nbsp;kills&nbsp;the&nbsp;foe,&nbsp;this&nbsp;method&nbsp;returns&nbsp;a&nbsp;2-tuple&nbsp;of&nbsp;a<br>
 &nbsp;&nbsp;Attack_Command_Attack_Hit&nbsp;object&nbsp;and&nbsp;a&nbsp;Various_Commands_Foe_Death&nbsp;object.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-begin_game_command"><strong>begin_game_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;BEGIN&nbsp;GAME&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-begin_game_command"><strong>begin_game_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;BEGIN&nbsp;GAME&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;BEGIN&nbsp;GAME<br>
 command&nbsp;takes&nbsp;no&nbsp;arguments.<br>
@@ -121,7 +121,7 @@ command&nbsp;takes&nbsp;no&nbsp;arguments.<br>
 &nbsp;&nbsp;Various_Commands_Entered_Room&nbsp;command&nbsp;describing&nbsp;the&nbsp;initial&nbsp;room&nbsp;of&nbsp;the<br>
 &nbsp;&nbsp;dungeon.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-cast_spell_command"><strong>cast_spell_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;BEGIN&nbsp;GAME&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-cast_spell_command"><strong>cast_spell_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;BEGIN&nbsp;GAME&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;CAST&nbsp;SPELL<br>
 command&nbsp;takes&nbsp;no&nbsp;arguments.<br>
@@ -148,7 +148,7 @@ command&nbsp;takes&nbsp;no&nbsp;arguments.<br>
 &nbsp;&nbsp;of&nbsp;a&nbsp;Cast_Spell_Command_Cast_Healing_Spell&nbsp;object&nbsp;and&nbsp;a<br>
 &nbsp;&nbsp;Various_Commands_Underwent_Healing_Effect&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-close_command"><strong>close_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;CLOSE&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-close_command"><strong>close_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;CLOSE&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;CLOSE&nbsp;command<br>
 has&nbsp;the&nbsp;following&nbsp;usage:<br>
@@ -170,7 +170,7 @@ CLOSE&nbsp;&lt;chest&nbsp;name&gt;<br>
 &nbsp;&nbsp;Close_Command_Element_Is_Already_Closed&nbsp;object&nbsp;is&nbsp;returned.<br>
 *&nbsp;Otherwise,&nbsp;a&nbsp;1-tuple&nbsp;of&nbsp;a&nbsp;Close_Command_Element_Has_Been_Closed&nbsp;is&nbsp;returned.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-drink_command"><strong>drink_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;DRINK&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-drink_command"><strong>drink_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;DRINK&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;DRINK&nbsp;command<br>
 has&nbsp;the&nbsp;following&nbsp;usage:<br>
@@ -204,7 +204,7 @@ DRINK&nbsp;&lt;number&gt;&nbsp;&lt;potion&nbsp;name&gt;[s]<br>
 &nbsp;&nbsp;with&nbsp;its&nbsp;mana_points_recovered&nbsp;attribute,&nbsp;and&nbsp;a&nbsp;1-tuple&nbsp;of&nbsp;a<br>
 &nbsp;&nbsp;Drink_Command_Drank_Mana_Potion&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-drop_command"><strong>drop_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;DROP&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-drop_command"><strong>drop_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;DROP&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;DROP&nbsp;command<br>
 has&nbsp;the&nbsp;following&nbsp;usage:<br>
@@ -225,7 +225,7 @@ DROP&nbsp;&lt;number&gt;&nbsp;&lt;item&nbsp;name&gt;<br>
 &nbsp;&nbsp;is&nbsp;returned.<br>
 *&nbsp;Otherwise,&nbsp;a&nbsp;1-tuple&nbsp;of&nbsp;a&nbsp;Drop_Command_Dropped_Item&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-equip_command"><strong>equip_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;EQUIP&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-equip_command"><strong>equip_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;EQUIP&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;EQUIP&nbsp;command<br>
 has&nbsp;the&nbsp;following&nbsp;usage:<br>
@@ -250,7 +250,7 @@ EQUIP&nbsp;&lt;weapon&nbsp;name&gt;<br>
 *&nbsp;Otherwise,&nbsp;the&nbsp;specified&nbsp;item&nbsp;is&nbsp;equipped,&nbsp;and&nbsp;a&nbsp;1-tuple&nbsp;of&nbsp;a<br>
 &nbsp;&nbsp;Various_Commands_Item_Equipped&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-help_command"><strong>help_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;HELP&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-help_command"><strong>help_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;HELP&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;HELP&nbsp;command<br>
 has&nbsp;the&nbsp;following&nbsp;usage:<br>
@@ -268,7 +268,7 @@ HELP&nbsp;&lt;command&nbsp;name&gt;<br>
 &nbsp;&nbsp;help&nbsp;for&nbsp;the&nbsp;command&nbsp;is&nbsp;located&nbsp;in&nbsp;COMMANDS_HELP,&nbsp;and&nbsp;a&nbsp;1-tuple&nbsp;of&nbsp;a<br>
 &nbsp;&nbsp;Help_Command_Display_Help_for_Command&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-inventory_command"><strong>inventory_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;INVENTORY&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-inventory_command"><strong>inventory_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;INVENTORY&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;INVENTORY<br>
 command&nbsp;takes&nbsp;no&nbsp;arguments.<br>
@@ -278,7 +278,7 @@ command&nbsp;takes&nbsp;no&nbsp;arguments.<br>
 *&nbsp;Otherwise,&nbsp;a&nbsp;1-tuple&nbsp;of&nbsp;a&nbsp;Inventory_Command_Display_Inventory&nbsp;object&nbsp;is<br>
 &nbsp;&nbsp;returned.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-leave_command"><strong>leave_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;LEAVE&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-leave_command"><strong>leave_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;LEAVE&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;LEAVE&nbsp;command<br>
 has&nbsp;the&nbsp;following&nbsp;usage:<br>
@@ -303,7 +303,7 @@ LEAVE&nbsp;[USING&nbsp;or&nbsp;VIA]&nbsp;&lt;compass&nbsp;direction&gt;&nbsp;&lt
 &nbsp;&nbsp;self.<strong>game_state</strong>.rooms_state&nbsp;object,&nbsp;and&nbsp;a&nbsp;2-tuple&nbsp;of&nbsp;a&nbsp;Leave_Command_Left_Room<br>
 &nbsp;&nbsp;object&nbsp;and&nbsp;a&nbsp;Various_Commands_Entered_Room&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-lock_command"><strong>lock_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;LOCK&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-lock_command"><strong>lock_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;LOCK&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;LOCK&nbsp;command<br>
 has&nbsp;the&nbsp;following&nbsp;usage:<br>
@@ -329,7 +329,7 @@ LOCK&nbsp;&lt;chest&nbsp;name&gt;<br>
 *&nbsp;Otherwise,&nbsp;the&nbsp;object&nbsp;has&nbsp;its&nbsp;is_locked&nbsp;attribute&nbsp;set&nbsp;to&nbsp;True,&nbsp;If&nbsp;the<br>
 &nbsp;&nbsp;Lock_Command_Element_Has_Been_Locked</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-look_at_command"><strong>look_at_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;LOOK&nbsp;AT&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-look_at_command"><strong>look_at_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;LOOK&nbsp;AT&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;LOOK&nbsp;AT&nbsp;command<br>
 has&nbsp;the&nbsp;following&nbsp;usage:<br>
@@ -369,7 +369,7 @@ LOOK&nbsp;AT&nbsp;&lt;compass&nbsp;direction&gt;&nbsp;DOORWAY<br>
 &nbsp;&nbsp;or&nbsp;in&nbsp;self.<strong>game_state</strong>.character.inventory,&nbsp;a&nbsp;1-tuple&nbsp;of&nbsp;a<br>
 &nbsp;&nbsp;Look_At_Command_Found_Item_or_Items_Here&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-open_command"><strong>open_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;OPEN&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-open_command"><strong>open_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;OPEN&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;OPEN&nbsp;command<br>
 has&nbsp;the&nbsp;following&nbsp;usage:<br>
@@ -395,7 +395,7 @@ OPEN&nbsp;&lt;chest&nbsp;name&gt;<br>
 *&nbsp;Otherwise,&nbsp;the&nbsp;chest&nbsp;or&nbsp;door&nbsp;has&nbsp;its&nbsp;is_closed&nbsp;attribute&nbsp;set&nbsp;to&nbsp;False,&nbsp;and&nbsp;a<br>
 &nbsp;&nbsp;1-tuple&nbsp;of&nbsp;a&nbsp;Open_Command_Element_Has_Been_Opened&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-pick_lock_command"><strong>pick_lock_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;PICK&nbsp;LOCK&nbsp;command.&nbsp;(The&nbsp;command&nbsp;is&nbsp;only&nbsp;usable<br>
+<dl><dt><a name="CommandProcessor-pick_lock_command"><strong>pick_lock_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;PICK&nbsp;LOCK&nbsp;command.&nbsp;(The&nbsp;command&nbsp;is&nbsp;only&nbsp;usable<br>
 if&nbsp;the&nbsp;player&nbsp;is&nbsp;playing&nbsp;a&nbsp;Thief.)&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that&nbsp;is<br>
 the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;PICK&nbsp;LOCK<br>
@@ -422,7 +422,7 @@ Priest,&nbsp;a&nbsp;1-tuple&nbsp;of&nbsp;a&nbsp;Command_Class_Restricted&nbsp;ob
 *&nbsp;Otherwise,&nbsp;the&nbsp;specified&nbsp;door&nbsp;or&nbsp;chest&nbsp;has&nbsp;its&nbsp;is_locked&nbsp;attribute&nbsp;set&nbsp;to<br>
 &nbsp;&nbsp;False,&nbsp;and&nbsp;a&nbsp;1-tuple&nbsp;of&nbsp;a&nbsp;Pick_Lock_Command_Target_Has_Been_Unlocked&nbsp;object.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-pick_up_command"><strong>pick_up_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;PICK&nbsp;UP&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-pick_up_command"><strong>pick_up_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;PICK&nbsp;UP&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;PICK&nbsp;UP&nbsp;command<br>
 has&nbsp;the&nbsp;following&nbsp;usage:<br>
@@ -448,7 +448,7 @@ PICK&nbsp;UP&nbsp;&lt;number&gt;&nbsp;&lt;item&nbsp;name&gt;),<br>
 &nbsp;&nbsp;self.<strong>game_state</strong>.character,&nbsp;and&nbsp;a&nbsp;1-tuple&nbsp;of&nbsp;a&nbsp;Pick_Up_Command_Item_Picked_Up<br>
 &nbsp;&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-process"><strong>process</strong></a>(self, natural_language_str)</dt><dd><tt>This&nbsp;method&nbsp;is&nbsp;used&nbsp;to&nbsp;process&nbsp;and&nbsp;dispatch&nbsp;commands&nbsp;during&nbsp;the&nbsp;game.<br>
+<dl><dt><a name="CommandProcessor-process"><strong>process</strong></a>(self, natural_language_str)</dt><dd><tt>This&nbsp;method&nbsp;is&nbsp;used&nbsp;to&nbsp;process&nbsp;and&nbsp;dispatch&nbsp;commands&nbsp;during&nbsp;the&nbsp;game.<br>
 &nbsp;<br>
 :natural_language_str:&nbsp;The&nbsp;player's&nbsp;command&nbsp;input&nbsp;as&nbsp;a&nbsp;natural&nbsp;language&nbsp;string.<br>
 &nbsp;<br>
@@ -469,7 +469,7 @@ from&nbsp;the&nbsp;remaining&nbsp;tokens,&nbsp;if&nbsp;the&nbsp;command&nbsp;is&
 the&nbsp;tokens&nbsp;are&nbsp;lowercased,&nbsp;and&nbsp;the&nbsp;command&nbsp;method&nbsp;is&nbsp;tail&nbsp;called&nbsp;with&nbsp;the&nbsp;tokens<br>
 as&nbsp;a&nbsp;*&nbsp;argument.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-put_command"><strong>put_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;PUT&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-put_command"><strong>put_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;PUT&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;PUT&nbsp;command&nbsp;has<br>
 the&nbsp;following&nbsp;usage:<br>
@@ -498,7 +498,7 @@ PUT&nbsp;&lt;number&gt;&nbsp;&lt;item&nbsp;name&gt;&nbsp;ON&nbsp;&lt;corpse&nbsp
 &nbsp;&nbsp;self.<strong>game_state</strong>.character,&nbsp;and&nbsp;put&nbsp;in&nbsp;the&nbsp;chest&nbsp;or&nbsp;on&nbsp;the&nbsp;corpse,&nbsp;and&nbsp;a<br>
 &nbsp;&nbsp;1-tuple&nbsp;of&nbsp;a&nbsp;Put_Command_Amount_Put&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-quit_command"><strong>quit_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;QUIT&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-quit_command"><strong>quit_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;QUIT&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;QUIT&nbsp;command<br>
 takes&nbsp;no&nbsp;arguments.<br>
@@ -508,7 +508,7 @@ takes&nbsp;no&nbsp;arguments.<br>
 *&nbsp;Otherwise,&nbsp;self.<strong>game_state</strong>.game_has_ended&nbsp;is&nbsp;set&nbsp;to&nbsp;True,&nbsp;and&nbsp;a&nbsp;1-tuple&nbsp;of&nbsp;a<br>
 &nbsp;&nbsp;Quit_Command_Have_Quit_The_Game&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-reroll_command"><strong>reroll_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;REROLL&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-reroll_command"><strong>reroll_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;REROLL&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;REROLL&nbsp;command<br>
 takes&nbsp;no&nbsp;arguments.<br>
@@ -520,7 +520,7 @@ takes&nbsp;no&nbsp;arguments.<br>
 *&nbsp;Otherwise,&nbsp;self.<strong>game_state</strong>.character.roll_stats()&nbsp;is&nbsp;called,&nbsp;and&nbsp;a&nbsp;1-tuple&nbsp;of<br>
 &nbsp;&nbsp;a&nbsp;Various_Commands_Display_Rolled_Stats&nbsp;is&nbsp;returned.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-set_class_command"><strong>set_class_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;SET&nbsp;CLASS&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-set_class_command"><strong>set_class_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;SET&nbsp;CLASS&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;SET&nbsp;CLASS<br>
 command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
@@ -538,7 +538,7 @@ SET&nbsp;CLASS&nbsp;[TO]&nbsp;&lt;Warrior,&nbsp;Thief,&nbsp;Mage&nbsp;or&nbsp;Pr
 &nbsp;&nbsp;and&nbsp;a&nbsp;2-tuple&nbsp;of&nbsp;a&nbsp;Set_Class_Command_Class_Set&nbsp;object&nbsp;and&nbsp;a<br>
 &nbsp;&nbsp;Various_Commands_Display_Rolled_Stats&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-set_name_command"><strong>set_name_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;SET&nbsp;NAME&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-set_name_command"><strong>set_name_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;SET&nbsp;NAME&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;SET&nbsp;NAME<br>
 command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
@@ -557,7 +557,7 @@ SET&nbsp;NAME&nbsp;[TO]&nbsp;&lt;character&nbsp;name&gt;<br>
 &nbsp;&nbsp;and&nbsp;a&nbsp;2-tuple&nbsp;of&nbsp;a&nbsp;Set_Name_Command_Name_Set&nbsp;object&nbsp;and&nbsp;a<br>
 &nbsp;&nbsp;Various_Commands_Display_Rolled_Stats&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-status_command"><strong>status_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;STATUS&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-status_command"><strong>status_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;STATUS&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;STATUS&nbsp;command<br>
 takes&nbsp;no&nbsp;arguments.<br>
@@ -566,7 +566,7 @@ takes&nbsp;no&nbsp;arguments.<br>
 &nbsp;&nbsp;Command_Bad_Syntax&nbsp;object.<br>
 *&nbsp;Otherwise,&nbsp;a&nbsp;1-tuple&nbsp;of&nbsp;a&nbsp;Status_Command_Output&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-take_command"><strong>take_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;TAKE&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-take_command"><strong>take_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;TAKE&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;TAKE&nbsp;command<br>
 has&nbsp;the&nbsp;following&nbsp;usage:<br>
@@ -594,7 +594,7 @@ TAKE&nbsp;&lt;number&gt;&nbsp;&lt;item&nbsp;name&gt;&nbsp;FROM&nbsp;&lt;containe
 &nbsp;&nbsp;self.<strong>game_state</strong>.character,&nbsp;and&nbsp;a&nbsp;1-tuple&nbsp;of&nbsp;a&nbsp;Take_Command_Item_or_Items_Taken<br>
 &nbsp;&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-unequip_command"><strong>unequip_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;UNEQUIP&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-unequip_command"><strong>unequip_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;UNEQUIP&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;UNEQUIP&nbsp;command<br>
 has&nbsp;the&nbsp;following&nbsp;usage:<br>
@@ -613,7 +613,7 @@ UNEQUIP&nbsp;&lt;weapon&nbsp;name&gt;<br>
 &nbsp;&nbsp;self.<strong>game_state</strong>.rooms_state.character,&nbsp;and&nbsp;a&nbsp;1-tuple&nbsp;of&nbsp;a<br>
 &nbsp;&nbsp;Various_Commands_Item_Unequipped&nbsp;is&nbsp;returned.</tt></dd></dl>
 
-<dl><dt><a name="Command_Processor-unlock_command"><strong>unlock_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;UNLOCK&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
+<dl><dt><a name="CommandProcessor-unlock_command"><strong>unlock_command</strong></a>(self, tokens)</dt><dd><tt>This&nbsp;method&nbsp;implements&nbsp;the&nbsp;UNLOCK&nbsp;command.&nbsp;It&nbsp;accepts&nbsp;a&nbsp;tokens&nbsp;tuple&nbsp;that<br>
 is&nbsp;the&nbsp;command's&nbsp;arguments,&nbsp;tokenized.&nbsp;It&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;one&nbsp;or&nbsp;more<br>
 adventuregame.statemsgs.Game_State_Message&nbsp;subclass&nbsp;objects.&nbsp;The&nbsp;UNLOCK&nbsp;command<br>
 has&nbsp;the&nbsp;following&nbsp;usage:<br>

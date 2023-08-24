@@ -9,9 +9,9 @@ __all__ = ("InvalidPart", "NameSet")
 
 class InvalidPart(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.set_name_command() when the player
-tries to set a name that is not one or more alphabetic titelcased strings.
+Returned by advgame.process.CommandProcessor.set_name_command() when the
+player tries to set a name that is not one or more alphabetic titelcased
+strings.
     """
     __slots__ = 'name_part',
 
@@ -25,9 +25,8 @@ tries to set a name that is not one or more alphabetic titelcased strings.
 
 class NameSet(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.set_name_command() when the player
-sets a name.
+Returned by advgame.process.CommandProcessor.set_name_command() when the
+player sets a name.
     """
     __slots__ = 'name',
 
@@ -37,4 +36,3 @@ sets a name.
 
     def __init__(self, name):
         self.name = name
-

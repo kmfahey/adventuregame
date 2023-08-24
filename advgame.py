@@ -911,12 +911,12 @@ game_state = advg.GameState(rooms_state, creatures_state, containers_state,
                              doors_state, items_state)
 
 
-# Stage 3: instancing the Command_Processor object.
+# Stage 3: instancing the CommandProcessor object.
 # 
 # The state objects are summarized by a GameState object, which is the
-# sole argument to Command_Processor.__init__. Its methods will consult the
+# sole argument to CommandProcessor.__init__. Its methods will consult the
 # game_state object to interact with the game's object environment.
-command_processor = advg.Command_Processor(game_state)
+command_processor = advg.CommandProcessor(game_state)
 
 
 ### Game data object environment established ###
@@ -953,7 +953,7 @@ that, enter BEGIN GAME and enter the dungeon!
 
 """)
 
-# input() builtin, and Command_Processor.process() is used to interpret &
+# input() builtin, and CommandProcessor.process() is used to interpret &
 # execute them.
 #
 # process() returns a tuple of advgame.stmsg.GameStateMessage

@@ -10,9 +10,9 @@
 ><td align=right valign=bottom
 ><font color="#ffffff" face="helvetica, arial"><a href="adventuregame.html">index</a><br></font></td></tr></table>
     <p><tt>This&nbsp;module&nbsp;contains&nbsp;<a href="#Game_State_Message">Game_State_Message</a>&nbsp;and&nbsp;its&nbsp;numerous&nbsp;subclasses.<br>
-adventuregame.processor.Command_Processor.process()&nbsp;processes&nbsp;a&nbsp;natural<br>
+adventuregame.processor.CommandProcessor.process()&nbsp;processes&nbsp;a&nbsp;natural<br>
 language&nbsp;command&nbsp;from&nbsp;the&nbsp;player&nbsp;and&nbsp;tail&nbsp;calls&nbsp;a&nbsp;command&nbsp;method&nbsp;of&nbsp;the<br>
-adventuregame.processor.Command_Processor&nbsp;object.&nbsp;It&nbsp;always&nbsp;returns&nbsp;a&nbsp;tuple<br>
+adventuregame.processor.CommandProcessor&nbsp;object.&nbsp;It&nbsp;always&nbsp;returns&nbsp;a&nbsp;tuple<br>
 of&nbsp;<a href="#Game_State_Message">Game_State_Message</a>&nbsp;subclass&nbsp;objects;&nbsp;each&nbsp;one&nbsp;represents&nbsp;a&nbsp;single&nbsp;possible<br>
 outcome&nbsp;of&nbsp;a&nbsp;command.&nbsp;A&nbsp;<a href="#Game_State_Message">Game_State_Message</a>&nbsp;subclass&nbsp;has&nbsp;an&nbsp;__init__&nbsp;method&nbsp;that<br>
 assigns&nbsp;keyword&nbsp;arguments&nbsp;to&nbsp;object&nbsp;attributes&nbsp;and&nbsp;a&nbsp;message&nbsp;property&nbsp;which<br>
@@ -153,7 +153,7 @@ natural&nbsp;language.</tt></p>
 <td colspan=2><tt><a href="#Attack_Command_Attack_Hit">Attack_Command_Attack_Hit</a>(creature_title,&nbsp;damage_done,&nbsp;creature_slain,&nbsp;weapon_type)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.attack_command()&nbsp;when&nbsp;the&nbsp;player's<br>
+adventuregame.processor.CommandProcessor.attack_command()&nbsp;when&nbsp;the&nbsp;player's<br>
 attack&nbsp;connected&nbsp;with&nbsp;their&nbsp;foe.&nbsp;Because&nbsp;attack_command()&nbsp;always&nbsp;triggers&nbsp;the<br>
 hidden&nbsp;_be_attacked_by_command()&nbsp;pseudo-command,&nbsp;an&nbsp;<a href="#Attack_Command_Attack_Hit">Attack_Command_Attack_Hit</a><br>
 object&nbsp;tracks&nbsp;if&nbsp;the&nbsp;foe&nbsp;was&nbsp;slain.&nbsp;If&nbsp;so,&nbsp;nothing&nbsp;relating&nbsp;to&nbsp;foe&nbsp;death&nbsp;is<br>
@@ -209,7 +209,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Attack_Command_Attack_Missed">Attack_Command_Attack_Missed</a>(creature_title,&nbsp;weapon_type)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.attack_command()&nbsp;when&nbsp;the&nbsp;player's<br>
+adventuregame.processor.CommandProcessor.attack_command()&nbsp;when&nbsp;the&nbsp;player's<br>
 attack&nbsp;missed.&nbsp;Like&nbsp;<a href="#Attack_Command_Attack_Hit">Attack_Command_Attack_Hit</a>,&nbsp;it&nbsp;mentions&nbsp;the&nbsp;foe&nbsp;turning&nbsp;to<br>
 attack,&nbsp;because&nbsp;an&nbsp;attack&nbsp;on&nbsp;a&nbsp;foe&nbsp;always&nbsp;leads&nbsp;to&nbsp;a&nbsp;counterattack&nbsp;if&nbsp;they&nbsp;live.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -260,7 +260,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Attack_Command_Opponent_Not_Found">Attack_Command_Opponent_Not_Found</a>(creature_title_given,&nbsp;opponent_present='')<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.attack_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;has<br>
+adventuregame.processor.CommandProcessor.attack_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;has<br>
 used&nbsp;an&nbsp;attack&nbsp;command&nbsp;that&nbsp;refers&nbsp;to&nbsp;a&nbsp;foe&nbsp;that&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;game's<br>
 current&nbsp;room.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -311,7 +311,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Attack_Command_You_Have_No_Weapon_or_Wand_Equipped">Attack_Command_You_Have_No_Weapon_or_Wand_Equipped</a>(character_class)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.attack_method()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.attack_method()&nbsp;when&nbsp;the&nbsp;player<br>
 has&nbsp;used&nbsp;the&nbsp;attack&nbsp;command&nbsp;while&nbsp;having&nbsp;no&nbsp;weapon&nbsp;(or,&nbsp;for&nbsp;Mages,&nbsp;no&nbsp;wand)<br>
 equipped.&nbsp;It&nbsp;tracks&nbsp;player&nbsp;class&nbsp;so&nbsp;it&nbsp;knows&nbsp;to&nbsp;display&nbsp;the&nbsp;wand&nbsp;option&nbsp;for<br>
 Mages.<br>&nbsp;</tt></td></tr>
@@ -361,7 +361,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Be_Attacked_by_Command_Attacked_and_Hit">Be_Attacked_by_Command_Attacked_and_Hit</a>(creature_title,&nbsp;damage_done,&nbsp;hit_points_left)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor._be_attacked_by_command()&nbsp;when&nbsp;the<br>
+adventuregame.processor.CommandProcessor._be_attacked_by_command()&nbsp;when&nbsp;the<br>
 foe's&nbsp;counterattack&nbsp;connects.&nbsp;It&nbsp;conveys&nbsp;the&nbsp;damage&nbsp;done&nbsp;and&nbsp;how&nbsp;many&nbsp;hit&nbsp;points<br>
 the&nbsp;player's&nbsp;character&nbsp;has&nbsp;left.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -414,7 +414,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Be_Attacked_by_Command_Attacked_and_Not_Hit">Be_Attacked_by_Command_Attacked_and_Not_Hit</a>(creature_title)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor._be_attacked_by_command()&nbsp;when&nbsp;the<br>
+adventuregame.processor.CommandProcessor._be_attacked_by_command()&nbsp;when&nbsp;the<br>
 foe's&nbsp;counterattack&nbsp;did&nbsp;not&nbsp;connect.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -460,7 +460,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor._be_attacked_by_command()&nbsp;when&nbsp;the<br>
+adventuregame.processor.CommandProcessor._be_attacked_by_command()&nbsp;when&nbsp;the<br>
 foe's&nbsp;counter&nbsp;attack&nbsp;killed&nbsp;the&nbsp;player's&nbsp;character.&nbsp;The&nbsp;game&nbsp;is&nbsp;now&nbsp;over,&nbsp;and<br>
 advgame.py&nbsp;responds&nbsp;to&nbsp;receiving&nbsp;this&nbsp;object&nbsp;by&nbsp;printing&nbsp;its&nbsp;message&nbsp;and&nbsp;then<br>
 exiting&nbsp;the&nbsp;program.<br>&nbsp;</tt></td></tr>
@@ -504,7 +504,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.begin_game_command()&nbsp;when&nbsp;the&nbsp;command<br>
+adventuregame.processor.CommandProcessor.begin_game_command()&nbsp;when&nbsp;the&nbsp;command<br>
 executes&nbsp;successfully.&nbsp;The&nbsp;game&nbsp;has&nbsp;begun.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -548,7 +548,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Begin_Game_Command_Name_or_Class_Not_Set">Begin_Game_Command_Name_or_Class_Not_Set</a>(character_name,&nbsp;character_class)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.begin_game_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.begin_game_command()&nbsp;when&nbsp;the&nbsp;player<br>
 has&nbsp;used&nbsp;the&nbsp;BEGIN&nbsp;GAME&nbsp;command&nbsp;prematurely.&nbsp;The&nbsp;player&nbsp;must&nbsp;set&nbsp;a&nbsp;name&nbsp;and&nbsp;a<br>
 class&nbsp;before&nbsp;the&nbsp;game&nbsp;can&nbsp;begin;&nbsp;this&nbsp;object&nbsp;is&nbsp;returned&nbsp;if&nbsp;they&nbsp;fail&nbsp;to.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -599,7 +599,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Cast_Spell_Command_Cast_Damaging_Spell">Cast_Spell_Command_Cast_Damaging_Spell</a>(creature_title,&nbsp;damage_dealt,&nbsp;creature_slain)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.cast_spell_command()&nbsp;when&nbsp;the&nbsp;player,<br>
+adventuregame.processor.CommandProcessor.cast_spell_command()&nbsp;when&nbsp;the&nbsp;player,<br>
 while&nbsp;playing&nbsp;a&nbsp;Mage,&nbsp;has&nbsp;cast&nbsp;a&nbsp;damaging&nbsp;spell.&nbsp;Like&nbsp;<a href="#Attack_Command_Attack_Hit">Attack_Command_Attack_Hit</a>,<br>
 it&nbsp;tracks&nbsp;whether&nbsp;the&nbsp;foe&nbsp;was&nbsp;slain,&nbsp;and&nbsp;adds&nbsp;a&nbsp;'they&nbsp;turn&nbsp;to&nbsp;attack'&nbsp;sentence<br>
 if&nbsp;not.<br>&nbsp;</tt></td></tr>
@@ -649,7 +649,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.cast_spell_command()&nbsp;when&nbsp;used&nbsp;by<br>
+adventuregame.processor.CommandProcessor.cast_spell_command()&nbsp;when&nbsp;used&nbsp;by<br>
 a&nbsp;Priest.&nbsp;It&nbsp;doesn't&nbsp;need&nbsp;to&nbsp;mention&nbsp;how&nbsp;much&nbsp;damage&nbsp;was&nbsp;healed&nbsp;because&nbsp;it's<br>
 followed&nbsp;by&nbsp;a&nbsp;<a href="#Various_Commands_Underwent_Healing_Effect">Various_Commands_Underwent_Healing_Effect</a>&nbsp;instance&nbsp;that&nbsp;does&nbsp;that.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -694,7 +694,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Cast_Spell_Command_Insufficient_Mana">Cast_Spell_Command_Insufficient_Mana</a>(current_mana_points,&nbsp;mana_point_total,&nbsp;spell_mana_cost)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.cast_spell_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.cast_spell_command()&nbsp;when&nbsp;the&nbsp;player<br>
 tries&nbsp;to&nbsp;cast&nbsp;a&nbsp;spell&nbsp;with&nbsp;insufficient&nbsp;mana&nbsp;points.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -744,7 +744,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.cast_spell_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.cast_spell_command()&nbsp;when&nbsp;the&nbsp;player<br>
 uses&nbsp;the&nbsp;command&nbsp;in&nbsp;a&nbsp;room&nbsp;with&nbsp;no&nbsp;creature&nbsp;to&nbsp;attack.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -788,7 +788,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Close_Command_Element_Has_Been_Closed">Close_Command_Element_Has_Been_Closed</a>(target)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.close_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.close_command()&nbsp;when&nbsp;the&nbsp;player<br>
 succeeds&nbsp;in&nbsp;closing&nbsp;a&nbsp;door&nbsp;or&nbsp;chest.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -836,7 +836,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Close_Command_Element_Is_Already_Closed">Close_Command_Element_Is_Already_Closed</a>(target)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.close_command()&nbsp;when&nbsp;the&nbsp;closable<br>
+adventuregame.processor.CommandProcessor.close_command()&nbsp;when&nbsp;the&nbsp;closable<br>
 object&nbsp;the&nbsp;player&nbsp;targeted&nbsp;is&nbsp;already&nbsp;closed.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -884,7 +884,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Close_Command_Element_Not_Closable">Close_Command_Element_Not_Closable</a>(target_title,&nbsp;target_type)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.close_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.close_command()&nbsp;when&nbsp;the&nbsp;player<br>
 attempts&nbsp;to&nbsp;close&nbsp;a&nbsp;corpse,&nbsp;creature,&nbsp;doorway&nbsp;or&nbsp;item.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -934,7 +934,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Close_Command_Element_to_Close_Not_Here">Close_Command_Element_to_Close_Not_Here</a>(target_title)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.close_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.close_command()&nbsp;when&nbsp;the&nbsp;player<br>
 specifies&nbsp;a&nbsp;target&nbsp;to&nbsp;the&nbsp;command&nbsp;that&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;current&nbsp;room&nbsp;of&nbsp;the<br>
 game.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -1031,7 +1031,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Command_Class_Restricted">Command_Class_Restricted</a>(command,&nbsp;*classes)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;error&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.processor()&nbsp;when&nbsp;the&nbsp;player&nbsp;has&nbsp;used&nbsp;a<br>
+adventuregame.processor.CommandProcessor.processor()&nbsp;when&nbsp;the&nbsp;player&nbsp;has&nbsp;used&nbsp;a<br>
 command&nbsp;that&nbsp;is&nbsp;restricted&nbsp;to&nbsp;a&nbsp;class&nbsp;other&nbsp;than&nbsp;their&nbsp;own.&nbsp;(For&nbsp;example,&nbsp;only<br>
 thieves&nbsp;can&nbsp;use&nbsp;PICK&nbsp;LOCK.)<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -1082,12 +1082,12 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Command_Not_Allowed_Now">Command_Not_Allowed_Now</a>(command,&nbsp;allowed_commands,&nbsp;game_has_begun)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;error&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.processor()&nbsp;when&nbsp;the&nbsp;player&nbsp;has&nbsp;used<br>
+adventuregame.processor.CommandProcessor.processor()&nbsp;when&nbsp;the&nbsp;player&nbsp;has&nbsp;used<br>
 a&nbsp;command&nbsp;that&nbsp;is&nbsp;not&nbsp;allowed&nbsp;in&nbsp;the&nbsp;current&nbsp;game&nbsp;mode.&nbsp;The&nbsp;game&nbsp;has&nbsp;two&nbsp;modes:<br>
 pregame,&nbsp;when&nbsp;name&nbsp;and&nbsp;class&nbsp;are&nbsp;chosen&nbsp;and&nbsp;ability&nbsp;scores&nbsp;are&nbsp;rolled,&nbsp;and<br>
 in-game,&nbsp;when&nbsp;the&nbsp;player&nbsp;plays&nbsp;the&nbsp;game.&nbsp;Different&nbsp;command&nbsp;sets&nbsp;are&nbsp;allowed&nbsp;in<br>
-each&nbsp;mode.&nbsp;See&nbsp;adventuregame.processor.Command_Processor.pregame_commands&nbsp;and<br>
-adventuregame.processor.Command_Processor.ingame_commands&nbsp;for&nbsp;the&nbsp;lists.<br>&nbsp;</tt></td></tr>
+each&nbsp;mode.&nbsp;See&nbsp;adventuregame.processor.CommandProcessor.pregame_commands&nbsp;and<br>
+adventuregame.processor.CommandProcessor.ingame_commands&nbsp;for&nbsp;the&nbsp;lists.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="adventuregame.statemsgs.html#Command_Not_Allowed_Now">Command_Not_Allowed_Now</a></dd>
@@ -1138,7 +1138,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Command_Not_Recognized">Command_Not_Recognized</a>(command,&nbsp;allowed_commands,&nbsp;game_has_begun)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;error&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.processor()&nbsp;when&nbsp;a&nbsp;command&nbsp;was&nbsp;entered<br>
+adventuregame.processor.CommandProcessor.processor()&nbsp;when&nbsp;a&nbsp;command&nbsp;was&nbsp;entered<br>
 that&nbsp;is&nbsp;not&nbsp;known&nbsp;to&nbsp;the&nbsp;command&nbsp;processor.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -1190,7 +1190,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Drink_Command_Drank_Mana_Potion">Drink_Command_Drank_Mana_Potion</a>(amount_regained,&nbsp;current_mana_points,&nbsp;mana_point_total)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.drink_coomand()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.drink_coomand()&nbsp;when&nbsp;the&nbsp;player<br>
 uses&nbsp;it&nbsp;to&nbsp;drink&nbsp;a&nbsp;mana&nbsp;potion.&nbsp;It&nbsp;is&nbsp;only&nbsp;returned&nbsp;if&nbsp;the&nbsp;player's<br>
 character&nbsp;is&nbsp;a&nbsp;Mage&nbsp;or&nbsp;Priest.&nbsp;If&nbsp;they're&nbsp;playing&nbsp;a&nbsp;Warrior&nbsp;or&nbsp;Thief,&nbsp;a<br>
 <a href="#Drink_Command_Drank_Mana_Potion_when_Not_A_Spellcaster">Drink_Command_Drank_Mana_Potion_when_Not_A_Spellcaster</a>&nbsp;object&nbsp;is&nbsp;returned<br>
@@ -1243,7 +1243,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.drink_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;drinks<br>
+adventuregame.processor.CommandProcessor.drink_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;drinks<br>
 a&nbsp;mana&nbsp;potion&nbsp;but&nbsp;they're&nbsp;playing&nbsp;a&nbsp;Warrior&nbsp;or&nbsp;Thief&nbsp;and&nbsp;have&nbsp;no&nbsp;mana&nbsp;points&nbsp;to<br>
 restore.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -1288,7 +1288,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Drink_Command_Item_Not_Drinkable">Drink_Command_Item_Not_Drinkable</a>(item_title)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.drink_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.drink_command()&nbsp;when&nbsp;the&nbsp;player<br>
 targets&nbsp;an&nbsp;item&nbsp;that&nbsp;is&nbsp;not&nbsp;a&nbsp;potion.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -1336,7 +1336,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Drink_Command_Item_Not_in_Inventory">Drink_Command_Item_Not_in_Inventory</a>(item_title)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.drink_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries<br>
+adventuregame.processor.CommandProcessor.drink_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries<br>
 to&nbsp;drink&nbsp;a&nbsp;potion&nbsp;that&nbsp;isn't&nbsp;in&nbsp;their&nbsp;inventory.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -1382,7 +1382,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.drink_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;writes<br>
+adventuregame.processor.CommandProcessor.drink_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;writes<br>
 an&nbsp;ungrammatical&nbsp;sentence&nbsp;that&nbsp;is&nbsp;ambiguous&nbsp;as&nbsp;to&nbsp;how&nbsp;many&nbsp;of&nbsp;the&nbsp;item&nbsp;they<br>
 intend&nbsp;to&nbsp;target.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -1427,7 +1427,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Drink_Command_Tried_to_Drink_More_than_Possessed">Drink_Command_Tried_to_Drink_More_than_Possessed</a>(item_title,&nbsp;attempted_qty,&nbsp;possessed_qty)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.drink_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.drink_command()&nbsp;when&nbsp;the&nbsp;player<br>
 specifies&nbsp;drinking&nbsp;a&nbsp;quantity&nbsp;of&nbsp;potions&nbsp;that&nbsp;is&nbsp;greater&nbsp;than&nbsp;the&nbsp;number&nbsp;they<br>
 have&nbsp;in&nbsp;their&nbsp;inventory.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -1480,7 +1480,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Drop_Command_Dropped_Item">Drop_Command_Dropped_Item</a>(item_title,&nbsp;item_type,&nbsp;amount_dropped,&nbsp;amount_on_floor,&nbsp;amount_left)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.drop_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.drop_command()&nbsp;when&nbsp;the&nbsp;player<br>
 successfully&nbsp;drops&nbsp;an&nbsp;item&nbsp;on&nbsp;the&nbsp;floor.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -1534,7 +1534,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.drop_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;writes<br>
+adventuregame.processor.CommandProcessor.drop_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;writes<br>
 an&nbsp;ungrammatical&nbsp;sentence&nbsp;that&nbsp;is&nbsp;ambiguous&nbsp;as&nbsp;to&nbsp;how&nbsp;many&nbsp;of&nbsp;the&nbsp;item&nbsp;they<br>
 intend&nbsp;to&nbsp;target.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -1579,7 +1579,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Drop_Command_Trying_to_Drop_Item_You_Dont_Have">Drop_Command_Trying_to_Drop_Item_You_Dont_Have</a>(item_title,&nbsp;amount_attempted)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.drop_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.drop_command()&nbsp;when&nbsp;the&nbsp;player<br>
 specifies&nbsp;an&nbsp;item&nbsp;to&nbsp;drop&nbsp;that&nbsp;is&nbsp;not&nbsp;in&nbsp;their&nbsp;inventory.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -1629,7 +1629,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Drop_Command_Trying_to_Drop_More_than_You_Have">Drop_Command_Trying_to_Drop_More_than_You_Have</a>(item_title,&nbsp;amount_attempted,&nbsp;amount_had)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.drop_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.drop_command()&nbsp;when&nbsp;the&nbsp;player<br>
 specifies&nbsp;a&nbsp;quantity&nbsp;of&nbsp;a&nbsp;certain&nbsp;item&nbsp;to&nbsp;drop&nbsp;that&nbsp;is&nbsp;more&nbsp;than&nbsp;the&nbsp;quantity&nbsp;of<br>
 that&nbsp;item&nbsp;that&nbsp;they&nbsp;actually&nbsp;possess.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -1682,7 +1682,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Equip_Command_Class_Cant_Use_Item">Equip_Command_Class_Cant_Use_Item</a>(character_class,&nbsp;item_title,&nbsp;item_type)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.equip_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries<br>
+adventuregame.processor.CommandProcessor.equip_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries<br>
 to&nbsp;equip&nbsp;an&nbsp;item&nbsp;that&nbsp;is&nbsp;not&nbsp;allowed&nbsp;for&nbsp;their&nbsp;class.&nbsp;As&nbsp;an&nbsp;example,&nbsp;a&nbsp;Mage<br>
 would&nbsp;get&nbsp;this&nbsp;result&nbsp;if&nbsp;they&nbsp;tried&nbsp;to&nbsp;equip&nbsp;a&nbsp;suit&nbsp;of&nbsp;armor&nbsp;or&nbsp;a&nbsp;shield,&nbsp;and<br>
 anyone&nbsp;besides&nbsp;a&nbsp;Mage&nbsp;would&nbsp;get&nbsp;this&nbsp;result&nbsp;if&nbsp;they&nbsp;tried&nbsp;to&nbsp;equip&nbsp;a&nbsp;wand.<br>&nbsp;</tt></td></tr>
@@ -1736,7 +1736,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Equip_Command_No_Such_Item_in_Inventory">Equip_Command_No_Such_Item_in_Inventory</a>(item_title)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.equip_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries<br>
+adventuregame.processor.CommandProcessor.equip_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries<br>
 to&nbsp;equip&nbsp;an&nbsp;item&nbsp;that&nbsp;they&nbsp;don't&nbsp;have&nbsp;in&nbsp;their&nbsp;inventory.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -1827,7 +1827,7 @@ Data and other attributes defined here:<br>
 <td colspan=2><tt><a href="#Help_Command_Command_Not_Recognized">Help_Command_Command_Not_Recognized</a>(command_attempted,&nbsp;commands_available)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.help_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries<br>
+adventuregame.processor.CommandProcessor.help_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries<br>
 to&nbsp;get&nbsp;help&nbsp;with&nbsp;a&nbsp;command&nbsp;that&nbsp;is&nbsp;not&nbsp;in&nbsp;the&nbsp;game.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -1877,7 +1877,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Help_Command_Display_Commands">Help_Command_Display_Commands</a>(commands_available)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.help_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;calls<br>
+adventuregame.processor.CommandProcessor.help_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;calls<br>
 it&nbsp;with&nbsp;no&nbsp;arguments;&nbsp;it&nbsp;displays&nbsp;all&nbsp;the&nbsp;commands&nbsp;in&nbsp;the&nbsp;game&nbsp;and&nbsp;prompts&nbsp;the<br>
 player&nbsp;to&nbsp;ask&nbsp;for&nbsp;help&nbsp;with&nbsp;one&nbsp;of&nbsp;them.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -1926,7 +1926,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Help_Command_Display_Help_for_Command">Help_Command_Display_Help_for_Command</a>(command,&nbsp;syntax_tuple=None,&nbsp;instructions=None)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.help_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;asks<br>
+adventuregame.processor.CommandProcessor.help_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;asks<br>
 for&nbsp;help&nbsp;with&nbsp;a&nbsp;specific&nbsp;command.&nbsp;It&nbsp;summarizes&nbsp;the&nbsp;syntax&nbsp;for&nbsp;them&nbsp;and&nbsp;prints<br>
 an&nbsp;informative&nbsp;blurb&nbsp;about&nbsp;the&nbsp;command.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -1979,7 +1979,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Inventory_Command_Display_Inventory">Inventory_Command_Display_Inventory</a>(inventory_contents_list)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.inventory_command().&nbsp;It&nbsp;lists&nbsp;all&nbsp;the<br>
+adventuregame.processor.CommandProcessor.inventory_command().&nbsp;It&nbsp;lists&nbsp;all&nbsp;the<br>
 items&nbsp;in&nbsp;the&nbsp;character's&nbsp;inventory&nbsp;by&nbsp;title&nbsp;and&nbsp;quantity.&nbsp;If&nbsp;they&nbsp;want&nbsp;more<br>
 information&nbsp;they&nbsp;need&nbsp;to&nbsp;say&nbsp;'LOOK&nbsp;AT&nbsp;&lt;item&nbsp;title&gt;&nbsp;IN&nbsp;INVENTORY'.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -2028,7 +2028,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Leave_Command_Door_Is_Locked">Leave_Command_Door_Is_Locked</a>(compass_dir,&nbsp;portal_type)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.leave_command()&nbsp;if&nbsp;the&nbsp;player&nbsp;tries&nbsp;to<br>
+adventuregame.processor.CommandProcessor.leave_command()&nbsp;if&nbsp;the&nbsp;player&nbsp;tries&nbsp;to<br>
 leave&nbsp;through&nbsp;a&nbsp;door&nbsp;that&nbsp;is&nbsp;locked.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -2078,7 +2078,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Leave_Command_Left_Room">Leave_Command_Left_Room</a>(compass_dir,&nbsp;portal_type)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.leave_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;uses<br>
+adventuregame.processor.CommandProcessor.leave_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;uses<br>
 it&nbsp;to&nbsp;leave&nbsp;the&nbsp;current&nbsp;dungeon&nbsp;room.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -2126,7 +2126,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.leave_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.leave_command()&nbsp;when&nbsp;the&nbsp;player<br>
 chances&nbsp;upon&nbsp;the&nbsp;door&nbsp;that&nbsp;is&nbsp;the&nbsp;exit&nbsp;to&nbsp;the&nbsp;dungeon.&nbsp;They&nbsp;have&nbsp;won&nbsp;the&nbsp;game;<br>
 when&nbsp;advgame.py&nbsp;receives&nbsp;this&nbsp;game&nbsp;state&nbsp;message&nbsp;it&nbsp;prints&nbsp;its&nbsp;message&nbsp;and&nbsp;then<br>
 exits&nbsp;the&nbsp;program.<br>&nbsp;</tt></td></tr>
@@ -2172,7 +2172,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Lock_Command_Dont_Possess_Correct_Key">Lock_Command_Dont_Possess_Correct_Key</a>(object_to_lock_title,&nbsp;key_needed)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.lock_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries<br>
+adventuregame.processor.CommandProcessor.lock_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries<br>
 to&nbsp;lock&nbsp;a&nbsp;chest&nbsp;while&nbsp;they&nbsp;don't&nbsp;possess&nbsp;the&nbsp;chest&nbsp;key,&nbsp;or&nbsp;a&nbsp;door&nbsp;while&nbsp;they<br>
 don't&nbsp;possess&nbsp;the&nbsp;door&nbsp;key.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -2223,7 +2223,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Lock_Command_Element_Has_Been_Locked">Lock_Command_Element_Has_Been_Locked</a>(target)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.lock_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.lock_command()&nbsp;when&nbsp;the&nbsp;player<br>
 successfully&nbsp;locks&nbsp;a&nbsp;chest&nbsp;or&nbsp;door.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -2271,7 +2271,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Lock_Command_Element_Is_Already_Locked">Lock_Command_Element_Is_Already_Locked</a>(target)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.lock_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries<br>
+adventuregame.processor.CommandProcessor.lock_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries<br>
 to&nbsp;lock&nbsp;a&nbsp;chest&nbsp;or&nbsp;door&nbsp;that&nbsp;is&nbsp;already&nbsp;locked.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -2367,7 +2367,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Lock_Command_Element_to_Lock_Not_Here">Lock_Command_Element_to_Lock_Not_Here</a>(target_title)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.lock_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.lock_command()&nbsp;when&nbsp;the&nbsp;player<br>
 specifies&nbsp;an&nbsp;object&nbsp;to&nbsp;lock&nbsp;that&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;current&nbsp;dungeon&nbsp;room.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -2415,7 +2415,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Look_At_Command_Found_Container_Here">Look_At_Command_Found_Container_Here</a>(container)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.look_at_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.look_at_command()&nbsp;when&nbsp;the&nbsp;player<br>
 targets&nbsp;a&nbsp;chest&nbsp;or&nbsp;a&nbsp;corpse.&nbsp;If&nbsp;it's&nbsp;a&nbsp;chest&nbsp;and&nbsp;it's&nbsp;unlocked,&nbsp;the&nbsp;contents&nbsp;of<br>
 the&nbsp;chest&nbsp;are&nbsp;conveyed.&nbsp;If&nbsp;it's&nbsp;a&nbsp;corpse,&nbsp;the&nbsp;corpse's&nbsp;possessions&nbsp;are&nbsp;conveyed.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -2472,7 +2472,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Look_At_Command_Found_Creature_Here">Look_At_Command_Found_Creature_Here</a>(creature_description)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.look_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;targets<br>
+adventuregame.processor.CommandProcessor.look_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;targets<br>
 a&nbsp;creature&nbsp;in&nbsp;the&nbsp;dungeon's&nbsp;current&nbsp;room.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -2520,7 +2520,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Look_At_Command_Found_Door_or_Doorway">Look_At_Command_Found_Door_or_Doorway</a>(compass_dir,&nbsp;door)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.look_at_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.look_at_command()&nbsp;when&nbsp;the&nbsp;player<br>
 targets&nbsp;a&nbsp;door&nbsp;or&nbsp;doorway&nbsp;in&nbsp;the&nbsp;current&nbsp;dungeon&nbsp;room.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -2570,7 +2570,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Look_At_Command_Found_Item_or_Items_Here">Look_At_Command_Found_Item_or_Items_Here</a>(item_description,&nbsp;item_qty,&nbsp;container_title,&nbsp;container_type=None)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.look_at_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.look_at_command()&nbsp;when&nbsp;the&nbsp;player<br>
 targets&nbsp;an&nbsp;item&nbsp;that&nbsp;is&nbsp;present&nbsp;on&nbsp;the&nbsp;floor&nbsp;of&nbsp;current&nbsp;room&nbsp;or&nbsp;in&nbsp;their<br>
 inventory&nbsp;or&nbsp;in&nbsp;a&nbsp;chest&nbsp;or&nbsp;on&nbsp;a&nbsp;corpse's&nbsp;person&nbsp;as&nbsp;specified&nbsp;by&nbsp;the&nbsp;player.&nbsp;It<br>
 conveys&nbsp;the&nbsp;item's&nbsp;description&nbsp;attribute&nbsp;and&nbsp;specifies&nbsp;how&nbsp;many&nbsp;are&nbsp;present.<br>&nbsp;</tt></td></tr>
@@ -2622,7 +2622,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Look_At_Command_Found_Nothing">Look_At_Command_Found_Nothing</a>(item_title,&nbsp;item_location=None,&nbsp;location_type=None)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.look_at_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.look_at_command()&nbsp;when&nbsp;the&nbsp;player<br>
 targets&nbsp;an&nbsp;item&nbsp;that&nbsp;can't&nbsp;be&nbsp;found&nbsp;where&nbsp;they&nbsp;said&nbsp;it&nbsp;was.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -2674,7 +2674,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Open_Command_Element_Has_Been_Opened">Open_Command_Element_Has_Been_Opened</a>(target)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.open_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.open_command()&nbsp;when&nbsp;the&nbsp;player<br>
 successfully&nbsp;opens&nbsp;a&nbsp;chest&nbsp;or&nbsp;door.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -2722,7 +2722,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Open_Command_Element_Is_Already_Open">Open_Command_Element_Is_Already_Open</a>(target)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.open_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;targets<br>
+adventuregame.processor.CommandProcessor.open_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;targets<br>
 a&nbsp;door&nbsp;or&nbsp;chest&nbsp;that&nbsp;is&nbsp;already&nbsp;open.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -2770,7 +2770,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Open_Command_Element_Is_Locked">Open_Command_Element_Is_Locked</a>(target)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.open_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;targets<br>
+adventuregame.processor.CommandProcessor.open_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;targets<br>
 a&nbsp;door&nbsp;or&nbsp;chest&nbsp;that&nbsp;is&nbsp;locked.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -2818,7 +2818,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Open_Command_Element_Not_Openable">Open_Command_Element_Not_Openable</a>(target_title,&nbsp;target_type)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.open_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.open_command()&nbsp;when&nbsp;the&nbsp;player<br>
 attempts&nbsp;to&nbsp;open&nbsp;a&nbsp;corpse,&nbsp;creature,&nbsp;doorway&nbsp;or&nbsp;item.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -2868,7 +2868,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Open_Command_Element_to_Open_Not_Here">Open_Command_Element_to_Open_Not_Here</a>(target_title)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.open_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;targets<br>
+adventuregame.processor.CommandProcessor.open_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;targets<br>
 a&nbsp;door&nbsp;or&nbsp;chest&nbsp;that&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;current&nbsp;dungeon&nbsp;room.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -2916,7 +2916,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Pick_Lock_Command_Element_Not_Unlockable">Pick_Lock_Command_Element_Not_Unlockable</a>(target_title,&nbsp;target_type)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.pick_lock_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.pick_lock_command()&nbsp;when&nbsp;the&nbsp;player<br>
 attempts&nbsp;to&nbsp;pick&nbsp;a&nbsp;lock&nbsp;on&nbsp;a&nbsp;corpse,&nbsp;creature,&nbsp;doorway&nbsp;or&nbsp;item.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -2966,7 +2966,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Pick_Lock_Command_Target_Has_Been_Unlocked">Pick_Lock_Command_Target_Has_Been_Unlocked</a>(target_title)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.pick_lock_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.pick_lock_command()&nbsp;when&nbsp;the&nbsp;player<br>
 successfully&nbsp;unlocks&nbsp;the&nbsp;chest&nbsp;or&nbsp;door.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -3014,7 +3014,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Pick_Lock_Command_Target_Not_Found">Pick_Lock_Command_Target_Not_Found</a>(target_title)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.pick_lock_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.pick_lock_command()&nbsp;when&nbsp;the&nbsp;player<br>
 targets&nbsp;a&nbsp;door&nbsp;or&nbsp;chest&nbsp;that&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;current&nbsp;dungeon&nbsp;room.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -3062,7 +3062,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Pick_Lock_Command_Target_Not_Locked">Pick_Lock_Command_Target_Not_Locked</a>(target_title)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.pick_lock_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.pick_lock_command()&nbsp;when&nbsp;the&nbsp;player<br>
 targets&nbsp;a&nbsp;door&nbsp;or&nbsp;chest&nbsp;that&nbsp;is&nbsp;not&nbsp;locked.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -3110,7 +3110,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Pick_Up_Command_Cant_Pick_Up_Chest_Corpse_Creature_or_Door">Pick_Up_Command_Cant_Pick_Up_Chest_Corpse_Creature_or_Door</a>(element_type,&nbsp;element_title)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.pick_up_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;has<br>
+adventuregame.processor.CommandProcessor.pick_up_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;has<br>
 specifies&nbsp;a&nbsp;game&nbsp;element&nbsp;that&nbsp;is&nbsp;a&nbsp;chest,&nbsp;corpse,&nbsp;creature&nbsp;or&nbsp;door&nbsp;and&nbsp;can't&nbsp;be<br>
 picked&nbsp;up.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -3161,7 +3161,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Pick_Up_Command_Item_Not_Found">Pick_Up_Command_Item_Not_Found</a>(item_title,&nbsp;amount_attempted,&nbsp;*items_here)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.pick_up_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.pick_up_command()&nbsp;when&nbsp;the&nbsp;player<br>
 targets&nbsp;an&nbsp;item&nbsp;to&nbsp;pick&nbsp;up&nbsp;that&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;current&nbsp;dungeon&nbsp;room.&nbsp;If<br>
 they&nbsp;meant&nbsp;to&nbsp;acquire&nbsp;an&nbsp;item&nbsp;from&nbsp;a&nbsp;chest&nbsp;or&nbsp;corpse,&nbsp;they&nbsp;need&nbsp;to&nbsp;say&nbsp;`TAKE<br>
 &lt;item&nbsp;name&gt;&nbsp;FROM&nbsp;&lt;corpse&nbsp;or&nbsp;chest&nbsp;name&gt;`.<br>&nbsp;</tt></td></tr>
@@ -3215,7 +3215,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Pick_Up_Command_Item_Picked_Up">Pick_Up_Command_Item_Picked_Up</a>(item_title,&nbsp;pick_up_amount,&nbsp;amount_had)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.pick_up_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.pick_up_command()&nbsp;when&nbsp;the&nbsp;player<br>
 successfully&nbsp;acquires&nbsp;an&nbsp;item&nbsp;from&nbsp;the&nbsp;floor&nbsp;of&nbsp;the&nbsp;current&nbsp;dungeon&nbsp;room.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -3265,7 +3265,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.pick_up_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;has<br>
+adventuregame.processor.CommandProcessor.pick_up_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;has<br>
 entered&nbsp;an&nbsp;ungrammatical&nbsp;sentence&nbsp;that&nbsp;is&nbsp;ambiguous&nbsp;as&nbsp;to&nbsp;how&nbsp;many&nbsp;it&nbsp;means&nbsp;to<br>
 specify.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -3310,7 +3310,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Pick_Up_Command_Trying_to_Pick_Up_More_than_Is_Present">Pick_Up_Command_Trying_to_Pick_Up_More_than_Is_Present</a>(item_title,&nbsp;amount_attempted,&nbsp;amount_present)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.pick_up_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;has<br>
+adventuregame.processor.CommandProcessor.pick_up_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;has<br>
 targeted&nbsp;an&nbsp;item&nbsp;that&nbsp;is&nbsp;present,&nbsp;but&nbsp;has&nbsp;specified&nbsp;a&nbsp;quantity&nbsp;to&nbsp;pick&nbsp;up&nbsp;that<br>
 is&nbsp;greater&nbsp;than&nbsp;the&nbsp;number&nbsp;of&nbsp;that&nbsp;item&nbsp;that&nbsp;is&nbsp;present&nbsp;in&nbsp;the&nbsp;current&nbsp;dungeon<br>
 room.<br>&nbsp;</tt></td></tr>
@@ -3364,7 +3364,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Put_Command_Amount_Put">Put_Command_Amount_Put</a>(item_title,&nbsp;container_title,&nbsp;container_type,&nbsp;amount_put,&nbsp;amount_left)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.put_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.put_command()&nbsp;when&nbsp;the&nbsp;player<br>
 successfully&nbsp;places&nbsp;one&nbsp;or&nbsp;more&nbsp;items&nbsp;in&nbsp;a&nbsp;chest&nbsp;or&nbsp;on&nbsp;a&nbsp;corpse's&nbsp;person.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -3420,7 +3420,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Put_Command_Item_Not_in_Inventory">Put_Command_Item_Not_in_Inventory</a>(item_title,&nbsp;amount_attempted)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.put_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;attempts<br>
+adventuregame.processor.CommandProcessor.put_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;attempts<br>
 to&nbsp;put&nbsp;an&nbsp;item&nbsp;in&nbsp;a&nbsp;chest&nbsp;or&nbsp;on&nbsp;a&nbsp;corpse&nbsp;that&nbsp;is&nbsp;not&nbsp;in&nbsp;their&nbsp;inventory.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -3468,7 +3468,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.put_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;writes<br>
+adventuregame.processor.CommandProcessor.put_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;writes<br>
 an&nbsp;ungrammatical&nbsp;sentence&nbsp;that&nbsp;is&nbsp;ambiguous&nbsp;as&nbsp;to&nbsp;how&nbsp;many&nbsp;of&nbsp;the&nbsp;item&nbsp;they&nbsp;mean<br>
 to&nbsp;put&nbsp;in&nbsp;the&nbsp;chest&nbsp;or&nbsp;on&nbsp;the&nbsp;corpse.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -3513,7 +3513,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Put_Command_Trying_to_Put_More_than_You_Have">Put_Command_Trying_to_Put_More_than_You_Have</a>(item_title,&nbsp;amount_present)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.put_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries&nbsp;to<br>
+adventuregame.processor.CommandProcessor.put_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries&nbsp;to<br>
 put&nbsp;a&nbsp;quantity&nbsp;of&nbsp;an&nbsp;item&nbsp;in&nbsp;a&nbsp;chest&nbsp;or&nbsp;on&nbsp;a&nbsp;corpse&nbsp;that&nbsp;that&nbsp;is&nbsp;more&nbsp;than&nbsp;they<br>
 have&nbsp;in&nbsp;their&nbsp;inventory.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -3562,7 +3562,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.quit_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.quit_command()&nbsp;when&nbsp;the&nbsp;player<br>
 executes&nbsp;the&nbsp;command.&nbsp;When&nbsp;advgame.py&nbsp;receives&nbsp;this&nbsp;object,&nbsp;it&nbsp;prints&nbsp;the<br>
 message&nbsp;and&nbsp;then&nbsp;exits&nbsp;the&nbsp;program.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -3607,7 +3607,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Reroll_Command_Name_or_Class_Not_Set">Reroll_Command_Name_or_Class_Not_Set</a>(character_name,&nbsp;character_class)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.reroll_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries<br>
+adventuregame.processor.CommandProcessor.reroll_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries<br>
 to&nbsp;use&nbsp;it&nbsp;before&nbsp;they&nbsp;have&nbsp;set&nbsp;their&nbsp;name&nbsp;and&nbsp;class.&nbsp;The&nbsp;player's&nbsp;ability&nbsp;scores<br>
 aren't&nbsp;rolled&nbsp;until&nbsp;they've&nbsp;chosen&nbsp;a&nbsp;name&nbsp;and&nbsp;class,&nbsp;and&nbsp;therefore&nbsp;can't&nbsp;be<br>
 rerolled&nbsp;yet.<br>&nbsp;</tt></td></tr>
@@ -3659,7 +3659,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Set_Class_Command_Class_Set">Set_Class_Command_Class_Set</a>(class_str)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.set_class_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.set_class_command()&nbsp;when&nbsp;the&nbsp;player<br>
 selects&nbsp;a&nbsp;class&nbsp;from&nbsp;the&nbsp;choices&nbsp;Warrior,&nbsp;Thief,&nbsp;Mage&nbsp;and&nbsp;Priest.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -3707,7 +3707,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Set_Class_Command_Invalid_Class">Set_Class_Command_Invalid_Class</a>(bad_class)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.set_class_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.set_class_command()&nbsp;when&nbsp;the&nbsp;player<br>
 specifies&nbsp;a&nbsp;class&nbsp;that&nbsp;is&nbsp;not&nbsp;one&nbsp;of&nbsp;Warrior,&nbsp;Thief,&nbsp;Mage&nbsp;or&nbsp;Priest.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -3755,7 +3755,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Set_Name_Command_Invalid_Part">Set_Name_Command_Invalid_Part</a>(name_part)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.set_name_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.set_name_command()&nbsp;when&nbsp;the&nbsp;player<br>
 tries&nbsp;to&nbsp;set&nbsp;a&nbsp;name&nbsp;that&nbsp;is&nbsp;not&nbsp;one&nbsp;or&nbsp;more&nbsp;alphabetic&nbsp;titelcased&nbsp;strings.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -3803,7 +3803,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Set_Name_Command_Name_Set">Set_Name_Command_Name_Set</a>(name)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.set_name_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.set_name_command()&nbsp;when&nbsp;the&nbsp;player<br>
 sets&nbsp;a&nbsp;name.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -3851,7 +3851,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Status_Command_Output">Status_Command_Output</a>(armor_class,&nbsp;attack_bonus,&nbsp;damage,&nbsp;weapon,&nbsp;hit_points,&nbsp;hit_point_total,&nbsp;armor=None,&nbsp;shield=None,&nbsp;wand=None,&nbsp;mana_points=None,&nbsp;mana_point_total=None,&nbsp;character_class=None)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.status_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.status_command()&nbsp;when&nbsp;the&nbsp;player<br>
 executes&nbsp;it.&nbsp;The&nbsp;status&nbsp;line&nbsp;conveyed&nbsp;by&nbsp;the&nbsp;message&nbsp;property&nbsp;includes&nbsp;the<br>
 player's&nbsp;current&nbsp;and&nbsp;total&nbsp;hit&nbsp;points,&nbsp;current&nbsp;and&nbsp;total&nbsp;mana&nbsp;points&nbsp;if&nbsp;they're<br>
 a&nbsp;spellcaster,&nbsp;their&nbsp;attack&nbsp;and&nbsp;damage,&nbsp;their&nbsp;armor&nbsp;class,&nbsp;their&nbsp;armor&nbsp;equipped<br>
@@ -3925,7 +3925,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Take_Command_Item_Not_Found_in_Container">Take_Command_Item_Not_Found_in_Container</a>(container_title,&nbsp;amount_attempted,&nbsp;container_type,&nbsp;item_title)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.take_command()&nbsp;if&nbsp;the&nbsp;player&nbsp;specifies<br>
+adventuregame.processor.CommandProcessor.take_command()&nbsp;if&nbsp;the&nbsp;player&nbsp;specifies<br>
 an&nbsp;item&nbsp;to&nbsp;take&nbsp;from&nbsp;a&nbsp;chest&nbsp;that&nbsp;is&nbsp;not&nbsp;in&nbsp;that&nbsp;chest&nbsp;or&nbsp;from&nbsp;a&nbsp;corpse&nbsp;that&nbsp;is<br>
 not&nbsp;on&nbsp;the&nbsp;corpse.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -3980,7 +3980,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Take_Command_Item_or_Items_Taken">Take_Command_Item_or_Items_Taken</a>(container_title,&nbsp;item_title,&nbsp;amount_taken)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.take_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.take_command()&nbsp;when&nbsp;the&nbsp;player<br>
 successfully&nbsp;acquires&nbsp;an&nbsp;item&nbsp;from&nbsp;a&nbsp;chest&nbsp;or&nbsp;corpse.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -4030,7 +4030,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.take_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;writes<br>
+adventuregame.processor.CommandProcessor.take_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;writes<br>
 an&nbsp;ungrammatical&nbsp;sentence&nbsp;that&nbsp;is&nbsp;ambiguous&nbsp;as&nbsp;to&nbsp;how&nbsp;many&nbsp;of&nbsp;the&nbsp;item&nbsp;the<br>
 player&nbsp;means&nbsp;to&nbsp;take.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -4075,7 +4075,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Take_Command_Trying_to_Take_More_than_Is_Present">Take_Command_Trying_to_Take_More_than_Is_Present</a>(container_title,&nbsp;container_type,&nbsp;item_title,&nbsp;item_type,&nbsp;amount_attempted,&nbsp;amount_present)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.take_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.take_command()&nbsp;when&nbsp;the&nbsp;player<br>
 specifies&nbsp;a&nbsp;quantity&nbsp;of&nbsp;an&nbsp;item&nbsp;to&nbsp;take&nbsp;from&nbsp;a&nbsp;chest&nbsp;that&nbsp;is&nbsp;more&nbsp;than&nbsp;is<br>
 present&nbsp;in&nbsp;that&nbsp;chest,&nbsp;or&nbsp;from&nbsp;a&nbsp;corpse&nbsp;that&nbsp;is&nbsp;more&nbsp;than&nbsp;is&nbsp;present&nbsp;on&nbsp;that<br>
 corpse.<br>&nbsp;</tt></td></tr>
@@ -4133,7 +4133,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Unequip_Command_Item_Not_Equipped">Unequip_Command_Item_Not_Equipped</a>(item_specified_title,&nbsp;item_specified_type=None,&nbsp;item_present_title=None)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.unequip_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.unequip_command()&nbsp;when&nbsp;the&nbsp;player<br>
 tries&nbsp;to&nbsp;unequip&nbsp;an&nbsp;item&nbsp;that&nbsp;is&nbsp;not&nbsp;equipped.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -4185,7 +4185,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Unlock_Command_Dont_Possess_Correct_Key">Unlock_Command_Dont_Possess_Correct_Key</a>(object_to_unlock_title,&nbsp;key_needed)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.unlock_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries<br>
+adventuregame.processor.CommandProcessor.unlock_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries<br>
 to&nbsp;unlock&nbsp;a&nbsp;door&nbsp;while&nbsp;not&nbsp;possessing&nbsp;the&nbsp;door&nbsp;key,&nbsp;or&nbsp;unlock&nbsp;a&nbsp;chest&nbsp;while&nbsp;not<br>
 possessing&nbsp;the&nbsp;chest&nbsp;key.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -4236,7 +4236,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Unlock_Command_Element_Has_Been_Unlocked">Unlock_Command_Element_Has_Been_Unlocked</a>(target)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.unlock_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.unlock_command()&nbsp;when&nbsp;the&nbsp;player<br>
 successfully&nbsp;unlocks&nbsp;a&nbsp;chest&nbsp;or&nbsp;door.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -4284,7 +4284,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Unlock_Command_Element_Is_Already_Unlocked">Unlock_Command_Element_Is_Already_Unlocked</a>(target)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.unlock_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries<br>
+adventuregame.processor.CommandProcessor.unlock_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries<br>
 to&nbsp;unlock&nbsp;a&nbsp;door&nbsp;or&nbsp;chest&nbsp;that&nbsp;is&nbsp;already&nbsp;unlocked.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -4332,7 +4332,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Unlock_Command_Element_Not_Unlockable">Unlock_Command_Element_Not_Unlockable</a>(target_title,&nbsp;target_type)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.unlock_command()&nbsp;when&nbsp;the&nbsp;player<br>
+adventuregame.processor.CommandProcessor.unlock_command()&nbsp;when&nbsp;the&nbsp;player<br>
 attempts&nbsp;to&nbsp;unlock&nbsp;a&nbsp;corpse,&nbsp;creature,&nbsp;doorway&nbsp;or&nbsp;item.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -4382,7 +4382,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Unlock_Command_Element_to_Unlock_Not_Here">Unlock_Command_Element_to_Unlock_Not_Here</a>(target_title)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.unlock_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries<br>
+adventuregame.processor.CommandProcessor.unlock_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries<br>
 to&nbsp;unlock&nbsp;a&nbsp;door&nbsp;or&nbsp;chest&nbsp;that&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;current&nbsp;dungeon&nbsp;room.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -4430,7 +4430,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Various_Commands_Ambiguous_Door_Specifier">Various_Commands_Ambiguous_Door_Specifier</a>(compass_dirs,&nbsp;door_or_doorway,&nbsp;door_type)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.lock_command(),&nbsp;.unlock_command(),<br>
+adventuregame.processor.CommandProcessor.lock_command(),&nbsp;.unlock_command(),<br>
 .open_command()&nbsp;and&nbsp;.close_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;has&nbsp;used&nbsp;a&nbsp;specifier&nbsp;for&nbsp;a<br>
 door&nbsp;that&nbsp;matches&nbsp;more&nbsp;than&nbsp;one&nbsp;door&nbsp;in&nbsp;the&nbsp;current&nbsp;dungeon&nbsp;room;&nbsp;for&nbsp;example,<br>
 saying&nbsp;'unlock&nbsp;wooden&nbsp;door'&nbsp;when&nbsp;there's&nbsp;two&nbsp;wooden&nbsp;doors.<br>&nbsp;</tt></td></tr>
@@ -4484,7 +4484,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Various_Commands_Container_Is_Closed">Various_Commands_Container_Is_Closed</a>(target)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.put_command()&nbsp;or&nbsp;.take_command()&nbsp;when<br>
+adventuregame.processor.CommandProcessor.put_command()&nbsp;or&nbsp;.take_command()&nbsp;when<br>
 the&nbsp;player&nbsp;tries&nbsp;to&nbsp;access&nbsp;a&nbsp;chest&nbsp;that&nbsp;is&nbsp;closed.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
@@ -4532,7 +4532,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Various_Commands_Container_Not_Found">Various_Commands_Container_Not_Found</a>(container_not_found_title,&nbsp;container_present_title=None)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.put_command(),&nbsp;.take_command(),&nbsp;or<br>
+adventuregame.processor.CommandProcessor.put_command(),&nbsp;.take_command(),&nbsp;or<br>
 .look_at_command()&nbsp;when&nbsp;trying&nbsp;to&nbsp;look&nbsp;in&nbsp;a&nbsp;chest&nbsp;that&nbsp;isn't&nbsp;present&nbsp;in&nbsp;the<br>
 current&nbsp;dungeon&nbsp;room,&nbsp;or&nbsp;check&nbsp;a&nbsp;corpse&nbsp;that&nbsp;isn't&nbsp;present&nbsp;in&nbsp;the&nbsp;current<br>
 dungeon&nbsp;room.<br>&nbsp;</tt></td></tr>
@@ -4584,7 +4584,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Various_Commands_Display_Rolled_Stats">Various_Commands_Display_Rolled_Stats</a>(strength,&nbsp;dexterity,&nbsp;constitution,&nbsp;intelligence,&nbsp;wisdom,&nbsp;charisma)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.set_name_command()&nbsp;or<br>
+adventuregame.processor.CommandProcessor.set_name_command()&nbsp;or<br>
 .set_class_command()&nbsp;when&nbsp;both&nbsp;name&nbsp;and&nbsp;class&nbsp;have&nbsp;been&nbsp;set,&nbsp;or&nbsp;by<br>
 .reroll_command().&nbsp;It&nbsp;displays&nbsp;the&nbsp;character's&nbsp;randomly&nbsp;generated&nbsp;ability<br>
 scores.<br>&nbsp;</tt></td></tr>
@@ -4644,7 +4644,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Various_Commands_Door_Not_Present">Various_Commands_Door_Not_Present</a>(compass_dir,&nbsp;portal_type=None)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.close_command(),&nbsp;.leave_command(),<br>
+adventuregame.processor.CommandProcessor.close_command(),&nbsp;.leave_command(),<br>
 .lock_command(),&nbsp;.look_at_command(),&nbsp;.open_command(),&nbsp;.pick_lock_command(),&nbsp;or<br>
 .unlock_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;specifies&nbsp;a&nbsp;door&nbsp;that&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the<br>
 current&nbsp;dungeon&nbsp;room.<br>&nbsp;</tt></td></tr>
@@ -4696,7 +4696,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Various_Commands_Entered_Room">Various_Commands_Entered_Room</a>(room)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.leave_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;leaves<br>
+adventuregame.processor.CommandProcessor.leave_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;leaves<br>
 a&nbsp;room&nbsp;and&nbsp;enters&nbsp;a&nbsp;new&nbsp;one,&nbsp;or&nbsp;by&nbsp;.begin_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;starts&nbsp;the<br>
 game&nbsp;in&nbsp;the&nbsp;first&nbsp;room.&nbsp;It&nbsp;prints&nbsp;the&nbsp;room&nbsp;description,&nbsp;lists&nbsp;the&nbsp;items&nbsp;on&nbsp;the<br>
 floor&nbsp;if&nbsp;any,&nbsp;mentions&nbsp;any&nbsp;chest&nbsp;or&nbsp;creature,&nbsp;and&nbsp;lists&nbsp;the&nbsp;exits&nbsp;to&nbsp;the&nbsp;room&nbsp;by<br>
@@ -4793,7 +4793,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Various_Commands_Item_Equipped">Various_Commands_Item_Equipped</a>(item_title,&nbsp;item_type,&nbsp;attack_bonus=None,&nbsp;damage='',&nbsp;armor_class=None,&nbsp;attacking_with=None)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.begin_game()&nbsp;or&nbsp;.equip_command()&nbsp;when<br>
+adventuregame.processor.CommandProcessor.begin_game()&nbsp;or&nbsp;.equip_command()&nbsp;when<br>
 the&nbsp;player&nbsp;equips&nbsp;an&nbsp;item.&nbsp;It&nbsp;lists&nbsp;the&nbsp;item&nbsp;equipped&nbsp;and&nbsp;mentions&nbsp;how&nbsp;the<br>
 relevant&nbsp;game&nbsp;parameters&nbsp;have&nbsp;changed&nbsp;as&nbsp;a&nbsp;result.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -4850,7 +4850,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Various_Commands_Item_Unequipped">Various_Commands_Item_Unequipped</a>(item_title,&nbsp;item_type,&nbsp;attack_bonus=None,&nbsp;damage=None,&nbsp;armor_class=None,&nbsp;attacking_with=None,&nbsp;now_attacking_with=None,&nbsp;now_cant_attack=False)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.equip_command(),&nbsp;.unequip_command(),<br>
+adventuregame.processor.CommandProcessor.equip_command(),&nbsp;.unequip_command(),<br>
 or&nbsp;.drop_command().&nbsp;It's&nbsp;returned&nbsp;by&nbsp;.unequip_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;unequips<br>
 an&nbsp;item;&nbsp;.equip_command()&nbsp;returns&nbsp;it&nbsp;if&nbsp;the&nbsp;player&nbsp;already&nbsp;had&nbsp;an&nbsp;item&nbsp;equipped<br>
 in&nbsp;that&nbsp;slot&nbsp;to&nbsp;convey&nbsp;the&nbsp;previous&nbsp;item's&nbsp;removal;&nbsp;and&nbsp;.drop_command()&nbsp;returns<br>
@@ -4914,7 +4914,7 @@ Data descriptors inherited from <a href="adventuregame.statemsgs.html#Game_State
 <td colspan=2><tt><a href="#Various_Commands_Underwent_Healing_Effect">Various_Commands_Underwent_Healing_Effect</a>(amount_healed,&nbsp;current_hit_points,&nbsp;hit_point_total)<br>
 &nbsp;<br>
 This&nbsp;class&nbsp;implements&nbsp;an&nbsp;object&nbsp;that&nbsp;is&nbsp;returned&nbsp;by<br>
-adventuregame.processor.Command_Processor.drink_command()&nbsp;or<br>
+adventuregame.processor.CommandProcessor.drink_command()&nbsp;or<br>
 .cast_spell_command().&nbsp;It's&nbsp;returned&nbsp;by&nbsp;.drink_command()&nbsp;if&nbsp;the&nbsp;player&nbsp;drinks&nbsp;a<br>
 health&nbsp;potion;&nbsp;and&nbsp;it's&nbsp;returned&nbsp;by&nbsp;the&nbsp;.cast_spell_command()&nbsp;if&nbsp;the&nbsp;player&nbsp;is&nbsp;a<br>
 Priest&nbsp;and&nbsp;they&nbsp;successfully&nbsp;cast&nbsp;a&nbsp;healing&nbsp;spell.<br>&nbsp;</tt></td></tr>

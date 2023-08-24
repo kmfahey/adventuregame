@@ -8,9 +8,8 @@ __all__ = ("GameBegins", "NameOrClassNotSet",)
 
 class GameBegins(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.begin_game_command() when the command
-executes successfully. The game has begun.
+Returned by advgame.process.CommandProcessor.begin_game_command() when
+the command executes successfully. The game has begun.
     """
 
     @property
@@ -23,10 +22,10 @@ executes successfully. The game has begun.
 
 class NameOrClassNotSet(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.begin_game_command() when the player
-has used the BEGIN GAME command prematurely. The player must set a name and a
-class before the game can begin; this object is returned if they fail to.
+Returned by advgame.process.CommandProcessor.begin_game_command() when
+the player has used the BEGIN GAME command prematurely. The player
+must set a name and a class before the game can begin; this object is
+returned if they fail to.
     """
     __slots__ = 'character_name', 'character_class'
 
@@ -51,4 +50,3 @@ class before the game can begin; this object is returned if they fail to.
     def __init__(self, character_name, character_class):
         self.character_name = character_name
         self.character_class = character_class
-

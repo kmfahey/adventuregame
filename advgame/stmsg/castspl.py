@@ -9,11 +9,10 @@ __all__ = ("CastDamagingSpell", "CastHealingSpell", "InsufficientMana",
 
 class CastDamagingSpell(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.cast_spell_command() when the player,
-while playing a Mage, has cast a damaging spell. Like Stmsg_Attack_AttackHit,
-it tracks whether the foe was slain, and adds a 'they turn to attack' sentence
-if not.
+Returned by advgame.process.CommandProcessor.cast_spell_command() when
+the player, while playing a Mage, has cast a damaging spell. Like
+.stmsg.attack.AttackHit, it tracks whether the foe was slain, and adds a
+'they turn to attack' sentence if not.
     """
     __slots__ = 'creature_title', 'damage_dealt'
 
@@ -39,10 +38,10 @@ if not.
 
 class CastHealingSpell(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.cast_spell_command() when used by
-a Priest. It doesn't need to mention how much damage was healed because it's
-followed by a Stmsg_Various_UnderwentHealingEffect instance that does that.
+Returned by advgame.process.CommandProcessor.cast_spell_command() when
+used by a Priest. It doesn't need to mention how much damage was healed
+because it's followed by a Stmsg_Various_UnderwentHealingEffect instance
+that does that.
     """
     __slots__ = ()
 
@@ -56,9 +55,8 @@ followed by a Stmsg_Various_UnderwentHealingEffect instance that does that.
 
 class InsufficientMana(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.cast_spell_command() when the player
-tries to cast a spell with insufficient mana points.
+Returned by advgame.process.CommandProcessor.cast_spell_command() when
+the player tries to cast a spell with insufficient mana points.
     """
     __slots__ = 'current_mana_points', 'mana_point_total', 'spell_mana_cost'
 
@@ -76,9 +74,8 @@ tries to cast a spell with insufficient mana points.
 
 class NoCreatureToTarget(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.cast_spell_command() when the player
-uses the command in a room with no creature to attack.
+Returned by advgame.process.CommandProcessor.cast_spell_command() when
+the player uses the command in a room with no creature to attack.
     """
     __slots__ = ()
 
@@ -88,4 +85,3 @@ uses the command in a room with no creature to attack.
 
     def __init__(self):
         pass
-

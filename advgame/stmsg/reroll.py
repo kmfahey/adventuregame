@@ -8,11 +8,10 @@ __all__ = ("NameOrClassNotSet",)
 
 class NameOrClassNotSet(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.reroll_command() when the player tries
-to use it before they have set their name and class. The player's ability scores
-aren't rolled until they've chosen a name and class, and therefore can't be
-rerolled yet.
+Returned by advgame.process.CommandProcessor.reroll_command() when the
+player tries to use it before they have set their name and class. The
+player's ability scores aren't rolled until they've chosen a name and
+class, and therefore can't be rerolled yet.
     """
     __slots__ = 'character_name', 'character_class'
 
@@ -34,4 +33,3 @@ rerolled yet.
     def __init__(self, character_name, character_class):
         self.character_name = character_name
         self.character_class = character_class
-

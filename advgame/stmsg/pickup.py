@@ -11,10 +11,9 @@ __all__ = ("CantPickUpChestCorpseCreatureOrDoor", "ItemNotFound", "ItemPickedUp"
 
 class CantPickUpChestCorpseCreatureOrDoor(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.pick_up_command() when the player has
-specifies a game element that is a chest, corpse, creature or door and can't be
-picked up.
+Returned by advgame.process.CommandProcessor.pick_up_command() when the
+player has specifies a game element that is a chest, corpse, creature or
+door and can't be picked up.
     """
     __slots__ = 'element_type', 'element_title'
 
@@ -29,11 +28,10 @@ picked up.
 
 class ItemNotFound(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.pick_up_command() when the player
-targets an item to pick up that is not present in the current dungeon room. If
-they meant to acquire an item from a chest or corpse, they need to say `TAKE
-<item name> FROM <corpse or chest name>`.
+Returned by advgame.process.CommandProcessor.pick_up_command() when the
+player targets an item to pick up that is not present in the current
+dungeon room. If they meant to acquire an item from a chest or corpse,
+they need to say `TAKE <item name> FROM <corpse or chest name>`.
     """
     __slots__ = 'item_title', 'amount_attempted', 'items_here'
 
@@ -62,9 +60,9 @@ they meant to acquire an item from a chest or corpse, they need to say `TAKE
 
 class ItemPickedUp(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.pick_up_command() when the player
-successfully acquires an item from the floor of the current dungeon room.
+Returned by advgame.process.CommandProcessor.pick_up_command() when
+the player successfully acquires an item from the floor of the current
+dungeon room.
     """
     __slots__ = 'item_title', 'pick_up_amount', 'amount_had'
 
@@ -93,10 +91,9 @@ successfully acquires an item from the floor of the current dungeon room.
 
 class QuantityUnclear(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.pick_up_command() when the player has
-entered an ungrammatical sentence that is ambiguous as to how many it means to
-specify.
+Returned by advgame.process.CommandProcessor.pick_up_command() when the
+player has entered an ungrammatical sentence that is ambiguous as to how
+many it means to specify.
     """
 
     @property
@@ -109,11 +106,10 @@ specify.
 
 class TryingToPickUpMoreThanIsPresent(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.pick_up_command() when the player has
-targeted an item that is present, but has specified a quantity to pick up that
-is greater than the number of that item that is present in the current dungeon
-room.
+Returned by advgame.process.CommandProcessor.pick_up_command() when
+the player has targeted an item that is present, but has specified a
+quantity to pick up that is greater than the number of that item that is
+present in the current dungeon room.
     """
     __slots__ = 'item_title', 'amount_attempted', 'amount_present'
 
@@ -125,4 +121,3 @@ room.
         self.item_title = item_title
         self.amount_attempted = amount_attempted
         self.amount_present = amount_present
-

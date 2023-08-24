@@ -8,9 +8,9 @@ __all__ = ("ElementNotUnlockable", "TargetHasBeenUnlocked", "TargetNotFound", "T
 
 class ElementNotUnlockable(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.pick_lock_command() when the player
-attempts to pick a lock on a corpse, creature, doorway or item.
+Returned by advgame.process.CommandProcessor.pick_lock_command() when
+the player attempts to pick a lock on a corpse, creature, doorway or
+item.
     """
     __slots__ = 'target_title', 'target_type'
 
@@ -31,9 +31,8 @@ attempts to pick a lock on a corpse, creature, doorway or item.
 
 class TargetHasBeenUnlocked(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.pick_lock_command() when the player
-successfully unlocks the chest or door.
+Returned by advgame.process.CommandProcessor.pick_lock_command() when
+the player successfully unlocks the chest or door.
     """
     __slots__ = 'target_title',
 
@@ -47,9 +46,9 @@ successfully unlocks the chest or door.
 
 class TargetNotFound(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.pick_lock_command() when the player
-targets a door or chest that is not present in the current dungeon room.
+Returned by advgame.process.CommandProcessor.pick_lock_command() when
+the player targets a door or chest that is not present in the current
+dungeon room.
     """
     __slots__ = 'target_title',
 
@@ -63,9 +62,8 @@ targets a door or chest that is not present in the current dungeon room.
 
 class TargetNotLocked(GameStateMessage):
     """
-This class implements an object that is returned by
-advgame.process.Command_Processor.pick_lock_command() when the player
-targets a door or chest that is not locked.
+Returned by advgame.process.CommandProcessor.pick_lock_command() when
+the player targets a door or chest that is not locked.
     """
     __slots__ = 'target_title',
 
@@ -75,5 +73,3 @@ targets a door or chest that is not locked.
 
     def __init__(self, target_title):
         self.target_title = target_title
-
-
