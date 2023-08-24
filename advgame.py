@@ -984,7 +984,7 @@ while True:
     # messages, the game exits.
     if isinstance(result[-1], (advg.statemsgs.quit.HaveQuitTheGame,
                                advg.Stmsg_Batkby_CharacterDeath,
-                               advg.Stmsg_Leave_WonTheGame)):
+                               advg.statemsgs.leave.WonTheGame)):
         exit(0)
 
     print()

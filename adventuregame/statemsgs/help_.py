@@ -1,0 +1,82 @@
+#!/usr/bin/python3
+
+
+from adventuregame.statemsgs._common import GameStateMessage
+from adventuregame.utility import join_str_seq_w_commas_and_conjunction, usage_verb
+
+
+__all__ = ("CommandNotRecognized", "DisplayCommands", "DisplayHelpForCommand",)
+
+class CommandNotRecognized(GameStateMessage):
+    """
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.help_command() when the player tries
+to get help with a command that is not in the game.
+    """
+    __slots__ = 'command_attempted', 'commands_available',
+
+    @property
+    def message(self):
+        return_lines = [f"The command '{self.command_attempted.upper()}' is not recognized. "
+                         'The full list of commands is:', '']
+        return_lines.extend((join_str_seq_w_commas_and_conjunction(self.commands_available, 'and'), ''))
+        return_lines.extend(('Which one do you want help with?', ''))
+        return '\n'.join(return_lines)
+
+    def __init__(self, command_attempted, commands_available):
+        self.command_attempted = command_attempted
+        self.commands_available = commands_available
+
+
+class DisplayCommands(GameStateMessage):
+    """
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.help_command() when the player calls
+it with no arguments; it displays all the commands in the game and prompts the
+player to ask for help with one of them.
+    """
+    __slots__ = 'commands_available', 'game_started'
+
+    @property
+    def message(self):
+        if self.game_started:
+            return_lines = ['The list of commands available during the game is:', '']
+        else:
+            return_lines = ['The list of commands available before game start is:', '']
+        return_lines.extend((join_str_seq_w_commas_and_conjunction(self.commands_available, 'and'), ''))
+        return_lines.extend(('Which one do you want help with?', ''))
+        return '\n'.join(return_lines)
+
+    def __init__(self, commands_available, game_started=True):
+        self.commands_available = commands_available
+        self.game_started = game_started
+
+
+class DisplayHelpForCommand(GameStateMessage):
+    """
+This class implements an object that is returned by
+adventuregame.processor.Command_Processor.help_command() when the player asks
+for help with a specific command. It summarizes the syntax for them and prints
+an informative blurb about the command.
+    """
+    __slots__ = 'command', 'syntax_tuple', 'instructions',
+
+    @property                   #
+    def message(self):          #
+        # Like Stmsg_CommandBadSyntax, this message property accepts syntax
+        # outlines from adventuregame.processor.COMMANDS_SYNTAX and assembles
+        # them into a list of valid usages, using unicode nonbreaking
+        # spaces so the usage examples aren't broken across lines by
+        # adventuregame.utilities.textwrapper().
+        syntax_str_list = [f"'{self.command}\u00A0{syntax_entry}'" if syntax_entry else f"'{self.command}'"
+                               for syntax_entry in self.syntax_tuple]
+        return_lines = [f'Help for the {self.command} command:', '']
+        return_lines.extend(('Usage: ' + join_str_seq_w_commas_and_conjunction(syntax_str_list, 'or'), ''))
+        return_lines.extend((self.instructions, ''))
+        return '\n'.join(return_lines)
+
+    def __init__(self, command, syntax_tuple=None, instructions=None):
+        self.command = command
+        self.syntax_tuple = syntax_tuple
+        self.instructions = instructions
+

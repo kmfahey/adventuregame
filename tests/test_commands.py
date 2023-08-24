@@ -398,7 +398,7 @@ class Test_Cast_Spell(unittest.TestCase):
         current_mana_points = 4
         self.assertTrue(mana_spending_outcome)
         result = self.command_processor.process('cast spell')
-        self.assertIsInstance(result[0], advg.Stmsg_Cstspl_InsufficientMana)
+        self.assertIsInstance(result[0], advg.statemsgs.castspl.InsufficientMana)
         self.assertEqual(result[0].current_mana_points, self.command_processor.game_state.character.mana_points)
         self.assertEqual(result[0].mana_point_total, self.command_processor.game_state.character.mana_point_total)
         self.assertEqual(result[0].spell_mana_cost, advg.SPELL_MANA_COST)
@@ -411,7 +411,7 @@ class Test_Cast_Spell(unittest.TestCase):
         self.command_processor.game_state.character_class = 'Mage'
         self.game_state.game_has_begun = True
         result = self.command_processor.process('cast spell')
-        self.assertIsInstance(result[0], advg.Stmsg_Cstspl_CastDamagingSpell)
+        self.assertIsInstance(result[0], advg.statemsgs.castspl.CastDamagingSpell)
         self.assertEqual(result[0].creature_title, 'kobold')
         self.assertIsInstance(result[0].damage_dealt, int)
         self.assertRegex(result[0].message, r'A magic missile springs from your gesturing hand and unerringly strikes '
@@ -437,7 +437,7 @@ class Test_Cast_Spell(unittest.TestCase):
         self.command_processor.game_state.character_class = 'Priest'
         self.game_state.game_has_begun = True
         result = self.command_processor.process('cast spell')
-        self.assertIsInstance(result[0], advg.Stmsg_Cstspl_CastHealingSpell)
+        self.assertIsInstance(result[0], advg.statemsgs.castspl.CastHealingSpell)
         self.assertRegex(result[0].message, r'You cast a healing spell on yourself.')
         self.assertIsInstance(result[1], advg.statemsgs.various.UnderwentHealingEffect)
         self.assertEqual(self.command_processor.game_state.character.mana_points + advg.SPELL_MANA_COST,
@@ -480,7 +480,7 @@ class Test_Close(unittest.TestCase):
 
     def test_close_2(self):
         result = self.command_processor.process(f'close {self.chest_title}')
-        self.assertIsInstance(result[0], advg.Stmsg_Close_ElementIsAlreadyClosed)
+        self.assertIsInstance(result[0], advg.statemsgs.close.ElementIsAlreadyClosed)
         self.assertEqual(result[0].target, self.chest_title)
         self.assertEqual(result[0].message, f'The {self.chest_title} is already closed.')
         self.assertTrue(self.chest.is_closed)
@@ -488,7 +488,7 @@ class Test_Close(unittest.TestCase):
     def test_close_3(self):
         self.chest.is_closed = False
         result = self.command_processor.process(f'close {self.chest_title}')
-        self.assertIsInstance(result[0], advg.Stmsg_Close_ElementHasBeenClosed)
+        self.assertIsInstance(result[0], advg.statemsgs.close.ElementHasBeenClosed)
         self.assertEqual(result[0].target, self.chest_title)
         self.assertEqual(result[0].message, f'You have closed the {self.chest_title}.')
         self.assertTrue(self.chest.is_closed)
@@ -502,7 +502,7 @@ class Test_Close(unittest.TestCase):
 
     def test_close_6(self):
         result = self.command_processor.process(f'close {self.door_title}')
-        self.assertIsInstance(result[0], advg.Stmsg_Close_ElementIsAlreadyClosed)
+        self.assertIsInstance(result[0], advg.statemsgs.close.ElementIsAlreadyClosed)
         self.assertEqual(result[0].target, self.door_title)
         self.assertEqual(result[0].message, f'The {self.door_title} is already closed.')
         self.assertTrue(self.door.is_closed)
@@ -510,7 +510,7 @@ class Test_Close(unittest.TestCase):
     def test_close_7(self):
         self.door.is_closed = False
         result = self.command_processor.process(f'close {self.door_title}')
-        self.assertIsInstance(result[0], advg.Stmsg_Close_ElementHasBeenClosed)
+        self.assertIsInstance(result[0], advg.statemsgs.close.ElementHasBeenClosed)
         self.assertEqual(result[0].target, self.door_title)
         self.assertEqual(result[0].message, f'You have closed the {self.door_title}.')
         self.assertTrue(self.door.is_closed)
@@ -521,27 +521,27 @@ class Test_Close(unittest.TestCase):
         result = self.command_processor.process('pick lock on west door')
         result = self.command_processor.process('leave via west door')
         result = self.command_processor.process('close south door')
-        self.assertIsInstance(result[0], advg.Stmsg_Close_ElementIsAlreadyClosed)
+        self.assertIsInstance(result[0], advg.statemsgs.close.ElementIsAlreadyClosed)
         self.assertEqual(result[0].target, 'south door')
         self.assertEqual(result[0].message, f'The south door is already closed.')
         self.assertTrue(self.door.is_closed)
 
     def test_close_8(self):
         result = self.command_processor.process('close north iron door')
-        self.assertIsInstance(result[0], advg.Stmsg_Close_ElementIsAlreadyClosed)
+        self.assertIsInstance(result[0], advg.statemsgs.close.ElementIsAlreadyClosed)
         self.assertEqual(result[0].target, 'north door')
         self.assertEqual(result[0].message, 'The north door is already closed.'),
 
     def test_close_9(self):
         result = self.command_processor.process('close mana potion')
-        self.assertIsInstance(result[0], advg.Stmsg_Close_ElementNotCloseable)
+        self.assertIsInstance(result[0], advg.statemsgs.close.ElementNotCloseable)
         self.assertEqual(result[0].target_title, 'mana potion')
         self.assertEqual(result[0].target_type, 'potion')
         self.assertEqual(result[0].message, "You can't close the mana potion; potions are not closable."),
 
     def test_close_10(self):
         result = self.command_processor.process('close kobold')
-        self.assertIsInstance(result[0], advg.Stmsg_Close_ElementNotCloseable)
+        self.assertIsInstance(result[0], advg.statemsgs.close.ElementNotCloseable)
         self.assertEqual(result[0].target_title, 'kobold')
         self.assertEqual(result[0].target_type, 'creature')
         self.assertEqual(result[0].message, "You can't close the kobold; creatures are not closable."),
@@ -550,7 +550,7 @@ class Test_Close(unittest.TestCase):
         self.command_processor.game_state.rooms_state.cursor.container_here = \
             self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         result = self.command_processor.process('close kobold corpse')
-        self.assertIsInstance(result[0], advg.Stmsg_Close_ElementNotCloseable)
+        self.assertIsInstance(result[0], advg.statemsgs.close.ElementNotCloseable)
         self.assertEqual(result[0].target_title, 'kobold corpse')
         self.assertEqual(result[0].target_type, 'corpse')
         self.assertEqual(result[0].message, "You can't close the kobold corpse; corpses are not closable."),
@@ -558,7 +558,7 @@ class Test_Close(unittest.TestCase):
     def test_close_12(self):
         self.command_processor.game_state.rooms_state.move(north=True)
         result = self.command_processor.process('close east doorway')
-        self.assertIsInstance(result[0], advg.Stmsg_Close_ElementNotCloseable)
+        self.assertIsInstance(result[0], advg.statemsgs.close.ElementNotCloseable)
         self.assertEqual(result[0].target_title, 'east doorway')
         self.assertEqual(result[0].target_type, 'doorway')
         self.assertEqual(result[0].message, "You can't close the east doorway; doorways are not closable.")
@@ -570,7 +570,7 @@ class Test_Close(unittest.TestCase):
         studded_leather_armor = self.items_state.get('Studded_Leather')
         self.command_processor.game_state.character.pick_up_item(studded_leather_armor)
         result = self.command_processor.process('close studded leather armor')
-        self.assertIsInstance(result[0], advg.Stmsg_Close_ElementNotCloseable)
+        self.assertIsInstance(result[0], advg.statemsgs.close.ElementNotCloseable)
         self.assertEqual(result[0].target_title, 'studded leather armor')
         self.assertEqual(result[0].target_type, 'armor')
         self.assertEqual(result[0].message, "You can't close the studded leather armor; suits of armor are not closable."),
@@ -610,7 +610,7 @@ class Test_Drink(unittest.TestCase):
         self.command_processor.game_state.character_class = 'Warrior'
         self.game_state.game_has_begun = True
         result = self.command_processor.process('drink health potion')
-        self.assertIsInstance(result[0], advg.Stmsg_Drink_ItemNotInInventory)
+        self.assertIsInstance(result[0], advg.statemsgs.drink.ItemNotInInventory)
         self.assertEqual(result[0].item_title, 'health potion')
         self.assertEqual(result[0].message, "You don't have a health potion in your inventory.")
 
@@ -660,7 +660,7 @@ class Test_Drink(unittest.TestCase):
         self.command_processor.game_state.character.spend_mana(10)
         result = self.command_processor.process('drink mana potion')
         self.assertEqual(mana_potion.mana_points_recovered, 20)
-        self.assertIsInstance(result[0], advg.Stmsg_Drink_DrankManaPotion)
+        self.assertIsInstance(result[0], advg.statemsgs.drink.DrankManaPotion)
         self.assertEqual(result[0].amount_regained, 10)
         self.assertRegex(result[0].message, r'You regained 10 mana points. You have full mana points! Your mana '
                                             r'points are (\d+)/\1.')
@@ -675,7 +675,7 @@ class Test_Drink(unittest.TestCase):
         self.command_processor.game_state.character.spend_mana(15)
         result = self.command_processor.process('drink mana potion')
         self.assertEqual(mana_potion.mana_points_recovered, 11)
-        self.assertIsInstance(result[0], advg.Stmsg_Drink_DrankManaPotion)
+        self.assertIsInstance(result[0], advg.statemsgs.drink.DrankManaPotion)
         self.assertEqual(result[0].amount_regained, 11)
         self.assertRegex(result[0].message, r'You regained 11 mana points. Your mana points are (?!(\d+)/\1)\d+/\d+.')
 
@@ -687,7 +687,7 @@ class Test_Drink(unittest.TestCase):
         self.command_processor.game_state.character.pick_up_item(mana_potion)
         result = self.command_processor.process('drink mana potion')
         self.assertEqual(mana_potion.mana_points_recovered, 20)
-        self.assertIsInstance(result[0], advg.Stmsg_Drink_DrankManaPotion)
+        self.assertIsInstance(result[0], advg.statemsgs.drink.DrankManaPotion)
         self.assertEqual(result[0].amount_regained, 0)
         self.assertRegex(result[0].message, r"You didn't regain any mana points. You have full mana points! Your mana points are (\d+)/\1.")
 
@@ -698,7 +698,7 @@ class Test_Drink(unittest.TestCase):
         mana_potion = self.command_processor.game_state.items_state.get('Mana_Potion')
         self.command_processor.game_state.character.pick_up_item(mana_potion)
         result = self.command_processor.process('drink mana potion')
-        self.assertIsInstance(result[0], advg.Stmsg_Drink_DrankManaPotion_when_Not_A_Spellcaster)
+        self.assertIsInstance(result[0], advg.statemsgs.drink.DrankManaPotionWhenNotASpellcaster)
         self.assertEqual(result[0].message, 'You feel a little strange, but otherwise nothing happens.')
 
     def test_drink10(self):
@@ -708,7 +708,7 @@ class Test_Drink(unittest.TestCase):
         gold_coin = self.command_processor.game_state.items_state.get('Gold_Coin')
         self.command_processor.game_state.character.pick_up_item(gold_coin)
         result = self.command_processor.process('drink gold coin')
-        self.assertIsInstance(result[0], advg.Stmsg_Drink_ItemNotDrinkable)
+        self.assertIsInstance(result[0], advg.statemsgs.drink.ItemNotDrinkable)
         self.assertEqual(result[0].message, 'A gold coin is not drinkable.')
 
     def test_drink11(self):
@@ -718,7 +718,7 @@ class Test_Drink(unittest.TestCase):
         mana_potion = self.command_processor.game_state.items_state.get('Mana_Potion')
         self.command_processor.game_state.character.pick_up_item(mana_potion)
         result = self.command_processor.process('drink 3 mana potions')
-        self.assertIsInstance(result[0], advg.Stmsg_Drink_TriedToDrinkMoreThanPossessed)
+        self.assertIsInstance(result[0], advg.statemsgs.drink.TriedToDrinkMoreThanPossessed)
         self.assertEqual(result[0].message, "You can't drink 3 mana potions. You only have 1 of them.")
 
     def test_drink12(self):
@@ -728,7 +728,7 @@ class Test_Drink(unittest.TestCase):
         mana_potion = self.command_processor.game_state.items_state.get('Mana_Potion')
         self.command_processor.game_state.character.pick_up_item(mana_potion)
         result = self.command_processor.process('drink three mana potions')
-        self.assertIsInstance(result[0], advg.Stmsg_Drink_TriedToDrinkMoreThanPossessed)
+        self.assertIsInstance(result[0], advg.statemsgs.drink.TriedToDrinkMoreThanPossessed)
         self.assertEqual(result[0].message, "You can't drink 3 mana potions. You only have 1 of them.")
 
     def test_drink13(self):
@@ -738,7 +738,7 @@ class Test_Drink(unittest.TestCase):
         mana_potion = self.command_processor.game_state.items_state.get('Mana_Potion')
         self.command_processor.game_state.character.pick_up_item(mana_potion)
         result = self.command_processor.process('drink mana potions')
-        self.assertIsInstance(result[0], advg.Stmsg_Drink_QuantityUnclear)
+        self.assertIsInstance(result[0], advg.statemsgs.drink.QuantityUnclear)
         self.assertEqual(result[0].message, 'Amount to drink unclear. How many do you mean?')
 
 
@@ -778,7 +778,7 @@ class Test_Drop(unittest.TestCase):
         gold_coin = self.items_state.get('Gold_Coin')
         self.command_processor.game_state.character.pick_up_item(gold_coin, qty=30)
         result = self.command_processor.process('drop a gold coins')  # check
-        self.assertIsInstance(result[0], advg.Stmsg_Drop_QuantityUnclear)
+        self.assertIsInstance(result[0], advg.statemsgs.drop.QuantityUnclear)
         self.assertEqual(result[0].message, 'Amount to drop unclear. How many do you mean?')
 
     def test_drop_3(self):
@@ -788,7 +788,7 @@ class Test_Drop(unittest.TestCase):
         gold_coin = self.items_state.get('Gold_Coin')
         self.command_processor.game_state.character.pick_up_item(gold_coin, qty=30)
         result = self.command_processor.process('drop a mana potion')  # check
-        self.assertIsInstance(result[0], advg.Stmsg_Drop_TryingToDropItemYouDontHave)
+        self.assertIsInstance(result[0], advg.statemsgs.drop.TryingToDropItemYouDontHave)
         self.assertEqual(result[0].item_title, 'mana potion')
         self.assertEqual(result[0].amount_attempted, 1)
         self.assertEqual(result[0].message, "You don't have a mana potion in your inventory.")
@@ -800,7 +800,7 @@ class Test_Drop(unittest.TestCase):
         gold_coin = self.items_state.get('Gold_Coin')
         self.command_processor.game_state.character.pick_up_item(gold_coin, qty=30)
         result = self.command_processor.process('drop 45 gold coins')  # check
-        self.assertIsInstance(result[0], advg.Stmsg_Drop_TryingToDropMoreThanYouHave)
+        self.assertIsInstance(result[0], advg.statemsgs.drop.TryingToDropMoreThanYouHave)
         self.assertEqual(result[0].item_title, 'gold coin')
         self.assertEqual(result[0].amount_attempted, 45)
         self.assertEqual(result[0].amount_had, 30)
@@ -814,7 +814,7 @@ class Test_Drop(unittest.TestCase):
         gold_coin = self.items_state.get('Gold_Coin')
         self.command_processor.game_state.character.pick_up_item(gold_coin, qty=30)
         result = self.command_processor.process('drop forty-five gold coins')  # check
-        self.assertIsInstance(result[0], advg.Stmsg_Drop_TryingToDropMoreThanYouHave)
+        self.assertIsInstance(result[0], advg.statemsgs.drop.TryingToDropMoreThanYouHave)
         self.assertEqual(result[0].item_title, 'gold coin')
         self.assertEqual(result[0].amount_attempted, 45)
         self.assertEqual(result[0].amount_had, 30)
@@ -828,7 +828,7 @@ class Test_Drop(unittest.TestCase):
         gold_coin = self.items_state.get('Gold_Coin')
         self.command_processor.game_state.character.pick_up_item(gold_coin, qty=30)
         result = self.command_processor.process('drop 15 gold coins')  # check
-        self.assertIsInstance(result[0], advg.Stmsg_Drop_DroppedItem)
+        self.assertIsInstance(result[0], advg.statemsgs.drop.DroppedItem)
         self.assertEqual(result[0].item_title, 'gold coin')
         self.assertEqual(result[0].amount_dropped, 15)
         self.assertEqual(result[0].amount_on_floor, 15)
@@ -837,7 +837,7 @@ class Test_Drop(unittest.TestCase):
                                             'coins left.')
 
         result = self.command_processor.process('drop 14 gold coins')  # check
-        self.assertIsInstance(result[0], advg.Stmsg_Drop_DroppedItem)
+        self.assertIsInstance(result[0], advg.statemsgs.drop.DroppedItem)
         self.assertEqual(result[0].item_title, 'gold coin')
         self.assertEqual(result[0].amount_dropped, 14)
         self.assertEqual(result[0].amount_on_floor, 29)
@@ -853,7 +853,7 @@ class Test_Drop(unittest.TestCase):
         self.command_processor.game_state.character.pick_up_item(gold_coin, qty=30)
         self.command_processor.process('pick up 29 gold coins')  # check
         result = self.command_processor.process('drop 1 gold coin')  # check
-        self.assertIsInstance(result[0], advg.Stmsg_Drop_DroppedItem)
+        self.assertIsInstance(result[0], advg.statemsgs.drop.DroppedItem)
         self.assertEqual(result[0].item_title, 'gold coin')
         self.assertEqual(result[0].amount_dropped, 1)
         self.assertEqual(result[0].amount_on_floor, 1)
@@ -868,7 +868,7 @@ class Test_Drop(unittest.TestCase):
         gold_coin = self.items_state.get('Gold_Coin')
         self.command_processor.game_state.character.pick_up_item(gold_coin, qty=30)
         result = self.command_processor.process('drop 30 gold coins')  # check
-        self.assertIsInstance(result[0], advg.Stmsg_Drop_DroppedItem)
+        self.assertIsInstance(result[0], advg.statemsgs.drop.DroppedItem)
         self.assertEqual(result[0].item_title, 'gold coin')
         self.assertEqual(result[0].amount_dropped, 30)
         self.assertEqual(result[0].amount_on_floor, 30)
@@ -888,7 +888,7 @@ class Test_Drop(unittest.TestCase):
         self.assertEqual(result[0].item_title, 'longsword')
         self.assertEqual(result[0].item_type, 'weapon')
         self.assertEqual(result[0].message, "You're no longer wielding a longsword. You now can't attack.")
-        self.assertIsInstance(result[1], advg.Stmsg_Drop_DroppedItem)
+        self.assertIsInstance(result[1], advg.statemsgs.drop.DroppedItem)
         self.assertEqual(result[1].item_title, 'longsword')
         self.assertEqual(result[1].amount_dropped, 1)
         self.assertEqual(result[1].amount_on_floor, 1)
@@ -908,7 +908,7 @@ class Test_Drop(unittest.TestCase):
         self.assertEqual(result[0].item_title, 'steel shield')
         self.assertEqual(result[0].item_type, 'shield')
         self.assertRegex(result[0].message, r"You're no longer carrying a steel shield. Your armor class is now \d+.")
-        self.assertIsInstance(result[1], advg.Stmsg_Drop_DroppedItem)
+        self.assertIsInstance(result[1], advg.statemsgs.drop.DroppedItem)
         self.assertEqual(result[1].item_title, 'steel shield')
         self.assertEqual(result[1].amount_dropped, 1)
         self.assertEqual(result[1].amount_on_floor, 1)
@@ -928,7 +928,7 @@ class Test_Drop(unittest.TestCase):
         self.assertEqual(result[0].item_title, 'magic wand')
         self.assertEqual(result[0].item_type, 'wand')
         self.assertRegex(result[0].message, r"You're no longer using a magic wand. You now can't attack.")
-        self.assertIsInstance(result[1], advg.Stmsg_Drop_DroppedItem)
+        self.assertIsInstance(result[1], advg.statemsgs.drop.DroppedItem)
         self.assertEqual(result[1].item_title, 'magic wand')
         self.assertEqual(result[1].amount_dropped, 1)
         self.assertEqual(result[1].amount_on_floor, 1)
@@ -951,7 +951,7 @@ class Test_Drop(unittest.TestCase):
         self.assertEqual(result[0].item_title, 'magic wand')
         self.assertEqual(result[0].item_type, 'wand')
         self.assertRegex(result[0].message, r"You're no longer using a magic wand. You're now attacking with your staff.")
-        self.assertIsInstance(result[1], advg.Stmsg_Drop_DroppedItem)
+        self.assertIsInstance(result[1], advg.statemsgs.drop.DroppedItem)
         self.assertEqual(result[1].item_title, 'magic wand')
         self.assertEqual(result[1].amount_dropped, 1)
         self.assertEqual(result[1].amount_on_floor, 1)
@@ -976,7 +976,7 @@ class Test_Drop(unittest.TestCase):
         self.assertRegex(result[0].message, r"You're no longer wielding a staff. You're attacking with your magic "
                                             r'wand. Your attack bonus is [\d+-]+ and your magic wand damage is '
                                             r'\d+d\d+([+-]\d+)?.')
-        self.assertIsInstance(result[1], advg.Stmsg_Drop_DroppedItem)
+        self.assertIsInstance(result[1], advg.statemsgs.drop.DroppedItem)
         self.assertEqual(result[1].item_title, 'staff')
         self.assertEqual(result[1].amount_dropped, 1)
         self.assertEqual(result[1].amount_on_floor, 1)
@@ -992,7 +992,7 @@ class Test_Drop(unittest.TestCase):
         self.command_processor.game_state.character.pick_up_item(longsword, qty=3)
         self.command_processor.game_state.character.equip_weapon(longsword)
         result = self.command_processor.process('drop longsword')  # check
-        self.assertIsInstance(result[0], advg.Stmsg_Drop_DroppedItem)
+        self.assertIsInstance(result[0], advg.statemsgs.drop.DroppedItem)
         self.assertEqual(result[0].item_title, 'longsword')
         self.assertEqual(result[0].amount_dropped, 1)
         self.assertEqual(result[0].amount_on_floor, 1)
@@ -1008,7 +1008,7 @@ class Test_Drop(unittest.TestCase):
         self.command_processor.game_state.character.pick_up_item(longsword, qty=3)
         self.command_processor.game_state.character.equip_weapon(longsword)
         result = self.command_processor.process('drop longsword')  # check
-        self.assertIsInstance(result[0], advg.Stmsg_Drop_DroppedItem)
+        self.assertIsInstance(result[0], advg.statemsgs.drop.DroppedItem)
         self.assertEqual(result[0].item_title, 'longsword')
         self.assertEqual(result[0].amount_dropped, 1)
         self.assertEqual(result[0].amount_on_floor, 1)
@@ -1063,27 +1063,27 @@ class Test_Equip_1(unittest.TestCase):
 
         result = self.command_processor.process('drop longsword')
         result = self.command_processor.process('equip longsword')
-        self.assertIsInstance(result[0], advg.Stmsg_Equip_NoSuchItemInInventory)
+        self.assertIsInstance(result[0], advg.statemsgs.equip.NoSuchItemInInventory)
         self.assertEqual(result[0].item_title, 'longsword')
         self.assertEqual(result[0].message, "You don't have a longsword in your inventory.")
 
     def test_equip_2(self):
         result = self.command_processor.process('equip longsword')
-        self.assertIsInstance(result[0], advg.Stmsg_Equip_ClassCantUseItem)
+        self.assertIsInstance(result[0], advg.statemsgs.equip.ClassCantUseItem)
         self.assertEqual(result[0].item_title, 'longsword')
         self.assertEqual(result[0].item_type, 'weapon')
         self.assertEqual(result[0].message, "Mages can't wield longswords.")
 
     def test_equip_3(self):
         result = self.command_processor.process('equip scale mail armor')
-        self.assertIsInstance(result[0], advg.Stmsg_Equip_ClassCantUseItem)
+        self.assertIsInstance(result[0], advg.statemsgs.equip.ClassCantUseItem)
         self.assertEqual(result[0].item_title, 'scale mail armor')
         self.assertEqual(result[0].item_type, 'armor')
         self.assertEqual(result[0].message, "Mages can't wear scale mail armor.")
 
     def test_equip_4(self):
         result = self.command_processor.process('equip steel shield')
-        self.assertIsInstance(result[0], advg.Stmsg_Equip_ClassCantUseItem)
+        self.assertIsInstance(result[0], advg.statemsgs.equip.ClassCantUseItem)
         self.assertEqual(result[0].item_title, 'steel shield')
         self.assertEqual(result[0].item_type, 'shield')
         self.assertEqual(result[0].message, "Mages can't carry steel shields.")
@@ -1209,7 +1209,7 @@ class Test_Equip_2(unittest.TestCase):
 
     def test_equip_5(self):
         result = self.command_processor.process('equip magic wand')
-        self.assertIsInstance(result[0], advg.Stmsg_Equip_ClassCantUseItem)
+        self.assertIsInstance(result[0], advg.statemsgs.equip.ClassCantUseItem)
         self.assertEqual(result[0].item_title, 'magic wand')
         self.assertEqual(result[0].message, "Warriors can't use magic wands.")
 
@@ -1236,7 +1236,7 @@ class Test_Help_1(unittest.TestCase):
 
     def test_help_1(self):
         result = self.command_processor.process('help')
-        self.assertIsInstance(result[0], advg.Stmsg_Help_DisplayCommands)
+        self.assertIsInstance(result[0], advg.statemsgs.help_.DisplayCommands)
         self.assertEqual(result[0].commands_available, ('ATTACK', 'CAST SPELL', 'CLOSE', 'DRINK', 'DROP', 'EQUIP',
                                                         'HELP', 'INVENTORY', 'LEAVE', 'LOCK', 'LOOK AT', 'OPEN',
                                                         'PICK LOCK', 'PICK UP', 'PUT', 'QUIT', 'STATUS', 'TAKE',
@@ -1251,7 +1251,7 @@ Which one do you want help with?
 
     def test_help_2(self):
         result = self.command_processor.process('help juggle')
-        self.assertIsInstance(result[0], advg.Stmsg_Help_CommandNotRecognized)
+        self.assertIsInstance(result[0], advg.statemsgs.help_.CommandNotRecognized)
         self.assertEqual(result[0].commands_available, ('ATTACK', 'BEGIN GAME', 'CAST SPELL', 'CLOSE', 'DRINK', 'DROP',
                                                         'EQUIP', 'HELP', 'INVENTORY', 'LEAVE', 'LOCK', 'LOOK AT',
                                                         'OPEN', 'PICK LOCK', 'PICK UP', 'PUT', 'QUIT', 'REROLL',
@@ -1267,7 +1267,7 @@ Which one do you want help with?
 
     def test_help_3(self):
         result = self.command_processor.process('help attack')
-        self.assertIsInstance(result[0], advg.Stmsg_Help_DisplayHelpForCommand)
+        self.assertIsInstance(result[0], advg.statemsgs.help_.DisplayHelpForCommand)
         self.assertEqual(result[0].command, 'ATTACK')
         self.assertEqual(result[0].syntax_tuple, ('<creature\u00A0name>',))
         self.assertEqual(result[0].message, """Help for the ATTACK command:
@@ -1281,7 +1281,7 @@ the TAKE command.
 
     def test_help_4(self):
         result = self.command_processor.process('help close')
-        self.assertIsInstance(result[0], advg.Stmsg_Help_DisplayHelpForCommand)
+        self.assertIsInstance(result[0], advg.statemsgs.help_.DisplayHelpForCommand)
         self.assertEqual(result[0].command, 'CLOSE')
         self.assertEqual(result[0].syntax_tuple, ('<door\u00A0name>', '<chest\u00A0name>'))
         self.assertEqual(result[0].message, """Help for the CLOSE command:
@@ -1293,7 +1293,7 @@ The CLOSE command can be used to close doors and chests.
 
     def test_help_5(self):
         result = self.command_processor.process('help put')
-        self.assertIsInstance(result[0], advg.Stmsg_Help_DisplayHelpForCommand)
+        self.assertIsInstance(result[0], advg.statemsgs.help_.DisplayHelpForCommand)
         self.assertEqual(result[0].command, 'PUT')
         self.assertEqual(result[0].syntax_tuple, ('<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>',
                                                   '<number>\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>',
@@ -1312,7 +1312,7 @@ leave items on the floor, use DROP.
 
     def test_help_6(self):
         result = self.command_processor.process('help begin game')
-        self.assertIsInstance(result[0], advg.Stmsg_Help_DisplayHelpForCommand)
+        self.assertIsInstance(result[0], advg.statemsgs.help_.DisplayHelpForCommand)
         self.assertEqual(result[0].command, 'BEGIN GAME')
         self.assertEqual(result[0].syntax_tuple, ('',)),
         self.assertEqual(result[0].message, """Help for the BEGIN GAME command:
@@ -1342,7 +1342,7 @@ class Test_Help_2(unittest.TestCase):
 
     def test_help_1(self):
         result = self.command_processor.process('help')
-        self.assertIsInstance(result[0], advg.Stmsg_Help_DisplayCommands)
+        self.assertIsInstance(result[0], advg.statemsgs.help_.DisplayCommands)
         self.assertEqual(result[0].commands_available, ('BEGIN GAME', 'HELP', 'QUIT', 'REROLL', 'SET CLASS',
                                                         'SET NAME'))
         self.assertEqual(result[0].message, """The list of commands available before game start is:
@@ -1354,7 +1354,7 @@ Which one do you want help with?
 
     def test_help_2(self):
         result = self.command_processor.process('help juggle')
-        self.assertIsInstance(result[0], advg.Stmsg_Help_CommandNotRecognized)
+        self.assertIsInstance(result[0], advg.statemsgs.help_.CommandNotRecognized)
         self.assertEqual(result[0].commands_available, ('ATTACK', 'BEGIN GAME', 'CAST SPELL', 'CLOSE', 'DRINK', 'DROP',
                                                         'EQUIP', 'HELP', 'INVENTORY', 'LEAVE', 'LOCK', 'LOOK AT',
                                                         'OPEN', 'PICK LOCK', 'PICK UP', 'PUT', 'QUIT', 'REROLL',
@@ -1370,7 +1370,7 @@ Which one do you want help with?
 
     def test_help_3(self):
         result = self.command_processor.process('help attack')
-        self.assertIsInstance(result[0], advg.Stmsg_Help_DisplayHelpForCommand)
+        self.assertIsInstance(result[0], advg.statemsgs.help_.DisplayHelpForCommand)
         self.assertEqual(result[0].command, 'ATTACK')
         self.assertEqual(result[0].syntax_tuple, ('<creature\u00A0name>',))
         self.assertEqual(result[0].message, """Help for the ATTACK command:
@@ -1384,7 +1384,7 @@ the TAKE command.
 
     def test_help_4(self):
         result = self.command_processor.process('help close')
-        self.assertIsInstance(result[0], advg.Stmsg_Help_DisplayHelpForCommand)
+        self.assertIsInstance(result[0], advg.statemsgs.help_.DisplayHelpForCommand)
         self.assertEqual(result[0].command, 'CLOSE')
         self.assertEqual(result[0].syntax_tuple, ('<door\u00A0name>', '<chest\u00A0name>'))
         self.assertEqual(result[0].message, """Help for the CLOSE command:
@@ -1396,7 +1396,7 @@ The CLOSE command can be used to close doors and chests.
 
     def test_help_5(self):
         result = self.command_processor.process('help put')
-        self.assertIsInstance(result[0], advg.Stmsg_Help_DisplayHelpForCommand)
+        self.assertIsInstance(result[0], advg.statemsgs.help_.DisplayHelpForCommand)
         self.assertEqual(result[0].command, 'PUT')
         self.assertEqual(result[0].syntax_tuple, ('<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>',
                                                   '<number>\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>',
@@ -1415,7 +1415,7 @@ leave items on the floor, use DROP.
 
     def test_help_6(self):
         result = self.command_processor.process('help begin game')
-        self.assertIsInstance(result[0], advg.Stmsg_Help_DisplayHelpForCommand)
+        self.assertIsInstance(result[0], advg.statemsgs.help_.DisplayHelpForCommand)
         self.assertEqual(result[0].command, 'BEGIN GAME')
         self.assertEqual(result[0].syntax_tuple, ('',)),
         self.assertEqual(result[0].message, """Help for the BEGIN GAME command:
@@ -1470,7 +1470,7 @@ class Test_Inventory(unittest.TestCase):
 
     def test_inventory_2(self):
         result = self.command_processor.process('inventory')
-        self.assertIsInstance(result[0], advg.Stmsg_Inven_DisplayInventory)
+        self.assertIsInstance(result[0], advg.statemsgs.inven.DisplayInventory)
         self.assertEqual(tuple(map(operator.itemgetter(0), result[0].inventory_contents)), (30, 1, 1, 2, 1, 1))
         self.assertIsInstance(result[0].inventory_contents[0][1], advg.Coin)
         self.assertIsInstance(result[0].inventory_contents[1][1], advg.Weapon)
@@ -1526,7 +1526,7 @@ class Test_Leave(unittest.TestCase):
 
     def test_leave_3(self):
         result = self.command_processor.process('leave using north door')
-        self.assertIsInstance(result[0], advg.Stmsg_Leave_LeftRoom)
+        self.assertIsInstance(result[0], advg.statemsgs.leave.LeftRoom)
         self.assertEqual(result[0].compass_dir, 'north')
         self.assertEqual(result[0].message, 'You leave the room via the north door.')
         self.assertIsInstance(result[1], advg.statemsgs.various.EnteredRoom)
@@ -1534,7 +1534,7 @@ class Test_Leave(unittest.TestCase):
         self.assertEqual(result[1].message, 'Nondescript room.\nThere is a doorway to the east and an iron door to the '
                                             'south.')
         result = self.command_processor.process('leave using south door')
-        self.assertIsInstance(result[0], advg.Stmsg_Leave_LeftRoom)
+        self.assertIsInstance(result[0], advg.statemsgs.leave.LeftRoom)
         self.assertEqual(result[0].compass_dir, 'south')
         self.assertEqual(result[0].message, 'You leave the room via the south door.')
         self.assertIsInstance(result[1], advg.statemsgs.various.EnteredRoom)
@@ -1545,7 +1545,7 @@ class Test_Leave(unittest.TestCase):
 
     def test_leave_4(self):
         result = self.command_processor.process('leave using north iron door')
-        self.assertIsInstance(result[0], advg.Stmsg_Leave_LeftRoom)
+        self.assertIsInstance(result[0], advg.statemsgs.leave.LeftRoom)
         self.assertEqual(result[0].compass_dir, 'north')
         self.assertEqual(result[0].message, 'You leave the room via the north door.')
         self.assertIsInstance(result[1], advg.statemsgs.various.EnteredRoom)
@@ -1564,16 +1564,16 @@ class Test_Leave(unittest.TestCase):
         self.command_processor.process('leave using east doorway')
         self.assertEqual(self.command_processor.game_state.rooms_state.cursor.title, 'northeast dungeon room')
         result = self.command_processor.process('leave using north door')
-        self.assertIsInstance(result[0], advg.Stmsg_Leave_DoorIsLocked)
+        self.assertIsInstance(result[0], advg.statemsgs.leave.DoorIsLocked)
         self.assertEqual(result[0].compass_dir, 'north')
         self.assertEqual(result[0].portal_type, 'door')
         self.assertEqual(result[0].message, "You can't leave the room via the north door. The door is locked.")
         result = self.command_processor.process('pick lock on north door')
         result = self.command_processor.process('leave using north door')
-        self.assertIsInstance(result[0], advg.Stmsg_Leave_LeftRoom)
+        self.assertIsInstance(result[0], advg.statemsgs.leave.LeftRoom)
         self.assertEqual(result[0].compass_dir, 'north')
         self.assertEqual(result[0].message, 'You leave the room via the north door.')
-        self.assertIsInstance(result[1], advg.Stmsg_Leave_WonTheGame)
+        self.assertIsInstance(result[1], advg.statemsgs.leave.WonTheGame)
         self.assertEqual(result[1].message, 'You found the exit to the dungeon. You have won the game!')
 
 
@@ -1622,7 +1622,7 @@ class Test_Lock(unittest.TestCase):
     def test_lock_3(self):
         self.door.is_locked = False
         result = self.command_processor.process(f'lock {self.door_title}')
-        self.assertIsInstance(result[0], advg.Stmsg_Lock_DontPossessCorrectKey)
+        self.assertIsInstance(result[0], advg.statemsgs.lock.DontPossessCorrectKey)
         self.assertEqual(result[0].object_to_lock_title, self.door_title)
         self.assertEqual(result[0].key_needed, 'door key')
         self.assertEqual(result[0].message, f'To lock the {self.door_title} you need a door key.')
@@ -1633,14 +1633,14 @@ class Test_Lock(unittest.TestCase):
         key = self.command_processor.game_state.items_state.get('Door_Key')
         self.command_processor.game_state.character.pick_up_item(key)
         result = self.command_processor.process(f'lock {self.door_title}')
-        self.assertIsInstance(result[0], advg.Stmsg_Lock_ElementIsAlreadyUnlocked)
+        self.assertIsInstance(result[0], advg.statemsgs.lock.ElementIsAlreadyUnlocked)
         self.assertEqual(result[0].target, self.door_title)
         self.assertEqual(result[0].message, f'The {self.door_title} is already locked.')
         self.assertTrue(self.door.is_locked)
 
         self.door.is_locked = False
         result = self.command_processor.process(f'lock {self.door_title}')
-        self.assertIsInstance(result[0], advg.Stmsg_Lock_ElementHasBeenUnlocked)
+        self.assertIsInstance(result[0], advg.statemsgs.lock.ElementHasBeenUnlocked)
         self.assertEqual(result[0].target, self.door_title)
         self.assertEqual(result[0].message, f'You have locked the {self.door_title}.')
         self.assertTrue(self.door.is_locked)
@@ -1651,13 +1651,13 @@ class Test_Lock(unittest.TestCase):
         result = self.command_processor.process('unlock west door')
         result = self.command_processor.process('leave via west door')
         result = self.command_processor.process('lock south door')
-        self.assertIsInstance(result[0], advg.Stmsg_Lock_ElementIsAlreadyUnlocked)
+        self.assertIsInstance(result[0], advg.statemsgs.lock.ElementIsAlreadyUnlocked)
         self.assertEqual(result[0].target, 'south door')
         self.assertEqual(result[0].message, 'The south door is already locked.')
 
     def test_lock_5(self):
         result = self.command_processor.process(f'lock {self.chest_title}')
-        self.assertIsInstance(result[0], advg.Stmsg_Lock_DontPossessCorrectKey)
+        self.assertIsInstance(result[0], advg.statemsgs.lock.DontPossessCorrectKey)
         self.assertEqual(result[0].object_to_lock_title, self.chest_title)
         self.assertEqual(result[0].key_needed, 'chest key')
         self.assertEqual(result[0].message, f'To lock the {self.chest_title} you need a chest key.')
@@ -1667,27 +1667,27 @@ class Test_Lock(unittest.TestCase):
         key = self.command_processor.game_state.items_state.get('Chest_Key')
         self.command_processor.game_state.character.pick_up_item(key)
         result = self.command_processor.process(f'lock {self.chest_title}')
-        self.assertIsInstance(result[0], advg.Stmsg_Lock_ElementIsAlreadyUnlocked)
+        self.assertIsInstance(result[0], advg.statemsgs.lock.ElementIsAlreadyUnlocked)
         self.assertEqual(result[0].target, self.chest_title)
         self.assertEqual(result[0].message, f'The {self.chest_title} is already locked.')
 
         self.chest.is_locked = False
         result = self.command_processor.process(f'lock {self.chest_title}')
-        self.assertIsInstance(result[0], advg.Stmsg_Lock_ElementHasBeenUnlocked)
+        self.assertIsInstance(result[0], advg.statemsgs.lock.ElementHasBeenUnlocked)
         self.assertEqual(result[0].target, self.chest_title)
         self.assertEqual(result[0].message, f'You have locked the {self.chest_title}.')
         self.assertTrue(self.chest.is_locked)
 
     def test_lock_7(self):
         result = self.command_processor.process('lock north iron door')
-        self.assertIsInstance(result[0], advg.Stmsg_Lock_DontPossessCorrectKey)
+        self.assertIsInstance(result[0], advg.statemsgs.lock.DontPossessCorrectKey)
         self.assertEqual(result[0].object_to_lock_title, 'north door')
         self.assertEqual(result[0].key_needed, 'door key')
         self.assertEqual(result[0].message, 'To lock the north door you need a door key.')
 
     def test_lock_8(self):
         result = self.command_processor.process('lock mana potion')
-        self.assertIsInstance(result[0], advg.Stmsg_Lock_ElementNotUnlockable)
+        self.assertIsInstance(result[0], advg.statemsgs.lock.ElementNotUnlockable)
         self.assertEqual(result[0].target_title, 'mana potion')
         self.assertEqual(result[0].target_type, 'potion')
         self.assertEqual(result[0].message, "You can't lock the mana potion; potions are not lockable."),
@@ -1696,21 +1696,21 @@ class Test_Lock(unittest.TestCase):
         studded_leather_armor = self.items_state.get('Studded_Leather')
         self.command_processor.game_state.character.pick_up_item(studded_leather_armor)
         result = self.command_processor.process('lock studded leather armor')
-        self.assertIsInstance(result[0], advg.Stmsg_Lock_ElementNotUnlockable)
+        self.assertIsInstance(result[0], advg.statemsgs.lock.ElementNotUnlockable)
         self.assertEqual(result[0].target_title, 'studded leather armor')
         self.assertEqual(result[0].target_type, 'armor')
         self.assertEqual(result[0].message, "You can't lock the studded leather armor; suits of armor are not lockable."),
 
     def test_lock_10(self):
         result = self.command_processor.process('lock mana potion')
-        self.assertIsInstance(result[0], advg.Stmsg_Lock_ElementNotUnlockable)
+        self.assertIsInstance(result[0], advg.statemsgs.lock.ElementNotUnlockable)
         self.assertEqual(result[0].target_title, 'mana potion')
         self.assertEqual(result[0].target_type, 'potion')
         self.assertEqual(result[0].message, "You can't lock the mana potion; potions are not lockable."),
 
     def test_lock_11(self):
         result = self.command_processor.process('lock kobold')
-        self.assertIsInstance(result[0], advg.Stmsg_Lock_ElementNotUnlockable)
+        self.assertIsInstance(result[0], advg.statemsgs.lock.ElementNotUnlockable)
         self.assertEqual(result[0].target_title, 'kobold')
         self.assertEqual(result[0].target_type, 'creature')
         self.assertEqual(result[0].message, "You can't lock the kobold; creatures are not lockable."),
@@ -1719,7 +1719,7 @@ class Test_Lock(unittest.TestCase):
         self.command_processor.game_state.rooms_state.cursor.container_here = \
             self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         result = self.command_processor.process('lock kobold corpse')
-        self.assertIsInstance(result[0], advg.Stmsg_Lock_ElementNotUnlockable)
+        self.assertIsInstance(result[0], advg.statemsgs.lock.ElementNotUnlockable)
         self.assertEqual(result[0].target_title, 'kobold corpse')
         self.assertEqual(result[0].target_type, 'corpse')
         self.assertEqual(result[0].message, "You can't lock the kobold corpse; corpses are not lockable."),
@@ -1728,7 +1728,7 @@ class Test_Lock(unittest.TestCase):
         result = self.command_processor.process('pick lock on north door')
         self.command_processor.game_state.rooms_state.move(north=True)
         result = self.command_processor.process('lock east doorway')
-        self.assertIsInstance(result[0], advg.Stmsg_Lock_ElementNotUnlockable)
+        self.assertIsInstance(result[0], advg.statemsgs.lock.ElementNotUnlockable)
         self.assertEqual(result[0].target_title, 'east doorway')
         self.assertEqual(result[0].target_type, 'doorway')
         self.assertEqual(result[0].message, "You can't lock the east doorway; doorways are not lockable.")
@@ -1737,7 +1737,7 @@ class Test_Lock(unittest.TestCase):
         studded_leather_armor = self.items_state.get('Studded_Leather')
         self.command_processor.game_state.character.pick_up_item(studded_leather_armor)
         result = self.command_processor.process('lock studded leather armor')
-        self.assertIsInstance(result[0], advg.Stmsg_Lock_ElementNotUnlockable)
+        self.assertIsInstance(result[0], advg.statemsgs.lock.ElementNotUnlockable)
         self.assertEqual(result[0].target_title, 'studded leather armor')
         self.assertEqual(result[0].target_type, 'armor')
         self.assertEqual(result[0].message, "You can't lock the studded leather armor; suits of armor are not lockable."),

@@ -584,7 +584,7 @@ VariousCommands_UnderwentHealingEffect object.
         # If the player character's mana is less than SPELL_MANA_COST, an
         # insufficient-mana error is returned.
         elif self.game_state.character.mana_points < SPELL_MANA_COST:
-            return stmsg.Stmsg_Cstspl_InsufficientMana(self.game_state.character.mana_points,
+            return stmsg.castspl.InsufficientMana(self.game_state.character.mana_points,
                                                             self.game_state.character.mana_point_total,
                                                             SPELL_MANA_COST),
 
@@ -595,7 +595,7 @@ VariousCommands_UnderwentHealingEffect object.
             # If the current room has no creature in it, a no-creature-to-target
             # error is returned.
             if self.game_state.rooms_state.cursor.creature_here is None:
-                return stmsg.Stmsg_Cstspl_NoCreatureToTarget(),
+                return stmsg.castspl.NoCreatureToTarget(),
             else:
                 # Otherwise, spell damage is rolled and inflicted on
                 # creature_here. The spell always hits (it's styled after _magic
@@ -611,7 +611,7 @@ VariousCommands_UnderwentHealingEffect object.
                     corpse = creature.convert_to_corpse()
                     self.game_state.rooms_state.cursor.container_here = corpse
                     self.game_state.rooms_state.cursor.creature_here = None
-                    return (stmsg.Stmsg_Cstspl_CastDamagingSpell(creature.title, damage_dealt,
+                    return (stmsg.castspl.CastDamagingSpell(creature.title, damage_dealt,
                                                                          creature_slain=True),
                             stmsg.various.FoeDeath(creature.title))
                 else:
@@ -621,7 +621,7 @@ VariousCommands_UnderwentHealingEffect object.
                     # self._be_attacked_by_command() and the total tuple is
                     # returned.
                     be_attacked_by_result = self._be_attacked_by_command(creature)
-                    return operator.concat((stmsg.Stmsg_Cstspl_CastDamagingSpell(creature.title,
+                    return operator.concat((stmsg.castspl.CastDamagingSpell(creature.title,
                                                                                            damage_dealt,
                                                                                            creature_slain=False),),
                                            be_attacked_by_result)
@@ -633,7 +633,7 @@ VariousCommands_UnderwentHealingEffect object.
             damage_rolled = util.roll_dice(SPELL_DAMAGE)
             healed_amt = self.game_state.character.heal_damage(damage_rolled)
             self.game_state.character.spend_mana(SPELL_MANA_COST)
-            return (stmsg.Stmsg_Cstspl_CastHealingSpell(),
+            return (stmsg.castspl.CastHealingSpell(),
                     stmsg.various.UnderwentHealingEffect(healed_amt, self.game_state.character.hit_points,
                                                                     self.game_state.character.hit_point_total))
 
@@ -732,7 +732,7 @@ CloseCommand_ElementIsAlreadyClosed object.
 
         # If the element to close is already closed, a
         if element_to_close.is_closed:
-            return stmsg.Stmsg_Close_ElementIsAlreadyClosed(element_to_close.title),
+            return stmsg.close.ElementIsAlreadyClosed(element_to_close.title),
         elif isinstance(element_to_close, elem.Door):
             # This is a door object, and it only represents _this side_ of the
             # door game element; I use _matching_door() to fetch the door object
@@ -745,7 +745,7 @@ CloseCommand_ElementIsAlreadyClosed object.
         # I set the element's is_closed attribute to True, and return an
         # element-has-been-closed value.
         element_to_close.is_closed = True
-        return stmsg.Stmsg_Close_ElementHasBeenClosed(element_to_close.title),
+        return stmsg.close.ElementHasBeenClosed(element_to_close.title),
 
     def drink_command(self, tokens):
         """
@@ -811,7 +811,7 @@ restored, and a DrinkCommand_DrankManaPotion object is returned.
             # error is returned.
             qty_to_drink = 1
             if tokens[-1].endswith('s'):
-                return stmsg.Stmsg_Drink_QuantityUnclear(),
+                return stmsg.drink.QuantityUnclear(),
 
         # The initial error checking is out of the way, so we check the
         # Character's inventory for an item with a title that matches the
@@ -822,7 +822,7 @@ restored, and a DrinkCommand_DrankManaPotion object is returned.
 
         # The character has no such item, so an item-not-in-inventory error is returned.
         if not len(matching_items_qtys_objs):
-            return stmsg.Stmsg_Drink_ItemNotInInventory(item_title),
+            return stmsg.drink.ItemNotInInventory(item_title),
 
         # An item by the title that the player specified was found, so the
         # object and its quantity are saved.
@@ -830,13 +830,13 @@ restored, and a DrinkCommand_DrankManaPotion object is returned.
 
         # If the item isn't a potion, an item-not-drinkable error is returned.
         if not item.title.endswith(' potion'):
-            return stmsg.Stmsg_Drink_ItemNotDrinkable(item_title),
+            return stmsg.drink.ItemNotDrinkable(item_title),
 
         # If the arguments specify a quantity to drink that's greater than the
         # quantity in inventory, a tried-to-drink-more-than-possessed error is
         # returned.
         elif qty_to_drink > item_qty:
-            return stmsg.Stmsg_Drink_TriedToDrinkMoreThanPossessed(item_title, qty_to_drink, item_qty),
+            return stmsg.drink.TriedToDrinkMoreThanPossessed(item_title, qty_to_drink, item_qty),
 
         # I execute the effect of a health potion or a mana potion, depending.
         # Mana potion first.
@@ -855,7 +855,7 @@ restored, and a DrinkCommand_DrankManaPotion object is returned.
             # does nothing; a drank-mana-potion-when-not-a-spellcaster error is
             # returned.
             if self.game_state.character_class not in ('Mage', 'Priest'):
-                return stmsg.Stmsg_Drink_DrankManaPotion_when_Not_A_Spellcaster(),
+                return stmsg.drink.DrankManaPotionWhenNotASpellcaster(),
 
             # The amount of mana recovery done by the potion is granted to the
             # character, and the potion is removed from inventory. A
@@ -863,7 +863,7 @@ restored, and a DrinkCommand_DrankManaPotion object is returned.
             mana_points_recovered = item.mana_points_recovered
             regained_amt = self.game_state.character.regain_mana(mana_points_recovered)
             self.game_state.character.drop_item(item)
-            return stmsg.Stmsg_Drink_DrankManaPotion(regained_amt, self.game_state.character.mana_points,
+            return stmsg.drink.DrankManaPotion(regained_amt, self.game_state.character.mana_points,
                                                          self.game_state.character.mana_point_total),
 
     def drop_command(self, tokens):
@@ -925,7 +925,7 @@ returned.
         # The player character's inventory doesn't contain an item by that
         # title, so a trying-to-drop-an-item-you-don't-have error is returned.
         if not len(items_had_pair):
-            return stmsg.Stmsg_Drop_TryingToDropItemYouDontHave(item_title, drop_quantity),
+            return stmsg.drop.TryingToDropItemYouDontHave(item_title, drop_quantity),
 
         # The item was found, so its object and quantity are saved.
         (item_had_qty, item), = items_had_pair
@@ -934,7 +934,7 @@ returned.
 
             # If the quantity specified to drop is greater than the quantity in
             # inventory, a trying-to-drop-more-than-you-have error is returned.
-            return stmsg.Stmsg_Drop_TryingToDropMoreThanYouHave(item_title, drop_quantity, item_had_qty),
+            return stmsg.drop.TryingToDropMoreThanYouHave(item_title, drop_quantity, item_had_qty),
         elif drop_quantity is math.nan:
 
             # The workhorse method returns math.nan as the drop_quantity if the
@@ -1029,7 +1029,7 @@ returned.
         # a dropped-item value with the quantity dropped, the quantity on the
         # floor, and the quantity remaining in inventory.
         quantity_had_now = item_had_qty - drop_quantity
-        return unequip_return + (stmsg.Stmsg_Drop_DroppedItem(
+        return unequip_return + (stmsg.drop.DroppedItem(
                                      item_title, item.item_type, drop_quantity, quantity_already_here + drop_quantity,
                                      quantity_had_now),)
 
@@ -1078,7 +1078,7 @@ object is returned.
         # If no such item is found in the inventory, a no-such-item-in-inventory
         # error is returned.
         if not len(matching_item_tuple):
-            return stmsg.Stmsg_Equip_NoSuchItemInInventory(item_title),
+            return stmsg.equip.NoSuchItemInInventory(item_title),
 
         # The Item subclass object was found and is saved.
         item, = matching_item_tuple[0:1]
@@ -1087,7 +1087,7 @@ object is returned.
         # a class-can't-use-item error is returned.
         can_use_attr = self.game_state.character_class.lower() + '_can_use'
         if not getattr(item, can_use_attr):
-            return stmsg.Stmsg_Equip_ClassCantUseItem(self.game_state.character_class, item_title, item.item_type),
+            return stmsg.equip.ClassCantUseItem(self.game_state.character_class, item_title, item.item_type),
 
         # This conditional handles checking, for each type of equippable
         # item, whether the player character already has an item of that type
@@ -1205,7 +1205,7 @@ HelpCommand_Stmsg_CommandNotRecognized object.
         if len(tokens) == 0:
             commands_set = self.ingame_commands if self.game_state.game_has_begun else self.pregame_commands
             commands_tuple = tuple(sorted(map(lambda strval: strval.replace('_', ' ').upper(), commands_set)))
-            return stmsg.Stmsg_Help_DisplayCommands(commands_tuple, self.game_state.game_has_begun),
+            return stmsg.help_.DisplayCommands(commands_tuple, self.game_state.game_has_begun),
 
         # A specific command was included as an argument.
         else:
@@ -1217,11 +1217,11 @@ HelpCommand_Stmsg_CommandNotRecognized object.
             if command_lc not in (self.ingame_commands | self.pregame_commands):
                 commands_tuple = tuple(sorted(map(lambda strval: strval.replace('_', ' ').upper(),
                                                   self.ingame_commands | self.pregame_commands)))
-                return stmsg.Stmsg_Help_CommandNotRecognized(command_uc, commands_tuple),
+                return stmsg.help_.CommandNotRecognized(command_uc, commands_tuple),
             else:
                 # Otherwise, a help message for the command specified is
                 # returned.
-                return stmsg.Stmsg_Help_DisplayHelpForCommand(command_uc, COMMANDS_SYNTAX[command_uc],
+                return stmsg.help_.DisplayHelpForCommand(command_uc, COMMANDS_SYNTAX[command_uc],
                                                                    COMMANDS_HELP[command_uc]),
 
     def inventory_command(self, tokens):
@@ -1243,7 +1243,7 @@ Stmsg_CommandBadSyntax object.
         # contents are stored in a tuple, and a display-inventory value is
         # returned with the tuple to display.
         inventory_contents = sorted(self.game_state.character.list_items(), key=lambda argl: argl[1].title)
-        return stmsg.Stmsg_Inven_DisplayInventory(inventory_contents),
+        return stmsg.inven.DisplayInventory(inventory_contents),
 
     def leave_command(self, tokens):
         """
@@ -1293,14 +1293,14 @@ VariousCommands_EnteredRoom object are returned.
 
         # If the door is locked, a door-is-locked error is returned.
         if door.is_locked:
-            return stmsg.Stmsg_Leave_DoorIsLocked(compass_dir, portal_type),
+            return stmsg.leave.DoorIsLocked(compass_dir, portal_type),
 
         # The exit to the dungeon is a special Door object marked with
         # is_exit=True. I test the Door object to see if this is the one.
         if door.is_exit:
 
             # If so, a left-room value will be returned along with a won-the-game value.
-            return_tuple = (stmsg.Stmsg_Leave_LeftRoom(compass_dir, portal_type), stmsg.Stmsg_Leave_WonTheGame())
+            return_tuple = (stmsg.leave.LeftRoom(compass_dir, portal_type), stmsg.leave.WonTheGame())
 
             # The game_has_ended boolean is set True, and the game-ending
             # return value is saved so that self.process() can return it if the
@@ -1312,7 +1312,7 @@ VariousCommands_EnteredRoom object are returned.
         # Otherwise, RoomsState.move is called with the compass direction, and
         # a left-room value is returned along with a entered-room value.
         self.game_state.rooms_state.move(**{compass_dir: True})
-        return (stmsg.Stmsg_Leave_LeftRoom(compass_dir, portal_type),
+        return (stmsg.leave.LeftRoom(compass_dir, portal_type),
                 stmsg.various.EnteredRoom(self.game_state.rooms_state.cursor))
 
     def lock_command(self, tokens):
@@ -1369,12 +1369,12 @@ LockCommand_ElementHasBeenLocked
         key_required = 'door key' if isinstance(element_to_lock, elem.Door) else 'chest key'
         if not any(item.title == key_required for _, item in self.game_state.character.list_items()):
             # Lacking the key, a don't-possess-correct-key error is returned.
-            return stmsg.Stmsg_Lock_DontPossessCorrectKey(element_to_lock.title, key_required),
+            return stmsg.lock.DontPossessCorrectKey(element_to_lock.title, key_required),
 
         # If the element_to_lock is already locked, a element-is-already-locked
         # error is returned.
         elif element_to_lock.is_locked:
-            return stmsg.Stmsg_Lock_ElementIsAlreadyUnlocked(element_to_lock.title),
+            return stmsg.lock.ElementIsAlreadyUnlocked(element_to_lock.title),
         elif isinstance(element_to_lock, elem.Door):
             # This is a door object, and it only represents _this side_ of the
             # door game element; I use _matching_door() to fetch the door object
@@ -1387,7 +1387,7 @@ LockCommand_ElementHasBeenLocked
         # The element_to_lock's is_locked attribute is set to rue, and a
         # Telement-has-been-locked value is returned.
         element_to_lock.is_locked = True
-        return stmsg.Stmsg_Lock_ElementHasBeenUnlocked(element_to_lock.title),
+        return stmsg.lock.ElementHasBeenUnlocked(element_to_lock.title),
 
     # This private workhorse method handles the shared logic between lock,
     # unlock, open or close: 
@@ -1511,11 +1511,11 @@ LockCommand_ElementHasBeenLocked
             if command.lower() == 'unlock':
                 return stmsg.unlock.ElementNotLockable(target_title, **argd),
             elif command.lower() == 'lock':
-                return stmsg.Stmsg_Lock_ElementNotUnlockable(target_title, **argd),
+                return stmsg.lock.ElementNotUnlockable(target_title, **argd),
             elif command.lower() == 'open':
                 return stmsg.open_.ElementNotOpenable(target_title, **argd),
             else:
-                return stmsg.Stmsg_Close_ElementNotCloseable(target_title, **argd),
+                return stmsg.close.ElementNotCloseable(target_title, **argd),
         else:
             # Otherwise, the target didn't match *any* game element within
             # the player's reach, so the appropriate error value is returned
@@ -1523,11 +1523,11 @@ LockCommand_ElementHasBeenLocked
             if command.lower() == 'unlock':
                 return stmsg.ElementToLockNotHere(target_title),
             elif command.lower() == 'lock':
-                return stmsg.Stmsg_Lock_ElementToUnlockNotHere(target_title),
+                return stmsg.lock.ElementToUnlockNotHere(target_title),
             elif command.lower() == 'open':
                 return stmsg.open_.ElementToOpenNotHere(target_title),
             else:
-                return stmsg.Stmsg_Close_ElementToCloseNotHere(target_title),
+                return stmsg.close.ElementToCloseNotHere(target_title),
 
     def _door_selector(self, tokens):
 
@@ -2225,7 +2225,7 @@ screens for ambiguous command arguments.
                     # but the end of the last token has a pluralizing 's' on
                     # it, I return a quantity-unclear error appropriate to the
                     # caller.
-                    return ((stmsg.Stmsg_Drop_QuantityUnclear(),) if command.lower() == 'drop'
+                    return ((stmsg.drop.QuantityUnclear(),) if command.lower() == 'drop'
                             else (stmsg.pickup.QuantityUnclear(),))
                 # Otherwise it implies a quantity of 1.
                 item_quantity = 1
@@ -2264,7 +2264,7 @@ screens for ambiguous command arguments.
                 # Repeating an earlier check on a wider set. If the
                 # item_quantity is 1 but the last token ends in a pluralizing
                 # 's', I return the appropriate quantity-unclear value.
-                return ((stmsg.Stmsg_Drop_QuantityUnclear(),) if command.lower() == 'drop'
+                return ((stmsg.drop.QuantityUnclear(),) if command.lower() == 'drop'
                         else (stmsg.pickup.QuantityUnclear(),))
         else:
             # I form the item title.
