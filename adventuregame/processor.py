@@ -1513,7 +1513,7 @@ LockCommand_ElementHasBeenLocked
             elif command.lower() == 'lock':
                 return stmsg.Stmsg_Lock_ElementNotUnlockable(target_title, **argd),
             elif command.lower() == 'open':
-                return stmsg.Stmsg_Open_ElementNotOpenable(target_title, **argd),
+                return stmsg.open_.ElementNotOpenable(target_title, **argd),
             else:
                 return stmsg.Stmsg_Close_ElementNotCloseable(target_title, **argd),
         else:
@@ -1525,7 +1525,7 @@ LockCommand_ElementHasBeenLocked
             elif command.lower() == 'lock':
                 return stmsg.Stmsg_Lock_ElementToUnlockNotHere(target_title),
             elif command.lower() == 'open':
-                return stmsg.Stmsg_Open_ElementToOpenNotHere(target_title),
+                return stmsg.open_.ElementToOpenNotHere(target_title),
             else:
                 return stmsg.Stmsg_Close_ElementToCloseNotHere(target_title),
 
@@ -1717,7 +1717,7 @@ LookAtCommand_FoundItemOrItemsHere object is returned.
                 # found-door-or-doorway value is returned with that door object
                 # informing the message.
                 door, = result
-                return stmsg.Stmsg_LookAt_FoundDoorOrDoorway(door.title.split(' ')[0], door),
+                return stmsg.lookat.FoundDoorOrDoorway(door.title.split(' ')[0], door),
         else:
             # The tokens don't indicate a door and don't have a location_title
             # to break off the end. The target_title is formed from the tokens.
@@ -1737,12 +1737,12 @@ LookAtCommand_FoundItemOrItemsHere object is returned.
         # If the target_title matches the creature in this room, a
         # found-creature-here value is returned.
         if creature_here is not None and creature_here.title == target_title.lower():
-            return stmsg.Stmsg_LookAt_FoundCreatureHere(creature_here.description),
+            return stmsg.lookat.FoundCreatureHere(creature_here.description),
 
         # If the container here is not None and matches, a found-container-here
         # value is returned.
         elif container_here is not None and container_here.title == target_title.lower():
-            return stmsg.Stmsg_LookAt_FoundContainerHere(container_here),
+            return stmsg.lookat.FoundContainerHere(container_here),
 
         # Otherwise, if the command specified an item that is contained in
         # something (including the inventory), so I test all the valid states.
@@ -1757,10 +1757,10 @@ LookAtCommand_FoundItemOrItemsHere object is returned.
                     # If found, a found-item-here value is returned.
                     # _look_at_item_detail() is used to supply a detailed
                     # accounting of the item.
-                    return stmsg.Stmsg_LookAt_FoundItemOrItemsHere(self._look_at_item_detail(item),
+                    return stmsg.lookat.FoundItemOrItemsHere(self._look_at_item_detail(item),
                                                                           item_qty, 'inventory'),
                 # Otherwise, a found-nothing value is returned.
-                return stmsg.Stmsg_LookAt_FoundNothing(target_title, 'inventory'),
+                return stmsg.lookat.FoundNothing(target_title, 'inventory'),
             else:
                 # Otherwise, the item is in a chest or on a corpse. Either one
                 # would need to be the value for container_here, so I test its
@@ -1781,11 +1781,11 @@ LookAtCommand_FoundItemOrItemsHere object is returned.
                         # If I find a match, I return a found-item-here value.
                         # _look_at_item_detail() is used to supply a detailed
                         # accounting of the item.
-                        return stmsg.Stmsg_LookAt_FoundItemOrItemsHere(self._look_at_item_detail(item),
+                        return stmsg.lookat.FoundItemOrItemsHere(self._look_at_item_detail(item),
                                                                               item_qty, container_here.title,
                                                                               container_here.container_type),
                     # Otherwise, I return a found-nothing value.
-                    return stmsg.Stmsg_LookAt_FoundNothing(target_title, location_title,
+                    return stmsg.lookat.FoundNothing(target_title, location_title,
                                                                'chest' if item_in_chest else 'corpse'),
                 else:
                     # The container wasn't found, so I return a
@@ -1802,10 +1802,10 @@ LookAtCommand_FoundItemOrItemsHere object is returned.
                 # If I find a match, I return a found-item-here value.
                 # _look_at_item_detail() is used to supply a detailed accounting
                 # of the item.
-                return stmsg.Stmsg_LookAt_FoundItemOrItemsHere(self._look_at_item_detail(item),
+                return stmsg.lookat.FoundItemOrItemsHere(self._look_at_item_detail(item),
                                                                       item_qty, 'floor'),
             # Otherwise, a found-nothing value is returned.
-            return stmsg.Stmsg_LookAt_FoundNothing(target_title, 'floor'),
+            return stmsg.lookat.FoundNothing(target_title, 'floor'),
 
     def _look_at_item_detail(self, element):
 
@@ -1901,11 +1901,11 @@ and returns returns a OpenCommand_ElementHasBeenOpened..
 
         # If the element is locked, a element-is-locked error is returned.
         if element_to_open.is_locked:
-            return stmsg.Stmsg_Open_ElementIsLocked(element_to_open.title),
+            return stmsg.open_.ElementIsLocked(element_to_open.title),
         elif not element_to_open.is_closed:
             # Otherwise if it's alreadty open, an element-is-already-open error
             # is returned.
-            return stmsg.Stmsg_Open_ElementIsAlreadyOpen(element_to_open.title),
+            return stmsg.open_.ElementIsAlreadyOpen(element_to_open.title),
         elif isinstance(element_to_open, elem.Door):
             # This is a door object, and it only represents _this side_ of the
             # door game element; I use _matching_door() to fetch the door object
@@ -1918,7 +1918,7 @@ and returns returns a OpenCommand_ElementHasBeenOpened..
         # The element has is_closed set to False and an element-has-been-opened
         # value is returned.
         element_to_open.is_closed = False
-        return stmsg.Stmsg_Open_ElementHasBeenOpened(element_to_open.title),
+        return stmsg.open_.ElementHasBeenOpened(element_to_open.title),
 
     def pick_lock_command(self, tokens):
         """
@@ -1991,7 +1991,7 @@ Priest, returns a Stmsg_CommandClassRestricted object.
                 tried_to_operate_on_doorway = True
             elif not door.is_locked:
                 # Otherwise if the door isn't locked, a target-not-locked error value is returned.
-                return stmsg.Stmsg_PkLock_TargetNotLocked(target_title),
+                return stmsg.pklock.TargetNotLocked(target_title),
             else:
                 # This is a door object, and it only represents _this side_ of
                 # the door game element; I use _matching_door() to fetch the
@@ -2005,7 +2005,7 @@ Priest, returns a Stmsg_CommandClassRestricted object.
                 # The door's is_locked attribute is set to False, and a
                 # target-has-been-unlocked value is returned.
                 door.is_locked = False
-                return stmsg.Stmsg_PkLock_TargetHasBeenUnlocked(target_title),
+                return stmsg.pklock.TargetHasBeenUnlocked(target_title),
         # The target isn't a door. If there is a container here and its title matches....
         elif container is not None and container.title == target_title:
             # If it's a Corpse, the failure mode boolean is set.
@@ -2013,12 +2013,12 @@ Priest, returns a Stmsg_CommandClassRestricted object.
                 tried_to_operate_on_corpse = True
             elif not getattr(container, 'is_locked', False):
                 # Otherwise if it's not locked, a target-not-locked error value is returned.
-                return stmsg.Stmsg_PkLock_TargetNotLocked(target_title),
+                return stmsg.pklock.TargetNotLocked(target_title),
             else:
                 # Otherwise, its is_locked attribute is set to False, and a
                 # target-has-been-unlocked error is returned.
                 container.is_locked = False
-                return stmsg.Stmsg_PkLock_TargetHasBeenUnlocked(target_title),
+                return stmsg.pklock.TargetHasBeenUnlocked(target_title),
 
         # The Door and Chest case have been handled and any possible success
         # value has been rejected. Everything from here on down is error
@@ -2051,11 +2051,11 @@ Priest, returns a Stmsg_CommandClassRestricted object.
                                    else 'corpse' if tried_to_operate_on_corpse
                                    else 'creature' if tried_to_operate_on_creature
                                    else item_targetted.__class__.__name__.lower()}
-            return stmsg.Stmsg_PkLock_ElementNotUnlockable(target_title, **argd),
+            return stmsg.pklock.ElementNotUnlockable(target_title, **argd),
         else:
             # The target_title didn't match anything in the current room, so a
             # target-not-found error value is returned.
-            return stmsg.Stmsg_PkLock_TargetNotFound(target_title),
+            return stmsg.pklock.TargetNotFound(target_title),
 
     def pick_up_command(self, tokens):
         """
@@ -2129,13 +2129,13 @@ PICK UP <number> <item name>),
         # If unpickupable_element_type acquired a value, a cant-pick-up-element
         # error is returned.
         if unpickupable_element_type:
-            return stmsg.Stmsg_PickUp_CantPickUpChestCorpseCreatureOrDoor(unpickupable_element_type,
+            return stmsg.pickup.CantPickUpChestCorpseCreatureOrDoor(unpickupable_element_type,
                                                                                     target_title),
 
         # If this room has no items_here ItemsMultiState object, nothing can
         # be picked up, and a item-not-found error is returned.
         if self.game_state.rooms_state.cursor.items_here is None:
-            return stmsg.Stmsg_PickUp_ItemNotFound(target_title, pick_up_quantity),
+            return stmsg.pickup.ItemNotFound(target_title, pick_up_quantity),
 
         # The items_here.values() sequence is cast to tuple and assigned to a
         # local variable, and the character's inventory is also so assigned. I
@@ -2151,7 +2151,7 @@ PICK UP <number> <item name>),
         # instanced with it as an argument and returned.
         if not len(item_here_pair):
             items_here_qtys_titles = tuple((item_qty, item.title) for item_qty, item in items_here)
-            return stmsg.Stmsg_PickUp_ItemNotFound(target_title, pick_up_quantity, *items_here_qtys_titles),
+            return stmsg.pickup.ItemNotFound(target_title, pick_up_quantity, *items_here_qtys_titles),
 
         # Otherwise, the item was found here, so its quantity and the Item
         # subclass object are extracted and saved.
@@ -2173,7 +2173,7 @@ PICK UP <number> <item name>),
         # the quantity in items_here, a trying-to-pick-up-more-than-is-present
         # error is returned.
         if quantity_here < pick_up_quantity:
-            return stmsg.Stmsg_PickUp_TryingToPickUpMoreThanIsPresent(target_title, pick_up_quantity,
+            return stmsg.pickup.TryingToPickUpMoreThanIsPresent(target_title, pick_up_quantity,
                                                                                 quantity_here),
         else:
             # Otherwise, that quantity of the item is added to the player
@@ -2191,7 +2191,7 @@ PICK UP <number> <item name>),
             # The quantity now possessed is computed, and used to construct a
             # item-picked-up return value, which is returned.
             quantity_had_now = quantity_in_inventory + pick_up_quantity
-            return stmsg.Stmsg_PickUp_ItemPickedUp(target_title, pick_up_quantity, quantity_had_now),
+            return stmsg.pickup.ItemPickedUp(target_title, pick_up_quantity, quantity_had_now),
 
     # Both PUT and TAKE have the same preprocessing challenges, so I refactored
     # their logic into a shared private preprocessing method.
@@ -2226,7 +2226,7 @@ screens for ambiguous command arguments.
                     # it, I return a quantity-unclear error appropriate to the
                     # caller.
                     return ((stmsg.Stmsg_Drop_QuantityUnclear(),) if command.lower() == 'drop'
-                            else (stmsg.Stmsg_PickUp_QuantityUnclear(),))
+                            else (stmsg.pickup.QuantityUnclear(),))
                 # Otherwise it implies a quantity of 1.
                 item_quantity = 1
             elif tokens[0].isdigit():
@@ -2265,7 +2265,7 @@ screens for ambiguous command arguments.
                 # item_quantity is 1 but the last token ends in a pluralizing
                 # 's', I return the appropriate quantity-unclear value.
                 return ((stmsg.Stmsg_Drop_QuantityUnclear(),) if command.lower() == 'drop'
-                        else (stmsg.Stmsg_PickUp_QuantityUnclear(),))
+                        else (stmsg.pickup.QuantityUnclear(),))
         else:
             # I form the item title.
             item_title = ' '.join(tokens)
@@ -2341,7 +2341,7 @@ PUT <number> <item name> ON <corpse name>
         else:
 
             # Otherwise I return an item-not-in-inventory error.
-            return stmsg.Stmsg_Put_ItemNotInInventory(item_title, put_amount),
+            return stmsg.put.ItemNotInInventory(item_title, put_amount),
 
         # I use the Item subclass object to get the internal_name, and look it
         # up in the container to see if any amount is already there. If so I
@@ -2354,7 +2354,7 @@ PUT <number> <item name> ON <corpse name>
         if put_amount > amount_possessed:
             # If the amount to put is more than the amount in inventory, I
             # return a trying-to-put-more-than-you-have error.
-            return stmsg.Stmsg_Put_TryingToPutMoreThanYouHave(item_title, amount_possessed),
+            return stmsg.put.TryingToPutMoreThanYouHave(item_title, amount_possessed),
         elif put_amount is math.nan:
             # Otherwise if _put_or_take_preproc returned math.nan for the
             # put_amount, that means it couldn't be determined from the
@@ -2372,7 +2372,7 @@ PUT <number> <item name> ON <corpse name>
         # return a amount-put value.
         self.game_state.character.drop_item(item, qty=put_amount)
         container.set(item.internal_name, amount_in_container + put_amount, item)
-        return stmsg.Stmsg_Put_PutAmountOfItem(item_title, container_title, container.container_type, put_amount,
+        return stmsg.put.PutAmountOfItem(item_title, container_title, container.container_type, put_amount,
                                             amount_possessed),
 
     def _put_or_take_preproc(self, command, tokens):
@@ -2467,7 +2467,7 @@ title) from the tokens argument.
                 # quantity is 1 but the item title is plural, so I return a
                 # syntax error.
                 return ((stmsg.take.QuantityUnclear(),) if command == 'take'
-                        else (stmsg.Stmsg_Put_QuantityUnclear(),))
+                        else (stmsg.put.QuantityUnclear(),))
 
             # I strip the plural s.
             item_tokens = item_tokens[:-1] + (item_tokens[-1].rstrip('s'),)
@@ -2535,7 +2535,7 @@ takes no arguments.
         # I devise the quit-the-game return value, set game_has_ended to True,
         # store the return value in game_ending_state_msg so process() can reuse
         # it if needs be, and return the value.
-        return_tuple = stmsg.Stmsg_Quit_HaveQuitTheGame(),
+        return_tuple = stmsg.quit.HaveQuitTheGame(),
         self.game_state.game_has_ended = True
         self.game_ending_state_msg = return_tuple[-1]
         return return_tuple
@@ -2567,7 +2567,7 @@ takes no arguments.
         character_name = getattr(self.game_state, 'character_name', None)
         character_class = getattr(self.game_state, 'character_class', None)
         if not character_name or not character_class:
-            return stmsg.Stmsg_Reroll_NameOrClassNotSet(character_name, character_class),
+            return stmsg.reroll.NameOrClassNotSet(character_name, character_class),
 
         # I reroll the player character's stats, and return a
         # display-rolled-stats value.
@@ -2607,7 +2607,7 @@ SET CLASS [TO] <Warrior, Thief, Mage or Priest>
         # If the user specified something other than one of the four classes, I
         # return an invalid-class error.
         elif tokens[0] not in ('Warrior', 'Thief', 'Mage', 'Priest'):
-            return stmsg.Stmsg_SetCls_InvalidClass(tokens[0]),
+            return stmsg.setcls.InvalidClass(tokens[0]),
 
         # I assign the chosen classname, record whether this is the first
         # time this command is used, and set the class.
@@ -2620,7 +2620,7 @@ SET CLASS [TO] <Warrior, Thief, Mage or Priest>
         # side effect, so I return a class-set value and a display-rolled-stats
         # value.
         if self.game_state.character_name is not None and class_was_none:
-            return (stmsg.Stmsg_SetCls_ClassSet(class_str),
+            return (stmsg.setcls.ClassSet(class_str),
                     stmsg.various.DisplayRolledStats(
                         strength=self.game_state.character.strength,
                         dexterity=self.game_state.character.dexterity,
@@ -2631,7 +2631,7 @@ SET CLASS [TO] <Warrior, Thief, Mage or Priest>
             ))
         else:
             # Otherwise I return only the class-set value.
-            return stmsg.Stmsg_SetCls_ClassSet(class_str),
+            return stmsg.setcls.ClassSet(class_str),
 
     def set_name_command(self, tokens):
         """

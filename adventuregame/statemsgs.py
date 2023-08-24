@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python32
 
 """
 This module contains Game_State_Message and its numerous subclasses.

@@ -982,7 +982,7 @@ while True:
     # Any one of these three GameStateMessage subclass objects signifies the
     # end of the game. If one of them occurs at the end of a list of state
     # messages, the game exits.
-    if isinstance(result[-1], (advg.Stmsg_Quit_HaveQuitTheGame,
+    if isinstance(result[-1], (advg.statemsgs.quit.HaveQuitTheGame,
                                advg.Stmsg_Batkby_CharacterDeath,
                                advg.Stmsg_Leave_WonTheGame)):
         exit(0)

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 """
 The adventuregame.utility module comprises a small collection of utility
