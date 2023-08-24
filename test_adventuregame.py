@@ -3,7 +3,7 @@
 import os
 import unittest
 
-from adventuregame import *
+from advgame import *
 from tests import *
 
 

@@ -6,7 +6,7 @@ import os
 import tempfile
 import textwrap
 
-import adventuregame as advg
+import advgame as advg
 
 
 ### Establishing the game data object environment ###
@@ -16,7 +16,7 @@ import adventuregame as advg
 # Defining the game data ini file strings.
 
 # This data used to be stored in the ./data/ directory. That made running
-# advgame.py confined to its parent directory. If the adventuregame module
+# advgame.py confined to its parent directory. If the advgame module
 # had been installed somewhere in sys.path and advgame.py copied to a bin
 # directory-- a predictable use case-- the game would fail to run. Moving the
 # game data inline prevents that failure mode.
@@ -956,7 +956,7 @@ that, enter BEGIN GAME and enter the dungeon!
 # input() builtin, and Command_Processor.process() is used to interpret &
 # execute them.
 #
-# process() returns a tuple of adventuregame.statemsgs.GameStateMessage
+# process() returns a tuple of advgame.stmsg.GameStateMessage
 # subclass objects; they always have a message property which returns a natural
 # language response to the command. It is either an error message or it
 # describes the results of a successful command.
@@ -974,7 +974,7 @@ while True:
     result = command_processor.process(command)
 
     # GameStateMessage subclass objects' message properties return one or more
-    # long lines of text, so adventuregame.utility.textwrapper is used to wrap
+    # long lines of text, so advgame.utils.textwrapper is used to wrap
     # the messages to 80 columns.
     for game_state_message in result:
         print(advg.textwrapper(game_state_message.message))
@@ -982,9 +982,9 @@ while True:
     # Any one of these three GameStateMessage subclass objects signifies the
     # end of the game. If one of them occurs at the end of a list of state
     # messages, the game exits.
-    if isinstance(result[-1], (advg.statemsgs.quit.HaveQuitTheGame,
-                               advg.statemsgs.be_atkd.CharacterDeath,
-                               advg.statemsgs.leave.WonTheGame)):
+    if isinstance(result[-1], (advg.stmsg.quit.HaveQuitTheGame,
+                               advg.stmsg.be_atkd.CharacterDeath,
+                               advg.stmsg.leave.WonTheGame)):
         exit(0)
 
     print()

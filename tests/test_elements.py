@@ -6,7 +6,7 @@ import unittest
 
 import iniconfig
 
-from .context import adventuregame as advg
+from .context import advgame as advg
 
 __name__ = 'tests.test_game_elements'
 
@@ -695,7 +695,7 @@ class Test_RoomsState_Obj(unittest.TestCase):
         self.assertTrue(self.rooms_state.cursor.has_west_door)
 
     def test_rooms_state_invalid_move(self):
-        with self.assertRaises(advg.Bad_Command_Exception):
+        with self.assertRaises(advg.BadCommandError):
             self.rooms_state.move(south=True)
 
     def test_rooms_state_room_items_container_creature_here(self):

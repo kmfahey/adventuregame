@@ -3,7 +3,7 @@
 import math
 import unittest
 
-from .context import adventuregame as advg
+from .context import advgame as advg
 
 __name__ = 'tests.test_utility'
 
