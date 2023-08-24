@@ -2,7 +2,7 @@
 
 
 from adventuregame.statemsgs.gsm import GameStateMessage
-from adventuregame.utility import join_str_seq_w_commas_and_conjunction, usage_verb
+from adventuregame.utility import join_strs_w_comma_conj, usage_verb
 
 
 __all__ = ("AmbiguousDoorSpecifier", "ContainerIsClosed", "ContainerNotFound", "DisplayRolledStats", "DoorNotPresent",
@@ -30,7 +30,7 @@ saying 'unlock wooden door' when there's two wooden doors.
             door_str_list = [f'the {compass_dir} {door_type}' for compass_dir in self.compass_dirs]
         else:
             door_str_list = [f'the {compass_dir} {self.door_or_doorway}' for compass_dir in self.compass_dirs]
-        message_str += join_str_seq_w_commas_and_conjunction(door_str_list, 'or') + '?'
+        message_str += join_strs_w_comma_conj(door_str_list, 'or') + '?'
         return message_str
 
     def __init__(self, compass_dirs, door_or_doorway, door_type):
@@ -183,7 +183,7 @@ compass direction.
                 quantifier = str(item_qty) if item_qty > 1 else 'an' if item.title[0] in 'aeiou' else 'a'
                 pluralizer = 's' if item_qty > 1 else ''
                 room_items.append(f'{quantifier} {item.title}{pluralizer}')
-            items_here_str = join_str_seq_w_commas_and_conjunction(room_items, 'and')
+            items_here_str = join_strs_w_comma_conj(room_items, 'and')
             message_list.append(f'You see {items_here_str} on the floor.')
 
         # A list of door titles and directions is assembled, joined into a
@@ -197,7 +197,7 @@ compass direction.
             door_ersatz_title = door.door_type.replace('_', ' ')
             indirect_article = 'an' if door_ersatz_title[0] in 'aeiou' else 'a'
             door_list.append(f'{indirect_article} {door_ersatz_title} to the {compass_dir}')
-        door_str = 'There is ' + join_str_seq_w_commas_and_conjunction(door_list, 'and') + '.'
+        door_str = 'There is ' + join_strs_w_comma_conj(door_list, 'and') + '.'
         message_list.append(door_str)
 
         # The list of sentences is joined into a string and returned.

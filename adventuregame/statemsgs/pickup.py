@@ -3,7 +3,7 @@
 from operator import itemgetter
 
 from adventuregame.statemsgs.gsm import GameStateMessage
-from adventuregame.utility import join_str_seq_w_commas_and_conjunction
+from adventuregame.utility import join_strs_w_comma_conj
 
 
 __all__ = ("CantPickUpChestCorpseCreatureOrDoor", "ItemNotFound", "ItemPickedUp", "QuantityUnclear", "TryingToPickUpMoreThanIsPresent",)
@@ -49,7 +49,7 @@ they meant to acquire an item from a chest or corpse, they need to say `TAKE
                                          else f'an {item_title}' if item_title[0] in 'aeiou'
                                          else f'a {item_title}'
                                              for item_count, item_title in self.items_here)
-            items_here_str = join_str_seq_w_commas_and_conjunction(items_here_str_tuple, 'and')
+            items_here_str = join_strs_w_comma_conj(items_here_str_tuple, 'and')
             return f'You see no {self.item_title}{item_pluralizer} here. However, there is {items_here_str} here.'
         else:
             return f'You see no {self.item_title}{item_pluralizer} here.'

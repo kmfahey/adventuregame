@@ -113,34 +113,34 @@ class Test_Lexical_Number_to_Digits_2(unittest.TestCase):
         super().__init__(*argl, **argd)
         self.maxDiff = None
 
-    def test_join_str_seq_w_commas_and_conjunction_1(self):
-        joined_str = advg.join_str_seq_w_commas_and_conjunction((), 'and')
+    def test_join_strs_w_comma_conj_1(self):
+        joined_str = advg.join_strs_w_comma_conj((), 'and')
         self.assertEqual(joined_str, '')
 
-    def test_join_str_seq_w_commas_and_conjunction_2(self):
-        joined_str = advg.join_str_seq_w_commas_and_conjunction(('foo',), 'and')
+    def test_join_strs_w_comma_conj_2(self):
+        joined_str = advg.join_strs_w_comma_conj(('foo',), 'and')
         self.assertEqual(joined_str, 'foo')
 
-    def test_join_str_seq_w_commas_and_conjunction_3(self):
-        joined_str = advg.join_str_seq_w_commas_and_conjunction(('foo', 'bar'), 'and')
+    def test_join_strs_w_comma_conj_3(self):
+        joined_str = advg.join_strs_w_comma_conj(('foo', 'bar'), 'and')
         self.assertEqual(joined_str, 'foo and bar')
 
-    def test_join_str_seq_w_commas_and_conjunction_4(self):
-        joined_str = advg.join_str_seq_w_commas_and_conjunction(('foo', 'bar', 'baz'), 'and')
+    def test_join_strs_w_comma_conj_4(self):
+        joined_str = advg.join_strs_w_comma_conj(('foo', 'bar', 'baz'), 'and')
         self.assertEqual(joined_str, 'foo, bar, and baz')
 
-    def test_join_str_seq_w_commas_and_conjunction_5(self):
-        joined_str = advg.join_str_seq_w_commas_and_conjunction((), 'or')
+    def test_join_strs_w_comma_conj_5(self):
+        joined_str = advg.join_strs_w_comma_conj((), 'or')
         self.assertEqual(joined_str, '')
 
-    def test_join_str_seq_w_commas_and_conjunction_6(self):
-        joined_str = advg.join_str_seq_w_commas_and_conjunction(('foo',), 'or')
+    def test_join_strs_w_comma_conj_6(self):
+        joined_str = advg.join_strs_w_comma_conj(('foo',), 'or')
         self.assertEqual(joined_str, 'foo')
 
-    def test_join_str_seq_w_commas_and_conjunction_7(self):
-        joined_str = advg.join_str_seq_w_commas_and_conjunction(('foo', 'bar'), 'or')
+    def test_join_strs_w_comma_conj_7(self):
+        joined_str = advg.join_strs_w_comma_conj(('foo', 'bar'), 'or')
         self.assertEqual(joined_str, 'foo or bar')
 
-    def test_join_str_seq_w_commas_and_conjunction_8(self):
-        joined_str = advg.join_str_seq_w_commas_and_conjunction(('foo', 'bar', 'baz'), 'or')
+    def test_join_strs_w_comma_conj_8(self):
+        joined_str = advg.join_strs_w_comma_conj(('foo', 'bar', 'baz'), 'or')
         self.assertEqual(joined_str, 'foo, bar, or baz')

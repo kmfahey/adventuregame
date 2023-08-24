@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from adventuregame.statemsgs.gsm import GameStateMessage
-from adventuregame.utility import join_str_seq_w_commas_and_conjunction
+from adventuregame.utility import join_strs_w_comma_conj
 
 
 __all__ = ("DisplayInventory",)
@@ -26,7 +26,7 @@ information they need to say 'LOOK AT <item title> IN INVENTORY'.
                                   else 'a')
             pluralizer = 's' if item_qty > 1 else ''
             display_strs_list.append(f'{indir_artcl_or_qty} {item.title}{pluralizer}')
-        return 'You have ' + join_str_seq_w_commas_and_conjunction(display_strs_list, 'and') + ' in your inventory.'
+        return 'You have ' + join_strs_w_comma_conj(display_strs_list, 'and') + ' in your inventory.'
 
     def __init__(self, inventory_contents_list):
         self.inventory_contents = inventory_contents_list

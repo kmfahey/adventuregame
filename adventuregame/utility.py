@@ -20,17 +20,16 @@ __name__ = 'adventuregame.utility'
 # a conjunction is a common one in adventuregame.statemsgs, so I wrote this
 # function to automate that task.
 
-
-def join_str_seq_w_commas_and_conjunction(str_list, conjunction='and'):
+def join_strs_w_comma_conj(str_list, conjunction='and'):
     """
 This function automates the task of joining a sequence of strings with commas
 and a conjunction.
 
->>> join_str_seq_w_commas_and_conjunction(['foo'], 'and')
+>>> join_strs_w_comma_conj(['foo'], 'and')
 'foo'
->>> join_str_seq_w_commas_and_conjunction(['foo', 'bar'], 'and')
+>>> join_strs_w_comma_conj(['foo', 'bar'], 'and')
 'foo and bar'
->>> join_str_seq_w_commas_and_conjunction(['foo', 'bar', 'baz'], 'and')
+>>> join_strs_w_comma_conj(['foo', 'bar', 'baz'], 'and')
 'foo, bar, and baz'
 
 :str_list:    The sequence of strings to join.

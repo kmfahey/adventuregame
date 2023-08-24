@@ -1,14 +1,14 @@
 #!/usr/bin/python3
 
 from adventuregame.statemsgs.gsm import GameStateMessage
-from adventuregame.utility import join_str_seq_w_commas_and_conjunction
+from adventuregame.utility import join_strs_w_comma_conj
 
 
-__all__ = ("CommandBadSyntax", "CommandClassRestricted",
-           "CommandNotAllowedNow", "CommandNotRecognized")
+__all__ = ("BadSyntax", "ClassRestricted", "NotAllowedNow",
+           "NotRecognized")
 
 
-class CommandBadSyntax(GameStateMessage):
+class BadSyntax(GameStateMessage):
     __slots__ = 'command', 'proper_syntax_options'
 
     """
@@ -35,7 +35,7 @@ has been used.
                                 if syntax_option
                                 else f"'{command}'"
                                 for syntax_option in self.proper_syntax_options)
-        proper_syntax_options_str = join_str_seq_w_commas_and_conjunction(syntax_options, 'or')
+        proper_syntax_options_str = join_strs_w_comma_conj(syntax_options, 'or')
         return f'{self.command.upper()} command: bad syntax. Should be {proper_syntax_options_str}.'
 
     def __init__(self, command, proper_syntax_options):
@@ -43,7 +43,7 @@ has been used.
         self.proper_syntax_options = proper_syntax_options
 
 
-class CommandClassRestricted(GameStateMessage):
+class ClassRestricted(GameStateMessage):
     """
 This class implements an error object that is returned by
 adventuregame.processor.Command_Processor.processor() when the player has used a
@@ -57,7 +57,7 @@ thieves can use PICK LOCK.)
         # This message property assembles a list of classes (in self.classes) which are
         # authorized to use the given command (in self.command).
         classes_plural = [class_str + 's' if class_str != 'thief' else 'thieves' for class_str in self.classes]
-        class_str = join_str_seq_w_commas_and_conjunction(classes_plural, 'and')
+        class_str = join_strs_w_comma_conj(classes_plural, 'and')
         return f'Only {class_str} can use the {self.command.upper()} command.'
 
     def __init__(self, command, *classes):
@@ -65,7 +65,7 @@ thieves can use PICK LOCK.)
         self.classes = classes
 
 
-class CommandNotAllowedNow(GameStateMessage):
+class NotAllowedNow(GameStateMessage):
     """
 This class implements an error object that is returned by
 adventuregame.processor.Command_Processor.processor() when the player has used
@@ -87,7 +87,7 @@ adventuregame.processor.Command_Processor.ingame_commands for the lists.
         # (game_state_str), but commands in this list (commands_str) can.
         game_state_str = 'before game start' if not self.game_has_begun else 'during the game'
         message_str = f"Command '{self.command}' not allowed {game_state_str}. "
-        commands_str = join_str_seq_w_commas_and_conjunction(
+        commands_str = join_strs_w_comma_conj(
                             tuple(command.upper().replace('_', ' ')
                                   for command in sorted(self.allowed_commands)),
                             'and')
@@ -100,7 +100,7 @@ adventuregame.processor.Command_Processor.ingame_commands for the lists.
         self.game_has_begun = game_has_begun
 
 
-class CommandNotRecognized(GameStateMessage):
+class NotRecognized(GameStateMessage):
     """
 This class implements an error object that is returned by
 adventuregame.processor.Command_Processor.processor() when a command was entered
@@ -117,7 +117,7 @@ that is not known to the command processor.
         # mode (game_state_str) commands in this list (commands_str) can.
         message_str = f"Command '{self.command}' not recognized. "
         game_state_str = 'before game start' if not self.game_has_begun else 'during the game'
-        commands_str = join_str_seq_w_commas_and_conjunction(tuple(command.upper().replace('_', ' ') for command in sorted(self.allowed_commands)), 'and')
+        commands_str = join_strs_w_comma_conj(tuple(command.upper().replace('_', ' ') for command in sorted(self.allowed_commands)), 'and')
         message_str += f'Commands allowed {game_state_str} are {commands_str}.'
         return message_str
 

@@ -47,7 +47,7 @@ class Test_Attack_1(unittest.TestCase):
 
     def test_attack_1(self):
         result = self.command_processor.process('attack')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'ATTACK')
         self.assertEqual(result[0].message, "ATTACK command: bad syntax. Should be 'ATTACK\u00A0<creature\u00A0name>'.")
 
@@ -240,7 +240,7 @@ class Test_Begin_Game(unittest.TestCase):
         self.command_processor.process('set class to Warrior')
         self.command_processor.process('set name to Niath')
         result = self.command_processor.process('begin game now')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'BEGIN GAME')
         self.assertEqual(result[0].message, "BEGIN GAME command: bad syntax. Should be 'BEGIN\u00A0GAME'.")
 
@@ -373,7 +373,7 @@ class Test_Cast_Spell(unittest.TestCase):
         self.command_processor.game_state.character_class = 'Warrior'
         self.game_state.game_has_begun = True
         result = self.command_processor.process('cast spell')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandClassRestricted)
+        self.assertIsInstance(result[0], advg.statemsgs.command.ClassRestricted)
         self.assertEqual(result[0].command, 'CAST SPELL')
         self.assertEqual(result[0].classes, ('mage', 'priest',))
         self.assertEqual(result[0].message, 'Only mages and priests can use the CAST SPELL command.')
@@ -384,7 +384,7 @@ class Test_Cast_Spell(unittest.TestCase):
         self.game_state.game_has_begun = True
         for bad_argument_str in ('cast spell at kobold', 'cast spell at',):
             result = self.command_processor.process(bad_argument_str)
-            self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+            self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
             self.assertEqual(result[0].command, 'CAST SPELL')
             self.assertEqual(result[0].message, "CAST SPELL command: bad syntax. Should be 'CAST\u00A0SPELL'.")
 
@@ -472,7 +472,7 @@ class Test_Close(unittest.TestCase):
 
     def test_close_1(self):
         result = self.command_processor.process('close')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'CLOSE')
         self.assertEqual(result[0].message, "CLOSE command: bad syntax. Should be 'CLOSE\u00A0<door\u00A0name>' or "
                                             "'CLOSE\u00A0<chest\u00A0name>'."),
@@ -598,7 +598,7 @@ class Test_Drink(unittest.TestCase):
         self.game_state.game_has_begun = True
         for bad_argument_str in ('drink', 'drink the', 'drink 2 mana potion', 'drink 1 mana potions'):
             result = self.command_processor.process(bad_argument_str)
-            self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+            self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
             self.assertEqual(result[0].command, 'DRINK')
             self.assertEqual(result[0].message, 'DRINK command: bad syntax. Should be '
                                                 "'DRINK\u00A0[THE]\u00A0<potion\u00A0name>' or "
@@ -765,7 +765,7 @@ class Test_Drop(unittest.TestCase):
         gold_coin = self.items_state.get('Gold_Coin')
         self.command_processor.game_state.character.pick_up_item(gold_coin, qty=30)
         result = self.command_processor.process('drop the')  # check
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'DROP')
         self.assertEqual(result[0].message, "DROP command: bad syntax. Should be 'DROP\u00A0<item\u00A0name>' or "
                                             "'DROP\u00A0<number>\u00A0<item\u00A0name>'."),
@@ -1054,7 +1054,7 @@ class Test_Equip_1(unittest.TestCase):
         self.game_state.game_has_begun = True
 
         result = self.command_processor.process('equip')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'EQUIP')
         self.assertEqual(result[0].message, "EQUIP command: bad syntax. Should be 'EQUIP\u00A0<armor\u00A0name>', "
                                             "'EQUIP\u00A0<shield\u00A0name>', 'EQUIP\u00A0<wand\u00A0name>', or "
@@ -1250,7 +1250,7 @@ Which one do you want help with?
 
     def test_help_2(self):
         result = self.command_processor.process('help juggle')
-        self.assertIsInstance(result[0], advg.statemsgs.help_.CommandNotRecognized)
+        self.assertIsInstance(result[0], advg.statemsgs.help_.NotRecognized)
         self.assertEqual(result[0].commands_available, ('ATTACK', 'BEGIN GAME', 'CAST SPELL', 'CLOSE', 'DRINK', 'DROP',
                                                         'EQUIP', 'HELP', 'INVENTORY', 'LEAVE', 'LOCK', 'LOOK AT',
                                                         'OPEN', 'PICK LOCK', 'PICK UP', 'PUT', 'QUIT', 'REROLL',
@@ -1353,7 +1353,7 @@ Which one do you want help with?
 
     def test_help_2(self):
         result = self.command_processor.process('help juggle')
-        self.assertIsInstance(result[0], advg.statemsgs.help_.CommandNotRecognized)
+        self.assertIsInstance(result[0], advg.statemsgs.help_.NotRecognized)
         self.assertEqual(result[0].commands_available, ('ATTACK', 'BEGIN GAME', 'CAST SPELL', 'CLOSE', 'DRINK', 'DROP',
                                                         'EQUIP', 'HELP', 'INVENTORY', 'LEAVE', 'LOCK', 'LOOK AT',
                                                         'OPEN', 'PICK LOCK', 'PICK UP', 'PUT', 'QUIT', 'REROLL',
@@ -1463,7 +1463,7 @@ class Test_Inventory(unittest.TestCase):
 
     def test_inventory_1(self):
         result = self.command_processor.process('inventory show')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'INVENTORY')
         self.assertEqual(result[0].message, "INVENTORY command: bad syntax. Should be 'INVENTORY'.")
 
@@ -1505,11 +1505,11 @@ class Test_Leave(unittest.TestCase):
 
     def test_leave_1(self):
         result = self.command_processor.process('leave')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         result = self.command_processor.process('leave using')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         result = self.command_processor.process('leave using north')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'LEAVE')
         self.assertEqual(result[0].message, 'LEAVE command: bad syntax. Should be '
                     "'LEAVE\u00A0[USING\u00A0or\u00A0VIA]\u00A0<compass\u00A0direction>\u00A0DOOR', "
@@ -1604,7 +1604,7 @@ class Test_Lock(unittest.TestCase):
 
     def test_lock_1(self):
         result = self.command_processor.process('lock')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'LOCK')
         self.assertEqual(result[0].message, "LOCK command: bad syntax. Should be 'LOCK\u00A0<door\u00A0name>' or "
                                             "'LOCK\u00A0<chest\u00A0name>'."),
@@ -1933,19 +1933,19 @@ class Test_Look_At_2(unittest.TestCase):
 
     def test_look_at_1(self):
         result = self.command_processor.process('look at')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         result = self.command_processor.process('look at on')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         result = self.command_processor.process('look at in')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         result = self.command_processor.process('look at mana potion in')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         result = self.command_processor.process('look at health potion on')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         result = self.command_processor.process('look at health potion on wooden chest')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         result = self.command_processor.process('look at mana potion in kobold corpse')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'LOOK AT')
         self.assertEqual(result[0].message, 'LOOK AT command: bad syntax. '
                                             "Should be 'LOOK\u00A0AT\u00A0<item\u00A0name>', "
@@ -2168,7 +2168,7 @@ class Test_Open(unittest.TestCase):
 
     def test_open_1(self):
         result = self.command_processor.process('open')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'OPEN')
         self.assertEqual(result[0].message, "OPEN command: bad syntax. Should be 'OPEN\u00A0<door\u00A0name>' or "
                                             "'OPEN\u00A0<chest\u00A0name>'."),
@@ -2319,7 +2319,7 @@ class Test_Pick_Lock(unittest.TestCase):
         self.command_processor.game_state.character_class = 'Warrior'
         self.game_state.game_has_begun = True
         result = self.command_processor.process('pick lock on wooden chest')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandClassRestricted)
+        self.assertIsInstance(result[0], advg.statemsgs.command.ClassRestricted)
         self.assertEqual(result[0].command, 'PICK LOCK')
         self.assertEqual(result[0].classes, ('thief',))
         self.assertEqual(result[0].message, 'Only thieves can use the PICK LOCK command.')
@@ -2329,13 +2329,13 @@ class Test_Pick_Lock(unittest.TestCase):
         self.command_processor.game_state.character_class = 'Thief'
         self.game_state.game_has_begun = True
         result = self.command_processor.process('pick lock')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         result = self.command_processor.process('pick lock on')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         result = self.command_processor.process('pick lock on the')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         result = self.command_processor.process('pick lock wooden chest')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'PICK LOCK')
         self.assertEqual(result[0].message, 'PICK LOCK command: bad syntax. Should be '
                                             "'PICK\u00A0LOCK\u00A0ON\u00A0[THE]\u00A0<chest\u00A0name>' or "
@@ -2517,7 +2517,7 @@ class Test_Pick_Up(unittest.TestCase):
 
     def test_pick_up_1(self):
         result = self.command_processor.process('pick up the')  # check
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'PICK UP')
         self.assertEqual(result[0].message, "PICK UP command: bad syntax. Should be 'PICK\u00A0UP\u00A0<item\u00A0name>"
                                             "' or 'PICK\u00A0UP\u00A0<number>\u00A0<item\u00A0name>'."),
@@ -2655,7 +2655,7 @@ class Test_Processor_Process(unittest.TestCase):
 
     def test_command_not_recognized_in_pregame(self):
         result = self.command_processor.process('juggle')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandNotRecognized)
+        self.assertIsInstance(result[0], advg.statemsgs.command.NotRecognized)
         self.assertEqual(result[0].command, 'juggle')
         self.assertEqual(result[0].allowed_commands, {'begin_game', 'set_name', 'help', 'quit', 'set_class', 'reroll'})
         self.assertEqual(result[0].message, "Command 'juggle' not recognized. Commands allowed before game start are "
@@ -2666,7 +2666,7 @@ class Test_Processor_Process(unittest.TestCase):
         self.command_processor.game_state.character_class = 'Warrior'
         self.command_processor.game_state.game_has_begun = True
         result = self.command_processor.process('juggle')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandNotRecognized)
+        self.assertIsInstance(result[0], advg.statemsgs.command.NotRecognized)
         self.assertEqual(result[0].command, 'juggle')
         self.assertEqual(result[0].allowed_commands, {'attack', 'cast_spell', 'close', 'drink', 'drop', 'equip',
                                                       'leave', 'inventory', 'leave', 'look_at', 'lock', 'open', 'help',
@@ -2679,7 +2679,7 @@ class Test_Processor_Process(unittest.TestCase):
 
     def test_command_not_allowed_in_pregame(self):
         result = self.command_processor.process('attack kobold')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandNotAllowedNow)
+        self.assertIsInstance(result[0], advg.statemsgs.command.NotAllowedNow)
         self.assertEqual(result[0].command, 'attack')
         self.assertEqual(result[0].allowed_commands, {'begin_game', 'help', 'reroll', 'set_name', 'quit', 'set_class'})
         self.assertEqual(result[0].message, "Command 'attack' not allowed before game start. Commands allowed before "
@@ -2690,7 +2690,7 @@ class Test_Processor_Process(unittest.TestCase):
         self.command_processor.game_state.character_class = 'Warrior'
         self.command_processor.game_state.game_has_begun = True
         result = self.command_processor.process('reroll')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandNotAllowedNow)
+        self.assertIsInstance(result[0], advg.statemsgs.command.NotAllowedNow)
         self.assertEqual(result[0].command, 'reroll')
         self.assertEqual(result[0].allowed_commands, {'attack', 'cast_spell', 'close', 'drink', 'drop', 'equip', 'help',
                                                       'leave', 'inventory', 'leave', 'look_at', 'lock', 'open',
@@ -2814,13 +2814,13 @@ class Test_Put(unittest.TestCase):
         self.command_processor.game_state.rooms_state.cursor.container_here.set('Gold_Coin', 15, self.gold_coin)
         self.game_state.rooms_state.cursor.container_here.is_closed = False
         result = self.command_processor.process('put in')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         result = self.command_processor.process('put 1 gold coin in')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         result = self.command_processor.process('put in the wooden chest')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         result = self.command_processor.process('put 1 gold coin on the wooden chest')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'PUT')
         self.assertEqual(result[0].message, 'PUT command: bad syntax. Should be '
                                             "'PUT\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>', "
@@ -2863,7 +2863,7 @@ class Test_Quit(unittest.TestCase):
 
     def test_quit_1(self):
         result = self.command_processor.process('quit the game now')  # check
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'QUIT')
         self.assertEqual(result[0].message, "QUIT command: bad syntax. Should be 'QUIT'.")
 
@@ -2895,7 +2895,7 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Games(unittest.TestCase):
         self.command_processor.process('set class to Warrior')
         self.command_processor.process('set name to Kerne')
         result = self.command_processor.process('reroll stats')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'REROLL')
         self.assertEqual(result[0].message, "REROLL command: bad syntax. Should be 'REROLL'.")
 
@@ -2931,7 +2931,7 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Games(unittest.TestCase):
         self.command_processor.process('set class to Warrior')
         self.command_processor.process('set name to Kerne')
         result = self.command_processor.process('reroll my stats')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'REROLL')
         self.assertEqual(result[0].message, "REROLL command: bad syntax. Should be 'REROLL'.")
 
@@ -2944,9 +2944,9 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Games(unittest.TestCase):
     def test_set_name_vs_set_class_1(self):
         self.assertFalse(self.command_processor.game_state.game_has_begun)
         result = self.command_processor.process('set class')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         result = self.command_processor.process('set class dread necromancer')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'SET CLASS')
         self.assertEqual(result[0].message, 'SET CLASS command: bad syntax. Should be '
                                             "'SET\u00A0CLASS\u00A0[TO]\u00A0<Warrior,\u00A0Thief,\u00A0Mage\u00A0"
@@ -2958,7 +2958,7 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Games(unittest.TestCase):
         self.assertEqual(result[0].message, 'Your class, Warrior, has been set.')
 
         result = self.command_processor.process('set name')  # check
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'SET NAME')
         self.assertEqual(result[0].message, 'SET NAME command: bad syntax. Should be '
                                             "'SET\u00A0NAME\u00A0[TO]\u00A0<character\u00A0name>'.")
@@ -3016,7 +3016,7 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Games(unittest.TestCase):
         self.command_processor.process('set class to Warrior')
         self.command_processor.process('set name to Kerne')
         result = self.command_processor.process('begin the game now')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'BEGIN GAME')
         self.assertEqual(result[0].message, "BEGIN GAME command: bad syntax. Should be 'BEGIN\u00A0GAME'.")
         self.assertFalse(self.command_processor.game_state.game_has_begun)
@@ -3072,7 +3072,7 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Games(unittest.TestCase):
         self.command_processor.process('set class to Warrior')
         self.command_processor.process('set name to Kerne')
         result = self.command_processor.process('begin the game now')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'BEGIN GAME')
         self.assertEqual(result[0].message, "BEGIN GAME command: bad syntax. Should be 'BEGIN\u00A0GAME'.")
         self.assertFalse(self.command_processor.game_state.game_has_begun)
@@ -3082,7 +3082,7 @@ class Test_Set_Name_Vs_Set_Class_Vs_Reroll_Vs_Begin_Games(unittest.TestCase):
         self.command_processor.process('set class to Warrior')
         self.command_processor.process('set name to Kerne')
         result = self.command_processor.process('reroll please')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'REROLL')
         self.assertEqual(result[0].message, "REROLL command: bad syntax. Should be 'REROLL'.")
         self.assertFalse(self.command_processor.game_state.game_has_begun)
@@ -3110,7 +3110,7 @@ class Test_Status(unittest.TestCase):
         self.command_processor.game_state.character_class = 'Warrior'
         self.game_state.game_has_begun = True
         result = self.command_processor.process('status status')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'STATUS')
         self.assertEqual(result[0].message, "STATUS command: bad syntax. Should be 'STATUS'.")
 
@@ -3270,13 +3270,13 @@ class Test_Take(unittest.TestCase):
         self.command_processor.game_state.rooms_state.cursor.container_here = \
             self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         result = self.command_processor.process('take one small leather armor from the kobold corpses')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         result = self.command_processor.process('take one small leather armor')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         result = self.command_processor.process('take the from the kobold corpse')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         result = self.command_processor.process('take the short sword from the')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'TAKE')
         self.assertEqual(result[0].message, 'TAKE command: bad syntax. Should be '
                                             "'TAKE\u00A0<item\u00A0name>\u00A0FROM\u00A0<container\u00A0name>' or "
@@ -3527,7 +3527,7 @@ class Test_Take(unittest.TestCase):
             self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         self.command_processor.game_state.rooms_state.cursor.container_here.set('Gold_Coin', 15, self.gold_coin)
         result = self.command_processor.process('put on the kobold corpse')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'PUT')
         self.assertEqual(result[0].message, 'PUT command: bad syntax. Should be '
                                             "'PUT\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>', "
@@ -3541,7 +3541,7 @@ class Test_Take(unittest.TestCase):
             self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         self.command_processor.game_state.rooms_state.cursor.container_here.set('Gold_Coin', 15, self.gold_coin)
         result = self.command_processor.process('put one small leather armor on')  # check
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'PUT')
         self.assertEqual(result[0].message, 'PUT command: bad syntax. Should be '
                                             "'PUT\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>', "
@@ -3555,7 +3555,7 @@ class Test_Take(unittest.TestCase):
             self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         self.command_processor.game_state.rooms_state.cursor.container_here.set('Gold_Coin', 15, self.gold_coin)
         result = self.command_processor.process('put on')  # check
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'PUT')
         self.assertEqual(result[0].message, 'PUT command: bad syntax. Should be '
                                             "'PUT\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>', "
@@ -3569,7 +3569,7 @@ class Test_Take(unittest.TestCase):
             self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         self.command_processor.game_state.rooms_state.cursor.container_here.set('Gold_Coin', 15, self.gold_coin)
         result = self.command_processor.process('put 1 gold coin in the kobold corpse')  # check
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'PUT')
         self.assertEqual(result[0].message, 'PUT command: bad syntax. Should be '
                                             "'PUT\u00A0<item\u00A0name>\u00A0IN\u00A0<chest\u00A0name>', "
@@ -3634,7 +3634,7 @@ class Test_Unequip_1(unittest.TestCase):
 
     def test_unequip_1(self):
         result = self.command_processor.process('unequip')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'UNEQUIP')
         self.assertEqual(result[0].message, "UNEQUIP command: bad syntax. Should be 'UNEQUIP\u00A0<armor\u00A0name>', "
                                             "'UNEQUIP\u00A0<shield\u00A0name>', 'UNEQUIP\u00A0<wand\u00A0name>', or "
@@ -3760,7 +3760,7 @@ class Test_Unlock(unittest.TestCase):
 
     def test_unlock_1(self):
         result = self.command_processor.process('unlock')
-        self.assertIsInstance(result[0], advg.statemsgs.command.CommandBadSyntax)
+        self.assertIsInstance(result[0], advg.statemsgs.command.BadSyntax)
         self.assertEqual(result[0].command, 'UNLOCK')
         self.assertEqual(result[0].message, "UNLOCK command: bad syntax. Should be 'UNLOCK\u00A0<door\u00A0name>' or "
                                             "'UNLOCK\u00A0<chest\u00A0name>'."),

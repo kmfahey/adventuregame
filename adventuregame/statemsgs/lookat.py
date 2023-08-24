@@ -2,7 +2,7 @@
 
 from adventuregame.exceptions import InternalError
 from adventuregame.statemsgs.gsm import GameStateMessage
-from adventuregame.utility import join_str_seq_w_commas_and_conjunction
+from adventuregame.utility import join_strs_w_comma_conj
 
 
 __all__ = ("FoundContainerHere", "FoundCreatureHere", "FoundDoorOrDoorway",
@@ -63,7 +63,7 @@ the chest are conveyed. If it's a corpse, the corpse's possessions are conveyed.
                                    else f'a {item.title}'
                                    for qty, item in sorted(self.container.values(), key=lambda arg: arg[1].title))
         # The list is condensed to a comma-separated string using a utility function.
-        contents_str = join_str_seq_w_commas_and_conjunction(contents_strs_tuple, 'and')
+        contents_str = join_strs_w_comma_conj(contents_strs_tuple, 'and')
         # If the list is zero-length, the message conveys that the container is empty.
         if len(contents_strs_tuple) == 0:
             return 'It is empty.' if self.container_type == 'chest' else 'They have nothing on them.'

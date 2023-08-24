@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 
 from adventuregame.statemsgs.gsm import GameStateMessage
-from adventuregame.utility import join_str_seq_w_commas_and_conjunction
+from adventuregame.utility import join_strs_w_comma_conj
 
 
-__all__ = ("CommandNotRecognized", "DisplayCommands", "DisplayHelpForCommand",)
+__all__ = ("NotRecognized", "DisplayCommands", "DisplayHelpForCommand",)
 
 
-class CommandNotRecognized(GameStateMessage):
+class NotRecognized(GameStateMessage):
     """
 This class implements an object that is returned by
 adventuregame.processor.Command_Processor.help_command() when the player tries
@@ -19,7 +19,7 @@ to get help with a command that is not in the game.
     def message(self):
         return_lines = [f"The command '{self.command_attempted.upper()}' is not recognized. "
                          'The full list of commands is:', '']
-        return_lines.extend((join_str_seq_w_commas_and_conjunction(self.commands_available, 'and'), ''))
+        return_lines.extend((join_strs_w_comma_conj(self.commands_available, 'and'), ''))
         return_lines.extend(('Which one do you want help with?', ''))
         return '\n'.join(return_lines)
 
@@ -43,7 +43,7 @@ player to ask for help with one of them.
             return_lines = ['The list of commands available during the game is:', '']
         else:
             return_lines = ['The list of commands available before game start is:', '']
-        return_lines.extend((join_str_seq_w_commas_and_conjunction(self.commands_available, 'and'), ''))
+        return_lines.extend((join_strs_w_comma_conj(self.commands_available, 'and'), ''))
         return_lines.extend(('Which one do you want help with?', ''))
         return '\n'.join(return_lines)
 
@@ -63,7 +63,7 @@ an informative blurb about the command.
 
     @property                   #
     def message(self):          #
-        # Like CommandBadSyntax, this message property accepts syntax
+        # Like BadSyntax, this message property accepts syntax
         # outlines from adventuregame.processor.COMMANDS_SYNTAX and assembles
         # them into a list of valid usages, using unicode nonbreaking
         # spaces so the usage examples aren't broken across lines by
@@ -71,7 +71,7 @@ an informative blurb about the command.
         syntax_str_list = [f"'{self.command}\u00A0{syntax_entry}'" if syntax_entry else f"'{self.command}'"
                                for syntax_entry in self.syntax_tuple]
         return_lines = [f'Help for the {self.command} command:', '']
-        return_lines.extend(('Usage: ' + join_str_seq_w_commas_and_conjunction(syntax_str_list, 'or'), ''))
+        return_lines.extend(('Usage: ' + join_strs_w_comma_conj(syntax_str_list, 'or'), ''))
         return_lines.extend((self.instructions, ''))
         return '\n'.join(return_lines)
 
