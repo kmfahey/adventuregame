@@ -2497,8 +2497,8 @@ returned.
         elif (self.game_state.rooms_state.cursor.container_here is not None and
                 self.game_state.rooms_state.cursor.container_here.title
                 == target_title):
-            unpickupable_element_type = self.game_state.rooms_state.cursor
-                                            .container_here.container_type
+            unpickupable_element_type = (self.game_state.rooms_state.cursor
+                                            .container_here.container_type)
 
         # If unpickupable_element_type acquired a value, a
         # cant-pick-up-element error is returned.
