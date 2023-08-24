@@ -54,20 +54,12 @@ _float_re = re.compile(r'^[+-]?([0-9]+\.|\.[0-9]+|[0-9]+\.[0-9]+|[0-9]+)$')
 
 
 def isfloat(strval):
-    """
-This function uses a regular expression to text whether a string represents a
-float value.
-
->>> isfloat('-0.5')
-True
->>> isfloat('3.14159')
-True
->>> isfloat('2+5i')
-False
-
-:strval: The string to test. return: Returns a boolean.
-    """
-    return bool(_float_re.match(strval))
+    try:
+        f = float(strval)
+    except ValueError:
+        return False
+    else:
+        return True
 
 
 # The player can use lexical numbers (ie. 'one', 'fourteen', 'thirty') in
