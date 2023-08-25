@@ -536,14 +536,14 @@ class Test_Close(unittest.TestCase):
         self.assertIsInstance(result[0], advg.stmsg.close.ElementNotCloseable)
         self.assertEqual(result[0].target_title, 'mana potion')
         self.assertEqual(result[0].target_type, 'potion')
-        self.assertEqual(result[0].message, "You can't close the mana potion; potions are not closable."),
+        self.assertEqual(result[0].message, "You can't close the mana potion; potions are not closeable."),
 
     def test_close_10(self):
         result = self.command_processor.process('close kobold')
         self.assertIsInstance(result[0], advg.stmsg.close.ElementNotCloseable)
         self.assertEqual(result[0].target_title, 'kobold')
         self.assertEqual(result[0].target_type, 'creature')
-        self.assertEqual(result[0].message, "You can't close the kobold; creatures are not closable."),
+        self.assertEqual(result[0].message, "You can't close the kobold; creatures are not closeable."),
 
     def test_close_11(self):
         self.command_processor.game_state.rooms_state.cursor.container_here = \
@@ -552,7 +552,7 @@ class Test_Close(unittest.TestCase):
         self.assertIsInstance(result[0], advg.stmsg.close.ElementNotCloseable)
         self.assertEqual(result[0].target_title, 'kobold corpse')
         self.assertEqual(result[0].target_type, 'corpse')
-        self.assertEqual(result[0].message, "You can't close the kobold corpse; corpses are not closable."),
+        self.assertEqual(result[0].message, "You can't close the kobold corpse; corpses are not closeable."),
 
     def test_close_12(self):
         self.command_processor.game_state.rooms_state.move(north=True)
@@ -560,7 +560,7 @@ class Test_Close(unittest.TestCase):
         self.assertIsInstance(result[0], advg.stmsg.close.ElementNotCloseable)
         self.assertEqual(result[0].target_title, 'east doorway')
         self.assertEqual(result[0].target_type, 'doorway')
-        self.assertEqual(result[0].message, "You can't close the east doorway; doorways are not closable.")
+        self.assertEqual(result[0].message, "You can't close the east doorway; doorways are not closeable.")
 
     def test_open_13(self):
         self.command_processor.game_state.character_name = 'Lidda'
@@ -572,7 +572,7 @@ class Test_Close(unittest.TestCase):
         self.assertIsInstance(result[0], advg.stmsg.close.ElementNotCloseable)
         self.assertEqual(result[0].target_title, 'studded leather armor')
         self.assertEqual(result[0].target_type, 'armor')
-        self.assertEqual(result[0].message, "You can't close the studded leather armor; suits of armor are not closable."),
+        self.assertEqual(result[0].message, "You can't close the studded leather armor; suits of armor are not closeable."),
 
 
 class Test_Drink(unittest.TestCase):

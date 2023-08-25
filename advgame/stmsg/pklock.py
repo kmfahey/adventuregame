@@ -12,13 +12,14 @@ Returned by advgame.process.CommandProcessor.pick_lock_command() when
 the player attempts to pick a lock on a corpse, creature, doorway or
 item.
     """
+
     __slots__ = 'target_title', 'target_type'
 
     @property
     def message(self):
-        # This message conveys that a corpse, creature, door or item isn't
-        # unlockable, handling armor separately so 'suits of [armor title]' can
-        # be used.
+        # This message conveys that a corpse, creature, door or item
+        # isn't unlockable, handling armor separately so 'suits of
+        # [armor title]' can be used.
         if self.target_type == 'armor':
             return f"You can't pick a lock on the {self.target_title}; suits of {self.target_type} are not unlockable."
         else:
@@ -34,6 +35,7 @@ class TargetHasBeenUnlocked(GameStateMessage):
 Returned by advgame.process.CommandProcessor.pick_lock_command() when
 the player successfully unlocks the chest or door.
     """
+
     __slots__ = 'target_title',
 
     @property
@@ -50,6 +52,7 @@ Returned by advgame.process.CommandProcessor.pick_lock_command() when
 the player targets a door or chest that is not present in the current
 dungeon room.
     """
+
     __slots__ = 'target_title',
 
     @property
@@ -65,6 +68,7 @@ class TargetNotLocked(GameStateMessage):
 Returned by advgame.process.CommandProcessor.pick_lock_command() when
 the player targets a door or chest that is not locked.
     """
+
     __slots__ = 'target_title',
 
     @property

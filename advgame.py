@@ -409,7 +409,7 @@ description=This open doorway is outlined by a stone arch set into the wall.
 door_type=doorway
 is_locked=false
 is_closed=false
-closable=false
+closeable=false
 
 [Room_1,2_x_Room_2,2]
 title=iron door
@@ -417,7 +417,7 @@ description=This door is bound in iron plates with a small barred window set up 
 door_type=iron_door
 is_locked=false
 is_closed=true
-closable=true
+closeable=true
 
 [Room_1,3_x_Room_2,3]
 title=wooden door
@@ -425,7 +425,7 @@ description=This door is made of wooden planks secured together with iron divots
 door_type=wooden_door
 is_locked=false
 is_closed=true
-closable=true
+closeable=true
 
 [Room_1,4_x_Room_1,5]
 title=wooden door
@@ -433,7 +433,7 @@ description=This door is made of wooden planks secured together with iron divots
 door_type=wooden_door
 is_locked=true
 is_closed=true
-closable=true
+closeable=true
 
 [Room_1,5_x_Room_2,5]
 title=wooden door
@@ -441,7 +441,7 @@ description=This door is made of wooden planks secured together with iron divots
 door_type=wooden_door
 is_locked=false
 is_closed=true
-closable=true
+closeable=true
 
 [Room_2,1_x_Room_2,2]
 title=doorway
@@ -449,7 +449,7 @@ description=This open doorway is outlined by a stone arch set into the wall.
 door_type=doorway
 is_locked=false
 is_closed=false
-closable=false
+closeable=false
 
 [Room_2,2_x_Room_3,2]
 title=iron door
@@ -457,7 +457,7 @@ description=This door is bound in iron plates with a small barred window set up 
 door_type=iron_door
 is_locked=false
 is_closed=true
-closable=true
+closeable=true
 
 [Room_2,3_x_Room_2,4]
 title=iron door
@@ -465,7 +465,7 @@ description=This door is bound in iron plates with a small barred window set up 
 door_type=iron_door
 is_locked=false
 is_closed=true
-closable=true
+closeable=true
 
 [Room_2,4_x_Room_2,5]
 title=doorway
@@ -473,7 +473,7 @@ description=This open doorway is outlined by a stone arch set into the wall.
 door_type=doorway
 is_locked=false
 is_closed=false
-closable=false
+closeable=false
 
 [Room_2,4_x_Room_3,4]
 title=wooden door
@@ -481,7 +481,7 @@ description=This door is made of wooden planks secured together with iron divots
 door_type=wooden_door
 is_locked=false
 is_closed=true
-closable=true
+closeable=true
 
 [Room_2,5_x_Room_3,5]
 title=wooden door
@@ -489,7 +489,7 @@ description=This door is made of wooden planks secured together with iron divots
 door_type=wooden_door
 is_locked=false
 is_closed=true
-closable=true
+closeable=true
 
 [Room_3,2_x_Room_3,3]
 title=iron door
@@ -497,7 +497,7 @@ description=This door is bound in iron plates with a small barred window set up 
 door_type=iron_door
 is_locked=true
 is_closed=true
-closable=true
+closeable=true
 
 [Room_3,2_x_Room_4,2]
 title=doorway
@@ -505,7 +505,7 @@ description=This open doorway is outlined by a stone arch set into the wall.
 door_type=doorway
 is_locked=false
 is_closed=false
-closable=false
+closeable=false
 
 [Room_3,3_x_Room_3,4]
 title=wooden door
@@ -513,7 +513,7 @@ description=This door is made of wooden planks secured together with iron divots
 door_type=wooden_door
 is_locked=false
 is_closed=true
-closable=true
+closeable=true
 
 [Room_1,4_x_Room_2,4]
 title=wooden door
@@ -521,7 +521,7 @@ description=This door is made of wooden planks secured together with iron divots
 door_type=wooden_door
 is_locked=false
 is_closed=true
-closable=true
+closeable=true
 
 [Room_3,3_x_Room_4,3]
 title=wooden door
@@ -529,7 +529,7 @@ description=This door is made of wooden planks secured together with iron divots
 door_type=wooden_door
 is_locked=false
 is_closed=true
-closable=true
+closeable=true
 
 [Room_3,5_x_Room_3,6]
 title=iron door
@@ -537,7 +537,7 @@ description=This door is bound in iron plates with a small barred window set up 
 door_type=iron_door
 is_locked=true
 is_closed=true
-closable=true
+closeable=true
 
 [Room_3,5_x_Room_4,5]
 title=iron door
@@ -545,7 +545,7 @@ description=This door is bound in iron plates with a small barred window set up 
 door_type=iron_door
 is_locked=false
 is_closed=true
-closable=true
+closeable=true
 
 [Room_4,2_x_Room_4,3]
 title=wooden door
@@ -553,7 +553,7 @@ description=This door is made of wooden planks secured together with iron divots
 door_type=wooden_door
 is_locked=false
 is_closed=true
-closable=true
+closeable=true
 
 [Room_4,3_x_Room_4,4]
 title=iron door
@@ -561,7 +561,7 @@ description=This door is bound in iron plates with a small barred window set up 
 door_type=iron_door
 is_locked=false
 is_closed=true
-closable=true
+closeable=true
 
 [Room_4,4_x_Room_4,5]
 title=iron door
@@ -569,7 +569,7 @@ description=This door is bound in iron plates with a small barred window set up 
 door_type=iron_door
 is_locked=false
 is_closed=true
-closable=true
+closeable=true
 
 [Room_3,6_x_Exit]
 title=iron door
@@ -578,7 +578,7 @@ door_type=iron_door
 is_exit=true
 is_locked=false
 is_closed=true
-closable=true
+closeable=true
 """,
     "containers.ini": """
 [Wooden_Chest_1]

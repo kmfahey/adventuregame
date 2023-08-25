@@ -12,13 +12,14 @@ Returned by advgame.process.CommandProcessor.put_command() when the
 player successfully places one or more items in a chest or on a corpse's
 person.
     """
+
     __slots__ = 'item_title', 'container_title', 'container_type', 'amount_put', 'amount_left'
 
     @property
     def message(self):
-        # This message property constructs a pair of sentences that convey how
-        # many of what item was put where, and how many the player character has
-        # left.
+        # This message property constructs a pair of sentences that
+        # convey how many of what item was put where, and how many the
+        # player character has left.
         amount_put_pluralizer = 's' if self.amount_put > 1 else ''
         amount_left_pluralizer = 's' if self.amount_left > 1 or not self.amount_left else ''
         container_placed_location_clause = (f'in the {self.container_title}' if self.container_type == 'chest'
@@ -42,6 +43,7 @@ Returned by advgame.process.CommandProcessor.put_command() when the
 player attempts to put an item in a chest or on a corpse that is not in
 their inventory.
     """
+
     __slots__ = 'amount_attempted', 'item_title'
 
     @property
@@ -77,6 +79,7 @@ Returned by advgame.process.CommandProcessor.put_command() when the
 player tries to put a quantity of an item in a chest or on a corpse that
 that is more than they have in their inventory.
     """
+
     __slots__ = 'item_title', 'amount_present'
 
     @property

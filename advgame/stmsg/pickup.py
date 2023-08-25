@@ -15,6 +15,7 @@ Returned by advgame.process.CommandProcessor.pick_up_command() when the
 player has specifies a game element that is a chest, corpse, creature or
 door and can't be picked up.
     """
+
     __slots__ = 'element_type', 'element_title'
 
     @property
@@ -33,14 +34,15 @@ player targets an item to pick up that is not present in the current
 dungeon room. If they meant to acquire an item from a chest or corpse,
 they need to say `TAKE <item name> FROM <corpse or chest name>`.
     """
+
     __slots__ = 'item_title', 'amount_attempted', 'items_here'
 
     @property
     def message(self):
-        # This message property assembles a string that indicates the specified
-        # item isn't present. The object is initialized with the items_here
-        # attribute of the current room object, and if it's non-null the items
-        # are listed as alternatives.
+        # This message property assembles a string that indicates the
+        # specified item isn't present. The object is initialized with
+        # the items_here attribute of the current room object, and if
+        # it's non-null the items are listed as alternatives.
         item_pluralizer = 's' if self.amount_attempted > 1 else ''
         if self.items_here:
             items_here_str_tuple = tuple(f'{item_count} {item_title}s' if item_count > 1
@@ -64,14 +66,15 @@ Returned by advgame.process.CommandProcessor.pick_up_command() when
 the player successfully acquires an item from the floor of the current
 dungeon room.
     """
+
     __slots__ = 'item_title', 'pick_up_amount', 'amount_had'
 
     @property
     def message(self):
-        # This message property assembles a sentence conveying that one or more
-        # items were picked up, and mentioning how many the player character now
-        # has. It picks the article or determiner and the use of a pluralizing s
-        # suffix.
+        # This message property assembles a sentence conveying that one
+        # or more items were picked up, and mentioning how many the
+        # player character now has. It picks the article or determiner
+        # and the use of a pluralizing s suffix.
         picked_up_indir_artcl_or_qty = (str(self.pick_up_amount) if self.pick_up_amount > 1
                                         else 'an' if self.item_title[0] in 'aeiou'
                                         else 'a')
@@ -111,6 +114,7 @@ the player has targeted an item that is present, but has specified a
 quantity to pick up that is greater than the number of that item that is
 present in the current dungeon room.
     """
+
     __slots__ = 'item_title', 'amount_attempted', 'amount_present'
 
     @property

@@ -13,12 +13,14 @@ Returned by advgame.process.CommandProcessor.take_command() if the
 player specifies an item to take from a chest that is not in that chest
 or from a corpse that is not on the corpse.
     """
+
     __slots__ = 'container_title', 'amount_attempted', 'container_type', 'item_title'
 
     @property
     def message(self):
-        # This message property assembles a single sentence which conveys that
-        # the container mentioned doesn't contain the item sought.
+        # This message property assembles a single sentence which
+        # conveys that the container mentioned doesn't contain the item
+        # sought.
         base_str = f"The {self.container_title} doesn't have"
         indirect_article_or_determiner = ('any' if self.amount_attempted > 1
                                else 'an' if self.item_title[0] in 'aeiou'
@@ -39,12 +41,14 @@ class ItemOrItemsTaken(GameStateMessage):
 Returned by advgame.process.CommandProcessor.take_command() when the
 player successfully acquires an item from a chest or corpse.
     """
+
     __slots__ = 'container_title', 'item_title', 'amount_taken'
 
     @property
     def message(self):
-        # This message property assembles a sentence which conveys that the
-        # player character took an amount of an item from a chest or corpse.
+        # This message property assembles a sentence which conveys that
+        # the player character took an amount of an item from a chest or
+        # corpse.
         indirect_article_or_quantity = (str(self.amount_taken) if self.amount_taken > 1
                                         else 'an' if self.item_title[0] in 'aeiou'
                                         else 'a')
@@ -79,15 +83,17 @@ player specifies a quantity of an item to take from a chest that is more
 than is present in that chest, or from a corpse that is more than is
 present on that corpse.
     """
+
     __slots__ = 'container_title', 'container_type', 'item_title', 'amount_attempted', 'amount_present'
 
     @property
     def message(self):
-        # This message property assembles a sentence conveying that the quantity
-        # of the item sought can't be taken from the container because only a
-        # smaller quantity is there. The lowest value self.amount_present can
-        # be is 1, and self.amount_attempted must be greater than that if this
-        # error is being returned, so we know that self.amount_attempted > 1.
+        # This message property assembles a sentence conveying that the
+        # quantity of the item sought can't be taken from the container
+        # because only a smaller quantity is there. The lowest value
+        # self.amount_present can be is 1, and self.amount_attempted
+        # must be greater than that if this error is being returned, so
+        # we know that self.amount_attempted > 1.
         item_specifier = f'suits of {self.item_title}' if self.item_type == 'armor' else f'{self.item_title}s'
         return (f"You can't take {self.amount_attempted} {item_specifier} from the {self.container_title}. Only "
                 f'{self.amount_present} is there.')

@@ -405,7 +405,7 @@ instantiated from a single section of a doors.ini file as returned by an
 IniConfig's dict-of-dicts sections attribute.
     """
     __slots__ = ('internal_name', 'title', 'description', 'door_type',
-                 'is_locked', 'is_closed', 'closable',
+                 'is_locked', 'is_closed', 'closeable',
                  '_linked_rooms_internal_names', 'is_exit')
 
     def __init__(self, **argd):

@@ -12,13 +12,14 @@ class ElementNotOpenable(GameStateMessage):
 Returned by advgame.process.CommandProcessor.open_command() when the
 player attempts to open a corpse, creature, doorway or item.
     """
+
     __slots__ = 'target_title', 'target_type'
 
     @property
     def message(self):
-        # This message conveys that a corpse, creature, door or item isn't
-        # openable, handling armor separately so 'suits of [armor title]' can
-        # be used.
+        # This message conveys that a corpse, creature, door or item
+        # isn't openable, handling armor separately so 'suits of [armor
+        # title]' can be used.
         if self.target_type == 'armor':
             return f"You can't open the {self.target_title}; suits of {self.target_type} are not openable."
         else:
@@ -34,6 +35,7 @@ class ElementHasBeenOpened(GameStateMessage):
 Returned by advgame.process.CommandProcessor.open_command() when the
 player successfully opens a chest or door.
     """
+
     __slots__ = 'target',
 
     @property
@@ -49,6 +51,7 @@ class ElementIsAlreadyOpen(GameStateMessage):
 Returned by advgame.process.CommandProcessor.open_command() when the
 player targets a door or chest that is already open.
     """
+
     __slots__ = 'target',
 
     @property
@@ -64,6 +67,7 @@ class ElementIsLocked(GameStateMessage):
 Returned by advgame.process.CommandProcessor.open_command() when the
 player targets a door or chest that is locked.
     """
+
     __slots__ = 'target',
 
     @property
@@ -80,6 +84,7 @@ Returned by advgame.process.CommandProcessor.open_command() when the
 player targets a door or chest that is not present in the current
 dungeon room.
     """
+
     __slots__ = 'target_title',
 
     @property

@@ -17,13 +17,14 @@ has used a specifier for a door that matches more than one door in the
 current dungeon room; for example, saying 'unlock wooden door' when
 there's two wooden doors.
     """
+
     __slots__ = 'compass_dirs', 'door_or_doorway', 'door_type'
 
     @property
     def message(self):
-        # This message property assembles a pair of sentences that describe
-        # every door in the room that matches the user's ambiguous command and
-        # asks them which one they mean.
+        # This message property assembles a pair of sentences that
+        # describe every door in the room that matches the user's
+        # ambiguous command and asks them which one they mean.
         door_type = self.door_type.replace('_', ' ') if self.door_type else None
         message_str = 'More than one door in this room matches your command. Do you mean '
         if door_type is not None:
@@ -44,6 +45,7 @@ class ContainerIsClosed(GameStateMessage):
 Returned by advgame.process.CommandProcessor.put_command() or
 .take_command() when the player tries to access a chest that is closed.
     """
+
     __slots__ = 'target',
 
     @property
@@ -61,6 +63,7 @@ Returned by advgame.process.CommandProcessor.put_command(),
 that isn't present in the current dungeon room, or check a corpse that
 isn't present in the current dungeon room.
     """
+
     __slots__ = 'container_not_found_title', 'container_present_title'
 
     @property
@@ -82,6 +85,7 @@ Returned by advgame.process.CommandProcessor.set_name_command() or
 .reroll_command(). It displays the character's randomly generated
 ability scores.
     """
+
     __slots__ = 'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'
 
     @property
@@ -111,24 +115,25 @@ Returned by advgame.process.CommandProcessor.close_command(),
 .pick_lock_command(), or .unlock_command() when the player specifies a
 door that is not present in the current dungeon room.
     """
+
     __slots__ = 'compass_dir', 'portal_type'
 
     @property
     def message(self):
-        # This message property assembles a sentence which informs the player
-        # that the door they specified in their command is not present in this
-        # room.
+        # This message property assembles a sentence which informs the
+        # player that the door they specified in their command is not
+        # present in this room.
         return_str = 'This room does not have a'
         if self.compass_dir is not None and self.portal_type is not None:
-            # This concatenation varies slightly to turn 'a' into 'an' if the
-            # word after it is 'east'.
+            # This concatenation varies slightly to turn 'a' into 'an'
+            # if the word after it is 'east'.
             return_str += (f'n {self.compass_dir} {self.portal_type}.' if self.compass_dir == 'east'
                            else f' {self.compass_dir} {self.portal_type}.')
         elif self.portal_type is not None:
             return_str += f'a {self.portal_type}.'
         elif self.compass_dir is not None:
-            # This concatenation varies slightly to turn 'a' into 'an' if the
-            # word after it is 'east'.
+            # This concatenation varies slightly to turn 'a' into 'an'
+            # if the word after it is 'east'.
             return_str += (f'n {self.compass_dir} door or doorway.' if self.compass_dir == 'east'
                            else f' {self.compass_dir} door or doorway.')
         return return_str
@@ -146,32 +151,35 @@ when the player starts the game in the first room. It prints the room
 description, lists the items on the floor if any, mentions any chest or
 creature, and lists the exits to the room by compass direction.
     """
+
     __slots__ = 'room',
 
     @property
     def message(self):
         # This message property assembles a room description, mentioning
-        # any chest, corpse, or creatures, items on the floor, and each of
-        # the doors, by building a list of sentences, then joining them and
-        # returning the string.
+        # any chest, corpse, or creatures, items on the floor, and each
+        # of the doors, by building a list of sentences, then joining
+        # them and returning the string.
         message_list = list()
 
         # It starts with the room description.
         message_list.append(self.room.description)
 
-        # If there's a container here, a sentence mentioning it is added to the list.
+        # If there's a container here, a sentence mentioning it is added
+        # to the list.
         if self.room.container_here is not None:
             indirect_article = 'an' if self.room.container_here.title[0] in 'aeiou' else 'a'
             message_list.append(f'You see {indirect_article} {self.room.container_here.title} here.')
 
-        # If there's a creature here, a sentence mentioning them is added to the list.
+        # If there's a creature here, a sentence mentioning them is
+        # added to the list.
         if self.room.creature_here is not None:
             indirect_article = 'an' if self.room.creature_here.title[0] in 'aeiou' else 'a'
             message_list.append(f'There is {indirect_article} {self.room.creature_here.title} in the room.')
 
-        # If the items_here attribute is a ItemsMultiState object, its
-        # contents are assembled into a list, joined into a comma-separated
-        # string, and that string is added to the list.
+        # If the items_here attribute is a ItemsMultiState object,
+        # its contents are assembled into a list, joined into a
+        # comma-separated string, and that string is added to the list.
         if self.room.items_here is not None:
             room_items = list()
             for item_qty, item in self.room.items_here.values():
@@ -181,8 +189,8 @@ creature, and lists the exits to the room by compass direction.
             items_here_str = join_strs_w_comma_conj(room_items, 'and')
             message_list.append(f'You see {items_here_str} on the floor.')
 
-        # A list of door titles and directions is assembled, joined into a
-        # string, and that string is added to the list.
+        # A list of door titles and directions is assembled, joined into
+        # a string, and that string is added to the list.
         door_list = list()
         for compass_dir in ('north', 'east', 'south', 'west'):
             dir_attr = compass_dir + '_door'
@@ -220,15 +228,17 @@ Returned by advgame.process.CommandProcessor.begin_game() or
 equipped and mentions how the relevant game parameters have changed as a
 result.
     """
+
     __slots__ = ('item_title', 'item_type', 'attack_bonus', 'damage', 'armor_class'
                 'change_text')
 
     @property
     def message(self):
-        # This message property assembles a sentence that informs the user of
-        # the new wand, weapon, armor or shield they've equipped. If it's a suit
-        # of armor or shield, their new armor class is mentioned. If it's a
-        # weapon or wand, their new attack bonus and damage is mentioned.
+        # This message property assembles a sentence that informs
+        # the user of the new wand, weapon, armor or shield they've
+        # equipped. If it's a suit of armor or shield, their new armor
+        # class is mentioned. If it's a weapon or wand, their new attack
+        # bonus and damage is mentioned.
         item_usage_verb = usage_verb(self.item_type, gerund=True)
         referent = ('a suit of' if self.item_type == 'armor'
                     else 'an' if self.item_title[0] in 'aeiou'
@@ -267,30 +277,32 @@ convey the previous item's removal; and .drop_command() returns it if
 the item the character dropped was equipped and they no longer have any
 of the item in their inventory.
     """
+
     __slots__ = ('item_title', 'item_type', 'changed_value_1', 'value_type_1', 'changed_value_2', 'value_type_2',
                 'change_text')
 
     @property
     def message(self):
-        # This message property constructs a series of sentences that inform the
-        # player that they unequipped an item, and what the changes to their
-        # stats are and if they can still attack. Nota Bene: if a Mage equips
-        # a wand, they will always use it instead of their weapon. If a Mage
-        # unequips their wand their attack and damage won't change; and if they
-        # unequip their wand their new attack and damage are from the weapon
-        # they still have equipped.
+        # This message property constructs a series of sentences that
+        # inform the player that they unequipped an item, and what the
+        # changes to their stats are and if they can still attack. Nota
+        # Bene: if a Mage equips a wand, they will always use it instead
+        # of their weapon. If a Mage unequips their wand their attack
+        # and damage won't change; and if they unequip their wand their
+        # new attack and damage are from the weapon they still have
+        # equipped.
         item_usage_verb = usage_verb(self.item_type, gerund=True)
         referent = 'a suit of' if self.item_type == 'armor' else 'an' if self.item_title[0] in 'aeiou' else 'a'
         return_str = f"You're no longer {item_usage_verb} {referent} {self.item_title}."
         if self.armor_class is not None:
 
-            # If the player just unequipped armor or a weapon, their armor class
-            # has changed.
+            # If the player just unequipped armor or a weapon, their
+            # armor class has changed.
             return_str += (f' Your armor class is now {self.armor_class}.')
         elif self.attack_bonus is not None and self.damage is not None:
 
-            # Only a mage can still have an attack bonus and damage after
-            # unequipping something.
+            # Only a mage can still have an attack bonus and damage
+            # after unequipping something.
             plussign = '+' if self.attack_bonus >= 0 else ''
             if self.now_attacking_with:
                 implement = self.now_attacking_with
@@ -304,7 +316,8 @@ of the item in their inventory.
                            f'{implement.title} damage is {tense}{self.damage}.')
         elif self.now_cant_attack:
 
-            # Any other class that just unequipped a weapon gets this message.
+            # Any other class that just unequipped a weapon gets this
+            # message.
             return_str += " You now can't attack."
         return return_str
 
@@ -327,15 +340,16 @@ Returned by advgame.process.CommandProcessor.drink_command() or
 drinks a health potion; and it's returned by the .cast_spell_command()
 if the player is a Priest and they successfully cast a healing spell.
     """
+
     __slots__ = 'amount_healed', 'current_hit_points', 'hit_point_total',
 
     @property
     def message(self):
-        # This message property handles three cases:
-        # * The player regained hit points and now has their maximum hit points.
-        # * The player regained hit points but are still short of their maximum.
-        # * The player didn't regain any hit points because their hit points were
-        #   already at maximum.
+        # This message property handles three cases: * The player
+        # regained hit points and now has their maximum hit points. *
+        # The player regained hit points but are still short of their
+        # maximum. * The player didn't regain any hit points because
+        # their hit points were already at maximum.
         return_str = (f'You regained {self.amount_healed} hit points.' if self.amount_healed != 0
                       else "You didn't regain any hit points.")
         if self.current_hit_points == self.hit_point_total:

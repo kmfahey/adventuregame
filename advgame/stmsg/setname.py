@@ -13,6 +13,7 @@ Returned by advgame.process.CommandProcessor.set_name_command() when the
 player tries to set a name that is not one or more alphabetic titelcased
 strings.
     """
+
     __slots__ = 'name_part',
 
     @property
@@ -28,6 +29,7 @@ class NameSet(GameStateMessage):
 Returned by advgame.process.CommandProcessor.set_name_command() when the
 player sets a name.
     """
+
     __slots__ = 'name',
 
     @property

@@ -13,13 +13,14 @@ player tries to use it before they have set their name and class. The
 player's ability scores aren't rolled until they've chosen a name and
 class, and therefore can't be rerolled yet.
     """
+
     __slots__ = 'character_name', 'character_class'
 
     @property
     def message(self):
-        # This mesage property constructs a string that indicates which of the
-        # two commands, SET NAME and SET CLASS, the player needs to use before
-        # REROLL can be used.
+        # This mesage property constructs a string that indicates which
+        # of the two commands, SET NAME and SET CLASS, the player needs
+        # to use before REROLL can be used.
         reroll_str = "Your character's stats haven't been rolled yet, so there's nothing to reroll."
         set_name_str = 'SET NAME <name> to set your name'
         set_class_str = 'SET CLASS <Warrior, Thief, Mage or Priest> to select your class'

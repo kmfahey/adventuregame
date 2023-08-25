@@ -14,11 +14,13 @@ Returned by advgame.process.CommandProcessor.lock_command() when the
 player tries to lock a chest while they don't possess the chest key, or
 a door while they don't possess the door key.
     """
+
     __slots__ = 'object_to_lock_title', 'key_needed',
 
     @property
     def message(self):
-        return f'To lock the {self.object_to_lock_title} you need a {self.key_needed}.'
+        return (f'To lock the {self.object_to_lock_title} '
+                + f'you need a {self.key_needed}.')
 
     def __init__(self, object_to_lock_title, key_needed):
         self.object_to_lock_title = object_to_lock_title
@@ -30,13 +32,16 @@ class ElementNotUnlockable(GameStateMessage):
 
     @property
     def message(self):
-        # This message property returns a string that informs the player that
-        # they tried to lock something that can't be locked (a corpse, creature,
-        # doorway or item). It omits the direct article is the item is armor.
+        # This message property returns a string that informs the
+        # player that they tried to lock something that can't be locked
+        # (a corpse, creature, doorway or item). It omits the direct
+        # article is the item is armor.
         if self.target_type == 'armor':
-            return f"You can't lock the {self.target_title}; suits of {self.target_type} are not lockable."
+            return (f"You can't lock the {self.target_title}; "
+                    + f"suits of {self.target_type} are not lockable.")
         else:
-            return f"You can't lock the {self.target_title}; {self.target_type}s are not lockable."
+            return (f"You can't lock the {self.target_title}; "
+                    + f"{self.target_type}s are not lockable.")
 
     def __init__(self, target_title, target_type):
         self.target_title = target_title
@@ -48,6 +53,7 @@ class ElementHasBeenUnlocked(GameStateMessage):
 Returned by advgame.process.CommandProcessor.lock_command() when the
 player successfully locks a chest or door.
     """
+
     __slots__ = 'target',
 
     @property
@@ -63,6 +69,7 @@ class ElementIsAlreadyUnlocked(GameStateMessage):
 Returned by advgame.process.CommandProcessor.lock_command() when the
 player tries to lock a chest or door that is already locked.
     """
+
     __slots__ = 'target',
 
     @property
@@ -79,6 +86,7 @@ Returned by advgame.process.CommandProcessor.lock_command() when the
 player specifies an object to lock that is not present in the current
 dungeon room.
     """
+
     __slots__ = 'target_title',
 
     @property

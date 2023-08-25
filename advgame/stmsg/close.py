@@ -12,14 +12,17 @@ class ElementNotCloseable(GameStateMessage):
 Returned by advgame.process.CommandProcessor.close_command() when the
 player attempts to close a corpse, creature, doorway or item.
     """
+
     __slots__ = 'target_title', 'target_type'
 
     @property
     def message(self):
         if self.target_type == 'armor':
-            return f"You can't close the {self.target_title}; suits of {self.target_type} are not closable."
+            return (f"You can't close the {self.target_title}; "
+                    + f"suits of {self.target_type} are not closeable.")
         else:
-            return f"You can't close the {self.target_title}; {self.target_type}s are not closable."
+            return (f"You can't close the {self.target_title}; "
+                    + f"{self.target_type}s are not closeable.")
 
     def __init__(self, target_title, target_type):
         self.target_title = target_title
@@ -31,6 +34,7 @@ class ElementHasBeenClosed(GameStateMessage):
 Returned by advgame.process.CommandProcessor.close_command() when the
 player succeeds in closing a door or chest.
     """
+
     __slots__ = 'target',
 
     @property
@@ -44,8 +48,9 @@ player succeeds in closing a door or chest.
 class ElementIsAlreadyClosed(GameStateMessage):
     """
 Returned by advgame.process.CommandProcessor.close_command() when the
-closable object the player targeted is already closed.
+closeable object the player targeted is already closed.
     """
+
     __slots__ = 'target',
 
     @property
@@ -58,11 +63,11 @@ closable object the player targeted is already closed.
 
 class ElementToCloseNotHere(GameStateMessage):
     """
-Returned by
-advgame.process.CommandProcessor.close_command() when the player
-specifies a target to the command that is not present in the current room of the
-game.
+Returned by advgame.process.CommandProcessor.close_command() when the
+player specifies a target to the command that is not present in the
+current room of the game.
     """
+
     __slots__ = 'target_title',
 
     @property

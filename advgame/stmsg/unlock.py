@@ -14,6 +14,7 @@ Returned by advgame.process.CommandProcessor.unlock_command() when the
 player tries to unlock a door while not possessing the door key, or
 unlock a chest while not possessing the chest key.
     """
+
     __slots__ = 'object_to_unlock_title', 'key_needed',
 
     @property
@@ -30,6 +31,7 @@ class ElementNotLockable(GameStateMessage):
 Returned by advgame.process.CommandProcessor.unlock_command() when the
 player attempts to unlock a corpse, creature, doorway or item.
     """
+
     __slots__ = 'target_title', 'target_type'
 
     @property
@@ -48,6 +50,7 @@ class ElementHasBeenLocked(GameStateMessage):
 Returned by advgame.process.CommandProcessor.unlock_command() when the
 player successfully unlocks a chest or door.
     """
+
     __slots__ = 'target',
 
     @property
@@ -63,6 +66,7 @@ class ElementIsAlreadyLocked(GameStateMessage):
 Returned by advgame.process.CommandProcessor.unlock_command() when the
 player tries to unlock a door or chest that is already unlocked.
     """
+
     __slots__ = 'target',
 
     @property
@@ -79,6 +83,7 @@ Returned by advgame.process.CommandProcessor.unlock_command() when
 the player tries to unlock a door or chest that is not present in the
 current dungeon room.
     """
+
     __slots__ = 'target_title',
 
     @property

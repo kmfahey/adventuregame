@@ -1776,7 +1776,7 @@ chest key to lock the specified door or chest, returns a
 
         # If any of the four failure modes occurred, then the
         # player specified an existing element that is not
-        # openable/closable/lockable/unlockable. An appropriate argd
+        # openable/closeable/lockable/unlockable. An appropriate argd
         # is constructed and an appropriate error value is returned
         # identifying the mistargeted element.
         if any((tried_to_operate_on_doorway, tried_to_operate_on_corpse,
@@ -2184,7 +2184,7 @@ on the floor, in a chest, on a corpse, or in inventory, returns a
                                     element.hit_points_recovered)
         elif isinstance(element, elem.Door):
             # If it's a door, whether it's open or closed is mentioned.
-            if element.closable:
+            if element.closeable:
                 descr_append_str = (' It is closed.' if element.is_closed
                                     else ' It is open.')
 

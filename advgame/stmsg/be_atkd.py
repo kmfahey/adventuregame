@@ -12,14 +12,16 @@ Returned by advgame.process.CommandProcessor._be_attacked_by_command()
 when the foe's counterattack connects. It conveys the damage done and
 how many hit points the player's character has left.
     """
+
     __slots__ = 'creature_title', 'damage_done', 'hit_points_left'
 
     @property
     def message(self):
-        # This message property informs the player of the effect of a creature's
-        # attack on their hit points.
-        return (f'The {self.creature_title} attacks! Their attack hits. They did {self.damage_done} damage! You have '
-                f'{self.hit_points_left} hit points left.')
+        # This message property informs the player of the effect of a
+        # creature's attack on their hit points.
+        return (f'The {self.creature_title} attacks! Their attack hits. '
+                + f'They did {self.damage_done} damage! You have '
+                + f'{self.hit_points_left} hit points left.')
 
     def __init__(self, creature_title, damage_done, hit_points_left):
         self.creature_title = creature_title
@@ -32,6 +34,7 @@ class AttackedAndNotHit(GameStateMessage):
 Returned by advgame.process.CommandProcessor._be_attacked_by_command()
 when the foe's counterattack did not connect.
     """
+
     __slots__ = 'creature_title',
 
     @property
