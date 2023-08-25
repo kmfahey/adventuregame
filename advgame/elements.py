@@ -77,8 +77,7 @@ Test two IniEntry objects or objects that subclass IniEntry for equality.
         if not isinstance(other, type(self)):
             return False
         else:
-            return all(getattr(self, attr, None) == getattr(other, attr, None)
-                       for attr in self.__slots__)
+            return all(getattr(self, attr, None) == getattr(other, attr, None) for attr in self.__slots__)
 
     def _post_init_slots_set_none(self, slots):
         """
@@ -105,10 +104,8 @@ to the contents of a container or corpse.
         value_match = self.inventory_list_value_re.match(inventory_value)
         inner_capture = value_match.groups(1)[0]
         capture_split = inner_capture.split(",")
-        qty_strval_pairs = tuple((int(item_qty), item_name)
-                                 for item_qty, item_name in (
-                                     name_x_qty_str.split("x", maxsplit=1)
-                                     for name_x_qty_str in capture_split))
+        qty_strval_pairs = [(int(item_qty), item_name) for item_qty, item_name in
+                            (name_x_qty_str.split("x", maxsplit=1) for name_x_qty_str in capture_split)]
         return qty_strval_pairs
 
 
@@ -307,8 +304,7 @@ dict.
         """
         self._contents = dict()
         for item_internal_name, item_dict in dict_of_dicts.items():
-            item = Item.subclassing_factory(
-                internal_name=item_internal_name, **item_dict)
+            item = Item.subclassing_factory(internal_name=item_internal_name, **item_dict)
             self._contents[item_internal_name] = item
 
 
@@ -344,8 +340,7 @@ name is present in the private dictionary.
 :item_internal_name: The internal name of the Item subclass object.
 :return:             A boolean.
         """
-        return(any(contained_item.internal_name == item_internal_name
-                   for _, contained_item in self._contents.values()))
+        return(any(contained_item.internal_name == item_internal_name for _, contained_item in self._contents.values()))
 
     def set(self, item_internal_name, item_qty, item):
         """
@@ -372,9 +367,8 @@ given internal name with a quantity of 1.
 :return:             None.
         """
         if self.contains(item_internal_name):
-            self._contents[item_internal_name] = (
-                self._contents[item_internal_name][0] + 1,
-                self._contents[item_internal_name][1])
+            self._contents[item_internal_name] = (self._contents[item_internal_name][0] + 1,
+                                                  self._contents[item_internal_name][1])
         else:
             self._contents[item_internal_name] = 1, item
 
@@ -393,9 +387,8 @@ deleted from the internal dictionary.
         elif self._contents[item_internal_name][0] == 1:
             del self._contents[item_internal_name]
         else:
-            self._contents[item_internal_name] = (
-                self._contents[item_internal_name][0] - 1,
-                self._contents[item_internal_name][1])
+            self._contents[item_internal_name] = (self._contents[item_internal_name][0] - 1,
+                                                  self._contents[item_internal_name][1])
 
 
 class Door(IniEntry):
@@ -420,8 +413,7 @@ door.
         """
         super().__init__(**argd)
         self._post_init_slots_set_none(self.__slots__)
-        self._linked_rooms_internal_names = set(
-            self.internal_name.split('_x_'))
+        self._linked_rooms_internal_names = set(self.internal_name.split('_x_'))
 
     @classmethod
     def subclassing_factory(cls, **door_dict):
@@ -538,9 +530,8 @@ that's later in the sort order is the inner dict's key.
         for door_internal_name, door_argd in dict_of_dicts.items():
             room_1_intrn_name, room_2_intrn_name = \
                 door_internal_name.split("_x_")
-            self._contents[room_1_intrn_name][room_2_intrn_name] = \
-                Door.subclassing_factory(internal_name=door_internal_name,
-                                         **door_argd)
+            self._contents[room_1_intrn_name][room_2_intrn_name] = Door.subclassing_factory(
+                    internal_name=door_internal_name, **door_argd)
             pass
 
     def contains(self, room_1_intrn_name, room_2_intrn_name):
@@ -555,8 +546,7 @@ two Room subclass object's internal names is present in the internal
                      objects.
 :return:             A boolean.
         """
-        return (room_1_intrn_name in self._contents
-                and room_2_intrn_name in self._contents[room_1_intrn_name])
+        return (room_1_intrn_name in self._contents and room_2_intrn_name in self._contents[room_1_intrn_name])
 
     def get(self, room_1_intrn_name, room_2_intrn_name):
         """
@@ -682,8 +672,7 @@ populate the container.
                     instantiate the Container object with.
         """
         contents_str = ini_constr_argd.pop("contents", None)
-        IniEntry.__init__(self, internal_name=internal_name,
-                          **ini_constr_argd)
+        IniEntry.__init__(self, internal_name=internal_name, **ini_constr_argd)
 
         # If this Container has a contents attribute, it
         # is a compacted list of Item internal names and
@@ -696,9 +685,8 @@ populate the container.
             # This list comprehension retrieves the Item subclass
             # objects from items_state.
 
-            contents_qtys_item_objs = tuple(
-                (item_qty, items_state.get(item_internal_name))
-                for item_qty, item_internal_name in contents_qtys_names)
+            contents_qtys_item_objs = [(item_qty, items_state.get(item_internal_name))
+                                       for item_qty, item_internal_name in contents_qtys_names]
         ItemsMultiState.__init__(self)
         if contents_str:
 
@@ -772,9 +760,8 @@ subclass objects that the container is populated with.
         """
         self._contents = dict()
         for container_internal_name, container_dict in dict_of_dicts.items():
-            container = Container.subclassing_factory(
-                items_state, internal_name=container_internal_name,
-                **container_dict)
+            container = Container.subclassing_factory(items_state, internal_name=container_internal_name,
+                                                      **container_dict)
             self._contents[container_internal_name] = container
 
 
@@ -873,8 +860,7 @@ an arbitrary ability score.
 :return:        An int.
         """
         if not hasattr(self, ability_score):
-            raise InternalError(
-                f"unrecognized ability {ability_score}")
+            raise InternalError(f"unrecognized ability {ability_score}")
         return math.floor((getattr(self, ability_score) - 10) / 2)
 
     def __init__(self, character_class_str):
@@ -887,9 +873,8 @@ class; each class has a different ability priority ordering.
 :character_class_str: One of 'Warrior', 'Thief', 'Priest' or 'Mage'.
         """
         if character_class_str not in self.weightings:
-            raise InternalError(
-                f"character class {character_class_str} not recognized, "
-                "should be one of 'Warrior', 'Thief', 'Priest' or 'Mage'")
+            raise InternalError(f"character class {character_class_str} not recognized, "
+                                + "should be one of 'Warrior', 'Thief', 'Priest' or 'Mage'")
         self.character_class = character_class_str
 
     # Rolling a six-sided die 4 times and then dropping the lowest roll
@@ -914,8 +899,7 @@ and the remaining three are summed to yield an ability score value.
         results_list.sort()
         results_list.reverse()
         for index in range(0, 6):
-            setattr(self, self.weightings[self.character_class][index],
-                    results_list[index])
+            setattr(self, self.weightings[self.character_class][index], results_list[index])
 
 
 class Equipment(object):
@@ -966,8 +950,7 @@ equipped.
         """
         return getattr(self, "wand", None)
 
-    def __init__(self, character_class, armor_item=None, shield_item=None,
-                 weapon_item=None, wand_item=None):
+    def __init__(self, character_class, armor_item=None, shield_item=None, weapon_item=None, wand_item=None):
         """
 This __init__ method instantiates the object with the given character
 class, and (optionally) armor, shield, weapon or wand items to equip.
@@ -986,9 +969,7 @@ This method equips the given Armor object.
 :returns: None.
         """
         if not isinstance(item, Armor):
-            raise InternalError(
-                "the method 'equip_armor()' only accepts 'armor' objects "
-                "for its argument")
+            raise InternalError("the method 'equip_armor()' only accepts 'armor' objects for its argument")
         self._equip("armor", item)
 
     def equip_shield(self, item):
@@ -999,9 +980,7 @@ This method equips the given Shield object.
 :returns: None.
         """
         if not isinstance(item, Shield):
-            raise InternalError(
-                "the method 'equip_shield()' only accepts 'shield' "
-                "objects for its argument")
+            raise InternalError("the method 'equip_shield()' only accepts 'shield' objects for its argument")
         self._equip("shield", item)
 
     def equip_weapon(self, item):
@@ -1012,9 +991,7 @@ This method equips the given Weapon object.
 :returns: None.
         """
         if not isinstance(item, Weapon):
-            raise InternalError(
-                "the method 'equip_weapon()' only accepts 'weapon' "
-                "objects for its argument")
+            raise InternalError("the method 'equip_weapon()' only accepts 'weapon' objects for its argument")
         self._equip("weapon", item)
 
     def equip_wand(self, item):
@@ -1025,9 +1002,7 @@ This method equips the given Wand object.
 :returns: None.
         """
         if not isinstance(item, Wand):
-            raise InternalError(
-                "the method 'equip_wand()' only accepts 'wand' objects "
-                "for its argument")
+            raise InternalError("the method 'equip_wand()' only accepts 'wand' objects for its argument")
         self._equip("wand", item)
 
     def unequip_armor(self):
@@ -1072,8 +1047,7 @@ the given slot.
 :return:         None.
         """
         if equipment_slot not in ("armor", "shield", "weapon", "wand"):
-            raise InternalError(
-                f"equipment slot {equipment_slot} not recognized")
+            raise InternalError(f"equipment slot {equipment_slot} not recognized")
         if equipment_slot == "armor":
             self.armor = item
         elif equipment_slot == "shield":
@@ -1092,8 +1066,7 @@ This private method unequips the given EquippableItem subclass object.
 :return:         None.
         """
         if equipment_slot not in ("armor", "shield", "weapon", "wand"):
-            raise InternalError(
-                f"equipment slot {equipment_slot} not recognized")
+            raise InternalError(f"equipment slot {equipment_slot} not recognized")
         if equipment_slot == "armor":
             self.armor = None
         elif equipment_slot == "shield":
@@ -1169,8 +1142,7 @@ points if a spellcaster, and inventory.
 
     _base_mana_points = {"Priest": 16, "Mage": 19}
 
-    _bonus_mana_points = {
-        -4: 0, -3: 0, -2: 0, -1: 0, 0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
+    _bonus_mana_points = {-4: 0, -3: 0, -2: 0, -1: 0, 0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
     # End data from that page.
 
     # These defaults are adapted from D&D 3rd edition rules. This info
@@ -1184,10 +1156,8 @@ points if a spellcaster, and inventory.
 
     _hitpoint_base = {"Warrior": 40, "Priest": 30, "Thief": 30, "Mage": 20}
 
-    def __init__(self, character_name_str, character_class_str,
-                 base_hit_points=0, base_mana_points=0,
-                 magic_key_stat=None, strength=0, dexterity=0, constitution=0,
-                 intelligence=0, wisdom=0, charisma=0):
+    def __init__(self, character_name_str, character_class_str, base_hit_points=0, base_mana_points=0,
+                 magic_key_stat=None, strength=0, dexterity=0, constitution=0, intelligence=0, wisdom=0, charisma=0):
         """
 This __init__ method sets the character's name and class. It
 instantiates a subordinate AbilityScores object, and initialized
@@ -1220,9 +1190,8 @@ the magic key stat if any.
                       Charisma score (optional).
         """
         if character_class_str not in {"Warrior", "Thief", "Priest", "Mage"}:
-            raise InternalError(
-                f"character class argument {character_class_str} not one "
-                "of Warrior, Thief, Priest or Mage")
+            raise InternalError(f"character class argument {character_class_str} not one of Warrior, Thief, "
+                                + "Priest or Mage")
         self.character_name = character_name_str
         self.character_class = character_class_str
         self.ability_scores = AbilityScores(character_class_str)
@@ -1230,20 +1199,16 @@ the magic key stat if any.
         # This step is refactored into a private method for readability.
         # All it does is set the ability scores if they're all nonzero.
 
-        self._set_up_ability_scores(strength, dexterity, constitution,
-                                    intelligence, wisdom, charisma)
+        self._set_up_ability_scores(strength, dexterity, constitution, intelligence, wisdom, charisma)
         self.inventory = ItemsMultiState()
         self._equipment = Equipment(character_class_str)
 
         # This step is refactored into a private method for readability.
         # Its logic is fairly complex, q.v.
 
-        self._set_up_hit_points_and_mana_points(base_hit_points,
-                                                base_mana_points,
-                                                magic_key_stat)
+        self._set_up_hit_points_and_mana_points(base_hit_points, base_mana_points, magic_key_stat)
 
-    def _set_up_ability_scores(self, strength=0, dexterity=0, constitution=0,
-                               intelligence=0, wisdom=0, charisma=0):
+    def _set_up_ability_scores(self, strength=0, dexterity=0, constitution=0, intelligence=0, wisdom=0, charisma=0):
         """
 This private method sets the ability scores from its arguments if they
 are nonzero. It is used by __init__ to set ability scores from its
@@ -1262,8 +1227,7 @@ arguments if furnished.
 :charisma:     An int, the set value for the character's Charisma
                score (optional).
         """
-        if all((strength, dexterity, constitution,
-                intelligence, wisdom, charisma)):
+        if all((strength, dexterity, constitution, intelligence, wisdom, charisma)):
             self.ability_scores.strength = strength
             self.ability_scores.dexterity = dexterity
             self.ability_scores.constitution = constitution
@@ -1272,16 +1236,13 @@ arguments if furnished.
             self.ability_scores.charisma = charisma
         elif any((strength, dexterity, constitution,
                   intelligence, wisdom, charisma)):
-            raise InternalError(
-                "The constructor for 'character' must be supplied with "
-                "either all of the arguments 'strength', 'dexterity', "
-                "'constitution', 'intelligence', 'wisdom', and 'charisma' "
-                "or none of them.")
+            raise InternalError("The constructor for 'character' must be supplied with either all of the arguments "
+                                + "'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', and 'charisma' "
+                                + "or none of them.")
         else:
             self.ability_scores.roll_stats()
 
-    def _set_up_hit_points_and_mana_points(self, base_hit_points,
-                                           base_mana_points, magic_key_stat):
+    def _set_up_hit_points_and_mana_points(self, base_hit_points, base_mana_points, magic_key_stat):
         """
 This private method sets up the Character object's hit points, and
 mana points if they're playing a spellcaster. Bonus hit points are
@@ -1305,22 +1266,18 @@ for Mages, and Wisdom for Priests).
         # or from the class's default in the _hitpoint_base dict.
 
         if base_hit_points:
-            self._hit_point_maximum = self._current_hit_points = (
-                (base_hit_points +
-                 self.ability_scores.constitution_mod * 3))
+            self._hit_point_maximum = self._current_hit_points = ((base_hit_points
+                                                                   + self.ability_scores.constitution_mod * 3))
         else:
-            self._hit_point_maximum = self._current_hit_points = (
-                self._hitpoint_base[self.character_class]
-                + self.ability_scores.constitution_mod * 3)
+            self._hit_point_maximum = self._current_hit_points = (self._hitpoint_base[self.character_class]
+                                                                  + self.ability_scores.constitution_mod * 3)
 
         # Magic key stat can be set from the arguments to __init__ or
         # drawn from class defaults.
 
         if magic_key_stat:
             if magic_key_stat not in ("intelligence", "wisdom", "charisma"):
-                raise InternalError(
-                    f"`magic_key_stat` argument '{magic_key_stat}' not "
-                    "recognized")
+                raise InternalError(f"`magic_key_stat` argument '{magic_key_stat}' not recognized")
             self.magic_key_stat = magic_key_stat
         else:
             if self.character_class == "Priest":
@@ -1338,13 +1295,11 @@ for Mages, and Wisdom for Priests).
         # spellcasting stat (16-18) can gain a lot of extra mana points.
 
         if base_mana_points:
-            self._mana_point_maximum = self._current_mana_points = (
-                base_mana_points
-                + self._bonus_mana_points[magic_key_stat_mod])
+            self._mana_point_maximum = self._current_mana_points = (base_mana_points
+                                                                    + self._bonus_mana_points[magic_key_stat_mod])
         elif self.character_class in self._base_mana_points:
-            self._mana_point_maximum = self._current_mana_points = (
-                self._base_mana_points[self.character_class]
-                + self._bonus_mana_points[magic_key_stat_mod])
+            self._mana_point_maximum = self._current_mana_points = (self._base_mana_points[self.character_class]
+                                                                    + self._bonus_mana_points[magic_key_stat_mod])
         else:
             self._mana_point_maximum = self._current_mana_points = 0
 
@@ -1364,9 +1319,8 @@ wielding a wand.
         # 5th edition rules as laid out in the 5th edition _Player's
         # Handbook_.
 
-        if (self.character_class in ("Warrior", "Priest")
-                or (self.character_class == "Mage"
-                    and self._equipment.weapon_equipped)):
+        if (self.character_class in ("Warrior", "Priest") or (self.character_class == "Mage"
+                                                              and self._equipment.weapon_equipped)):
             return "strength"
         elif self.character_class == "Thief":
             return "dexterity"
@@ -1489,10 +1443,8 @@ amount of mana points regained.
 :regaining_value: An int, the number of mana points to regain.
 :return:          An int.
         """
-        if (self._current_mana_points + regaining_value
-                > self._mana_point_maximum):
-            amount_regained = self._mana_point_maximum - \
-                self._current_mana_points
+        if (self._current_mana_points + regaining_value > self._mana_point_maximum):
+            amount_regained = self._mana_point_maximum - self._current_mana_points
             self._current_mana_points = self._mana_point_maximum
             return amount_regained
         else:
@@ -1535,8 +1487,7 @@ and the relevant ability score modifier.
         #
         # If no weapon or wand is equipped, None is returned.
 
-        if not (self._equipment.weapon_equipped
-                or self._equipment.wand_equipped):
+        if not (self._equipment.weapon_equipped or self._equipment.wand_equipped):
             return None
 
         # The ability score can be strength, dexterity or intelligence,
@@ -1550,9 +1501,7 @@ and the relevant ability score modifier.
         item_attacking_with = self._item_attacking_with
         stat_mod = getattr(self.ability_scores, stat_dependency+"_mod")
         total_mod = item_attacking_with.attack_bonus + stat_mod
-        mod_str = ("+" + str(total_mod) if total_mod > 0
-                   else str(total_mod) if total_mod < 0
-                   else "")
+        mod_str = ("+" + str(total_mod) if total_mod > 0 else str(total_mod) if total_mod < 0 else "")
 
         # Attack rolls are resolved with a roll of a twenty-sided die.
         # .utils.roll_dice can interpret this return value into a
@@ -1575,8 +1524,7 @@ wand or weapon, and the relevant ability score modifier.
         # Dungeons & Dragon 3rd edition. Those rules can be found at
         # <https://dndsrd.net/>.
 
-        if not (self._equipment.weapon_equipped
-                or self._equipment.wand_equipped):
+        if not (self._equipment.weapon_equipped or self._equipment.wand_equipped):
             return None
         stat_dependency = self._attack_or_damage_stat_dependency()
         item_attacking_with = self._item_attacking_with
@@ -1595,10 +1543,8 @@ wand or weapon, and the relevant ability score modifier.
 
         total_dmg_mod = dmg_mod + getattr(self.ability_scores,
                                           stat_dependency+"_mod")
-        dmg_str = dmg_base_dice + ("+" + str(total_dmg_mod)
-                                   if total_dmg_mod > 0
-                                   else str(total_dmg_mod)
-                                   if total_dmg_mod < 0
+        dmg_str = dmg_base_dice + ("+" + str(total_dmg_mod) if total_dmg_mod > 0
+                                   else str(total_dmg_mod) if total_dmg_mod < 0
                                    else "")
 
         # The dice expression is reassembled with the changed modifier,
@@ -1897,9 +1843,8 @@ object with the given argument.
 :return: None.
         """
         if not self.inventory.contains(item.internal_name):
-            raise InternalError(
-                "equipping an `item` object that is not in the "
-                "character's `inventory` object is not allowed")
+            raise InternalError("equipping an `item` object that is not in the character's `inventory` object is not "
+                                + "allowed")
         return self._equipment.equip_armor(item)
 
     def equip_shield(self, item):
@@ -1911,9 +1856,8 @@ object with the given argument.
 :return: None.
         """
         if not self.inventory.contains(item.internal_name):
-            raise InternalError(
-                "equipping an `item` object that is not in the "
-                "character's `inventory` object is not allowed")
+            raise InternalError("equipping an `item` object that is not in the character's `inventory` object is not "
+                                + "allowed")
         return self._equipment.equip_shield(item)
 
     def equip_weapon(self, item):
@@ -1925,9 +1869,8 @@ object with the given argument.
 :return: None.
         """
         if not self.inventory.contains(item.internal_name):
-            raise InternalError(
-                "equipping an `item` object that is not in the "
-                "character's `inventory` object is not allowed")
+            raise InternalError("equipping an `item` object that is not in the character's `inventory` object is not "
+                                + "allowed")
         return self._equipment.equip_weapon(item)
 
     def equip_wand(self, item):
@@ -1939,9 +1882,8 @@ object with the given argument.
 :return: None.
         """
         if not self.inventory.contains(item.internal_name):
-            raise InternalError(
-                "equipping an `item` object that is not in the "
-                "character's `inventory` object is not allowed")
+            raise InternalError("equipping an `item` object that is not in the character's `inventory` object is not "
+                                + "allowed")
         return self._equipment.equip_wand(item)
 
     def unequip_armor(self):
@@ -2016,12 +1958,9 @@ Dexterity for Thieves; and Intelligence for Mages wielding a wand).
 
         # A character with no weapon or wand has no attack bonus.
 
-        if (not (self._equipment.weapon_equipped
-                 or self.character_class == "Mage"
-                 and self._equipment.wand_equipped)):
-            raise InternalError(
-                "The character does not have a weapon equipped; no valid "
-                "value for `attack_bonus` can be computed.")
+        if (not (self._equipment.weapon_equipped or self.character_class == "Mage" and self._equipment.wand_equipped)):
+            raise InternalError("The character does not have a weapon equipped; no valid value for `attack_bonus` can "
+                                + "be computed.")
         stat_dependency = self._attack_or_damage_stat_dependency()
 
         # By the shield statement above, I know that the control flow
@@ -2029,8 +1968,7 @@ Dexterity for Thieves; and Intelligence for Mages wielding a wand).
         # be.
 
         if self.character_class == "Mage":
-            base_attack_bonus = (self._equipment.wand.attack_bonus
-                                 if self._equipment.wand_equipped
+            base_attack_bonus = (self._equipment.wand.attack_bonus if self._equipment.wand_equipped
                                  else self._equipment.weapon.attack_bonus)
         else:
             base_attack_bonus = self._equipment.weapon.attack_bonus
@@ -2038,8 +1976,7 @@ Dexterity for Thieves; and Intelligence for Mages wielding a wand).
         # The attack bonus is drawn from the weapon or wand's attack
         # bonus plus the relevant stat mod.
 
-        return base_attack_bonus + getattr(self.ability_scores,
-                                           stat_dependency + '_mod')
+        return base_attack_bonus + getattr(self.ability_scores, stat_dependency + '_mod')
 
 
 class Creature(IniEntry, Character):
@@ -2076,10 +2013,8 @@ file data.
         # Inventory object.
 
         char_init_argd, ini_entry_init_argd, equip_argd, invent_qty_pairs = \
-            self._seprt_argd_into_diff_arg_sets(
-                items_state, internal_name, **argd)
-        IniEntry.__init__(self, internal_name=internal_name,
-                          **ini_entry_init_argd)
+                self._seprt_argd_into_diff_arg_sets(items_state, internal_name, **argd)
+        IniEntry.__init__(self, internal_name=internal_name, **ini_entry_init_argd)
         self._post_init_slots_set_none(self.__slots__)
         Character.__init__(self, **char_init_argd)
 
@@ -2088,8 +2023,7 @@ file data.
         # initializations with invent_qty_pairs and equip_argd as
         # arguments.
 
-        self._init_inventory_and_equipment(items_state, invent_qty_pairs,
-                                           equip_argd)
+        self._init_inventory_and_equipment(items_state, invent_qty_pairs, equip_argd)
         self._items_state = items_state
 
     # Divides the argd passed to __init__ into arguments for
@@ -2133,8 +2067,7 @@ inventory quantity-internal name pairs, and an equipment dict.
         # argd and added to equip_argd.
 
         equip_argd = dict()
-        for ini_key in ("weapon_equipped", "armor_equipped",
-                        "shield_equipped", "wand_equipped"):
+        for ini_key in ("weapon_equipped", "armor_equipped", "shield_equipped", "wand_equipped"):
             if ini_key not in argd:
                 continue
             equip_argd[ini_key] = argd.pop(ini_key)
@@ -2152,24 +2085,18 @@ inventory quantity-internal name pairs, and an equipment dict.
 
         if any(not items_state.contains(invent_intrn_name)
                for _, invent_intrn_name in invent_qty_name_pairs):
-            missing_names = tuple(item_intrn_name
-                                  for _, item_intrn_name
-                                  in invent_qty_name_pairs
+            missing_names = tuple(item_intrn_name for _, item_intrn_name in invent_qty_name_pairs
                                   if not items_state.contains(item_intrn_name))
             pluralizer = "s" if len(missing_names) > 1 else ""
-            raise InternalError(
-                f"bad creatures.ini specification for creature "
-                f"{intrn_name}: creature ini config dict "
-                f"`inventory_items` value indicated item{pluralizer} not "
-                "present in `ItemsState` argument: "
-                + (", ".join(missing_names)))
+            raise InternalError(f"bad creatures.ini specification for creature {intrn_name}: creature ini config dict "
+                                + "`inventory_items` value indicated item{pluralizer} not present in `ItemsState` "
+                                + "argument: " + (", ".join(missing_names)))
 
         # The remaining argd is for IniEntry.__init__. And the four
         # argds are returned.
 
         ini_entry_init_argd = argd
-        return (char_init_argd, ini_entry_init_argd,
-                equip_argd, invent_qty_name_pairs)
+        return (char_init_argd, ini_entry_init_argd, equip_argd, invent_qty_name_pairs)
 
     def _init_inventory_and_equipment(self, items_state, invent_qty_name_pairs,
                                       equip_argd):
@@ -2198,10 +2125,8 @@ creature's inventory and equipped items.
 
         for equip_key, item_internal_name in equip_argd.items():
             if not items_state.contains(item_internal_name):
-                raise InternalError(
-                    "bad creatures.ini specification for creature "
-                    f"{self.internal_name}: items index object does not "
-                    f"contain an item named {item_internal_name}")
+                raise InternalError(f"bad creatures.ini specification for creature {self.internal_name}: items index "
+                                    + f"object does not contain an item named {item_internal_name}")
             item = items_state.get(item_internal_name)
             if equip_key == "weapon_equipped":
                 self.equip_weapon(item)
@@ -2223,9 +2148,7 @@ container (subclass corpse).
         internal_name = self.internal_name
         description = self.description_dead
         title = f"{self.title} corpse"
-        corpse = Corpse(self._items_state, internal_name,
-                        container_type="corpse",
-                        description=description, title=title)
+        corpse = Corpse(self._items_state, internal_name, container_type="corpse", description=description, title=title)
 
         # The items in inventory are saved to the new Corpse object's
         # contents.
@@ -2257,9 +2180,7 @@ types of creature.
         """
         self._contents = dict()
         for creature_internal_name, creature_dict in dict_of_dicts.items():
-            creature = Creature(items_state,
-                                internal_name=creature_internal_name,
-                                **creature_dict)
+            creature = Creature(items_state, internal_name=creature_internal_name, **creature_dict)
             self.set(creature.internal_name, creature)
 
 
@@ -2269,11 +2190,9 @@ This IniEntry subclass represents a single room. It is instantiated
 from a single section of a doors.ini file as returned by an IniConfig's
 dict-of-dicts sections attribute.
     """
-    __slots__ = ('internal_name', 'title', 'description', 'north_door',
-                 'west_door', 'south_door', 'east_door', 'occupant', 'item',
-                 'is_entrance', 'is_exit', '_containers_state',
-                 '_creatures_state', '_doors_state', '_items_state',
-                 'creature_here', 'container_here', 'items_here')
+    __slots__ = ('internal_name', 'title', 'description', 'north_door', 'west_door', 'south_door', 'east_door',
+                 'occupant', 'item', 'is_entrance', 'is_exit', '_containers_state', '_creatures_state', '_doors_state',
+                 '_items_state', 'creature_here', 'container_here', 'items_here')
 
     @property
     def has_north_door(self):
@@ -2315,8 +2234,7 @@ False otherwise.
         """
         return bool(getattr(self, "west_door", False))
 
-    def __init__(self, creatures_state, containers_state, doors_state,
-                 items_state, **argd):
+    def __init__(self, creatures_state, containers_state, doors_state, items_state, **argd):
         """
 This __init__ method defines a room object as given in a single section
 of rooms.ini. It needs a creatures_state object, a containers_state
@@ -2345,10 +2263,8 @@ attributes.
 
         if self.creature_here:
             if not self._creatures_state.contains(self.creature_here):
-                raise InternalError(
-                    f"room obj `{self.internal_name}` creature_here value "
-                    f"'{self.creature_here}' doesn't correspond to any "
-                    "creatures in creatures_state store")
+                raise InternalError(f"room obj `{self.internal_name}` creature_here value '{self.creature_here}' "
+                                    + "doesn't correspond to any creatures in creatures_state store")
             self.creature_here = self._creatures_state.get(self.creature_here)
 
         # If a container_here attribute is set, that value is taken
@@ -2357,12 +2273,9 @@ attributes.
 
         if self.container_here:
             if not self._containers_state.contains(self.container_here):
-                raise InternalError(
-                    f"room obj `{self.internal_name}` container_here "
-                    f"value '{self.container_here}' doesn't correspond to "
-                    "any creatures in creatures_state store")
-            self.container_here = self._containers_state.get(
-                self.container_here)
+                raise InternalError(f"room obj `{self.internal_name}` container_here value '{self.container_here}' "
+                                    + "doesn't correspond to any creatures in creatures_state store")
+            self.container_here = self._containers_state.get(self.container_here)
 
         # If an items_here attribute is set, it's parsed as the
         # compact item quantity/internal_name as interpretable
@@ -2380,8 +2293,7 @@ attributes.
             door_attr = f"{compass_dir}_door"
             if not getattr(self, door_attr, False):
                 continue
-            sorted_pair = tuple(sorted((self.internal_name,
-                                        getattr(self, door_attr))))
+            sorted_pair = tuple(sorted((self.internal_name, getattr(self, door_attr))))
             if sorted_pair[0].lower() == "exit":
                 sorted_pair = tuple(reversed(sorted_pair))
 
@@ -2393,8 +2305,7 @@ attributes.
             # the northern one.
 
             door = self._doors_state.get(*sorted_pair).copy()
-            door.title = (f"{compass_dir} doorway" if door.title == "doorway"
-                          else f"{compass_dir} door")
+            door.title = (f"{compass_dir} doorway" if door.title == "doorway" else f"{compass_dir} door")
             setattr(self, door_attr, door)
 
     @property
@@ -2436,8 +2347,7 @@ considers the player to currently be occupying.
         """
         return self._rooms_objs[self._room_cursor]
 
-    def __init__(self, creatures_state, containers_state, doors_state,
-                 items_state, **dict_of_dicts):
+    def __init__(self, creatures_state, containers_state, doors_state, items_state, **dict_of_dicts):
         """
 This __init__method instantiates every room object, given a
 creatures_state object, a containers_state object, a doors_state object
@@ -2462,8 +2372,7 @@ from rooms.ini as furnished by an IniConfig's sections attribute.
         # **dict_of_dicts.
 
         for room_internal_name, room_dict in dict_of_dicts.items():
-            room = Room(creatures_state, containers_state, doors_state,
-                        items_state, internal_name=room_internal_name,
+            room = Room(creatures_state, containers_state, doors_state, items_state, internal_name=room_internal_name,
                         **room_dict)
 
             # The cursor is set to the room identifies by
@@ -2515,9 +2424,8 @@ current room to an adjacent room by the given compass direction.
 
         if ((north and west) or (north and south) or (north and east)
                 or (west and south) or (west and east) or (south and east)):
-            raise InternalError(
-                "move() must receive only *one* True argument of the four "
-                "keys `north`, `south`, `east` and `west`")
+            raise InternalError("move() must receive only *one* True argument of the four keys `north`, `south`, "
+                                + "`east` and `west`")
         if north:
             exit_name = "north_door"
             exit_key = "NORTH"
@@ -2535,23 +2443,20 @@ current room to an adjacent room by the given compass direction.
         # raised.
 
         if not getattr(self.cursor, exit_name):
-            raise BadCommandError(
-                "MOVE", f"This room has no <{exit_key}> exit.")
+            raise BadCommandError("MOVE", f"This room has no <{exit_key}> exit.")
         door = getattr(self.cursor, exit_name)
 
         # If the Door object has is_locked=True, an exception is raised.
 
         if door.is_locked:
-            raise InternalError(
-                f"exiting {self.cursor.internal_name} via the "
-                f"{exit_name.replace('_',' ')}: door is locked")
+            raise InternalError(f"exiting {self.cursor.internal_name} via the {exit_name.replace('_',' ')}: door is "
+                                + "locked")
 
         # The Door object returns the other Room object it connects to;
         # the value for cursor is updated by setting _room_cursor to
         # that Room object's internal_name.
 
-        other_room_internal_name = door.other_room_internal_name(
-            self.cursor.internal_name)
+        other_room_internal_name = door.other_room_internal_name(self.cursor.internal_name)
         new_room_dest = self._rooms_objs[other_room_internal_name]
         self._room_cursor = new_room_dest.internal_name
 
@@ -2613,8 +2518,7 @@ set.
         setattr(self, "_character_class", class_str)
         self._incept_character_obj_if_possible()
 
-    def __init__(self, rooms_state, creatures_state, containers_state,
-                 doors_state, items_state):
+    def __init__(self, rooms_state, creatures_state, containers_state, doors_state, items_state):
         """
 This __init__ method stores an items_state object, a doors_state object,
 a containers_state object, a creatures_state object, and a rooms_state
@@ -2652,7 +2556,5 @@ character name and the character class have been set.
 
 :return: None.
         """
-        if (self.character is None and getattr(self, "character_name", None)
-                and getattr(self, "character_class", None)):
-            self.character = Character(self.character_name,
-                                       self.character_class)
+        if (self.character is None and getattr(self, "character_name", None) and getattr(self, "character_class", None)):
+            self.character = Character(self.character_name, self.character_class)
