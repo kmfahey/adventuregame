@@ -16,8 +16,8 @@ player tries to leave through a door that is locked.
 
     @property
     def message(self):
-        return (f"You can't leave the room via the {self.compass_dir} "
-                + f"{self.portal_type}. The {self.portal_type} is locked.")
+        return (f"You can't leave the room via the {self.compass_dir} {self.portal_type}. The {self.portal_type} is "
+                + "locked.")
 
     def __init__(self, compass_dir, portal_type):
         self.compass_dir = compass_dir
@@ -34,8 +34,7 @@ player uses it to leave the current dungeon room.
 
     @property
     def message(self):
-        return (f'You leave the room via the {self.compass_dir} '
-                + f'{self.portal_type}.')
+        return (f'You leave the room via the {self.compass_dir} {self.portal_type}.')
 
     def __init__(self, compass_dir, portal_type):
         self.compass_dir = compass_dir

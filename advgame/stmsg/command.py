@@ -30,13 +30,11 @@ incorrect syntax for a command has been used.
         # the proper_syntax_options tuple, and presents a corrective
         # outlining valid syntax for this command.
         command = self.command.upper().replace(' ', '\u00A0')
-        syntax_options = [f"'{command}\u00A0{syntax_option}'" if syntax_option
-                          else f"'{command}'"
+        syntax_options = [f"'{command}\u00A0{syntax_option}'" if syntax_option else f"'{command}'"
                           for syntax_option in self.proper_syntax_options]
         proper_syntax_options_str = join_strs_w_comma_conj(
                 syntax_options, 'or')
-        return (f'{self.command.upper()} command: bad syntax. '
-                + f'Should be {proper_syntax_options_str}.')
+        return (f'{self.command.upper()} command: bad syntax. Should be {proper_syntax_options_str}.')
 
     def __init__(self, command, proper_syntax_options):
         self.command = command
@@ -57,9 +55,7 @@ has used a command that is restricted to a class other than their own.
         # This message property assembles a list of classes (in
         # self.classes) which are authorized to use the given command
         # (in self.command).
-        classes_plural = ([class_str + 's' if class_str != 'thief'
-                           else 'thieves'
-                           for class_str in self.classes])
+        classes_plural = ([class_str + 's' if class_str != 'thief' else 'thieves' for class_str in self.classes])
         class_str = join_strs_w_comma_conj(classes_plural, 'and')
         return f'Only {class_str} can use the {self.command.upper()} command.'
 
@@ -90,14 +86,11 @@ advgame.process.CommandProcessor.ingame_commands for the lists.
         # player that the command they tried (in self.command) can't be
         # used in the current game mode (game_state_str), but commands
         # in this list (commands_str) can.
-        game_state_str = ('before game start' if not self.game_has_begun
-                          else 'during the game')
-        message_str = (f"Command '{self.command}' "
-                       + f"not allowed {game_state_str}. ")
-        commands_str = join_strs_w_comma_conj(
-                            [command.upper().replace('_', ' ')
-                             for command in sorted(self.allowed_commands)],
-                            'and')
+        game_state_str = ('before game start' if not self.game_has_begun else 'during the game')
+        message_str = (f"Command '{self.command}' not allowed {game_state_str}. ")
+        commands_str = join_strs_w_comma_conj([command.upper().replace('_', ' ')
+                                               for command in sorted(self.allowed_commands)],
+                                              'and')
         message_str += f'Commands allowed {game_state_str} are {commands_str}.'
         return message_str
 
@@ -124,12 +117,10 @@ was entered that is not known to the command processor.
         # recognized but in the current game mode (game_state_str)
         # commands in this list (commands_str) can.
         message_str = f"Command '{self.command}' not recognized. "
-        game_state_str = ('before game start' if not self.game_has_begun
-                          else 'during the game')
-        commands_str = join_strs_w_comma_conj(
-                            [command.upper().replace('_', ' ')
-                             for command in sorted(self.allowed_commands)],
-                            'and')
+        game_state_str = ('before game start' if not self.game_has_begun else 'during the game')
+        commands_str = join_strs_w_comma_conj([command.upper().replace('_', ' ')
+                                               for command in sorted(self.allowed_commands)],
+                                              'and')
         message_str += f'Commands allowed {game_state_str} are {commands_str}.'
         return message_str
 

@@ -29,13 +29,11 @@ returned instead.
         #   maximum.
         # * The player didn't regain any mana points because their mana
         #   points were already at maximum.
-        return_str = (f'You regained {self.amount_regained} mana points.'
-                      if self.amount_regained != 0
+        return_str = (f'You regained {self.amount_regained} mana points.' if self.amount_regained != 0
                       else "You didn't regain any mana points.")
         if self.current_mana_points == self.mana_point_total:
             return_str += ' You have full mana points!'
-        return_str += (f' Your mana points are {self.current_mana_points}/'
-                       + f'{self.mana_point_total}.')
+        return_str += (f' Your mana points are {self.current_mana_points}/{self.mana_point_total}.')
         return return_str
 
     def __init__(self, amount_regained, current_mana_points, mana_point_total):
@@ -104,8 +102,7 @@ number they have in their inventory.
 
     @property
     def message(self):
-        return (f"You can't drink {self.attempted_qty} {self.item_title}s. "
-                + f"You only have {self.possessed_qty} of them.")
+        return (f"You can't drink {self.attempted_qty} {self.item_title}s. You only have {self.possessed_qty} of them.")
 
     def __init__(self, item_title, attempted_qty, possessed_qty):
         self.item_title = item_title

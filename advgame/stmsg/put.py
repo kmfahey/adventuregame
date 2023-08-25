@@ -23,11 +23,12 @@ person.
         amount_put_pluralizer = 's' if self.amount_put > 1 else ''
         amount_left_pluralizer = 's' if self.amount_left > 1 or not self.amount_left else ''
         container_placed_location_clause = (f'in the {self.container_title}' if self.container_type == 'chest'
-                              else f"on the {self.container_title}'s person")
-        amount_left_clause = (f'{self.amount_left} {self.item_title}{amount_left_pluralizer} left' if self.amount_left != 0
-                        else f'no more {self.item_title}{amount_left_pluralizer}')
-        return (f'You put {self.amount_put} {self.item_title}{amount_put_pluralizer} {container_placed_location_clause}. '
-                f'You have {amount_left_clause}.')
+                                            else f"on the {self.container_title}'s person")
+        amount_left_clause = (f'{self.amount_left} {self.item_title}{amount_left_pluralizer} left'
+                              if self.amount_left != 0
+                              else f'no more {self.item_title}{amount_left_pluralizer}')
+        return (f'You put {self.amount_put} {self.item_title}{amount_put_pluralizer} '
+                + f'{container_placed_location_clause}. You have {amount_left_clause}.')
 
     def __init__(self, item_title, container_title, container_type, amount_put, amount_left):
         self.item_title = item_title

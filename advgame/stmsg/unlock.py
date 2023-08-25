@@ -36,7 +36,8 @@ player attempts to unlock a corpse, creature, doorway or item.
 
     @property
     def message(self):
-        singular_item = f'the suit of {self.target_title}' if self.target_type == 'armor' else f'the {self.target_title}'
+        singular_item = (f'the suit of {self.target_title}' if self.target_type == 'armor'
+                         else f'the {self.target_title}')
         item_pluralized = f'suits of {self.target_type}' if self.target_type == 'armor' else f'{self.target_type}s'
         return f"You can't unlock {singular_item}; {item_pluralized} are not unlockable."
 

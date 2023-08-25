@@ -6,7 +6,8 @@ from advgame.stmsg.gsm import GameStateMessage
 from advgame.utils import join_strs_w_comma_conj
 
 
-__all__ = ("CantPickUpChestCorpseCreatureOrDoor", "ItemNotFound", "ItemPickedUp", "QuantityUnclear", "TryingToPickUpMoreThanIsPresent",)
+__all__ = ("CantPickUpChestCorpseCreatureOrDoor", "ItemNotFound", "ItemPickedUp", "QuantityUnclear",
+           "TryingToPickUpMoreThanIsPresent",)
 
 
 class CantPickUpChestCorpseCreatureOrDoor(GameStateMessage):
@@ -48,7 +49,7 @@ they need to say `TAKE <item name> FROM <corpse or chest name>`.
             items_here_str_tuple = tuple(f'{item_count} {item_title}s' if item_count > 1
                                          else f'an {item_title}' if item_title[0] in 'aeiou'
                                          else f'a {item_title}'
-                                             for item_count, item_title in self.items_here)
+                                         for item_count, item_title in self.items_here)
             items_here_str = join_strs_w_comma_conj(items_here_str_tuple, 'and')
             return f'You see no {self.item_title}{item_pluralizer} here. However, there is {items_here_str} here.'
         else:

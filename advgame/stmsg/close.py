@@ -18,11 +18,9 @@ player attempts to close a corpse, creature, doorway or item.
     @property
     def message(self):
         if self.target_type == 'armor':
-            return (f"You can't close the {self.target_title}; "
-                    + f"suits of {self.target_type} are not closeable.")
+            return (f"You can't close the {self.target_title}; suits of {self.target_type} are not closeable.")
         else:
-            return (f"You can't close the {self.target_title}; "
-                    + f"{self.target_type}s are not closeable.")
+            return (f"You can't close the {self.target_title}; {self.target_type}s are not closeable.")
 
     def __init__(self, target_title, target_type):
         self.target_title = target_title

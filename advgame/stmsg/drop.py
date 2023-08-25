@@ -26,16 +26,13 @@ player successfully drops an item on the floor.
         # Armor is handled specially because the proper way to refer to
         # a singular armor piece isn't "a studded leather armor" but "a
         # suit of studded leather armor'.
-        drop_qty_or_ind_artcl = (
-                f'{self.amount_dropped} ' if self.amount_on_floor > 1
-                else 'a suit of ' if self.item_type == 'armor'
-                else 'an ' if self.item_title[0] in 'aeiou'
-                else 'a ')
-        floor_qty_or_ind_artcl = (
-                f'{self.amount_on_floor} ' if self.amount_on_floor > 1
-                else 'a suit of ' if self.item_type == 'armor'
-                else 'an ' if self.item_title[0] in 'aeiou'
-                else 'a ')
+        drop_qty_or_ind_artcl = (f'{self.amount_dropped} ' if self.amount_on_floor > 1
+                                 else 'a suit of ' if self.item_type == 'armor'
+                                 else 'an ' if self.item_title[0] in 'aeiou'
+                                 else 'a ')
+        floor_qty_or_ind_artcl = (f'{self.amount_on_floor} ' if self.amount_on_floor > 1
+                                  else 'a suit of ' if self.item_type == 'armor'
+                                  else 'an ' if self.item_title[0] in 'aeiou' else 'a ')
         # The *_pluralizer strings are appended to the item titles, and
         # are 's' if the item qty is more than 1, or '' if the item qty
         # is 1.
@@ -50,16 +47,12 @@ player successfully drops an item on the floor.
                 else f'{self.item_title}s' if self.amount_left != 1
                 else self.item_title)
         if self.amount_left >= 1:
-            return (f'You dropped {drop_qty_or_ind_artcl}{self.item_title}'
-                    + f'{drop_qty_pluralizer}. You see '
-                    + f'{floor_qty_or_ind_artcl}{self.item_title}'
-                    + f'{floor_qty_pluralizer} here. You have '
+            return (f'You dropped {drop_qty_or_ind_artcl}{self.item_title}{drop_qty_pluralizer}. You see '
+                    + f'{floor_qty_or_ind_artcl}{self.item_title}{floor_qty_pluralizer} here. You have '
                     + f'{self.amount_left} {left_qty_plr_or_sing_term} left.')
         else:
-            return (f'You dropped {drop_qty_or_ind_artcl}{self.item_title}'
-                    + f'{drop_qty_pluralizer}. You see '
-                    + f'{floor_qty_or_ind_artcl}{self.item_title}'
-                    + f'{floor_qty_pluralizer} here. You have no '
+            return (f'You dropped {drop_qty_or_ind_artcl}{self.item_title}{drop_qty_pluralizer}. You see '
+                    + f'{floor_qty_or_ind_artcl}{self.item_title}{floor_qty_pluralizer} here. You have no '
                     + f'{left_qty_plr_or_sing_term} left.')
 
     def __init__(self, item_title, item_type, amount_dropped, amount_on_floor,

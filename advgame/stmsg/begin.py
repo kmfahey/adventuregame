@@ -37,20 +37,17 @@ returned if they fail to.
         # The player needs to use both the SET NAME and the SET CLASS
         # commands before proceeding.
         if not self.character_name and not self.character_class:
-            return ('You need to set your character name and class before '
-                    + 'you begin the game. Use SET NAME <name> to set your '
-                    + 'name and SET CLASS <Warrior, Thief, Mage or Priest> '
-                    + 'to select your class.')
+            return ('You need to set your character name and class before you begin the game. Use SET NAME <name> to '
+                    + 'set your name and SET CLASS <Warrior, Thief, Mage or Priest> to select your class.')
         # The player needs to use the SET NAME command before
         # proceeding.
         elif not self.character_name:
-            return ('You need to set your character name before you begin '
-                    + "the game. Use SET NAME <name> to set your name.")
+            return ('You need to set your character name before you begin the game. Use SET NAME <name> to set your '
+                    + 'name.')
         # The player needs to use the SET CLASS command before
         # proceeding.
         else:
-            return ('You need to set your character class before you begin '
-                    + 'the game. Use SET CLASS <Warrior, Thief, '
+            return ('You need to set your character class before you begin the game. Use SET CLASS <Warrior, Thief, '
                     + 'Mage or Priest> to select your class.')
 
     def __init__(self, character_name, character_class):

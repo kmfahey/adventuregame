@@ -34,21 +34,16 @@ possessions are conveyed.
             if self.is_locked is True and self.is_closed is True:
                 return f'{self.container_description} It is closed and locked.'
             elif self.is_locked is False and self.is_closed is True:
-                return (f'{self.container_description} '
-                        + 'It is closed but unlocked.')
+                return (f'{self.container_description} It is closed but unlocked.')
             elif self.is_locked is False and self.is_closed is False:
-                return (f'{self.container_description} It is unlocked and '
-                        + f'open. {self._contents}')
+                return (f'{self.container_description} It is unlocked and open. {self._contents}')
             elif self.is_locked is True and self.is_closed is False:
-                raise InternalError('FoundContainerHere.message accessed '
-                                    + 'to describe a chest with the '
-                                    + 'impossible combination of is_locked '
-                                    + '= True and is_closed = False.')
+                raise InternalError('FoundContainerHere.message accessed to describe a chest with the impossible '
+                                    + 'combination of is_locked = True and is_closed = False.')
             elif self.is_locked is None and self.is_closed is True:
                 return f'{self.container_description} It is closed.'
             elif self.is_locked is None and self.is_closed is False:
-                return (f'{self.container_description} It is open. '
-                        + f'{self._contents}')
+                return (f'{self.container_description} It is open. {self._contents}')
             elif self.is_locked is True and self.is_closed is None:
                 return f'{self.container_description} It is locked.'
             elif self.is_locked is False and self.is_closed is None:
@@ -71,16 +66,14 @@ possessions are conveyed.
                 f'{qty} {item.title}s' if qty > 1
                 else f'an {item.title}' if item.title[0] in 'aeiou'
                 else f'a {item.title}'
-                for qty, item in sorted(self.container.values(),
-                                        key=lambda arg: arg[1].title)]
+                for qty, item in sorted(self.container.values(), key=lambda arg: arg[1].title)]
         # The list is condensed to a comma-separated string using a
         # utility function.
         contents_str = join_strs_w_comma_conj(contents_strs_tuple, 'and')
         # If the list is zero-length, the message conveys that the
         # container is empty.
         if len(contents_strs_tuple) == 0:
-            return ('It is empty.' if self.container_type == 'chest'
-                    else 'They have nothing on them.')
+            return ('It is empty.' if self.container_type == 'chest' else 'They have nothing on them.')
         # Otherwise a container-specific framing str is used to convey
         # the contents.
         elif self.container_type == 'chest':
@@ -95,8 +88,7 @@ possessions are conveyed.
         self.is_closed = container.is_closed
         self.container_type = container.container_type
         if self.is_locked is True and self.is_closed is False:
-            raise InternalError(f'Container {container.internal_name} has '
-                                + 'is_locked = True and is_open = False, '
+            raise InternalError(f'Container {container.internal_name} has is_locked = True and is_open = False, '
                                 + 'invalid combination of parameters.')
 
 
@@ -129,10 +121,8 @@ player targets a door or doorway in the current dungeon room.
         # This message property combines the Door object's description,
         # a statement of which wall the door is on, and a statement of
         # its closed/locked status.
-        closed_locked_str = ('It is closed and locked.'
-                             if self.door.is_closed and self.door.is_locked
-                             else 'It is closed but unlocked.'
-                             if self.door.is_closed and not self.door.is_locked
+        closed_locked_str = ('It is closed and locked.' if self.door.is_closed and self.door.is_locked
+                             else 'It is closed but unlocked.' if self.door.is_closed and not self.door.is_locked
                              else 'It is open.')
         return (f'{self.door.description} It is set in the '
                 + f'{self.compass_dir} wall. {closed_locked_str}')
@@ -160,12 +150,9 @@ how many are present.
         # on the floor, in the character's inventory, in a chest or on a
         # corpse's person.
         to_be_conjug = 'is' if self.item_qty == 1 else 'are'
-        item_location = ('on the floor'
-                         if self.container_title == 'floor'
-                         else 'in your inventory'
-                         if self.container_title == 'inventory'
-                         else f'in the {self.container_title}'
-                         if self.container_type == 'chest'
+        item_location = ('on the floor' if self.container_title == 'floor'
+                         else 'in your inventory' if self.container_title == 'inventory'
+                         else f'in the {self.container_title}' if self.container_type == 'chest'
                          else f"on the {self.container_title}'s person")
         return (f'{self.item_description} There {to_be_conjug} '
                 + f'{self.item_qty} {item_location}.')
@@ -194,18 +181,15 @@ player targets an item that can't be found where they said it was.
         # generic 'You see no X here' is returned.
         if self.item_location is not None:
             if self.location_type == 'chest':
-                return (f'The {self.item_location} has no '
-                        + f'{self.item_title} in it.')
+                return (f'The {self.item_location} has no {self.item_title} in it.')
             elif self.location_type == 'corpse':
-                return (f'The {self.item_location} has no '
-                        + f'{self.item_title} on its person.')
+                return (f'The {self.item_location} has no {self.item_title} on its person.')
             elif self.item_location == 'floor':
                 return f'There is no {self.item_title} on the floor.'
             elif self.item_location == 'inventory':
                 return f'You have no {self.item_title} in your inventory.'
             else:
-                raise InternalError(f'Location type {self.location_type} '
-                                    + 'not recognized.')
+                raise InternalError(f'Location type {self.location_type} not recognized.')
         else:
             return f'You see no {self.item_title} here.'
 

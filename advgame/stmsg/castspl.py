@@ -23,17 +23,15 @@ the player, while playing a Mage, has cast a damaging spell. Like
         #
         # The player character's spell killed their foe.
         if self.creature_slain:
-            return ('A magic missile springs from your gesturing hand and '
-                    + f'unerringly strikes the {self.creature_title}. '
-                    + f'You have done {self.damage_dealt} points of damage.')
+            return ('A magic missile springs from your gesturing hand and unerringly strikes the '
+                    + f'{self.creature_title}. You have done {self.damage_dealt} points of damage.')
         # The player character's spell didn't kill their foe, and,
         # as with any use of the ATTACK command, the creature is
         # counterattacking.
         else:
-            return ('A magic missile springs from your gesturing hand and '
-                    + f'unerringly strikes the {self.creature_title}. '
-                    + f'You have done {self.damage_dealt} points of damage. '
-                    + f'The {self.creature_title} turns to attack!')
+            return ('A magic missile springs from your gesturing hand and unerringly strikes the '
+                    + f'{self.creature_title}. You have done {self.damage_dealt} points of damage. The '
+                    + f'{self.creature_title} turns to attack!')
 
     def __init__(self, creature_title, damage_dealt, creature_slain):
         self.creature_title = creature_title
@@ -69,10 +67,8 @@ the player tries to cast a spell with insufficient mana points.
 
     @property
     def message(self):
-        return ("You don't have enough mana points to cast a spell. "
-                + f"Casting a spell costs {self.spell_mana_cost} mana "
-                + f'points. Your mana points are {self.current_mana_points}/'
-                + f'{self.mana_point_total}.')
+        return (f"You don't have enough mana points to cast a spell. Casting a spell costs {self.spell_mana_cost} mana "
+                + f"points. Your mana points are {self.current_mana_points}/{self.mana_point_total}.")
 
     def __init__(self, current_mana_points, mana_point_total, spell_mana_cost):
         self.current_mana_points = current_mana_points
@@ -90,8 +86,7 @@ the player uses the command in a room with no creature to attack.
 
     @property
     def message(self):
-        return ("You can't cast magic missile here; "
-                + "there is no creature here to target.")
+        return ("You can't cast magic missile here; there is no creature here to target.")
 
     def __init__(self):
         pass

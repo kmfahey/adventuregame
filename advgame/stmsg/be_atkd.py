@@ -19,8 +19,7 @@ how many hit points the player's character has left.
     def message(self):
         # This message property informs the player of the effect of a
         # creature's attack on their hit points.
-        return (f'The {self.creature_title} attacks! Their attack hits. '
-                + f'They did {self.damage_done} damage! You have '
+        return (f'The {self.creature_title} attacks! Their attack hits. They did {self.damage_done} damage! You have '
                 + f'{self.hit_points_left} hit points left.')
 
     def __init__(self, creature_title, damage_done, hit_points_left):

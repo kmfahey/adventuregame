@@ -27,24 +27,20 @@ includes a clause about the foe turning to attack.
         #
         # The attack was with a weapon and the creature died.
         if self.creature_slain and self.weapon_type == 'weapon':
-            return (f'Your attack on the {self.creature_title} hit! '
-                    + f'You did {self.damage_done} damage.')
+            return (f'Your attack on the {self.creature_title} hit! You did {self.damage_done} damage.')
         # The attack was with a wand and the creature died.
         elif self.creature_slain and self.weapon_type == 'wand':
-            return ('A bolt of energy from your wand hits the '
-                    + f'{self.creature_title}! You did {self.damage_done} '
+            return (f'A bolt of energy from your wand hits the {self.creature_title}! You did {self.damage_done} '
                     + f'damage. The {self.creature_title} turns to attack!')
         # The attack was with a weapon, the creature didn't die, and
         # they're counterattacking.
         elif not self.creature_slain and self.weapon_type == 'weapon':
-            return (f'Your attack on the {self.creature_title} hit! '
-                    + f'You did {self.damage_done} damage. The '
+            return (f'Your attack on the {self.creature_title} hit! You did {self.damage_done} damage. The '
                     + f'{self.creature_title} turns to attack!')
         # The attack was with a wand, the creature didn't die, and
         # they're counterattacking.
         else:
-            return ('A bolt of energy from your wand hits the '
-                    + f'{self.creature_title}! You did {self.damage_done} '
+            return (f'A bolt of energy from your wand hits the {self.creature_title}! You did {self.damage_done} '
                     + f'damage. The {self.creature_title} turns to attack!')
 
     def __init__(self, creature_title, damage_done, creature_slain,
@@ -73,13 +69,11 @@ counterattack if they live.
         # The attack was with a weapon, and the creature is
         # counterattacking.
         if self.weapon_type == 'weapon':
-            return (f'Your attack on the {self.creature_title} missed. '
-                    + 'It turns to attack!')
+            return (f'Your attack on the {self.creature_title} missed. It turns to attack!')
         # The attack was with a wand, and the creature is
         # counterattacking.
         else:
-            return ('A bolt of energy from your wand misses the '
-                    + f'{self.creature_title}. It turns to attack!')
+            return (f'A bolt of energy from your wand misses the {self.creature_title}. It turns to attack!')
 
     def __init__(self, creature_title, weapon_type):
         self.creature_title = creature_title
@@ -102,12 +96,10 @@ present in the game's current room.
         # There is a creature in the room by a different title and they
         # can be suggested as a better target.
         if self.opponent_present:
-            return (f"This room doesn't have a {self.creature_title_given}; "
-                    + f"but there is a {self.opponent_present}.")
+            return (f"This room doesn't have a {self.creature_title_given}; but there is a {self.opponent_present}.")
         # There is no creature in this room.
         else:
-            return (f"This room doesn't have a {self.creature_title_given}; "
-                    + "nobody is here.")
+            return (f"This room doesn't have a {self.creature_title_given}; nobody is here.")
 
     def __init__(self, creature_title_given, opponent_present=''):
         self.creature_title_given = creature_title_given

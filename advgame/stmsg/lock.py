@@ -37,11 +37,9 @@ class ElementNotUnlockable(GameStateMessage):
         # (a corpse, creature, doorway or item). It omits the direct
         # article is the item is armor.
         if self.target_type == 'armor':
-            return (f"You can't lock the {self.target_title}; "
-                    + f"suits of {self.target_type} are not lockable.")
+            return (f"You can't lock the {self.target_title}; suits of {self.target_type} are not lockable.")
         else:
-            return (f"You can't lock the {self.target_title}; "
-                    + f"{self.target_type}s are not lockable.")
+            return (f"You can't lock the {self.target_title}; {self.target_type}s are not lockable.")
 
     def __init__(self, target_title, target_type):
         self.target_title = target_title

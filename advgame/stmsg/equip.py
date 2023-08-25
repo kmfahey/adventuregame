@@ -27,8 +27,7 @@ they tried to equip a wand.
         # if the item is a suit of armor.
         item_usage_verb = usage_verb(self.item_type, gerund=False)
         pluralizer = 's' if self.item_type != 'armor' else ''
-        return (f"{self.character_class}s can't {item_usage_verb} "
-                + f"{self.item_title}{pluralizer}.")
+        return (f"{self.character_class}s can't {item_usage_verb} {self.item_title}{pluralizer}.")
 
     def __init__(self, character_class, item_title, item_type):
         self.character_class = character_class
