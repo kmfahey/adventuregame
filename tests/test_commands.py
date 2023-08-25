@@ -337,7 +337,7 @@ class Test_Begin_Game(unittest.TestCase):
         self.assertEqual(result[3].item_type, 'weapon')
         self.assertRegex(result[3].message,
                          r"^You're now wielding a mace. Your attack bonus is now [\d+-]+ and your weapon damage is now "
-                         + "[\dd+-]+.$")
+                         + r"[\dd+-]+.$")
         self.assertIsInstance(result[4], advg.stmsg.various.EnteredRoom)
         self.assertIsInstance(result[4].room, advg.Room)
         self.assertEqual(result[4].message,
