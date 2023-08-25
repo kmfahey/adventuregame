@@ -3,7 +3,6 @@
 import os
 import unittest
 
-from advgame.errors import InternalError
 from tests import *
 
 

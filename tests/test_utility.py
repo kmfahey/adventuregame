@@ -55,7 +55,7 @@ luctus volutpat sit.
 """
 
 
-class Test_Textwrapper(unittest.TestCase):
+class TestTextwrapper(unittest.TestCase):
 
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
@@ -66,7 +66,7 @@ class Test_Textwrapper(unittest.TestCase):
         self.assertEqual(wrapped_text, LOREM_IPSUM_WRAPPED)
 
 
-class Test_Isfloat(unittest.TestCase):
+class TestIsfloat(unittest.TestCase):
 
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
@@ -84,7 +84,7 @@ class Test_Isfloat(unittest.TestCase):
         self.assertFalse(advg.isfloat('-'))
 
 
-class Test_Lexical_Number_to_Digits_1(unittest.TestCase):
+class TestLexicalNumberToDigits1(unittest.TestCase):
 
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
@@ -105,7 +105,7 @@ class Test_Lexical_Number_to_Digits_1(unittest.TestCase):
         self.assertIs(advg.lexical_number_to_digits('one hundred'), math.nan)
 
 
-class Test_Lexical_Number_to_Digits_2(unittest.TestCase):
+class TestLexicalNumberToDigits2(unittest.TestCase):
 
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)

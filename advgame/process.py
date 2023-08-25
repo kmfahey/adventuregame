@@ -217,7 +217,7 @@ on this object, a Character object will be added and the game can begin.
             attrval = getattr(self, method_name, None)
             if not isinstance(attrval, types.MethodType):
                 continue
-            if (not method_name.endswith('_command') or method_name.startswith('_')):
+            if not method_name.endswith('_command') or method_name.startswith('_'):
                 continue
             command = method_name.rsplit('_', maxsplit=1)[0]
             self.dispatch_table[command] = attrval
@@ -267,7 +267,7 @@ string.
         if command == 'cast' and len(tokens) and tokens[0].lower() == 'spell':
             # A two-word command.
             command += '_' + tokens.pop(0).lower()
-        elif (command == 'leave' and len(tokens) and tokens[0].lower() in ('using', 'via')):
+        elif command == 'leave' and len(tokens) and tokens[0].lower() in ('using', 'via'):
             # 'via' or 'using' is dropped.
             tokens.pop(0)
         elif command == 'begin':
@@ -315,7 +315,7 @@ string.
         # table. If it's not present, a NotRecognized error is
         # returned. The commands allowed in the current game mode are
         # included.
-        if (command not in self.dispatch_table and not self.game_state.game_has_begun):
+        if command not in self.dispatch_table and not self.game_state.game_has_begun:
             return stmsg.command.NotRecognized(command, self.pregame_commands, self.game_state.game_has_begun),
         elif (command not in self.dispatch_table
                 and self.game_state.game_has_begun):
@@ -387,7 +387,7 @@ object and a .stmsg.various.FoeDeath object are returned.
             return stmsg.attack.OpponentNotFound(creature_title),
         # If the arguments don't match the title of the creature in the
         # current room, an error is returned.
-        elif (self.game_state.rooms_state.cursor.creature_here.title.lower() != creature_title):
+        elif self.game_state.rooms_state.cursor.creature_here.title.lower() != creature_title:
             return stmsg.attack.OpponentNotFound(creature_title,
                                                  self.game_state.rooms_state.cursor.creature_here.title),
 
@@ -837,7 +837,7 @@ restored, and a .stmsg.drink.DrankManaPotion object is returned.
         # This command requires an argument, which may include a direct
         # or indirect article. If that standard isn't met, a syntax
         # error is returned.
-        if (not len(tokens) or len(tokens) == 1 and tokens[0] in ('the', 'a', 'an')):
+        if not len(tokens) or len(tokens) == 1 and tokens[0] in ('the', 'a', 'an'):
             return stmsg.command.BadSyntax('DRINK', COMMANDS_SYNTAX['DRINK']),
 
         # Any leading article is stripped, but it signals that the
@@ -848,7 +848,7 @@ restored, and a .stmsg.drink.DrankManaPotion object is returned.
 
         # Otherwise, I check if the first token is a digital or lexical
         # integer.
-        elif (tokens[0].isdigit() or lexical_number_in_1_99_re.match(tokens[0])):
+        elif tokens[0].isdigit() or lexical_number_in_1_99_re.match(tokens[0]):
             # If the first token parses as an int, I cast it and
             # set qty_to_drink. Otherwise, the utility function
             # advgame.utilsities.lexical_number_to_digits() is used
@@ -1170,7 +1170,7 @@ object is returned.
         # type equipped; if so, it's unequipped, and a item-unequipped
         # return value is appended to the return values tuple.
         return_values = tuple()
-        if (item.item_type == 'armor' and self.game_state.character.armor_equipped):
+        if item.item_type == 'armor' and self.game_state.character.armor_equipped:
             # The player is trying to equip armor but is already wearing
             # armor, so their existing armor is unequipped.
             old_equipped = self.game_state.character.armor_equipped
@@ -1298,7 +1298,7 @@ object.
 
             # If the command doesn't occur in commands_tuple, a
             # command-not-recognized error is returned.
-            if (command_lc not in (self.ingame_commands | self.pregame_commands)):
+            if command_lc not in (self.ingame_commands | self.pregame_commands):
                 commands_tuple = tuple(sorted(strval.replace('_', ' ').upper()
                                               for strval in self.ingame_commands | self.pregame_commands))
                 return stmsg.help_.NotRecognized(command_uc, commands_tuple),
@@ -1356,7 +1356,7 @@ the room, returns a .stmsg.various.AmbiguousDoorSpecifier object.
         """
         # This method takes arguments of a specific form; if the
         # arguments don't match it, a syntax error is returned.
-        if (not len(tokens) or not 2 <= len(tokens) <= 4 or tokens[-1] not in ('door', 'doorway')):
+        if not len(tokens) or not 2 <= len(tokens) <= 4 or tokens[-1] not in ('door', 'doorway'):
             return stmsg.command.BadSyntax('LEAVE', COMMANDS_SYNTAX['LEAVE']),
 
         # The format for specifying doors is flexible, and is
@@ -1466,7 +1466,7 @@ chest key to lock the specified door or chest, returns a
         # isn't used for anything (it's not expended), so I don't save
         # it, just check if it's there.
         key_required = ('door key' if isinstance(element_to_lock, Door) else 'chest key')
-        if (not any(item.title == key_required for _, item in self.game_state.character.list_items())):
+        if not any(item.title == key_required for _, item in self.game_state.character.list_items()):
             # Lacking the key, a don't-possess-correct-key error is
             # returned.
             return stmsg.lock.DontPossessCorrectKey(element_to_lock.title, key_required),
@@ -1630,7 +1630,7 @@ chest key to lock the specified door or chest, returns a
             # within the player's reach, so the appropriate error value
             # is returned indicating the target isn't present.
             if command.lower() == 'unlock':
-                return stmsg.ElementToLockNotHere(target_title),
+                return stmsg.unlock.ElementToLockNotHere(target_title),
             elif command.lower() == 'lock':
                 return stmsg.lock.ElementToUnlockNotHere(target_title),
             elif command.lower() == 'open':
@@ -1686,7 +1686,7 @@ chest key to lock the specified door or chest, returns a
         matching_doors = list()
         for door in doors:
             if compass_dir is not None and door_type is not None:
-                if (not (door.title.startswith(compass_dir) and door.door_type == door_type)):
+                if not (door.title.startswith(compass_dir) and door.door_type == door_type):
                     continue
             elif compass_dir is not None:
                 if not door.title.startswith(compass_dir):
@@ -1794,7 +1794,7 @@ on the floor, in a chest, on a corpse, or in inventory, returns a
         # This conditional is more easily accomplished with a regex
         # than a multi-line boolean chain. `look_at_door_re` is defined
         # above.
-        elif (tokens[-1] in ('door', 'doorway') and not self.look_at_door_re.match(' '.join(tokens))):
+        elif tokens[-1] in ('door', 'doorway') and not self.look_at_door_re.match(' '.join(tokens)):
             return stmsg.command.BadSyntax('LOOK AT', COMMANDS_SYNTAX['LOOK AT']),
 
         # These four booleans are initialized to False so they can be
@@ -1869,12 +1869,12 @@ on the floor, in a chest, on a corpse, or in inventory, returns a
 
         # If the target_title matches the creature in this room, a
         # found-creature-here value is returned.
-        if (creature_here is not None and creature_here.title == target_title.lower()):
+        if creature_here is not None and creature_here.title == target_title.lower():
             return stmsg.lookat.FoundCreatureHere(creature_here.description),
 
         # If the container here is not None and matches, a
         # found-container-here value is returned.
-        elif (container_here is not None and container_here.title == target_title.lower()):
+        elif container_here is not None and container_here.title == target_title.lower():
             return stmsg.lookat.FoundContainerHere(container_here),
 
         # Otherwise, if the command specified an item that is contained
@@ -1900,7 +1900,7 @@ on the floor, in a chest, on a corpse, or in inventory, returns a
                 # Either one would need to be the value for
                 # container_here, so I test its title against the
                 # location_title.
-                if (container_here is None or container_here.title != location_title):
+                if container_here is None or container_here.title != location_title:
 
                     # If it doesn't match, a container-not-found error
                     # is returned.
@@ -1909,7 +1909,7 @@ on the floor, in a chest, on a corpse, or in inventory, returns a
                 # Otherwise, if the container is non-None and its title
                 # matches, I iterate through the container's contents
                 # looking for a matching item title.
-                elif (container_here is not None and container_here.title == location_title):
+                elif container_here is not None and container_here.title == location_title:
                     for item_qty, item in container_here.values():
                         if item.title != target_title:
                             continue
@@ -1969,7 +1969,7 @@ on the floor, in a chest, on a corpse, or in inventory, returns a
 
                 # It's a defensive item, so its armor bonus is
                 # mentioned.
-                descr_append_str = (f' Its armor bonus is +{element.armor_bonus}. ')
+                descr_append_str = f' Its armor bonus is +{element.armor_bonus}. '
             can_use_list = []
             # All Equippable items have *_can_use attributes expresing
             # class limitations, so I survey those.
@@ -2112,7 +2112,7 @@ to False, and a .stmsg.pklock.TargetHasBeenUnlocked object is returned.
 
         # This command requires an argument. If called with no argument
         # or a patently invalid one, a syntax error is returned.
-        if (not len(tokens) or tokens[0] != 'on' or tokens == ('on',) or tokens == ('on', 'the',)):
+        if not len(tokens) or tokens[0] != 'on' or tokens == ('on',) or tokens == ('on', 'the',):
             return stmsg.command.BadSyntax('PICK LOCK', COMMANDS_SYNTAX['PICK LOCK']),
         elif tokens[:2] == ('on', 'the'):
             tokens = tokens[2:]
@@ -2291,7 +2291,7 @@ from the floor, and added to the character's inventory, and a
         # container_type.
         elif (self.game_state.rooms_state.cursor.container_here is not None
                 and self.game_state.rooms_state.cursor.container_here.title == target_title):
-            unpickupable_element_type = (self.game_state.rooms_state.cursor.container_here.container_type)
+            unpickupable_element_type = self.game_state.rooms_state.cursor.container_here.container_type
 
         # If unpickupable_element_type acquired a value, a
         # cant-pick-up-element error is returned.
@@ -2384,7 +2384,7 @@ from the floor, and added to the character's inventory, and a
 
         # This long boolean checks whether the first token in tokens can
         # indicate quantity.
-        if (tokens[0] in ('a', 'an', 'the') or tokens[0].isdigit() or lexical_number_in_1_99_re.match(tokens[0])):
+        if tokens[0] in ('a', 'an', 'the') or tokens[0].isdigit() or lexical_number_in_1_99_re.match(tokens[0]):
             # If the quantity indicator is all there is, a syntax error
             # is returned.
             if len(tokens) == 1:
@@ -2649,7 +2649,7 @@ returned.
             item_tokens = item_tokens[1:]
 
         # The first token is an indirect article, which would mean '1'.
-        elif (item_tokens[0] == 'a' or item_tokens[0] == 'an' or item_tokens[0] == 'the'):
+        elif item_tokens[0] == 'a' or item_tokens[0] == 'an' or item_tokens[0] == 'the':
             if len(item_tokens) == 1:
                 # item_tokens is *just* ('a',) or ('an',) or ('the',)
                 # which is a syntax error.
@@ -2671,7 +2671,7 @@ returned.
             if quantity == 1:
                 # quantity is 1 but the item title is plural, so I
                 # return a syntax error.
-                return ((stmsg.take.QuantityUnclear(),) if command == 'take' else (stmsg.put.QuantityUnclear(),))
+                return (stmsg.take.QuantityUnclear(),) if command == 'take' else (stmsg.put.QuantityUnclear(),)
 
             # I strip the plural s.
             item_tokens = item_tokens[:-1] + (item_tokens[-1].rstrip('s'),)
@@ -2938,7 +2938,7 @@ when it's of length 1. The STATUS command takes no arguments.
         # attack_bonus and damage are only set if a weapon is
         # equipped... or if the player character is a Mage and a wand is
         # equipped.
-        if (character.weapon_equipped or (character.character_class == 'Mage' and character.wand_equipped)):
+        if character.weapon_equipped or (character.character_class == 'Mage' and character.wand_equipped):
             status_gsm_argd['attack_bonus'] = character.attack_bonus
             status_gsm_argd['damage'] = character.damage_roll
         else:
@@ -3003,7 +3003,7 @@ the chest or the corpse and added to the character's inventory, and a
 
         # As always with private workhorse methods, it may have returned
         # an error value; if so, I return it.
-        if (len(results) == 1 and isinstance(results[0], stmsg.GameStateMessage)):
+        if len(results) == 1 and isinstance(results[0], stmsg.GameStateMessage):
             return results
         else:
             # Otherwise, I extract the values parsed out of tokens from
@@ -3103,7 +3103,7 @@ object.
                 # no armor equipped I return a item-not-equipped error.
                 return stmsg.unequip.ItemNotEquipped(item_title, 'armor'),
             else:
-                if (self.game_state.character.armor_equipped.title != item_title):
+                if self.game_state.character.armor_equipped.title != item_title:
                     # If armor_equipped's title doesn't match the
                     # argument item_title, I return an item-not-equipped
                     # error.
@@ -3122,7 +3122,7 @@ object.
                 # error.
                 return stmsg.unequip.ItemNotEquipped(item_title, 'shield'),
             else:
-                if (self.game_state.character.shield_equipped.title != item_title):
+                if self.game_state.character.shield_equipped.title != item_title:
                     # If shield_equipped's title doesn't match the
                     # argument item_title, I return an item-not-equipped
                     # error.
@@ -3169,7 +3169,7 @@ object.
             if self.game_state.character.weapon_equipped is None:
                 return stmsg.unequip.ItemNotEquipped(item.title, 'weapon'),
             else:
-                if (self.game_state.character.weapon_equipped.title != item_title):
+                if self.game_state.character.weapon_equipped.title != item_title:
                     # If weapon_equipped's title doesn't match the
                     # argument item_title, I return an item-not-equipped
                     # error.

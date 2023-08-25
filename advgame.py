@@ -1,10 +1,8 @@
 #!/usr/bin/python3
 
-import functools
 import iniconfig
 import os
 import tempfile
-import textwrap
 
 import advgame as advg
 
