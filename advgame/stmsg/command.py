@@ -4,8 +4,7 @@ from advgame.stmsg.gsm import GameStateMessage
 from advgame.utils import join_strs_w_comma_conj
 
 
-__all__ = ("BadSyntax", "ClassRestricted", "NotAllowedNow",
-           "NotRecognized")
+__all__ = ("BadSyntax", "ClassRestricted", "NotAllowedNow", "NotRecognized")
 
 
 class BadSyntax(GameStateMessage):

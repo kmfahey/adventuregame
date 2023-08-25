@@ -3,8 +3,7 @@
 from advgame.stmsg.gsm import GameStateMessage
 
 
-__all__ = ("CastDamagingSpell", "CastHealingSpell", "InsufficientMana",
-           "NoCreatureToTarget",)
+__all__ = ("CastDamagingSpell", "CastHealingSpell", "InsufficientMana", "NoCreatureToTarget",)
 
 
 class CastDamagingSpell(GameStateMessage):

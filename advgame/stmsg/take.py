@@ -3,8 +3,7 @@
 from advgame.stmsg.gsm import GameStateMessage
 
 
-__all__ = ("ItemNotFoundInContainer", "ItemOrItemsTaken", "QuantityUnclear",
-           "TryingToTakeMoreThanIsPresent")
+__all__ = ("ItemNotFoundInContainer", "ItemOrItemsTaken", "QuantityUnclear", "TryingToTakeMoreThanIsPresent")
 
 
 class ItemNotFoundInContainer(GameStateMessage):

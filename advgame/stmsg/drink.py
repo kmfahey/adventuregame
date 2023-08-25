@@ -3,8 +3,7 @@
 from advgame.stmsg.gsm import GameStateMessage
 
 
-__all__ = ("DrankManaPotion", "DrankManaPotionWhenNotASpellcaster",
-           "ItemNotDrinkable", "ItemNotInInventory",
+__all__ = ("DrankManaPotion", "DrankManaPotionWhenNotASpellcaster", "ItemNotDrinkable", "ItemNotInInventory",
            "TriedToDrinkMoreThanPossessed", "QuantityUnclear",)
 
 

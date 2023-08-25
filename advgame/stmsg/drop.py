@@ -3,8 +3,7 @@
 from advgame.stmsg.gsm import GameStateMessage
 
 
-__all__ = ("DroppedItem", "QuantityUnclear", "TryingToDropItemYouDontHave",
-           "TryingToDropMoreThanYouHave",)
+__all__ = ("DroppedItem", "QuantityUnclear", "TryingToDropItemYouDontHave", "TryingToDropMoreThanYouHave",)
 
 
 class DroppedItem(GameStateMessage):

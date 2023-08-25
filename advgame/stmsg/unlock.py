@@ -3,8 +3,7 @@
 from advgame.stmsg.gsm import GameStateMessage
 
 
-__all__ = ("DontPossessCorrectKey", "ElementNotLockable",
-           "ElementHasBeenLocked", "ElementIsAlreadyLocked",
+__all__ = ("DontPossessCorrectKey", "ElementNotLockable", "ElementHasBeenLocked", "ElementIsAlreadyLocked",
            "ElementToLockNotHere")
 
 

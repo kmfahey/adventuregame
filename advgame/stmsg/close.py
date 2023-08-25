@@ -3,8 +3,7 @@
 from advgame.stmsg.gsm import GameStateMessage
 
 
-__all__ = ("ElementNotCloseable", "ElementHasBeenClosed",
-           "ElementIsAlreadyClosed", "ElementToCloseNotHere",)
+__all__ = ("ElementNotCloseable", "ElementHasBeenClosed", "ElementIsAlreadyClosed", "ElementToCloseNotHere",)
 
 
 class ElementNotCloseable(GameStateMessage):

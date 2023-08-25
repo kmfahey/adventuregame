@@ -3,8 +3,7 @@
 from advgame.stmsg.gsm import GameStateMessage
 
 
-__all__ = ("DontPossessCorrectKey", "ElementNotUnlockable",
-           "ElementHasBeenUnlocked", "ElementIsAlreadyUnlocked",
+__all__ = ("DontPossessCorrectKey", "ElementNotUnlockable", "ElementHasBeenUnlocked", "ElementIsAlreadyUnlocked",
            "ElementToUnlockNotHere")
 
 
