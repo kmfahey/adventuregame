@@ -13,15 +13,15 @@ import operator
 import re
 import types
 
-import advgame.elements as elem
-import advgame.errors as excpt
 import advgame.stmsg as stmsg
 
+from advgame.errors import InternalError
+from advgame.elements import Chest, Corpse, Door, Doorway, EquippableItem, ItemsMultiState, Potion, Wand, Weapon
 from advgame.utils import join_strs_w_comma_conj, roll_dice, lexical_number_in_1_99_re, lexical_number_to_digits, \
         digit_re
 
 
-__name__ = 'advgame.process'
+__all__ = "CommandProcessor",
 
 
 # This module consists solely of the CommandProcessor class and
@@ -36,7 +36,6 @@ __name__ = 'advgame.process'
 # logic that completes the command task is often a brief coda to a
 # sophisticated conditional handling all the cases where the command
 # can't complete.
-
 
 
 SPELL_DAMAGE = '3d8+5'
@@ -60,41 +59,41 @@ STARTER_GEAR = {'Mage': {'weapon': 'Staff'},
 # syntax examples become difficult to read if wrapped across a line.
 
 COMMANDS_SYNTAX = {'ATTACK': ('<creature\xa0name>',),
-                    'BEGIN GAME': ('',),
-                    'CAST SPELL': ('',),
-                    'CLOSE': ('<door\xa0name>', '<chest\xa0name>'),
-                    'DRINK': ('[THE]\xa0<potion\xa0name>', '<number>\xa0<potion\xa0name>(s)'),
-                    'DROP': ('<item\xa0name>', '<number>\xa0<item\xa0name>'),
-                    'EQUIP': ('<armor\xa0name>', '<shield\xa0name>', '<wand\xa0name>', '<weapon\xa0name>'),
-                    'HELP': ('', '<command\xa0name>'),
-                    'INVENTORY': ('',),
-                    'LEAVE': ('[USING\xa0or\xa0VIA]\xa0<compass\xa0direction>\xa0DOOR',
-                              '[USING\xa0or\xa0VIA]\xa0<compass\xa0direction>\xa0DOORWAY',
-                              '[USING\xa0or\xa0VIA]\xa0<door\xa0name>',
-                              '[USING\xa0or\xa0VIA]\xa0<compass\xa0direction>\xa0<door\xa0name>'),
-                    'LOCK': ('<door\xa0name>', '<chest\xa0name>'),
-                    'LOOK AT': ('<item\xa0name>',
-                                '<item\xa0name>\xa0IN\xa0<chest\xa0name>',
-                                '<item\xa0name>\xa0IN\xa0INVENTORY',
-                                '<item\xa0name>\xa0ON\xa0<corpse\xa0name>',
-                                '<compass\xa0direction>\xa0DOOR',
-                                '<compass\xa0direction>\xa0DOORWAY'),
-                    'OPEN': ('<door\xa0name>', '<chest\xa0name>'),
-                    'PICK LOCK': ('ON\xa0[THE]\xa0<chest\xa0name>', 'ON\xa0[THE]\xa0<door\xa0name>'),
-                    'PICK UP': ('<item\xa0name>', '<number>\xa0<item\xa0name>'),
-                    'PUT': ('<item\xa0name>\xa0IN\xa0<chest\xa0name>',
-                            '<number>\xa0<item\xa0name>\xa0IN\xa0<chest\xa0name>',
-                            '<item\xa0name>\xa0ON\xa0<corpse\xa0name>',
-                            '<number>\xa0<item\xa0name>\xa0ON\xa0<corpse\xa0name>'),
-                    'QUIT': ('',),
-                    'REROLL': ('',),
-                    'SET CLASS': ('[TO]\xa0<Warrior,\xa0Thief,\xa0Mage\xa0or\xa0Priest>',),
-                    'SET NAME': ('[TO]\xa0<character\xa0name>',),
-                    'STATUS': ('',),
-                    'TAKE': ('<item\xa0name>\xa0FROM\xa0<container\xa0name>',
-                             '<number>\xa0<item\xa0name>\xa0FROM\xa0<container\xa0name>'),
-                    'UNEQUIP': ('<armor\xa0name>', '<shield\xa0name>', '<wand\xa0name>', '<weapon\xa0name>'),
-                    'UNLOCK': ('<door\xa0name>', '<chest\xa0name>')}
+                   'BEGIN GAME': ('',),
+                   'CAST SPELL': ('',),
+                   'CLOSE': ('<door\xa0name>', '<chest\xa0name>'),
+                   'DRINK': ('[THE]\xa0<potion\xa0name>', '<number>\xa0<potion\xa0name>(s)'),
+                   'DROP': ('<item\xa0name>', '<number>\xa0<item\xa0name>'),
+                   'EQUIP': ('<armor\xa0name>', '<shield\xa0name>', '<wand\xa0name>', '<weapon\xa0name>'),
+                   'HELP': ('', '<command\xa0name>'),
+                   'INVENTORY': ('',),
+                   'LEAVE': ('[USING\xa0or\xa0VIA]\xa0<compass\xa0direction>\xa0DOOR',
+                             '[USING\xa0or\xa0VIA]\xa0<compass\xa0direction>\xa0DOORWAY',
+                             '[USING\xa0or\xa0VIA]\xa0<door\xa0name>',
+                             '[USING\xa0or\xa0VIA]\xa0<compass\xa0direction>\xa0<door\xa0name>'),
+                   'LOCK': ('<door\xa0name>', '<chest\xa0name>'),
+                   'LOOK AT': ('<item\xa0name>',
+                               '<item\xa0name>\xa0IN\xa0<chest\xa0name>',
+                               '<item\xa0name>\xa0IN\xa0INVENTORY',
+                               '<item\xa0name>\xa0ON\xa0<corpse\xa0name>',
+                               '<compass\xa0direction>\xa0DOOR',
+                               '<compass\xa0direction>\xa0DOORWAY'),
+                   'OPEN': ('<door\xa0name>', '<chest\xa0name>'),
+                   'PICK LOCK': ('ON\xa0[THE]\xa0<chest\xa0name>', 'ON\xa0[THE]\xa0<door\xa0name>'),
+                   'PICK UP': ('<item\xa0name>', '<number>\xa0<item\xa0name>'),
+                   'PUT': ('<item\xa0name>\xa0IN\xa0<chest\xa0name>',
+                           '<number>\xa0<item\xa0name>\xa0IN\xa0<chest\xa0name>',
+                           '<item\xa0name>\xa0ON\xa0<corpse\xa0name>',
+                           '<number>\xa0<item\xa0name>\xa0ON\xa0<corpse\xa0name>'),
+                   'QUIT': ('',),
+                   'REROLL': ('',),
+                   'SET CLASS': ('[TO]\xa0<Warrior,\xa0Thief,\xa0Mage\xa0or\xa0Priest>',),
+                   'SET NAME': ('[TO]\xa0<character\xa0name>',),
+                   'STATUS': ('',),
+                   'TAKE': ('<item\xa0name>\xa0FROM\xa0<container\xa0name>',
+                            '<number>\xa0<item\xa0name>\xa0FROM\xa0<container\xa0name>'),
+                   'UNEQUIP': ('<armor\xa0name>', '<shield\xa0name>', '<wand\xa0name>', '<weapon\xa0name>'),
+                   'UNLOCK': ('<door\xa0name>', '<chest\xa0name>')}
 
 # The COMMANDS_HELP dict is a compendium of help blurbs for use by
 # CommandProcessor.help_command(). Where the blurb explicitly suggests
@@ -153,6 +152,7 @@ COMMANDS_HELP = {'ATTACK': "The ATTACK command is used to attack creatures. Bewa
                             'inventory.',
                  'UNLOCK': 'The UNLOCK command is used to unlock a door or chest. You need a door key to unlock doors '
                            'and a chest key to unlock chests.'}
+
 
 class CommandProcessor(object):
     """
@@ -225,17 +225,17 @@ on this object, a Character object will be added and the game can begin.
             # pregame_commands or ingame_commands wasn't updated with a
             # new command.
             if command not in commands_set:
-                raise excpt.InternalError('Inconsistency between set list of commands and command methods found by '
-                                          + f'introspection: method {method_name}() does not correspond to a command '
-                                          + 'in pregame_commands or ingame_commands.')
+                raise InternalError('Inconsistency between set list of commands and command methods found by '
+                                    + f'introspection: method {method_name}() does not correspond to a command in '
+                                    + 'pregame_commands or ingame_commands.')
             commands_set.remove(command)
         # This exception catches a programmer error if a new command
         # was added to pregame_commands or ingame_commands but the
         # corresponding method hasn't been written or was misnamed.
         if len(commands_set):
-            raise excpt.InternalError("Inconsistency between set list of commands and command methods found by "
-                                      + "introspection: command '{commands_set.pop()} does not correspond to a command "
-                                      + "in pregame_commands or ingame_commands.")
+            raise InternalError("Inconsistency between set list of commands and command methods found by "
+                                + f"introspection: command '{commands_set.pop()} does not correspond to a command in "
+                                + "pregame_commands or ingame_commands.")
 
     def process(self, natural_language_str):
         """
@@ -459,7 +459,7 @@ object and a .stmsg.various.FoeDeath object are returned.
         # attack by the foe creature is calculated, if it hits damage
         # is assessed on the player character, and if character.is_dead
         # becomes True, the game ends.
-        # 
+        #
         # :creature: The foe creature that was targeted by
         # self.attack_command().
 
@@ -567,7 +567,7 @@ object.
             elif item.item_type == 'wand':
                 return_values += (stmsg.various.ItemEquipped(item.title, 'wand',
                                                              attack_bonus=self.game_state.character.attack_bonus,
-                    damage=self.game_state.character.damage_roll),)
+                                                             damage=self.game_state.character.damage_roll),)
             else:
                 return_values += (stmsg.various.ItemEquipped(item.title, 'weapon',
                                                              attack_bonus=self.game_state.character.attack_bonus,
@@ -787,7 +787,7 @@ object.
         # If the element to close is already closed, a
         if element_to_close.is_closed:
             return stmsg.close.ElementIsAlreadyClosed(element_to_close.title),
-        elif isinstance(element_to_close, elem.Door):
+        elif isinstance(element_to_close, Door):
             # This is a door object, and it only represents _this side_
             # of the door game element; I use _matching_door() to fetch
             # the door object representing the opposite side so that the
@@ -910,7 +910,8 @@ restored, and a .stmsg.drink.DrankManaPotion object is returned.
             self.game_state.character.drop_item(item)
             return stmsg.various.UnderwentHealingEffect(healed_amt, self.game_state.character.hit_points,
                                                         self.game_state.character.hit_point_total),
-        else: # item.title == 'mana potion':
+        else:
+            # item.title == 'mana potion':
 
             # If the player character isn't a Mage or
             # a Priest, a mana potion does nothing; a
@@ -1033,7 +1034,7 @@ returned.
             # and a item-unequipped error value is generated, noting the
             # decreased armor class.
             if (item.item_type == 'armor' and armor_equipped is not None
-                and armor_equipped.internal_name == item.internal_name):
+                    and armor_equipped.internal_name == item.internal_name):
                 self.game_state.character.unequip_armor()
                 unequip_return = stmsg.various.ItemUnequipped(item.title, item.item_type,
                                                               armor_class=self.game_state.character.armor_class),
@@ -1041,7 +1042,7 @@ returned.
             # unequipped and a item-unequipped error value is generated,
             # noting the decreased armor class.
             elif (item.item_type == 'shield' and shield_equipped is not None
-                      and shield_equipped.internal_name == item.internal_name):
+                    and shield_equipped.internal_name == item.internal_name):
                 self.game_state.character.unequip_shield()
                 unequip_return = stmsg.various.ItemUnequipped(item_title, 'shield',
                                                               armor_class=self.game_state .character.armor_class),
@@ -1050,7 +1051,7 @@ returned.
             # unequipped, and an item-unequipped error value is
             # generated.
             elif (item.item_type == 'weapon' and weapon_equipped is not None
-                      and weapon_equipped.internal_name == item.internal_name):
+                    and weapon_equipped.internal_name == item.internal_name):
                 self.game_state.character.unequip_weapon()
                 if wand_equipped:
                     # If the player character is a mage and has a wand
@@ -1092,7 +1093,7 @@ returned.
         # If there wasn't a ItemsMultiState set to items_here, I
         # instantiate one.
         if self.game_state.rooms_state.cursor.items_here is None:
-            self.game_state.rooms_state.cursor.items_here = (elem.ItemsMultiState())
+            self.game_state.rooms_state.cursor.items_here = ItemsMultiState()
 
         # The item is saved to items_here with the combined quantity of
         # what was already there (can be 0) and the quantity dropped.
@@ -1177,7 +1178,7 @@ object is returned.
             return_values += stmsg.various.ItemUnequipped(old_equipped.title, old_equipped.item_type,
                                                           armor_class=self.game_state.character.armor_class),
         elif (item.item_type == 'shield'
-                  and self.game_state.character.shield_equipped):
+                and self.game_state.character.shield_equipped):
             # The player is trying to equip shield but is already
             # carrying a shield, so their existing shield is unequipped.
             old_equipped = self.game_state.character.shield_equipped
@@ -1185,7 +1186,7 @@ object is returned.
             return_values += stmsg.various.ItemUnequipped(old_equipped.title, old_equipped.item_type,
                                                           armor_class=self.game_state.character.armor_class),
         elif (item.item_type == 'wand'
-                  and self.game_state.character.wand_equipped):
+                and self.game_state.character.wand_equipped):
             # The player is trying to equip wand but is already using a
             # wand, so their existing wand is unequipped.
             old_equipped = self.game_state.character.wand_equipped
@@ -1199,7 +1200,7 @@ object is returned.
                 return_values += stmsg.various.ItemUnequipped(old_equipped.title, old_equipped.item_type,
                                                               now_cant_attack=True),
         elif (item.item_type == 'weapon'
-                  and self.game_state.character.weapon_equipped):
+                and self.game_state.character.weapon_equipped):
             # The player is trying to equip weapon but is already
             # wielding a weapon, so their existing weapon is unequipped.
             old_equipped = self.game_state.character.weapon_equipped
@@ -1464,7 +1465,7 @@ chest key to lock the specified door or chest, returns a
         # inventory is searched for a matching Key object. The object
         # isn't used for anything (it's not expended), so I don't save
         # it, just check if it's there.
-        key_required = ('door key' if isinstance(element_to_lock, elem.Door) else 'chest key')
+        key_required = ('door key' if isinstance(element_to_lock, Door) else 'chest key')
         if (not any(item.title == key_required for _, item in self.game_state.character.list_items())):
             # Lacking the key, a don't-possess-correct-key error is
             # returned.
@@ -1474,7 +1475,7 @@ chest key to lock the specified door or chest, returns a
         # element-is-already-locked error is returned.
         elif element_to_lock.is_locked:
             return stmsg.lock.ElementIsAlreadyUnlocked(element_to_lock.title),
-        elif isinstance(element_to_lock, elem.Door):
+        elif isinstance(element_to_lock, Door):
             # This is a door object, and it only represents _this side_
             # of the door game element; I use _matching_door() to fetch
             # the door object representing the opposite side so that the
@@ -1577,7 +1578,7 @@ chest key to lock the specified door or chest, returns a
             tried_to_operate_on_creature = True
         elif container is not None and container.title == target_title:
             # If the target matches the title for a container here...
-            if isinstance(container, elem.Corpse):
+            if isinstance(container, Corpse):
                 # If the container is a corpse, that failure mode
                 # boolean is set.
                 tried_to_operate_on_corpse = True
@@ -1659,7 +1660,7 @@ chest key to lock the specified door or chest, returns a
 
         # These variables are initialized to None so they can be checked
         # for non-None values later.
-        compass_dir = door_title = door_type = None
+        compass_dir = door_type = None
 
         # If the first token is a compass direction, compass_dir is set
         # to it. This method is always called from a context where the
@@ -1668,7 +1669,6 @@ chest key to lock the specified door or chest, returns a
         # under in RoomsState.
         if tokens[0] in ('north', 'east', 'south', 'west'):
             compass_dir = tokens[0]
-            door_title = f'{compass_dir} {tokens[-1]}'
             tokens = tokens[1:]
 
         # If the first token matches 'iron' or 'wooden' and the last
@@ -1717,7 +1717,6 @@ chest key to lock the specified door or chest, returns a
             # Otherwise matching_doors is length 1; I have a match, so I
             # return it.
             return matching_doors
-
 
     look_at_door_re = re.compile(r"""(
                                          # For example, this regex
@@ -1863,8 +1862,8 @@ on the floor, in a chest, on a corpse, or in inventory, returns a
         # If earlier reasoning concluded the item is meant to be found
         # in a chest, but the container here is None or a corpse, a
         # syntax error is returned.
-        if (item_in_chest and isinstance(container_here, elem.Corpse) or item_on_corpse
-                and isinstance(container_here, elem.Chest)):
+        if (item_in_chest and isinstance(container_here, Corpse) or item_on_corpse
+                and isinstance(container_here, Chest)):
             return stmsg.command.BadSyntax('look at',
                                            COMMANDS_SYNTAX['LOOK AT']),
 
@@ -1959,13 +1958,14 @@ on the floor, in a chest, on a corpse, or in inventory, returns a
         descr_append_str = ''
         # If the item is equipment, its utility as an equippable item
         # will be detailed.
-        if isinstance(element, elem.EquippableItem):
-            if isinstance(element, (elem.Wand, elem.Weapon)):
+        if isinstance(element, EquippableItem):
+            if isinstance(element, (Wand, Weapon)):
                 # If the item can be attacked with, its attack bonus and
                 # damage are mentioned.
                 descr_append_str = (f' Its attack bonus is +{element.attack_bonus} and its damage is '
                                     + f'{element.damage}. ')
-            else: # isinstance(element, (elem.Armor, elem.Shield))
+            else:
+                # isinstance(element, (Armor, Shield))
 
                 # It's a defensive item, so its armor bonus is
                 # mentioned.
@@ -1982,13 +1982,13 @@ on the floor, in a chest, on a corpse, or in inventory, returns a
             can_use_list[0] = can_use_list[0].title()
             descr_append_str += join_strs_w_comma_conj(can_use_list, 'and')
             descr_append_str += ' can use this.'
-        elif isinstance(element, elem.Potion):
+        elif isinstance(element, Potion):
             # If it's a potion, the points recovered are mentioned.
             if element.title == 'mana potion':
                 descr_append_str = f' It restores {element.mana_points_recovered} mana points.'
             elif element.title == 'health potion':
                 descr_append_str = f' It restores {element.hit_points_recovered} hit points.'
-        elif isinstance(element, elem.Door):
+        elif isinstance(element, Door):
             # If it's a door, whether it's open or closed is mentioned.
             if element.closeable:
                 descr_append_str = (' It is closed.' if element.is_closed else ' It is open.')
@@ -2049,7 +2049,7 @@ and returns returns a .stmsg.open_.ElementHasBeenOpened..
             # Otherwise if it's alreadty open, an
             # element-is-already-open error is returned.
             return stmsg.open_.ElementIsAlreadyOpen(element_to_open.title),
-        elif isinstance(element_to_open, elem.Door):
+        elif isinstance(element_to_open, Door):
             # This is a door object, and it only represents _this side_
             # of the door game element; I use _matching_door() to fetch
             # the door object representing the opposite side so that the
@@ -2141,7 +2141,7 @@ to False, and a .stmsg.pklock.TargetHasBeenUnlocked object is returned.
 
             # If the Door is a doorway, it can't be unlocked; a failure
             # mode boolean is assigned.
-            if isinstance(door, elem.Doorway):
+            if isinstance(door, Doorway):
                 tried_to_operate_on_doorway = True
             elif not door.is_locked:
                 # Otherwise if the door isn't locked, a
@@ -2165,7 +2165,7 @@ to False, and a .stmsg.pklock.TargetHasBeenUnlocked object is returned.
         # title matches....
         elif container is not None and container.title == target_title:
             # If it's a Corpse, the failure mode boolean is set.
-            if isinstance(container, elem.Corpse):
+            if isinstance(container, Corpse):
                 tried_to_operate_on_corpse = True
             elif not getattr(container, 'is_locked', False):
                 # Otherwise if it's not locked, a target-not-locked
@@ -2291,8 +2291,7 @@ from the floor, and added to the character's inventory, and a
         # container_type.
         elif (self.game_state.rooms_state.cursor.container_here is not None
                 and self.game_state.rooms_state.cursor.container_here.title == target_title):
-            unpickupable_element_type = (self.game_state.rooms_state.cursor
-                                            .container_here.container_type)
+            unpickupable_element_type = (self.game_state.rooms_state.cursor.container_here.container_type)
 
         # If unpickupable_element_type acquired a value, a
         # cant-pick-up-element error is returned.
@@ -2708,8 +2707,8 @@ returned.
             # error.
             return stmsg.various.ContainerNotFound(container_title, container.title),
 
-        elif (isinstance(container, elem.Chest) and joinword == 'on'
-                  or isinstance(container, elem.Corpse) and joinword == 'in'):
+        elif (isinstance(container, Chest) and joinword == 'on'
+                or isinstance(container, Corpse) and joinword == 'in'):
 
             # The joinword used doesn't match the one appropriate to the
             # type of container here, so I return a syntax error.
@@ -2837,8 +2836,7 @@ Stmsg_Various_DisplayRolledStats object is returned.
                                                      constitution=self.game_state.character.constitution,
                                                      intelligence=self.game_state.character.intelligence,
                                                      wisdom=self.game_state.character.wisdom,
-                                                     charisma=self.game_state.character.charisma
-            ))
+                                                     charisma=self.game_state.character.charisma))
         else:
             # Otherwise I return only the class-set value.
             return stmsg.setcls.ClassSet(class_str),
@@ -3124,8 +3122,7 @@ object.
                 # error.
                 return stmsg.unequip.ItemNotEquipped(item_title, 'shield'),
             else:
-                if (self.game_state.character.shield_equipped.title
-                    != item_title):
+                if (self.game_state.character.shield_equipped.title != item_title):
                     # If shield_equipped's title doesn't match the
                     # argument item_title, I return an item-not-equipped
                     # error.
@@ -3251,7 +3248,7 @@ chest key to lock the specified door or chest, returns an
         # character's inventory for it. The key is not consumed by use,
         # so I only need to know it's there, not retrieve the Key object
         # and operate on it.
-        key_required = ('door key' if isinstance(element_to_unlock, elem.Door)
+        key_required = ('door key' if isinstance(element_to_unlock, Door)
                         else 'chest key')
         if not any(item.title == key_required
                    for _, item in self.game_state.character.list_items()):
@@ -3262,7 +3259,7 @@ chest key to lock the specified door or chest, returns an
             # Otherwise, if the item is already unlocked, I return an
             # element-is-already-unlocked error.
             return stmsg.unlock.ElementIsAlreadyLocked(element_to_unlock.title),
-        elif isinstance(element_to_unlock, elem.Door):
+        elif isinstance(element_to_unlock, Door):
             # This is a door object, and it only represents _this side_
             # of the door game element; I use _matching_door() to fetch
             # the door object representing the opposite side so that the

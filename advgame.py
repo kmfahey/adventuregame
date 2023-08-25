@@ -11,25 +11,27 @@ import advgame as advg
 
 ### Establishing the game data object environment ###
 
-# Stage 0: offloading the inline game data ini file strings into tempfiles.
+# Stage 0: offloading the inline game data ini file strings into
+# tempfiles.
 
 # Defining the game data ini file strings.
 
-# This data used to be stored in the ./data/ directory. That made running
-# advgame.py confined to its parent directory. If the advgame module
-# had been installed somewhere in sys.path and advgame.py copied to a bin
-# directory-- a predictable use case-- the game would fail to run. Moving the
-# game data inline prevents that failure mode.
+# This data used to be stored in the ./data/ directory. That made
+# running advgame.py confined to its parent directory. If the advgame
+# module had been installed somewhere in sys.path and advgame.py copied
+# to a bin directory-- a predictable use case-- the game would fail to
+# run. Moving the game data inline prevents that failure mode.
 
 ini_file_texts = {
     "items.ini": """
-# The weapons in this file are adapted from the Dungeons & Dragons 3rd edition
-# weapons. They were accessed online using the _System Reference Document_. They
-# can be viewed at <http://dndsrd.net/weapons.html>.
+# The weapons in this file are adapted from the Dungeons & Dragons 3rd
+# edition weapons. They were accessed online using the _System Reference
+# Document_. They can be viewed at <http://dndsrd.net/weapons.html>.
 #
-# The armor and shields in this file are adapted from the Dungeons & Dragons
-# 3rd edition armor and shields. They were accessed online using the _System
-# Reference Document_. They can be viewed at <http://dndsrd.net/armor.html>.
+# The armor and shields in this file are adapted from the Dungeons &
+# Dragons 3rd edition armor and shields. They were accessed online
+# using the _System Reference Document_. They can be viewed at
+# <http://dndsrd.net/armor.html>.
 
 [Longsword]
 attack_bonus=0
@@ -300,7 +302,8 @@ warrior_can_use=true
 rogue_can_use=true
 weight=45
 
-# These miscellaneous goods are inspired by the "Trinkets" 2-page table in the 5th ed. D&D Player's Handbook, pp 160-161.
+# These miscellaneous goods are inspired by the "Trinkets" 2-page table
+# in the 5th ed. D&D Player's Handbook, pp 160-161.
 
 [Music_Box]
 description=A figurine of a dancer on a base & under a glass dome, with a turnkey on one side of the base.
@@ -623,8 +626,8 @@ container_type=chest
 """,
     "creatures.ini": """
 [Kobold_1]
-# This creature was adapted from the Dungeons & Dragons 3rd edition _Monster
-# Manual_, p.123.
+# This creature was adapted from the Dungeons & Dragons 3rd edition
+# _Monster Manual_, p.123.
 armor_equipped=Small_Leather_Armor
 base_hit_points=20
 character_class=Thief
@@ -643,8 +646,8 @@ weapon_equipped=Short_Sword
 wisdom=9
 
 [Kobold_2]
-# This creature was adapted from the Dungeons & Dragons 3rd edition _Races of
-# the Dragon_, p.144.
+# This creature was adapted from the Dungeons & Dragons 3rd edition
+# _Races of the Dragon_, p.144.
 armor_equipped=Small_Leather_Armor
 base_hit_points=27
 character_class=Warrior
@@ -664,8 +667,8 @@ weapon_equipped=Light_Mace
 wisdom=9
 
 [Kobold_3]
-# This creature was adapted from the Dungeons & Dragons 3rd edition _Races of
-# the Dragon_, p.144.
+# This creature was adapted from the Dungeons & Dragons 3rd edition
+# _Races of the Dragon_, p.144.
 armor_equipped=Small_Leather_Armor
 base_hit_points=22
 character_class=Thief
@@ -685,8 +688,9 @@ weapon_equipped=Short_Sword
 wisdom=11
 
 [Goblin]
-# This creature was adapted from the Dungeons & Dragons 3rd ed. _System
-# Reference Document_. It can be found at <http://dndsrd.net/monstersG.html>.
+# This creature was adapted from the Dungeons & Dragons
+# 3rd ed. _System Reference Document_. It can be found at
+# <http://dndsrd.net/monstersG.html>.
 armor_equipped=Small_Studded_Leather
 base_hit_points=22
 character_class=Thief
@@ -706,8 +710,9 @@ weapon_equipped=Short_Sword
 wisdom=9
 
 [Bugbear]
-# This creature was adapted from the Dungeons & Dragons 3rd ed. _System
-# Reference Document_. It can be found at <http://dndsrd.net/monstersBtoC.html>.
+# This creature was adapted from the Dungeons & Dragons
+# 3rd ed. _System Reference Document_. It can be found at
+# <http://dndsrd.net/monstersBtoC.html>.
 armor_equipped=Scale_Mail
 base_hit_points=22
 character_class=Warrior
@@ -852,10 +857,11 @@ north_door=Exit
 
 # Incepting a tempfile for each .ini file the game needs.
 
-# iniconfig.IniConfig takes a filename as its argument when instantiating.
-# There's no way for it to load data from memory; it requires a file to load
-# data from. So here the game data is written to tempfiles. Later in step 2 it
-# will be loaded back from those files again. Circular, but it works.
+# iniconfig.IniConfig takes a filename as its argument when
+# instantiating. There's no way for it to load data from memory; it
+# requires a file to load data from. So here the game data is written
+# to tempfiles. Later in step 2 it will be loaded back from those files
+# again. Circular, but it works.
 
 ini_file_tempfiles = {
     "items.ini": tempfile.mktemp(".ini"),
@@ -875,10 +881,10 @@ for ini_file_name in ini_file_texts.keys():
 
 
 # Stage 1: parsing the config files
-# 
-# This stage uses IniConfig to load the game data files from ./data/ . Each
-# one becomes an IniConfig object, with a .sections attribute that is a
-# dict-of-dicts representation of the .ini file data.
+#
+# This stage uses IniConfig to load the game data files from ./data/ .
+# Each one becomes an IniConfig object, with a .sections attribute that
+# is a dict-of-dicts representation of the .ini file data.
 
 items_ini_config = iniconfig.IniConfig(ini_file_tempfiles['items.ini'])
 doors_ini_config = iniconfig.IniConfig(ini_file_tempfiles['doors.ini'])
@@ -893,29 +899,25 @@ for temp_file in ini_file_tempfiles.values():
 
 
 # Stage 2: instancing the state objects.
-# 
-# Each state class can initialize itself from a **dict-of-dicts argument, so
-# I initialize the state objects from the parsed .ini data files. Some state
-# objects require other ones as arguments to initialize properly, so this
-# proceeds in order from simple to complex.
+#
+# Each state class can initialize itself from a **dict-of-dicts
+# argument, so I initialize the state objects from the parsed .ini
+# data files. Some state objects require other ones as arguments to
+# initialize properly, so this proceeds in order from simple to complex.
 
 items_state = advg.ItemsState(**items_ini_config.sections)
 doors_state = advg.DoorsState(**doors_ini_config.sections)
-containers_state = advg.ContainersState(items_state, 
-                                         **containers_ini_config.sections)
-creatures_state = advg.CreaturesState(items_state, 
-                                       **creatures_ini_config.sections)
-rooms_state = advg.RoomsState(creatures_state, containers_state, doors_state, 
-                              items_state, **rooms_ini_config.sections)
-game_state = advg.GameState(rooms_state, creatures_state, containers_state, 
-                             doors_state, items_state)
+containers_state = advg.ContainersState(items_state, **containers_ini_config.sections)
+creatures_state = advg.CreaturesState(items_state, **creatures_ini_config.sections)
+rooms_state = advg.RoomsState(creatures_state, containers_state, doors_state, items_state, **rooms_ini_config.sections)
+game_state = advg.GameState(rooms_state, creatures_state, containers_state, doors_state, items_state)
 
 
 # Stage 3: instancing the CommandProcessor object.
-# 
+#
 # The state objects are summarized by a GameState object, which is the
-# sole argument to CommandProcessor.__init__. Its methods will consult the
-# game_state object to interact with the game's object environment.
+# sole argument to CommandProcessor.__init__. Its methods will consult
+# the game_state object to interact with the game's object environment.
 command_processor = advg.CommandProcessor(game_state)
 
 
@@ -956,8 +958,8 @@ that, enter BEGIN GAME and enter the dungeon!
 # input() builtin, and CommandProcessor.process() is used to interpret &
 # execute them.
 #
-# process() returns a tuple of advgame.stmsg.GameStateMessage
-# subclass objects; they always have a message property which returns a natural
+# process() returns a tuple of advgame.stmsg.GameStateMessage subclass
+# objects; they always have a message property which returns a natural
 # language response to the command. It is either an error message or it
 # describes the results of a successful command.
 while True:
@@ -973,15 +975,15 @@ while True:
 
     result = command_processor.process(command)
 
-    # GameStateMessage subclass objects' message properties return one or more
-    # long lines of text, so advgame.utils.textwrapper is used to wrap
-    # the messages to 80 columns.
+    # GameStateMessage subclass objects' message properties return one
+    # or more long lines of text, so advgame.utils.textwrapper is used
+    # to wrap the messages to 80 columns.
     for game_state_message in result:
         print(advg.textwrapper(game_state_message.message))
 
-    # Any one of these three GameStateMessage subclass objects signifies the
-    # end of the game. If one of them occurs at the end of a list of state
-    # messages, the game exits.
+    # Any one of these three GameStateMessage subclass objects signifies
+    # the end of the game. If one of them occurs at the end of a list of
+    # state messages, the game exits.
     if isinstance(result[-1], (advg.stmsg.quit.HaveQuitTheGame,
                                advg.stmsg.be_atkd.CharacterDeath,
                                advg.stmsg.leave.WonTheGame)):

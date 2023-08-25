@@ -18,9 +18,6 @@ from advgame.errors import InternalError, BadCommandError
 from advgame.utils import isfloat
 
 
-__name__ = "advgame.elements"
-
-
 __all__ = ("AbilityScores", "Armor", "Character", "Chest", "Coin", "Container",
            "ContainersState", "Corpse", "Creature", "CreaturesState", "Door",
            "DoorsState", "Doorway", "Equipment", "EquippableItem", "GameState",
@@ -2013,7 +2010,7 @@ file data.
         # Inventory object.
 
         char_init_argd, ini_entry_init_argd, equip_argd, invent_qty_pairs = \
-                self._seprt_argd_into_diff_arg_sets(items_state, internal_name, **argd)
+            self._seprt_argd_into_diff_arg_sets(items_state, internal_name, **argd)
         IniEntry.__init__(self, internal_name=internal_name, **ini_entry_init_argd)
         self._post_init_slots_set_none(self.__slots__)
         Character.__init__(self, **char_init_argd)
@@ -2087,7 +2084,6 @@ inventory quantity-internal name pairs, and an equipment dict.
                for _, invent_intrn_name in invent_qty_name_pairs):
             missing_names = tuple(item_intrn_name for _, item_intrn_name in invent_qty_name_pairs
                                   if not items_state.contains(item_intrn_name))
-            pluralizer = "s" if len(missing_names) > 1 else ""
             raise InternalError(f"bad creatures.ini specification for creature {intrn_name}: creature ini config dict "
                                 + "`inventory_items` value indicated item{pluralizer} not present in `ItemsState` "
                                 + "argument: " + (", ".join(missing_names)))
@@ -2556,5 +2552,6 @@ character name and the character class have been set.
 
 :return: None.
         """
-        if (self.character is None and getattr(self, "character_name", None) and getattr(self, "character_class", None)):
+        if (self.character is None and getattr(self, "character_name", None)
+                and getattr(self, "character_class", None)):
             self.character = Character(self.character_name, self.character_class)

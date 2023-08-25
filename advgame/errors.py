@@ -4,7 +4,7 @@
 This module stores the exceptions used by other advgame modules.
 """
 
-__name__ = 'advgame.errors'
+__all__ = "BadCommandError", "InternalError",
 
 
 class InternalError(Exception):

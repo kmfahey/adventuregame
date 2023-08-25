@@ -8,7 +8,6 @@ import iniconfig
 
 from .context import advgame as advg
 
-__name__ = 'tests.test_game_elements'
 
 containers_ini_config = iniconfig.IniConfig('./testing_data/containers.ini')
 items_ini_config = iniconfig.IniConfig('./testing_data/items.ini')
@@ -31,8 +30,9 @@ class Test_Container(unittest.TestCase):
         container = self.containers_state.get('Wooden_Chest_1')
         self.assertEqual(container.internal_name, 'Wooden_Chest_1')
         self.assertEqual(container.title, 'wooden chest')
-        self.assertEqual(container.description, 'This small, serviceable chest is made of wooden slats bound '
-                                                    'within an iron frame, and features a sturdy-looking lock.')
+        self.assertEqual(container.description,
+                         'This small, serviceable chest is made of wooden slats bound within an iron frame, and '
+                         + 'features a sturdy-looking lock.')
         self.assertEqual(container.is_locked, True)
         self.assertTrue(container.contains('Gold_Coin'))
         self.assertTrue(container.contains('Warhammer'))
@@ -81,7 +81,7 @@ class Test_Character(unittest.TestCase):
         self.assertEqual(character.damage_roll, '1d8' + strength_mod_str)
         self.assertEqual(character.attack_bonus, character.strength_mod)
         self.assertEqual(character.armor_class, 10 + scale_mail.armor_bonus + shield.armor_bonus
-                                                    + character.dexterity_mod)
+                         + character.dexterity_mod)
         self.assertEqual(character.weapon, longsword)
         self.assertEqual(character.armor, scale_mail)
         self.assertEqual(character.shield, shield)
@@ -109,8 +109,7 @@ class Test_Character(unittest.TestCase):
                                else str(total_dmg_bonus) if total_dmg_bonus < 0 else '')
         self.assertEqual(character.attack_roll, '1d20' + total_atk_bonus_str)
         self.assertEqual(character.damage_roll, '3d8' + total_dmg_bonus_str)
-        self.assertEqual(character.attack_bonus, int(wand.attack_bonus)
-                                                     + character.intelligence_mod)
+        self.assertEqual(character.attack_bonus, int(wand.attack_bonus) + character.intelligence_mod)
         self.assertEqual(character.armor_class, 10 + character.dexterity_mod)
         self.assertEqual(character.wand, wand)
         character.unequip_wand()
@@ -125,7 +124,7 @@ class Test_Character(unittest.TestCase):
         character.pick_up_item(scale_mail)
         character.pick_up_item(shield)
         testing_items_list = list(sorted((longsword, scale_mail, shield),
-                                          key=operator.attrgetter('title')))
+                                         key=operator.attrgetter('title')))
         given_items_list = list(sorted(map(operator.itemgetter(1), character.list_items()),
                                        key=operator.attrgetter('title')))
         self.assertEqual(testing_items_list, given_items_list)
@@ -201,8 +200,8 @@ class Test_Character(unittest.TestCase):
         self.assertFalse(character.is_dead)
 
     def test_character_init_ability_score_and_hp_overrides(self):
-        character = advg.Character('Regdar', 'Warrior', base_hit_points=50, strength=15, constitution=14,
-                                  dexterity=13, intelligence=12, wisdom=8, charisma=10)
+        character = advg.Character('Regdar', 'Warrior', base_hit_points=50, strength=15, constitution=14, dexterity=13,
+                                   intelligence=12, wisdom=8, charisma=10)
         self.assertEqual(character.strength, 15)
         self.assertEqual(character.constitution, 14)
         self.assertEqual(character.dexterity, 13)
@@ -213,7 +212,7 @@ class Test_Character(unittest.TestCase):
 
     def test_mana_points(self):
         character = advg.Character('Hennet', 'Mage', base_hit_points=30, strength=12, constitution=13, dexterity=14,
-                                  intelligence=15, wisdom=10, charisma=8)
+                                   intelligence=15, wisdom=10, charisma=8)
         self.assertEqual(character.mana_points, 23)
         self.assertEqual(character.mana_point_total, 23)
         result = character.spend_mana(10)
@@ -240,8 +239,9 @@ class Test_Creature(unittest.TestCase):
         self.assertEqual(kobold.character_class, 'Thief')
         self.assertEqual(kobold.character_name, 'Trysk')
         self.assertEqual(kobold.species, 'Kobold')
-        self.assertEqual(kobold.description, 'This diminuitive draconic humanoid is dressed in leather armor and '
-                                                 'has a short sword at its hip. It eyes you warily.')
+        self.assertEqual(kobold.description,
+                         'This diminuitive draconic humanoid is dressed in leather armor and has a short sword at its '
+                         + 'hip. It eyes you warily.')
         self.assertEqual(kobold.character_class, 'Thief')
         self.assertEqual(kobold.strength, 9)
         self.assertEqual(kobold.dexterity, 13)
@@ -392,11 +392,10 @@ class Test_Inventory(unittest.TestCase):
         self.inventory.set('Longsword', 1, longsword)
         self.assertTrue(self.inventory.contains(longsword.internal_name))
         self.assertEqual(set(self.inventory.keys()), {'Longsword', 'Rapier', 'Buckler', 'Heavy_Mace', 'Staff',
-                                                          'Warhammer', 'Door_Key', 'Chest_Key', 'Studded_Leather',
-                                                          'Scale_Mail', 'Magic_Sword', 'Dagger', 'Gold_Coin',
-                                                          'Small_Leather_Armor', 'Short_Sword', 'Steel_Shield',
-                                                          'Mana_Potion', 'Health_Potion', 'Magic_Wand',
-                                                          'Magic_Wand_2'})
+                                                      'Warhammer', 'Door_Key', 'Chest_Key', 'Studded_Leather',
+                                                      'Scale_Mail', 'Magic_Sword', 'Dagger', 'Gold_Coin',
+                                                      'Small_Leather_Armor', 'Short_Sword', 'Steel_Shield',
+                                                      'Mana_Potion', 'Health_Potion', 'Magic_Wand', 'Magic_Wand_2'})
         _, rapier, = self.inventory.get('Rapier')
         _, heavy_mace, = self.inventory.get('Heavy_Mace')
         _, staff = self.inventory.get('Staff')
@@ -435,8 +434,9 @@ class Test_Inventory(unittest.TestCase):
 
     def test_total_weight_and_burden_for_strength_score(self):
         for item_internal_name in ('Buckler', 'Dagger', 'Gold_Coin', 'Health_Potion', 'Magic_Sword', 'Magic_Wand',
-                                   'Magic_Wand_2', 'Mana_Potion', 'Scale_Mail', 'Door_Key', 'Chest_Key', 'Steel_Shield',
-                                   'Short_Sword', 'Small_Leather_Armor', 'Studded_Leather', 'Warhammer'):
+                                   'Magic_Wand_2', 'Mana_Potion', 'Scale_Mail', 'Door_Key', 'Chest_Key',
+                                   'Steel_Shield', 'Short_Sword', 'Small_Leather_Armor', 'Studded_Leather',
+                                   'Warhammer'):
             self.inventory.remove_one(item_internal_name)
         self.assertEqual(self.inventory.total_weight, 13)
         self.assertEqual(self.inventory.burden_for_strength_score(4), advg.Inventory.LIGHT)
@@ -463,7 +463,8 @@ class Test_Door_and_DoorsState(unittest.TestCase):
                                             ('Room_1,2', 'Room_2,2'), ('Room_2,1', 'Room_2,2'),
                                             ('Room_2,2', 'Exit')])
         doors_state_values = self.doors_state.values()
-        self.assertTrue(all(isinstance(door, advg.Door) and isinstance(door, (advg.WoodenDoor, advg.IronDoor, advg.Doorway))
+        self.assertTrue(all(isinstance(door, advg.Door) and isinstance(door, (advg.WoodenDoor, advg.IronDoor,
+                                                                              advg.Doorway))
                             for door in doors_state_values))
         doors_state_items = self.doors_state.items()
         self.assertEqual(list(map(operator.itemgetter(0, 1), doors_state_items)), [('Room_1,1', 'Room_1,2'),
@@ -471,7 +472,8 @@ class Test_Door_and_DoorsState(unittest.TestCase):
                                                                                    ('Room_1,2', 'Room_2,2'),
                                                                                    ('Room_2,1', 'Room_2,2'),
                                                                                    ('Room_2,2', 'Exit')])
-        self.assertTrue(all(isinstance(door, advg.Door) and isinstance(door, (advg.WoodenDoor, advg.IronDoor, advg.Doorway))
+        self.assertTrue(all(isinstance(door, advg.Door) and isinstance(door, (advg.WoodenDoor, advg.IronDoor,
+                                                                              advg.Doorway))
                             for door in doors_state_values))
         self.assertEqual(self.doors_state.size(), 5)
         self.assertTrue(self.doors_state.contains('Room_2,1', 'Room_2,2'))
@@ -498,8 +500,8 @@ class Test_Door_and_DoorsState(unittest.TestCase):
 
         door = self.doors_state.get('Room_1,1', 'Room_2,1')
         self.assertEqual(door.title, 'iron door')
-        self.assertEqual(door.description, 'This door is bound in iron plates with a small barred window set up '
-                                               'high.')
+        self.assertEqual(door.description,
+                         'This door is bound in iron plates with a small barred window set up high.')
         self.assertEqual(door.door_type, 'iron_door')
         self.assertEqual(door.is_locked, True)
         self.assertEqual(door.is_closed, True)
@@ -638,8 +640,8 @@ class Test_RoomsState_Obj(unittest.TestCase):
         self.assertEqual(self.rooms_state.cursor.north_door.closeable, True)
         self.assertTrue(self.rooms_state.cursor.has_east_door)
         self.assertTrue(self.rooms_state.cursor.east_door.title, 'east door')
-        self.assertTrue(self.rooms_state.cursor.east_door.description, 'This door is bound in iron plates with a '
-                                                                           'small barred window set up high.')
+        self.assertTrue(self.rooms_state.cursor.east_door.description,
+                        'This door is bound in iron plates with a small barred window set up high.')
         self.assertTrue(self.rooms_state.cursor.east_door.door_type, 'iron_door')
         self.assertTrue(self.rooms_state.cursor.east_door.is_locked, True)
         self.assertTrue(self.rooms_state.cursor.east_door.is_closed, True)
@@ -678,8 +680,8 @@ class Test_RoomsState_Obj(unittest.TestCase):
         self.rooms_state.move(north=True)
         self.rooms_state.move(east=True)
         self.assertTrue(self.rooms_state.cursor.west_door.title, 'west doorway')
-        self.assertTrue(self.rooms_state.cursor.west_door.description, 'This door is bound in iron plates with a '
-                                                                           'small barred window set up high.')
+        self.assertTrue(self.rooms_state.cursor.west_door.description,
+                        'This door is bound in iron plates with a small barred window set up high.')
         self.assertTrue(self.rooms_state.cursor.west_door.door_type, 'doorway')
         self.assertFalse(self.rooms_state.cursor.west_door.is_locked)
         self.assertFalse(self.rooms_state.cursor.west_door.is_closed)

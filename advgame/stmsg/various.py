@@ -229,8 +229,7 @@ equipped and mentions how the relevant game parameters have changed as a
 result.
     """
 
-    __slots__ = ('item_title', 'item_type', 'attack_bonus', 'damage', 'armor_class'
-                'change_text')
+    __slots__ = ('item_title', 'item_type', 'attack_bonus', 'damage', 'armor_class' 'change_text')
 
     @property
     def message(self):
@@ -279,7 +278,7 @@ of the item in their inventory.
     """
 
     __slots__ = ('item_title', 'item_type', 'changed_value_1', 'value_type_1', 'changed_value_2', 'value_type_2',
-                'change_text')
+                 'change_text')
 
     @property
     def message(self):
@@ -322,7 +321,7 @@ of the item in their inventory.
         return return_str
 
     def __init__(self, item_title, item_type, attack_bonus=None, damage=None, armor_class=None, attacking_with=None,
-                       now_attacking_with=None, now_cant_attack=False):
+                 now_attacking_with=None, now_cant_attack=False):
         self.item_title = item_title
         self.item_type = item_type
         self.attack_bonus = attack_bonus

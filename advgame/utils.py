@@ -13,8 +13,6 @@ import textwrap
 
 import advgame.errors as excpt
 
-__name__ = 'advgame.utils'
-
 
 # The task of joining a list that may be 1, 2, or more elements with commas and
 # a conjunction is a common one in advgame.stmsg, so I wrote this
@@ -55,7 +53,7 @@ _float_re = re.compile(r'^[+-]?([0-9]+\.|\.[0-9]+|[0-9]+\.[0-9]+|[0-9]+)$')
 
 def isfloat(strval):
     try:
-        f = float(strval)
+        float(strval)
     except ValueError:
         return False
     else:

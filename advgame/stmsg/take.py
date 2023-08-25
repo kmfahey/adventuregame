@@ -22,8 +22,8 @@ or from a corpse that is not on the corpse.
         # sought.
         base_str = f"The {self.container_title} doesn't have"
         indirect_article_or_determiner = ('any' if self.amount_attempted > 1
-                               else 'an' if self.item_title[0] in 'aeiou'
-                               else 'a')
+                                          else 'an' if self.item_title[0] in 'aeiou'
+                                          else 'a')
         container_clause = 'in it' if self.container_type == 'chest' else 'on them'
         pluralizer = 's' if self.amount_attempted > 1 else ''
         return f'{base_str} {indirect_article_or_determiner} {self.item_title}{pluralizer} {container_clause}.'
