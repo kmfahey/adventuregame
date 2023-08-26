@@ -37,7 +37,6 @@ def cast_spell_command(context, tokens):
     * If the character is a Priest, returns a
     .stmsg.castspl.CastHealingSpell object and a
     .stmsg.various.UnderwentHealingEffect object."""
-
     game_state = context["game_state"]
 
     # The first error check detects if the player has used this
@@ -96,7 +95,7 @@ def cast_spell_command(context, tokens):
                 # Otherwise, like ATTACK, using this command and
                 # not killing your foe means they counterattack.
                 # cast-damaging-spell is conjoined with the outcome
-                # of self._be_attacked_by_command() and the total
+                # of _be_attacked_by_command() and the total
                 # tuple is returned.
                 be_attacked_by_result = be_attacked_by_command(context, creature)
                 return (

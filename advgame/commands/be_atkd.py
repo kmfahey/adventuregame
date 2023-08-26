@@ -16,7 +16,6 @@ def be_attacked_by_command(context, creature):
     # True, the game ends.
     #
     # :creature: The foe creature that was targeted by attack_command().
-
     game_state = context["game_state"]
 
     # The attack is calculated.

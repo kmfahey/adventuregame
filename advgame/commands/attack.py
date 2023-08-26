@@ -37,7 +37,6 @@ def attack_command(context, tokens):
     object and a .stmsg.various.FoeDeath object are returned.
     """
     game_state = context["game_state"]
-
     # If the player character has no weapon or wand equipped, an error
     # is returned right away.
     if not game_state.character.weapon_equipped and (
