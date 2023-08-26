@@ -53,7 +53,7 @@ __all__ = (
 )
 
 
-class IniEntry(object):
+class IniEntry:
     """
     Parent class for classes like Room, Item, and Door that are instantiated
     from .ini file entries.
@@ -583,7 +583,7 @@ class IronDoor(Door):
 # method.
 
 
-class DoorsState(object):
+class DoorsState:
     """
     This class replicates the functionality of the State object for a
     container object which stores Door subclass objects. It's initialized
@@ -863,7 +863,7 @@ class ContainersState(ItemsState):
             self._contents[container_internal_name] = container
 
 
-class AbilityScores(object):
+class AbilityScores:
     """
     This class is one of the dependencies of the Character and Creature
     classes and is only used as a subordinate object to them. It abstracts
@@ -1036,7 +1036,7 @@ class AbilityScores(object):
             )
 
 
-class Equipment(object):
+class Equipment:
     """
     This object represents the equipment held by a Character or Creature. It
     stores what items are equipped as the armor, shield, weapon or wand, and
@@ -1276,7 +1276,7 @@ class Equipment(object):
             return None
 
 
-class Character(object):
+class Character:
     """
     This class represents a character. The player's interaction with the
     game rules environment during play is mediated by an instance of this
@@ -2635,7 +2635,7 @@ class Room(IniEntry):
         return doors_tuple
 
 
-class RoomsState(object):
+class RoomsState:
     """
     This class implements a state object that tracks the entire dungeon's
     layout.
@@ -2799,7 +2799,7 @@ class RoomsState(object):
         self._room_cursor = new_room_dest.internal_name
 
 
-class GameState(object):
+class GameState:
     """
     This class represents the entire GameState needed to run a
     session of AdventureGame. It is the top-level object, and stores an

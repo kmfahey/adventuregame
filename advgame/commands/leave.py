@@ -34,7 +34,7 @@ def leave_command(context, tokens):
     * Otherwise, a .stmsg.leave.LeftRoom object and a
     .stmsg.various.EnteredRoom object are returned.
     """
-    game_state = context["game_state"]
+    game_state = context.game_state
 
     # This method takes arguments of a specific form; if the
     # arguments don't match it, a syntax error is returned.
@@ -85,7 +85,7 @@ def leave_command(context, tokens):
         # can return it if the frontend accidentally tries to submit
         # another command.
         game_state.game_has_ended = True
-        context["game_ending_state_msg"] = return_tuple[-1]
+        context.game_ending_state_msg = return_tuple[-1]
         return return_tuple
 
     # Otherwise, RoomsState.move is called with the compass

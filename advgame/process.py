@@ -12,6 +12,8 @@ import operator
 import re
 import types
 
+from dataclasses import dataclass
+
 import advgame.stmsg as stmsg
 
 from advgame.commands import (
@@ -68,6 +70,7 @@ from advgame.elements import (
     Door,
     Doorway,
     EquippableItem,
+    GameState,
     ItemsMultiState,
     Potion,
     Wand,
@@ -85,6 +88,12 @@ from advgame.utils import (
 __all__ = ("CommandProcessor",)
 
 
+@dataclass
+class Context:
+    game_state: GameState
+    game_ending_state_msg: stmsg.GameStateMessage
+
+
 # This module consists solely of the CommandProcessor class and
 # its supporting data structures. CommandProcessor is a monolithic
 # class that has a process() method which accepts a natural language
@@ -98,35 +107,14 @@ __all__ = ("CommandProcessor",)
 # sophisticated conditional handling all the cases where the command
 # can't complete.
 
-
-# FIXME
-#
-# If this class were to be broken up into a processor class and a family
-# of command functions one per module, each command function would need
-# to be passed a dict containing only the following values:
-#
-# command_state = {"game_state": # the GameState instance that
-#                                # CommandProcessor was instanced with
-#                   "character": # None until the game starts, then the
-#                                # Character instance
-#                   "game_ending_state_msg": # None until the game ends,
-#                                            # then the retval of the
-#                                            # game-ending command
-#
-# There'd also need to be a constants module that the COMMANDS_HELP,
-# COMMANDS_SYNTAX, INGAME_COMMANDS, PREGAME_COMMANDS, SPELL_DAMAGE,
-# SPELL_MANA_COST, and/or STARTER_GEAR constants could be imported from
-# for the functions that need them.
-
-
-class CommandProcessor(object):
+class CommandProcessor:
     """
     A processor that can parse a natural language command, modify the
     game state appropriately, and return a GameStateMessage object that
     stringifies to a natural language reply.
     """
 
-    __slots__ = "context", "commands_set"
+    __slots__ = "context", "commands_set", "game_state", "game_ending_state_msg"
 
     # All return values from [a-z_]+_command methods in this class are
     # tuples. Every [a-z_]+_command method returns a tuple of one or
@@ -140,32 +128,6 @@ class CommandProcessor(object):
     # object, and a `Stmsg_Batkby_CharacterDeath` object, each bearing a
     # message in its `message` property. The frontend code will iterate
     # through the tuple printing each message in turn.
-
-    @property
-    def game_state(self):
-        try:
-            return self.context["game_state"]
-        except KeyError:
-            raise AttributeError(
-                "CommandProcessor object has no attribute 'game_state'"
-            )
-
-    @game_state.setter
-    def game_state(self, value):
-        self.context["game_state"] = value
-
-    @property
-    def game_ending_state_msg(self):
-        try:
-            return self.context["game_ending_state_msg"]
-        except KeyError:
-            raise AttributeError(
-                "CommandProcessor object has no attribute 'game_ending_state_msg'"
-            )
-
-    @game_ending_state_msg.setter
-    def game_ending_state_msg(self, value):
-        self.context["game_ending_state_msg"] = value
 
     def __init__(self, game_state):
         """
@@ -208,12 +170,6 @@ class CommandProcessor(object):
         # said different ways.
 
         match command:
-            case "cast" if len(tokens) and tokens[0].lower() == "spell":
-                # A two-word command.
-                command += "_" + tokens.pop(0).lower()
-            case "leave" if len(tokens) and tokens[0].lower() in ("using", "via"):
-                # 'via' or 'using' is dropped.
-                tokens.pop(0)
             case "begin":
                 if (
                     len(tokens) >= 1
@@ -228,6 +184,12 @@ class CommandProcessor(object):
                     command += "_" + tokens.pop(0).lower()
                 elif not len(tokens):
                     command = "begin_game"
+            case "cast" if len(tokens) and tokens[0].lower() == "spell":
+                # A two-word command.
+                command += "_" + tokens.pop(0).lower()
+            case "leave" if len(tokens) and tokens[0].lower() in ("using", "via"):
+                # 'via' or 'using' is dropped.
+                tokens.pop(0)
             case "look" if len(tokens) and tokens[0].lower() == "at":
                 # A two-word command.
                 command += "_" + tokens.pop(0).lower()
@@ -328,13 +290,18 @@ class CommandProcessor(object):
         # Having completed all the checks, I have a valid command and
         # there is a matching command method. The command method is tail
         # called with the remainder of the tokens as an argument.
+        context = Context(self.game_state, self.game_ending_state_msg)
         match command:
             case "attack":
-                return attack_command(self.context, tokens)
+                retval = attack_command(context, tokens)
+                self.game_ending_state_msg = context.game_ending_state_msg
+                return retval
             case "begin_game":
                 return begin_game_command(self.game_state, tokens)
             case "cast_spell":
-                return cast_spell_command(self.context, tokens)
+                retval = cast_spell_command(context, tokens)
+                self.game_ending_state_msg = context.game_ending_state_msg
+                return retval
             case "close":
                 return close_command(self.game_state, tokens)
             case "drink":
@@ -348,7 +315,9 @@ class CommandProcessor(object):
             case "inventory":
                 return inventory_command(self.game_state, tokens)
             case "leave":
-                return leave_command(self.context, tokens)
+                retval = leave_command(context, tokens)
+                self.game_ending_state_msg = context.game_ending_state_msg
+                return retval
             case "lock":
                 return lock_command(self.game_state, tokens)
             case "look_at":
@@ -362,7 +331,9 @@ class CommandProcessor(object):
             case "put":
                 return put_command(self.game_state, tokens)
             case "quit":
-                return quit_command(self.context, tokens)
+                retval = quit_command(context, tokens)
+                self.game_ending_state_msg = context.game_ending_state_msg
+                return retval
             case "reroll":
                 return reroll_command(self.game_state, tokens)
             case "set_class":
@@ -379,4 +350,3 @@ class CommandProcessor(object):
                 return unlock_command(self.game_state, tokens)
             case _:
                 raise InternalError(f"unrecognized command: {_}")
-

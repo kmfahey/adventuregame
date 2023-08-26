@@ -16,7 +16,7 @@ def be_attacked_by_command(context, creature):
     # True, the game ends.
     #
     # :creature: The foe creature that was targeted by attack_command().
-    game_state = context["game_state"]
+    game_state = context.game_state
 
     # The attack is calculated.
     attack_roll_dice_expr = creature.attack_roll
@@ -48,7 +48,7 @@ def be_attacked_by_command(context, creature):
             # return it if the frontend accidentally tries to submit
             # another command.
             game_state.game_has_ended = True
-            context["game_ending_state_msg"] = return_tuple[-1]
+            context.game_ending_state_msg = return_tuple[-1]
             return return_tuple
         else:
             # game_state.character.is_alive == True

@@ -28,6 +28,6 @@ def quit_command(context, tokens):
     # to True, store the return value in game_ending_state_msg so
     # process() can reuse it if needs be, and return the value.
     return_tuple = (stmsg.quit.HaveQuitTheGame(),)
-    context["game_state"].game_has_ended = True
-    context["game_ending_state_msg"] = return_tuple[-1]
+    context.game_state.game_has_ended = True
+    context.game_ending_state_msg = return_tuple[-1]
     return return_tuple

@@ -37,7 +37,7 @@ def cast_spell_command(context, tokens):
     * If the character is a Priest, returns a
     .stmsg.castspl.CastHealingSpell object and a
     .stmsg.various.UnderwentHealingEffect object."""
-    game_state = context["game_state"]
+    game_state = context.game_state
 
     # The first error check detects if the player has used this
     # command while playing a Warrior or Thief. Those classes can't
