@@ -27,37 +27,166 @@ abstract base class and a large collection of subclasses each of which
 implements a specific result case of one or more specific commands.
 """
 
-from advgame.elements import AbilityScores, Armor, Character, Chest, Coin, Container, ContainersState, Corpse, \
-        Creature, CreaturesState, Door, DoorsState, Doorway, Equipment, EquippableItem, GameState, IniEntry, IronDoor, \
-        Item, ItemsMultiState, ItemsState, Key, Oddment, Potion, Room, RoomsState, Shield, State, Wand, Weapon, \
-        WoodenDoor
+from advgame.elements import (
+    AbilityScores,
+    Armor,
+    Character,
+    Chest,
+    Coin,
+    Container,
+    ContainersState,
+    Corpse,
+    Creature,
+    CreaturesState,
+    Door,
+    DoorsState,
+    Doorway,
+    Equipment,
+    EquippableItem,
+    GameState,
+    IniEntry,
+    IronDoor,
+    Item,
+    ItemsMultiState,
+    ItemsState,
+    Key,
+    Oddment,
+    Potion,
+    Room,
+    RoomsState,
+    Shield,
+    State,
+    Wand,
+    Weapon,
+    WoodenDoor,
+)
 from advgame.errors import BadCommandError, InternalError
 from advgame.process import CommandProcessor
-from advgame.stmsg import attack, be_atkd, begin, castspl, close, command, drink, drop, equip, help_, inven, leave, \
-        lock, lookat, open_, pklock, pickup, put, quit, reroll, setcls, setname, status, take, unequip, unlock, \
-        various, GameStateMessage
-from advgame.utils import join_strs_w_comma_conj, isfloat, lexical_number_to_digits, usage_verb, roll_dice, textwrapper
+from advgame.stmsg import (
+    attack,
+    be_atkd,
+    begin,
+    castspl,
+    close,
+    command,
+    drink,
+    drop,
+    equip,
+    help_,
+    inven,
+    leave,
+    lock,
+    lookat,
+    open_,
+    pklock,
+    pickup,
+    put,
+    quit,
+    reroll,
+    setcls,
+    setname,
+    status,
+    take,
+    unequip,
+    unlock,
+    various,
+    GameStateMessage,
+)
+from advgame.utils import (
+    join_strs_w_comma_conj,
+    isfloat,
+    lexical_number_to_digits,
+    usage_verb,
+    roll_dice,
+    textwrapper,
+)
 
 
 __version__ = "0.9.001"
 
 
 # From advgame.elements
-__all__ = ("AbilityScores", "Armor", "Character", "Chest", "Coin", "Container", "ContainersState", "Corpse",
-           "Creature", "CreaturesState", "Door", "DoorsState", "Doorway", "Equipment", "EquippableItem", "GameState",
-           "IniEntry", "IronDoor", "Item", "ItemsMultiState", "ItemsState", "Key", "Oddment", "Potion", "Room",
-           "RoomsState", "Shield", "State", "Wand", "Weapon", "WoodenDoor")
+__all__ = (
+    "AbilityScores",
+    "Armor",
+    "Character",
+    "Chest",
+    "Coin",
+    "Container",
+    "ContainersState",
+    "Corpse",
+    "Creature",
+    "CreaturesState",
+    "Door",
+    "DoorsState",
+    "Doorway",
+    "Equipment",
+    "EquippableItem",
+    "GameState",
+    "IniEntry",
+    "IronDoor",
+    "Item",
+    "ItemsMultiState",
+    "ItemsState",
+    "Key",
+    "Oddment",
+    "Potion",
+    "Room",
+    "RoomsState",
+    "Shield",
+    "State",
+    "Wand",
+    "Weapon",
+    "WoodenDoor",
+)
 
 # From advgame.errors
-__all__ += ("BadCommandError", "InternalError",)
+__all__ += (
+    "BadCommandError",
+    "InternalError",
+)
 
 # From advgame.process
-__all__ += "CommandProcessor",
+__all__ += ("CommandProcessor",)
 
 # From advgame.stmsg
-__all__ += ("attack", "be_atkd", "begin", "castspl", "close", "command", "drink", "drop", "equip", "help_", "inven",
-            "leave", "lock", "lookat", "open_", "pklock", "pickup", "put", "quit", "reroll", "setcls", "setname",
-            "status", "take", "unequip", "unlock", "various", "GameStateMessage")
+__all__ += (
+    "attack",
+    "be_atkd",
+    "begin",
+    "castspl",
+    "close",
+    "command",
+    "drink",
+    "drop",
+    "equip",
+    "help_",
+    "inven",
+    "leave",
+    "lock",
+    "lookat",
+    "open_",
+    "pklock",
+    "pickup",
+    "put",
+    "quit",
+    "reroll",
+    "setcls",
+    "setname",
+    "status",
+    "take",
+    "unequip",
+    "unlock",
+    "various",
+    "GameStateMessage",
+)
 
 # From advgame.utils
-__all__ = ("join_strs_w_comma_conj", "isfloat", "lexical_number_to_digits", "usage_verb", "roll_dice", "textwrapper")
+__all__ = (
+    "join_strs_w_comma_conj",
+    "isfloat",
+    "lexical_number_to_digits",
+    "usage_verb",
+    "roll_dice",
+    "textwrapper",
+)

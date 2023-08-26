@@ -3,18 +3,23 @@
 from advgame.stmsg.gsm import GameStateMessage
 
 
-__all__ = ("CastDamagingSpell", "CastHealingSpell", "InsufficientMana", "NoCreatureToTarget",)
+__all__ = (
+    "CastDamagingSpell",
+    "CastHealingSpell",
+    "InsufficientMana",
+    "NoCreatureToTarget",
+)
 
 
 class CastDamagingSpell(GameStateMessage):
     """
-Returned by advgame.process.CommandProcessor.cast_spell_command() when
-the player, while playing a Mage, has cast a damaging spell. Like
-.stmsg.attack.AttackHit, it tracks whether the foe was slain, and adds a
-'they turn to attack' sentence if not.
+    Returned by advgame.process.CommandProcessor.cast_spell_command() when
+    the player, while playing a Mage, has cast a damaging spell. Like
+    .stmsg.attack.AttackHit, it tracks whether the foe was slain, and adds a
+    'they turn to attack' sentence if not.
     """
 
-    __slots__ = 'creature_title', 'damage_dealt'
+    __slots__ = "creature_title", "damage_dealt"
 
     @property
     def message(self):
@@ -22,15 +27,21 @@ the player, while playing a Mage, has cast a damaging spell. Like
         #
         # The player character's spell killed their foe.
         if self.creature_slain:
-            return ('A magic missile springs from your gesturing hand and unerringly strikes the '
-                    + f'{self.creature_title}. You have done {self.damage_dealt} points of damage.')
+            return (
+                "A magic missile springs from your gesturing hand and "
+                + f"unerringly strikes the {self.creature_title}. You have "
+                + f"done {self.damage_dealt} points of damage."
+            )
         # The player character's spell didn't kill their foe, and,
         # as with any use of the ATTACK command, the creature is
         # counterattacking.
         else:
-            return ('A magic missile springs from your gesturing hand and unerringly strikes the '
-                    + f'{self.creature_title}. You have done {self.damage_dealt} points of damage. The '
-                    + f'{self.creature_title} turns to attack!')
+            return (
+                "A magic missile springs from your gesturing hand and "
+                + f"unerringly strikes the {self.creature_title}. You have "
+                + f"done {self.damage_dealt} points of damage. The "
+                + f"{self.creature_title} turns to attack!"
+            )
 
     def __init__(self, creature_title, damage_dealt, creature_slain):
         self.creature_title = creature_title
@@ -40,17 +51,17 @@ the player, while playing a Mage, has cast a damaging spell. Like
 
 class CastHealingSpell(GameStateMessage):
     """
-Returned by advgame.process.CommandProcessor.cast_spell_command() when
-used by a Priest. It doesn't need to mention how much damage was healed
-because it's followed by a Stmsg_Various_UnderwentHealingEffect instance
-that does that.
+    Returned by advgame.process.CommandProcessor.cast_spell_command() when
+    used by a Priest. It doesn't need to mention how much damage was healed
+    because it's followed by a Stmsg_Various_UnderwentHealingEffect instance
+    that does that.
     """
 
     __slots__ = ()
 
     @property
     def message(self):
-        return 'You cast a healing spell on yourself.'
+        return "You cast a healing spell on yourself."
 
     def __init__(self):
         pass
@@ -58,16 +69,19 @@ that does that.
 
 class InsufficientMana(GameStateMessage):
     """
-Returned by advgame.process.CommandProcessor.cast_spell_command() when
-the player tries to cast a spell with insufficient mana points.
+    Returned by advgame.process.CommandProcessor.cast_spell_command() when
+    the player tries to cast a spell with insufficient mana points.
     """
 
-    __slots__ = 'current_mana_points', 'mana_point_total', 'spell_mana_cost'
+    __slots__ = "current_mana_points", "mana_point_total", "spell_mana_cost"
 
     @property
     def message(self):
-        return (f"You don't have enough mana points to cast a spell. Casting a spell costs {self.spell_mana_cost} mana "
-                + f"points. Your mana points are {self.current_mana_points}/{self.mana_point_total}.")
+        return (
+            f"You don't have enough mana points to cast a spell. Casting a "
+            + f"spell costs {self.spell_mana_cost} mana points. Your mana "
+            + f"points are {self.current_mana_points}/{self.mana_point_total}."
+        )
 
     def __init__(self, current_mana_points, mana_point_total, spell_mana_cost):
         self.current_mana_points = current_mana_points
@@ -77,15 +91,15 @@ the player tries to cast a spell with insufficient mana points.
 
 class NoCreatureToTarget(GameStateMessage):
     """
-Returned by advgame.process.CommandProcessor.cast_spell_command() when
-the player uses the command in a room with no creature to attack.
+    Returned by advgame.process.CommandProcessor.cast_spell_command() when
+    the player uses the command in a room with no creature to attack.
     """
 
     __slots__ = ()
 
     @property
     def message(self):
-        return ("You can't cast magic missile here; there is no creature here to target.")
+        return "You can't cast magic missile here; there is no creature here to target."
 
     def __init__(self):
         pass

@@ -18,26 +18,26 @@ import abc
 
 class GameStateMessage(abc.ABC):
     """
-This class is the abstract base class for all the game state message
-classes in this module. It defines an abstract property message and an
-abstract method __init__.
+    This class is the abstract base class for all the game state message
+    classes in this module. It defines an abstract property message and an
+    abstract method __init__.
     """
 
     @property
     @abc.abstractmethod
     def message(self):
         """
-The message property of a GameStateMessage subclass renders the data
-stored in the object attributes to a natural language string which
-communicates the semantic content of the object to the player. The
-message property is accessed and printed by advgame.py.
+        The message property of a GameStateMessage subclass renders the data
+        stored in the object attributes to a natural language string which
+        communicates the semantic content of the object to the player. The
+        message property is accessed and printed by advgame.py.
         """
         pass
 
     @abc.abstractmethod
     def __init__(self, *argl, **argd):
         """
-The __init__ method of a GameStateMessage subclass stores its keyword
-arguments to object attributes, and performs no other task.
+        The __init__ method of a GameStateMessage subclass stores its keyword
+        arguments to object attributes, and performs no other task.
         """
         pass

@@ -3,23 +3,33 @@
 from advgame.stmsg.gsm import GameStateMessage
 
 
-__all__ = ("DontPossessCorrectKey", "ElementNotUnlockable", "ElementHasBeenUnlocked", "ElementIsAlreadyUnlocked",
-           "ElementToUnlockNotHere")
+__all__ = (
+    "DontPossessCorrectKey",
+    "ElementNotUnlockable",
+    "ElementHasBeenUnlocked",
+    "ElementIsAlreadyUnlocked",
+    "ElementToUnlockNotHere",
+)
 
 
 class DontPossessCorrectKey(GameStateMessage):
     """
-Returned by advgame.process.CommandProcessor.lock_command() when the
-player tries to lock a chest while they don't possess the chest key, or
-a door while they don't possess the door key.
+    Returned by advgame.process.CommandProcessor.lock_command() when the
+    player tries to lock a chest while they don't possess the chest key, or
+    a door while they don't possess the door key.
     """
 
-    __slots__ = 'object_to_lock_title', 'key_needed',
+    __slots__ = (
+        "object_to_lock_title",
+        "key_needed",
+    )
 
     @property
     def message(self):
-        return (f'To lock the {self.object_to_lock_title} '
-                + f'you need a {self.key_needed}.')
+        return (
+            f"To lock the {self.object_to_lock_title} "
+            + f"you need a {self.key_needed}."
+        )
 
     def __init__(self, object_to_lock_title, key_needed):
         self.object_to_lock_title = object_to_lock_title
@@ -27,7 +37,7 @@ a door while they don't possess the door key.
 
 
 class ElementNotUnlockable(GameStateMessage):
-    __slots__ = 'target_title', 'target_type'
+    __slots__ = "target_title", "target_type"
 
     @property
     def message(self):
@@ -35,10 +45,16 @@ class ElementNotUnlockable(GameStateMessage):
         # player that they tried to lock something that can't be locked
         # (a corpse, creature, doorway or item). It omits the direct
         # article is the item is armor.
-        if self.target_type == 'armor':
-            return (f"You can't lock the {self.target_title}; suits of {self.target_type} are not lockable.")
+        if self.target_type == "armor":
+            return (
+                f"You can't lock the {self.target_title}; suits of "
+                + f"{self.target_type} are not lockable."
+            )
         else:
-            return (f"You can't lock the {self.target_title}; {self.target_type}s are not lockable.")
+            return (
+                f"You can't lock the {self.target_title}; {self.target_type}s "
+                + "are not lockable."
+            )
 
     def __init__(self, target_title, target_type):
         self.target_title = target_title
@@ -47,15 +63,15 @@ class ElementNotUnlockable(GameStateMessage):
 
 class ElementHasBeenUnlocked(GameStateMessage):
     """
-Returned by advgame.process.CommandProcessor.lock_command() when the
-player successfully locks a chest or door.
+    Returned by advgame.process.CommandProcessor.lock_command() when the
+    player successfully locks a chest or door.
     """
 
-    __slots__ = 'target',
+    __slots__ = ("target",)
 
     @property
     def message(self):
-        return f'You have locked the {self.target}.'
+        return f"You have locked the {self.target}."
 
     def __init__(self, target):
         self.target = target
@@ -63,15 +79,15 @@ player successfully locks a chest or door.
 
 class ElementIsAlreadyUnlocked(GameStateMessage):
     """
-Returned by advgame.process.CommandProcessor.lock_command() when the
-player tries to lock a chest or door that is already locked.
+    Returned by advgame.process.CommandProcessor.lock_command() when the
+    player tries to lock a chest or door that is already locked.
     """
 
-    __slots__ = 'target',
+    __slots__ = ("target",)
 
     @property
     def message(self):
-        return f'The {self.target} is already locked.'
+        return f"The {self.target} is already locked."
 
     def __init__(self, target):
         self.target = target
@@ -79,16 +95,16 @@ player tries to lock a chest or door that is already locked.
 
 class ElementToUnlockNotHere(GameStateMessage):
     """
-Returned by advgame.process.CommandProcessor.lock_command() when the
-player specifies an object to lock that is not present in the current
-dungeon room.
+    Returned by advgame.process.CommandProcessor.lock_command() when the
+    player specifies an object to lock that is not present in the current
+    dungeon room.
     """
 
-    __slots__ = 'target_title',
+    __slots__ = ("target_title",)
 
     @property
     def message(self):
-        return f'You found no {self.target_title} here to lock.'
+        return f"You found no {self.target_title} here to lock."
 
     def __init__(self, target_title):
         self.target_title = target_title

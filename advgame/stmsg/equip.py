@@ -5,19 +5,22 @@ from advgame.stmsg.gsm import GameStateMessage
 from advgame.utils import usage_verb
 
 
-__all__ = ("ClassCantUseItem", "NoSuchItemInInventory",)
+__all__ = (
+    "ClassCantUseItem",
+    "NoSuchItemInInventory",
+)
 
 
 class ClassCantUseItem(GameStateMessage):
     """
-Returned by advgame.process.CommandProcessor.equip_command() when the
-player tries to equip an item that is not allowed for their class. As an
-example, a Mage would get this result if they tried to equip a suit of
-armor or a shield, and anyone besides a Mage would get this result if
-they tried to equip a wand.
+    Returned by advgame.process.CommandProcessor.equip_command() when the
+    player tries to equip an item that is not allowed for their class. As an
+    example, a Mage would get this result if they tried to equip a suit of
+    armor or a shield, and anyone besides a Mage would get this result if
+    they tried to equip a wand.
     """
 
-    __slots__ = 'character_class', 'item_title', 'item_type'
+    __slots__ = "character_class", "item_title", "item_type"
 
     @property
     def message(self):
@@ -26,8 +29,11 @@ they tried to equip a wand.
         # Stmsg_Drop_DroppedItem.message, it omits the indirect article
         # if the item is a suit of armor.
         item_usage_verb = usage_verb(self.item_type, gerund=False)
-        pluralizer = 's' if self.item_type != 'armor' else ''
-        return (f"{self.character_class}s can't {item_usage_verb} {self.item_title}{pluralizer}.")
+        pluralizer = "s" if self.item_type != "armor" else ""
+        return (
+            f"{self.character_class}s can't {item_usage_verb} "
+            + f"{self.item_title}{pluralizer}."
+        )
 
     def __init__(self, character_class, item_title, item_type):
         self.character_class = character_class
@@ -37,11 +43,11 @@ they tried to equip a wand.
 
 class NoSuchItemInInventory(GameStateMessage):
     """
-Returned by advgame.process.CommandProcessor.equip_command() when the
-player tries to equip an item that they don't have in their inventory.
+    Returned by advgame.process.CommandProcessor.equip_command() when the
+    player tries to equip an item that they don't have in their inventory.
     """
 
-    __slots__ = 'item_title',
+    __slots__ = ("item_title",)
 
     @property
     def message(self):
