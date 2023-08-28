@@ -1,9 +1,17 @@
 #!/usr/bin/python3
 
-from advgame import stmsg as stmsg
-
 from advgame.commands.constants import COMMANDS_SYNTAX
 from advgame.utils import lexical_number_in_1_99_re, lexical_number_to_digits
+from advgame.stmsg.command import BadSyntaxGSM
+from advgame.stmsg.drink import (
+    AmountToDrinkUnclearGSM,
+    DrankManaPotionGSM,
+    DrankManaPotionWhenNotASpellcasterGSM,
+    ItemNotDrinkableGSM,
+    ItemNotInInventoryGSM,
+    TriedToDrinkMoreThanPossessedGSM,
+)
+from advgame.stmsg.various import UnderwentHealingEffectGSM
 
 
 __all__ = ("drink_command",)
@@ -17,35 +25,35 @@ def drink_command(game_state, tokens):
     DRINK [THE] <potion name>
     DRINK <number> <potion name>[s]
 
-    * If that syntax is not followed, returns a .stmsg.command.BadSyntaxGSM
+    * If that syntax is not followed, returns a BadSyntaxGSM
     object.
 
     * If the potion specified is not in the character's inventory, returns a
-    .stmsg.drink.ItemNotInInventoryGSM object.
+    ItemNotInInventoryGSM object.
 
     * If the name matches an undrinkable item, or a door, chest, creature,
-    or corpse, returns a .stmsg.drink.ItemNotDrinkableGSM object.
+    or corpse, returns a ItemNotDrinkableGSM object.
 
     * If the <number> argument is used, and there's not that many of the
-    potion, returns a .stmsg.drink.TriedToDrinkMoreThanPossessedGSM object.
+    potion, returns a TriedToDrinkMoreThanPossessedGSM object.
 
     * Otherwise, if it's a health potion, then that potion is
     removed from inventory, the character is healed, and returns a
-    .stmsg.various.UnderwentHealingEffectGSM object.
+    UnderwentHealingEffectGSM object.
 
     * If it's a mana potion, and the character is a Warrior or a
     Thief, the potion is removed from inventory, and returns a
-    .stmsg.drink.DrankManaPotionWhenNotASpellcasterGSM object.
+    DrankManaPotionWhenNotASpellcasterGSM object.
 
     * If it's a mana potion, and the character is a Mage or a Preist, then
     the potion is removed from inventory, the character has some mana
-    restored, and a .stmsg.drink.DrankManaPotionGSM object is returned.
+    restored, and a DrankManaPotionGSM object is returned.
     """
     # This command requires an argument, which may include a direct
     # or indirect article. If that standard isn't met, a syntax
     # error is returned.
     if not len(tokens) or len(tokens) == 1 and tokens[0] in ("the", "a", "an"):
-        return (stmsg.command.BadSyntaxGSM("DRINK", COMMANDS_SYNTAX["DRINK"]),)
+        return (BadSyntaxGSM("DRINK", COMMANDS_SYNTAX["DRINK"]),)
 
     # Any leading article is stripped, but it signals that the
     # quantity to drink is 1, so qty_to_drink is set.
@@ -68,7 +76,7 @@ def drink_command(game_state, tokens):
         if (qty_to_drink > 1 and not tokens[-1].endswith("s")) or (
             qty_to_drink == 1 and tokens[-1].endswith("s")
         ):
-            return (stmsg.command.BadSyntaxGSM("DRINK", COMMANDS_SYNTAX["DRINK"]),)
+            return (BadSyntaxGSM("DRINK", COMMANDS_SYNTAX["DRINK"]),)
 
         # The first token is dropped off the tokens tuple.
         tokens = tokens[1:]
@@ -80,7 +88,7 @@ def drink_command(game_state, tokens):
         # a quantity-unclear error is returned.
         qty_to_drink = 1
         if tokens[-1].endswith("s"):
-            return (stmsg.drink.AmountToDrinkUnclearGSM(),)
+            return (AmountToDrinkUnclearGSM(),)
 
     # The initial error checking is out of the way, so we check the
     # Character's inventory for an item with a title that matches
@@ -96,7 +104,7 @@ def drink_command(game_state, tokens):
     # The character has no such item, so an item-not-in-inventory
     # error is returned.
     if not len(matching_items_qtys_objs):
-        return (stmsg.drink.ItemNotInInventoryGSM(item_title),)
+        return (ItemNotInInventoryGSM(item_title),)
 
     # An item by the title that the player specified was found, so
     # the object and its quantity are saved.
@@ -105,17 +113,13 @@ def drink_command(game_state, tokens):
     # If the item isn't a potion, an item-not-drinkable error is
     # returned.
     if not item.title.endswith(" potion"):
-        return (stmsg.drink.ItemNotDrinkableGSM(item_title),)
+        return (ItemNotDrinkableGSM(item_title),)
 
     # If the arguments specify a quantity to drink
     # that's greater than the quantity in inventory, a
     # tried-to-drink-more-than-possessed error is returned.
     elif qty_to_drink > item_qty:
-        return (
-            stmsg.drink.TriedToDrinkMoreThanPossessedGSM(
-                item_title, qty_to_drink, item_qty
-            ),
-        )
+        return (TriedToDrinkMoreThanPossessedGSM(item_title, qty_to_drink, item_qty),)
 
     # I execute the effect of a health potion or a mana potion,
     # depending. Mana potion first.
@@ -128,7 +132,7 @@ def drink_command(game_state, tokens):
         healed_amt = game_state.character.heal_damage(hit_points_recovered)
         game_state.character.drop_item(item)
         return (
-            stmsg.various.UnderwentHealingEffectGSM(
+            UnderwentHealingEffectGSM(
                 healed_amt,
                 game_state.character.hit_points,
                 game_state.character.hit_point_total,
@@ -142,7 +146,7 @@ def drink_command(game_state, tokens):
         # drank-mana-potion-when-not-a-spellcaster error is
         # returned.
         if game_state.character_class not in ("Mage", "Priest"):
-            return (stmsg.drink.DrankManaPotionWhenNotASpellcasterGSM(),)
+            return (DrankManaPotionWhenNotASpellcasterGSM(),)
 
         # The amount of mana recovery done by the potion is
         # granted to the character, and the potion is removed from
@@ -151,7 +155,7 @@ def drink_command(game_state, tokens):
         regained_amt = game_state.character.regain_mana(mana_points_recovered)
         game_state.character.drop_item(item)
         return (
-            stmsg.drink.DrankManaPotionGSM(
+            DrankManaPotionGSM(
                 regained_amt,
                 game_state.character.mana_points,
                 game_state.character.mana_point_total,

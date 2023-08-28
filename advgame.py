@@ -6,6 +6,10 @@ import tempfile
 
 import advgame as advg
 
+from advgame.stmsg.quit import HaveQuitTheGameGSM
+from advgame.stmsg.be_atkd import CharacterDeathGSM
+from advgame.stmsg.leave import WonTheGameGSM
+
 
 ### Establishing the game data object environment ###
 
@@ -1079,11 +1083,7 @@ while True:
     # state messages, the game exits.
     if isinstance(
         result[-1],
-        (
-            advg.stmsg.quit.HaveQuitTheGameGSM,
-            advg.stmsg.be_atkd.CharacterDeathGSM,
-            advg.stmsg.leave.WonTheGameGSM,
-        ),
+        (HaveQuitTheGameGSM, CharacterDeathGSM, WonTheGameGSM),
     ):
         exit(0)
 

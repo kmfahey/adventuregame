@@ -600,11 +600,11 @@ class Test_Cast_Spell(unittest.TestCase):
             result[0].mana_point_total,
             self.command_processor.game_state.character.mana_point_total,
         )
-        self.assertEqual(result[0].spell_mana_cost, advg.process.SPELL_MANA_COST)
+        self.assertEqual(result[0].spell_mana_cost, advg.commands.constants.SPELL_MANA_COST)
         self.assertEqual(
             result[0].message,
             "You don't have enough mana points to cast a spell. Casting a spell costs "
-            + f"{advg.process.SPELL_MANA_COST} mana points. Your mana points are "
+            + f"{advg.commands.constants.SPELL_MANA_COST} mana points. Your mana points are "
             + f"{current_mana_points}/{mana_point_total}.",
         )
 
@@ -645,7 +645,7 @@ class Test_Cast_Spell(unittest.TestCase):
             )
             self.assertEqual(
                 self.command_processor.game_state.character.mana_points
-                + spell_cast_count * advg.process.SPELL_MANA_COST,
+                + spell_cast_count * advg.commands.constants.SPELL_MANA_COST,
                 self.command_processor.game_state.character.mana_point_total,
             )
 
@@ -659,7 +659,7 @@ class Test_Cast_Spell(unittest.TestCase):
         self.assertIsInstance(result[1], advg.stmsg.various.UnderwentHealingEffectGSM)
         self.assertEqual(
             self.command_processor.game_state.character.mana_points
-            + advg.process.SPELL_MANA_COST,
+            + advg.commands.constants.SPELL_MANA_COST,
             self.command_processor.game_state.character.mana_point_total,
         )
 

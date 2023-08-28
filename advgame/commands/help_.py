@@ -1,12 +1,15 @@
 #!/usr/bin/python3
 
-from advgame import stmsg as stmsg
-
 from advgame.commands.constants import (
     COMMANDS_SYNTAX,
     PREGAME_COMMANDS,
     INGAME_COMMANDS,
     COMMANDS_HELP,
+)
+from advgame.stmsg.help_ import (
+    DisplayCommandsGSM,
+    DisplayHelpForCommandGSM,
+    NotRecognizedGSM,
 )
 
 
@@ -21,16 +24,16 @@ def help_command(game_state, tokens):
     HELP
     HELP <command name>
 
-    * If that syntax is not followed, returns a .stmsg.command.BadSyntaxGSM
+    * If that syntax is not followed, returns a BadSyntaxGSM
     object.
 
     * If the command is used with no arguments, returns a
-    .stmsg.help_.DisplayCommandsGSM object.
+    DisplayCommandsGSM object.
 
     * If the argument is not a recognized command, returns a
-    .stmsg.help_.NotRecognizedGSM object.
+    NotRecognizedGSM object.
 
-    * Otherwise, returns a .stmsg.help_.DisplayHelpForCommandGSM object.
+    * Otherwise, returns a DisplayHelpForCommandGSM object.
     """
     # An ordered tuple of all commands in uppercase is displayed in
     # some return values so it is computed.
@@ -44,7 +47,7 @@ def help_command(game_state, tokens):
         commands_tuple = tuple(
             sorted(strval.replace("_", " ").upper() for strval in commands_set)
         )
-        return (stmsg.help_.DisplayCommandsGSM(commands_tuple, game_state.game_has_begun),)
+        return (DisplayCommandsGSM(commands_tuple, game_state.game_has_begun),)
 
     # A specific command was included as an argument.
     else:
@@ -60,12 +63,12 @@ def help_command(game_state, tokens):
                     for strval in INGAME_COMMANDS | PREGAME_COMMANDS
                 )
             )
-            return (stmsg.help_.NotRecognizedGSM(command_uc, commands_tuple),)
+            return (NotRecognizedGSM(command_uc, commands_tuple),)
         else:
             # Otherwise, a help message for the command specified is
             # returned.
             return (
-                stmsg.help_.DisplayHelpForCommandGSM(
+                DisplayHelpForCommandGSM(
                     command_uc,
                     COMMANDS_SYNTAX[command_uc],
                     COMMANDS_HELP[command_uc],

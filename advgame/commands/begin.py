@@ -2,8 +2,10 @@
 
 from operator import itemgetter
 
-from advgame import stmsg as stmsg
 from advgame.commands.constants import COMMANDS_SYNTAX, STARTER_GEAR
+from advgame.stmsg.begin import GameBeginsGSM, NameOrClassNotSetGSM
+from advgame.stmsg.command import BadSyntaxGSM
+from advgame.stmsg.various import EnteredRoomGSM, ItemEquippedGSM
 
 
 __all__ = ("begin_game_command",)
@@ -15,13 +17,13 @@ def begin_game_command(game_state, tokens):
     in a tuple even when it's of length 1. Returns one or more
     statemsgs.GameStateMessage subclass instances. Takes no arguments.
 
-    * If any arguments are given, returns a .stmsg.command.BadSyntaxGSM object.
+    * If any arguments are given, returns a BadSyntaxGSM object.
 
     * If the command is used before the character's name and class have been
-    set, returns a .stmsg.begin.NameOrClassNotSetGSM object.
+    set, returns a NameOrClassNotSetGSM object.
 
-    * Otherwise, returns a .stmsg.begin.GameBeginsGSM object, one or more
-    .stmsg.various.ItemEquippedGSM objects, and a .stmsg.various.EnteredRoomGSM
+    * Otherwise, returns a GameBeginsGSM object, one or more
+    ItemEquippedGSM objects, and a EnteredRoomGSM
     object.
     """
     # This command begins the game. Most of the work done is devoted
@@ -31,7 +33,7 @@ def begin_game_command(game_state, tokens):
     # This command takes no argument; if any were used, a syntax
     # error is returned.
     if len(tokens):
-        return (stmsg.command.BadSyntaxGSM("BEGIN GAME", COMMANDS_SYNTAX["BEGIN GAME"]),)
+        return (BadSyntaxGSM("BEGIN GAME", COMMANDS_SYNTAX["BEGIN GAME"]),)
 
     # The game can't begin if the player hasn't used both SET
     # NAME and SET CLASS yet, so I check for that. If not, a
@@ -39,13 +41,13 @@ def begin_game_command(game_state, tokens):
     character_name = getattr(game_state, "character_name", None)
     character_class = getattr(game_state, "character_class", None)
     if not character_name or not character_class:
-        return (stmsg.begin.NameOrClassNotSetGSM(character_name, character_class),)
+        return (NameOrClassNotSetGSM(character_name, character_class),)
 
     # The error checking is done, so GameState.game_has_begun is set
     # to True, and a game-begins value is used to initialiZe the
     # return_values tuple.
     game_state.game_has_begun = True
-    return_values = (stmsg.begin.GameBeginsGSM(),)
+    return_values = (GameBeginsGSM(),)
 
     # A player character receives starting equipment appropriate to
     # their class, as laid out in the STARTER_GEAR dict. The value
@@ -71,7 +73,7 @@ def begin_game_command(game_state, tokens):
         # return_values tuple.
         if item.item_type == "armor":
             return_values += (
-                stmsg.various.ItemEquippedGSM(
+                ItemEquippedGSM(
                     item.title,
                     "armor",
                     armor_class=game_state.character.armor_class,
@@ -79,7 +81,7 @@ def begin_game_command(game_state, tokens):
             )
         elif item.item_type == "shield":
             return_values += (
-                stmsg.various.ItemEquippedGSM(
+                ItemEquippedGSM(
                     item.title,
                     "shield",
                     armor_class=game_state.character.armor_class,
@@ -87,7 +89,7 @@ def begin_game_command(game_state, tokens):
             )
         elif item.item_type == "wand":
             return_values += (
-                stmsg.various.ItemEquippedGSM(
+                ItemEquippedGSM(
                     item.title,
                     "wand",
                     attack_bonus=game_state.character.attack_bonus,
@@ -96,7 +98,7 @@ def begin_game_command(game_state, tokens):
             )
         else:
             return_values += (
-                stmsg.various.ItemEquippedGSM(
+                ItemEquippedGSM(
                     item.title,
                     "weapon",
                     attack_bonus=game_state.character.attack_bonus,
@@ -107,7 +109,7 @@ def begin_game_command(game_state, tokens):
     # Lastly, an entered-room return value is appended to the
     # return_values tuple, so a description of the first room will
     # print.
-    return_values += (stmsg.various.EnteredRoomGSM(game_state.rooms_state.cursor),)
+    return_values += (EnteredRoomGSM(game_state.rooms_state.cursor),)
 
     # From the player's perspective, the frontend printing out this
     # entire sequence of return values can look like:

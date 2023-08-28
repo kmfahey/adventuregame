@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 
-from advgame import stmsg as stmsg
-
 from advgame.commands.constants import COMMANDS_SYNTAX
 from advgame.commands.utils import _door_selector
+from advgame.stmsg import GameStateMessage
+from advgame.stmsg.command import BadSyntaxGSM
+from advgame.stmsg.leave import DoorIsLockedGSM, LeftRoomGSM, WonTheGameGSM
+from advgame.stmsg.various import EnteredRoomGSM
 
 
 __all__ = ("leave_command",)
@@ -19,20 +21,20 @@ def leave_command(context, tokens):
     LEAVE [USING or VIA] <door name>
     LEAVE [USING or VIA] <compass direction> <door name>
 
-    * If that syntax is not followed, returns a .stmsg.command.BadSyntaxGSM
+    * If that syntax is not followed, returns a BadSyntaxGSM
     object.
 
     * If the door by that name is not present in the room, returns a
-    .stmsg.various.DoorNotPresentGSM object.
+    DoorNotPresentGSM object.
 
     * If the door specifier is ambiguous and matches more than one door in
-    the room, returns a .stmsg.various.AmbiguousDoorSpecifierGSM object.
+    the room, returns a AmbiguousDoorSpecifierGSM object.
 
     * If the door is the exit to the dungeon, returns a
-    .stmsg.leave.LeftRoomGSM object and a .stmsg.leave.WonTheGameGSM object.
+    LeftRoomGSM object and a WonTheGameGSM object.
 
-    * Otherwise, a .stmsg.leave.LeftRoomGSM object and a
-    .stmsg.various.EnteredRoomGSM object are returned.
+    * Otherwise, a LeftRoomGSM object and a
+    EnteredRoomGSM object are returned.
     """
     game_state = context.game_state
 
@@ -43,7 +45,7 @@ def leave_command(context, tokens):
         or not 2 <= len(tokens) <= 4
         or tokens[-1] not in ("door", "doorway")
     ):
-        return (stmsg.command.BadSyntaxGSM("LEAVE", COMMANDS_SYNTAX["LEAVE"]),)
+        return (BadSyntaxGSM("LEAVE", COMMANDS_SYNTAX["LEAVE"]),)
 
     # The format for specifying doors is flexible, and is
     # implemented by a private workhorse method.
@@ -52,7 +54,7 @@ def leave_command(context, tokens):
     # Like all workhorse methods, it may return an error. result[0]
     # is type-tested if it inherits from GameStateMessage. If it
     # matches, the result tuple is returned.
-    if isinstance(result[0], stmsg.GameStateMessage):
+    if isinstance(result[0], GameStateMessage):
         return result
     else:
         # Otherwise, the matching Door object is extracted from
@@ -66,7 +68,7 @@ def leave_command(context, tokens):
 
     # If the door is locked, a door-is-locked error is returned.
     if door.is_locked:
-        return (stmsg.leave.DoorIsLockedGSM(compass_dir, portal_type),)
+        return (DoorIsLockedGSM(compass_dir, portal_type),)
 
     # The exit to the dungeon is a special Door object marked with
     # is_exit=True. I test the Door object to see if this is the
@@ -76,8 +78,8 @@ def leave_command(context, tokens):
         # If so, a left-room value will be returned along with a
         # won-the-game value.
         return_tuple = (
-            stmsg.leave.LeftRoomGSM(compass_dir, portal_type),
-            stmsg.leave.WonTheGameGSM(),
+            LeftRoomGSM(compass_dir, portal_type),
+            WonTheGameGSM(),
         )
 
         # The game_has_ended boolean is set True, and the
@@ -93,6 +95,6 @@ def leave_command(context, tokens):
     # entered-room value.
     game_state.rooms_state.move(**{compass_dir: True})
     return (
-        stmsg.leave.LeftRoomGSM(compass_dir, portal_type),
-        stmsg.various.EnteredRoomGSM(game_state.rooms_state.cursor),
+        LeftRoomGSM(compass_dir, portal_type),
+        EnteredRoomGSM(game_state.rooms_state.cursor),
     )

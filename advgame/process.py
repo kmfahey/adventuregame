@@ -6,29 +6,17 @@ and executes it in the game object environment, modifying the game state
 and generating a natural-language response.
 """
 
-import itertools
-import math
-import operator
-import re
-import types
-
 from dataclasses import dataclass
 
-import advgame.stmsg as stmsg
+from advgame.stmsg import GameStateMessage
+from advgame.stmsg.command import NotRecognizedGSM, NotAllowedNowGSM
 
 from advgame.commands import (
-    COMMANDS_HELP,
-    COMMANDS_SYNTAX,
     INGAME_COMMANDS,
     PREGAME_COMMANDS,
-    SPELL_DAMAGE,
-    SPELL_MANA_COST,
-    STARTER_GEAR,
-    VALID_NAME_RE,
 )
 from advgame.commands import (
     attack_command,
-    be_attacked_by_command,
     begin_game_command,
     cast_spell_command,
     close_command,
@@ -54,35 +42,8 @@ from advgame.commands import (
     unlock_command,
 )
 
-from advgame.commands.utils import (
-    _matching_door,
-    _preprocessing_for_lock_unlock_open_or_close,
-    _door_selector,
-    _put_or_take_preproc,
-    _pick_up_or_drop_preproc,
-    _look_at_item_detail,
-)
-
 from advgame.errors import InternalError
-from advgame.elements import (
-    Chest,
-    Corpse,
-    Door,
-    Doorway,
-    EquippableItem,
-    GameState,
-    ItemsMultiState,
-    Potion,
-    Wand,
-    Weapon,
-)
-from advgame.utils import (
-    join_strs_w_comma_conj,
-    roll_dice,
-    lexical_number_in_1_99_re,
-    lexical_number_to_digits,
-    digit_re,
-)
+from advgame.elements import GameState
 
 
 __all__ = ("CommandProcessor",)
@@ -91,7 +52,7 @@ __all__ = ("CommandProcessor",)
 @dataclass
 class Context:
     game_state: GameState
-    game_ending_state_msg: stmsg.GameStateMessage
+    game_ending_state_msg: GameStateMessage
 
 
 # This module consists solely of the CommandProcessor class and
@@ -258,7 +219,7 @@ class CommandProcessor:
         # The commands allowed in the current game mode are included.
         if command not in self.commands_set:
             return (
-                stmsg.command.NotRecognizedGSM(
+                NotRecognizedGSM(
                     command,
                     INGAME_COMMANDS
                     if self.game_state.game_has_begun
@@ -273,13 +234,13 @@ class CommandProcessor:
         # commands included.
         elif self.game_state.game_has_begun and command not in INGAME_COMMANDS:
             return (
-                stmsg.command.NotAllowedNowGSM(
+                NotAllowedNowGSM(
                     command, INGAME_COMMANDS, self.game_state.game_has_begun
                 ),
             )
         elif not self.game_state.game_has_begun and command not in PREGAME_COMMANDS:
             return (
-                stmsg.command.NotAllowedNowGSM(
+                NotAllowedNowGSM(
                     command, PREGAME_COMMANDS, self.game_state.game_has_begun
                 ),
             )

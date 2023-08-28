@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-from advgame import stmsg as stmsg
 from advgame.utils import roll_dice
+from advgame.stmsg.be_atkd import AttackedAndHitGSM, AttackedAndNotHitGSM, CharacterDeathGSM
 
 
 __all__ = ("be_attacked_by_command",)
@@ -26,7 +26,7 @@ def be_attacked_by_command(context, creature):
     # If the attack roll didn't meet or exceed the player character's
     # armor class, an attacked-and-not-hit value is returned.
     if attack_result < game_state.character.armor_class:
-        return (stmsg.be_atkd.AttackedAndNotHitGSM(creature.title),)
+        return (AttackedAndNotHitGSM(creature.title),)
     else:
         # attack_result >= game_state.character.armor_class
 
@@ -39,8 +39,8 @@ def be_attacked_by_command(context, creature):
             # returned. Game over, it's that easy. Combat comes with
             # risk.
             return_tuple = (
-                stmsg.be_atkd.AttackedAndHitGSM(creature.title, damage_done, 0),
-                stmsg.be_atkd.CharacterDeathGSM(),
+                AttackedAndHitGSM(creature.title, damage_done, 0),
+                CharacterDeathGSM(),
             )
 
             # The game_has_ended boolean is set True, and the
@@ -56,7 +56,7 @@ def be_attacked_by_command(context, creature):
             # The player character survived, so just an attacked-and-hit
             # value is returned.
             return (
-                stmsg.be_atkd.AttackedAndHitGSM(
+                AttackedAndHitGSM(
                     creature.title, damage_done, game_state.character.hit_points
                 ),
             )
