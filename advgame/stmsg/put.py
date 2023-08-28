@@ -6,7 +6,7 @@ from advgame.stmsg.gsm import GameStateMessage
 __all__ = (
     "PutAmountOfItem",
     "ItemNotInInventory",
-    "QuantityUnclear",
+    "AmountToPutUnclear",
     "TryingToPutMoreThanYouHave",
 )
 
@@ -81,7 +81,7 @@ class ItemNotInInventory(GameStateMessage):
         self.item_title = item_title
 
 
-class QuantityUnclear(GameStateMessage):
+class AmountToPutUnclear(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.put_command() when the
     player writes an ungrammatical sentence that is ambiguous as to how many

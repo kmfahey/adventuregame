@@ -1053,7 +1053,7 @@ class Test_Drink(unittest.TestCase):
         mana_potion = self.command_processor.game_state.items_state.get("Mana_Potion")
         self.command_processor.game_state.character.pick_up_item(mana_potion)
         result = self.command_processor.process("drink mana potions")
-        self.assertIsInstance(result[0], advg.stmsg.drink.QuantityUnclear)
+        self.assertIsInstance(result[0], advg.stmsg.drink.AmountToDrinkUnclear)
         self.assertEqual(
             result[0].message, "Amount to drink unclear. How many do you mean?"
         )
@@ -1111,7 +1111,7 @@ class Test_Drop(unittest.TestCase):
         gold_coin = self.items_state.get("Gold_Coin")
         self.command_processor.game_state.character.pick_up_item(gold_coin, qty=30)
         result = self.command_processor.process("drop a gold coins")  # check
-        self.assertIsInstance(result[0], advg.stmsg.drop.QuantityUnclear)
+        self.assertIsInstance(result[0], advg.stmsg.drop.AmountToDropUnclear)
         self.assertEqual(
             result[0].message, "Amount to drop unclear. How many do you mean?"
         )
@@ -3622,7 +3622,7 @@ class Test_Pick_Up(unittest.TestCase):
 
     def test_pick_up_2(self):
         result = self.command_processor.process("pick up a gold coins")  # check
-        self.assertIsInstance(result[0], advg.stmsg.pickup.QuantityUnclear)
+        self.assertIsInstance(result[0], advg.stmsg.pickup.AmountToPickUpUnclear)
         self.assertEqual(
             result[0].message, "Amount to pick up unclear. How many do you mean?"
         )
@@ -5128,7 +5128,7 @@ class Test_Take(unittest.TestCase):
             "Gold_Coin", 15, self.gold_coin
         )
         result = self.command_processor.process("put a gold coins on the kobold corpse")
-        self.assertIsInstance(result[0], advg.stmsg.put.QuantityUnclear)
+        self.assertIsInstance(result[0], advg.stmsg.put.AmountToPutUnclear)
         self.assertEqual(
             result[0].message, "Amount to put unclear. How many do you mean?"
         )

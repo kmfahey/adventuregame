@@ -30,7 +30,7 @@ def put_command(game_state, tokens):
     .stmsg.various.ContainerIsClosed object.
 
     * If the arguments are an ungrammatical sentence and are ambiguous about
-    the quantity to put, returns a .stmsg.put.QuantityUnclear object.
+    the quantity to put, returns a .stmsg.take.AmountToPutUnclear object.
 
     * If the arguments specify an item to put that is not present in the
     character's inventory, returns a .stmsg.put.ItemNotInInventory object.

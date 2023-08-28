@@ -29,7 +29,7 @@ def take_command(game_state, tokens):
 
     * If the arguments are an ungrammatical sentence and are
     ambiguous as to what quantity the player means to take, returns a
-    .stmsg.take.QuantityUnclear object.
+    .stmsg.take.AmountToTakeUnclear object.
 
     * If the specified item is not present in the specified chest or on the
     specified corpse, returns a .stmsg.take.ItemNotFoundInContainer object.

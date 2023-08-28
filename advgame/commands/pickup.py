@@ -22,7 +22,7 @@ def pick_up_command(game_state, tokens):
     object.
 
     * If the arguments are ungrammatical and are unclear about the quantity
-    to pick up, returns a .stmsg.pickup.QuantityUnclear object.
+    to pick up, returns a .stmsg.drop.AmountToPickUpUnclear object.
 
     * If the arguments specify a chest, corpse, creature or door, returns a
     .stmsg.pickup.CantPickUpChestCorpseCreatureOrDoor object.

@@ -5,7 +5,7 @@ from advgame.stmsg.gsm import GameStateMessage
 
 __all__ = (
     "DroppedItem",
-    "QuantityUnclear",
+    "AmountToDropUnclear",
     "TryingToDropItemYouDontHave",
     "TryingToDropMoreThanYouHave",
 )
@@ -92,7 +92,7 @@ class DroppedItem(GameStateMessage):
         self.amount_left = amount_left
 
 
-class QuantityUnclear(GameStateMessage):
+class AmountToDropUnclear(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.drop_command() when the
     player writes an ungrammatical sentence that is ambiguous as to how many

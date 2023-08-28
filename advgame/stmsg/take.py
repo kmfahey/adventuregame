@@ -6,7 +6,7 @@ from advgame.stmsg.gsm import GameStateMessage
 __all__ = (
     "ItemNotFoundInContainer",
     "ItemOrItemsTaken",
-    "QuantityUnclear",
+    "AmountToTakeUnclear",
     "TryingToTakeMoreThanIsPresent",
 )
 
@@ -79,7 +79,7 @@ class ItemOrItemsTaken(GameStateMessage):
         self.amount_taken = amount_taken
 
 
-class QuantityUnclear(GameStateMessage):
+class AmountToTakeUnclear(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.take_command() when the
     player writes an ungrammatical sentence that is ambiguous as to how many

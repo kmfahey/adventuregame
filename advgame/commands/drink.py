@@ -80,7 +80,7 @@ def drink_command(game_state, tokens):
         # a quantity-unclear error is returned.
         qty_to_drink = 1
         if tokens[-1].endswith("s"):
-            return (stmsg.drink.QuantityUnclear(),)
+            return (stmsg.drink.AmountToDrinkUnclear(),)
 
     # The initial error checking is out of the way, so we check the
     # Character's inventory for an item with a title that matches

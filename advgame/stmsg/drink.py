@@ -9,7 +9,7 @@ __all__ = (
     "ItemNotDrinkable",
     "ItemNotInInventory",
     "TriedToDrinkMoreThanPossessed",
-    "QuantityUnclear",
+    "AmountToDrinkUnclear",
 )
 
 
@@ -128,7 +128,7 @@ class TriedToDrinkMoreThanPossessed(GameStateMessage):
         self.possessed_qty = possessed_qty
 
 
-class QuantityUnclear(GameStateMessage):
+class AmountToDrinkUnclear(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.drink_command() when the
     player writes an ungrammatical sentence that is ambiguous as to how many

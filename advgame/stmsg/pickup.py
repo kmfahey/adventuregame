@@ -10,7 +10,7 @@ __all__ = (
     "CantPickUpChestCorpseCreatureOrDoor",
     "ItemNotFound",
     "ItemPickedUp",
-    "QuantityUnclear",
+    "AmountToPickUpUnclear",
     "TryingToPickUpMoreThanIsPresent",
 )
 
@@ -120,7 +120,7 @@ class ItemPickedUp(GameStateMessage):
         self.amount_had = amount_had
 
 
-class QuantityUnclear(GameStateMessage):
+class AmountToPickUpUnclear(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.pick_up_command() when the
     player has entered an ungrammatical sentence that is ambiguous as to how

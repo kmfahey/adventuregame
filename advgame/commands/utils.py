@@ -263,8 +263,8 @@ def _pick_up_or_drop_preproc(command, tokens):
     #
     # * If the player submitted an ungrammatical
     # sentence which is ambiguous as to the quantity
-    # intended, a .stmsg.drop.QuantityUnclear object or a
-    # .stmsg.pickup.QuantityUnclear object is returned depending on
+    # intended, a .stmsg.drop.AmountToDropUnclear object or a
+    # .stmsg.drop.AmountToPickUpUnclear object is returned depending on
     # the value in command.
 
     # This long boolean checks whether the first token in tokens can
@@ -292,9 +292,9 @@ def _pick_up_or_drop_preproc(command, tokens):
                 # 's' on it, I return a quantity-unclear error
                 # appropriate to the caller.
                 return (
-                    (stmsg.drop.QuantityUnclear(),)
+                    (stmsg.drop.AmountToDropUnclear(),)
                     if command.lower() == "drop"
-                    else (stmsg.pickup.QuantityUnclear(),)
+                    else (stmsg.pickup.AmountToPickUpUnclear(),)
                 )
             # Otherwise it implies a quantity of 1.
             item_quantity = 1
@@ -341,9 +341,9 @@ def _pick_up_or_drop_preproc(command, tokens):
             # in a pluralizing 's', I return the appropriate
             # quantity-unclear value.
             return (
-                (stmsg.drop.QuantityUnclear(),)
+                (stmsg.drop.AmountToDropUnclear(),)
                 if command.lower() == "drop"
-                else (stmsg.pickup.QuantityUnclear(),)
+                else (stmsg.drop.AmountToPickUpUnclear(),)
             )
     else:
         # I form the item title.
@@ -552,8 +552,8 @@ def _put_or_take_preproc(game_state, command, tokens):
     #
     # * If the arguments are an ungrammatical sentence
     # and are ambiguous about the quantity of the item,
-    # returns a .stmsg.put.QuantityUnclear object or a
-    # .stmsg.take.QuantityUnclear object.
+    # returns a .stmsg.take.AmountToPutUnclear object or a
+    # .stmsg.take.AmountToTakeUnclear object.
     #
     # * If the arguments specify a container title that doesn't
     # match the title of the container in the current room, returns
@@ -647,9 +647,9 @@ def _put_or_take_preproc(game_state, command, tokens):
             # quantity is 1 but the item title is plural, so I
             # return a syntax error.
             return (
-                (stmsg.take.QuantityUnclear(),)
+                (stmsg.take.AmountToTakeUnclear(),)
                 if command == "take"
-                else (stmsg.put.QuantityUnclear(),)
+                else (stmsg.put.AmountToPutUnclear(),)
             )
 
         # I strip the plural s.
