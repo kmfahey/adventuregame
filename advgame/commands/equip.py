@@ -18,28 +18,28 @@ def equip_command(game_state, tokens):
     EQUIP <wand name>
     EQUIP <weapon name>
 
-    * If that syntax is not followed, returns a .stmsg.command.BadSyntax
+    * If that syntax is not followed, returns a .stmsg.command.BadSyntaxGSM
     object.
 
     * If the item isn't in inventory, returns a
-    .stmsg.equip.NoSuchItemInInventory object.
+    .stmsg.equip.NoSuchItemInInventoryGSM object.
 
     * If the item can't be used by the character due to their class, returns
-    a .stmsg.equip.ClassCantUseItem object.
+    a .stmsg.equip.ClassCantUseItemGSM object.
 
     * If an item of the same kind is already equipped (for example trying
     to equip a suit of armor when the character is already wearing armor),
     that item is unequipped, the specified item is equipped, and a
-    .stmsg.various.ItemUnequipped object and a .stmsg.various.ItemEquipped
+    .stmsg.various.ItemUnequippedGSM object and a .stmsg.various.ItemEquippedGSM
     object are returned.
 
-    * Otherwise, the item is equipped, and a .stmsg.various.ItemEquipped
+    * Otherwise, the item is equipped, and a .stmsg.various.ItemEquippedGSM
     object is returned.
     """
     # The equip command requires an argument; if none was given, a
     # syntax error is returned.
     if not tokens or len(tokens) == 1 and tokens[0] == "the":
-        return (stmsg.command.BadSyntax("EQUIP", COMMANDS_SYNTAX["EQUIP"]),)
+        return (stmsg.command.BadSyntaxGSM("EQUIP", COMMANDS_SYNTAX["EQUIP"]),)
     if tokens[0] == "the":
         tokens = tokens[1:]
 
@@ -57,7 +57,7 @@ def equip_command(game_state, tokens):
     # If no such item is found in the inventory, a
     # no-such-item-in-inventory error is returned.
     if not len(matching_item_tuple):
-        return (stmsg.equip.NoSuchItemInInventory(item_title),)
+        return (stmsg.equip.NoSuchItemInInventoryGSM(item_title),)
 
     # The Item subclass object was found and is saved.
     (item,) = matching_item_tuple[0:1]
@@ -67,7 +67,7 @@ def equip_command(game_state, tokens):
     can_use_attr = game_state.character_class.lower() + "_can_use"
     if not getattr(item, can_use_attr):
         return (
-            stmsg.equip.ClassCantUseItem(
+            stmsg.equip.ClassCantUseItemGSM(
                 game_state.character_class, item_title, item.item_type
             ),
         )
@@ -83,7 +83,7 @@ def equip_command(game_state, tokens):
         old_equipped = game_state.character.armor_equipped
         game_state.character.unequip_armor()
         return_values += (
-            stmsg.various.ItemUnequipped(
+            stmsg.various.ItemUnequippedGSM(
                 old_equipped.title,
                 old_equipped.item_type,
                 armor_class=game_state.character.armor_class,
@@ -95,7 +95,7 @@ def equip_command(game_state, tokens):
         old_equipped = game_state.character.shield_equipped
         game_state.character.unequip_shield()
         return_values += (
-            stmsg.various.ItemUnequipped(
+            stmsg.various.ItemUnequippedGSM(
                 old_equipped.title,
                 old_equipped.item_type,
                 armor_class=game_state.character.armor_class,
@@ -108,7 +108,7 @@ def equip_command(game_state, tokens):
         game_state.character.unequip_wand()
         if game_state.character.weapon_equipped:
             return_values += (
-                stmsg.various.ItemUnequipped(
+                stmsg.various.ItemUnequippedGSM(
                     old_equipped.title,
                     old_equipped.item_type,
                     attacking_with=game_state.character.weapon_equipped,
@@ -118,7 +118,7 @@ def equip_command(game_state, tokens):
             )
         else:
             return_values += (
-                stmsg.various.ItemUnequipped(
+                stmsg.various.ItemUnequippedGSM(
                     old_equipped.title, old_equipped.item_type, now_cant_attack=True
                 ),
             )
@@ -129,7 +129,7 @@ def equip_command(game_state, tokens):
         game_state.character.unequip_weapon()
         if game_state.character.wand_equipped:
             return_values += (
-                stmsg.various.ItemUnequipped(
+                stmsg.various.ItemUnequippedGSM(
                     old_equipped.title,
                     old_equipped.item_type,
                     attacking_with=game_state.character.wand_equipped,
@@ -139,7 +139,7 @@ def equip_command(game_state, tokens):
             )
         else:
             return_values += (
-                stmsg.various.ItemUnequipped(
+                stmsg.various.ItemUnequippedGSM(
                     old_equipped.title, old_equipped.item_type, now_cant_attack=True
                 ),
             )
@@ -152,7 +152,7 @@ def equip_command(game_state, tokens):
         # object.
         game_state.character.equip_armor(item)
         return_values += (
-            stmsg.various.ItemEquipped(
+            stmsg.various.ItemEquippedGSM(
                 item.title,
                 "armor",
                 armor_class=game_state.character.armor_class,
@@ -164,7 +164,7 @@ def equip_command(game_state, tokens):
         # object.
         game_state.character.equip_shield(item)
         return_values += (
-            stmsg.various.ItemEquipped(
+            stmsg.various.ItemEquippedGSM(
                 item.title,
                 "shield",
                 armor_class=game_state.character.armor_class,
@@ -176,7 +176,7 @@ def equip_command(game_state, tokens):
         # object.
         game_state.character.equip_wand(item)
         return_values += (
-            stmsg.various.ItemEquipped(
+            stmsg.various.ItemEquippedGSM(
                 item.title,
                 "wand",
                 attack_bonus=game_state.character.attack_bonus,
@@ -195,7 +195,7 @@ def equip_command(game_state, tokens):
         # is necessary.
         if game_state.character.wand_equipped:
             return_values += (
-                stmsg.various.ItemEquipped(
+                stmsg.various.ItemEquippedGSM(
                     item.title,
                     "weapon",
                     attack_bonus=game_state.character.attack_bonus,
@@ -205,7 +205,7 @@ def equip_command(game_state, tokens):
             )
         else:
             return_values += (
-                stmsg.various.ItemEquipped(
+                stmsg.various.ItemEquippedGSM(
                     item.title,
                     "weapon",
                     attack_bonus=game_state.character.attack_bonus,

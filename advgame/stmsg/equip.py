@@ -11,7 +11,7 @@ __all__ = (
 )
 
 
-class ClassCantUseItem(GameStateMessage):
+class ClassCantUseItemGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.equip_command() when the
     player tries to equip an item that is not allowed for their class. As an
@@ -41,7 +41,7 @@ class ClassCantUseItem(GameStateMessage):
         self.item_type = item_type
 
 
-class NoSuchItemInInventory(GameStateMessage):
+class NoSuchItemInInventoryGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.equip_command() when the
     player tries to equip an item that they don't have in their inventory.

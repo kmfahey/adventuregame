@@ -18,25 +18,25 @@ def pick_up_command(game_state, tokens):
     PICK UP <item name>
     PICK UP <number> <item name>),
 
-    * If that syntax is not followed, returns a .stmsg.command.BadSyntax
+    * If that syntax is not followed, returns a .stmsg.command.BadSyntaxGSM
     object.
 
     * If the arguments are ungrammatical and are unclear about the quantity
-    to pick up, returns a .stmsg.drop.AmountToPickUpUnclear object.
+    to pick up, returns a .stmsg.drop.AmountToPickUpUnclearGSM object.
 
     * If the arguments specify a chest, corpse, creature or door, returns a
-    .stmsg.pickup.CantPickUpChestCorpseCreatureOrDoor object.
+    .stmsg.pickup.CantPickUpChestCorpseCreatureOrDoorGSM object.
 
     * If the arguments specify an item to pick up that is not on the floor
-    in the room, returns a .stmsg.pickup.ItemNotFound object.
+    in the room, returns a .stmsg.pickup.ItemNotFoundGSM object.
 
     * If the arguments specify a quantity of the item to pick up that is
     greater than the quantity present on the floor in the room, returns a
-    .stmsg.pickup.TryingToPickUpMoreThanIsPresent object.
+    .stmsg.pickup.TryingToPickUpMoreThanIsPresentGSM object.
 
     * Otherwise, the item— or the quantity of the item— is removed
     from the floor, and added to the character's inventory, and a
-    .stmsg.pickup.ItemPickedUp object is returned.
+    .stmsg.pickup.ItemPickedUpGSM object is returned.
     """
     # The door var is set to None so later it can be checked for a
     # non-None value.
@@ -98,7 +98,7 @@ def pick_up_command(game_state, tokens):
     # cant-pick-up-element error is returned.
     if unpickupable_element_type:
         return (
-            stmsg.pickup.CantPickUpChestCorpseCreatureOrDoor(
+            stmsg.pickup.CantPickUpChestCorpseCreatureOrDoorGSM(
                 unpickupable_element_type, target_title
             ),
         )
@@ -106,7 +106,7 @@ def pick_up_command(game_state, tokens):
     # If this room has no items_here ItemsMultiState object, nothing
     # can be picked up, and a item-not-found error is returned.
     if game_state.rooms_state.cursor.items_here is None:
-        return (stmsg.pickup.ItemNotFound(target_title, pick_up_quantity),)
+        return (stmsg.pickup.ItemNotFoundGSM(target_title, pick_up_quantity),)
 
     # The items_here.values() sequence is cast to tuple and assigned
     # to a local variable, and the character's inventory is also so
@@ -129,7 +129,7 @@ def pick_up_command(game_state, tokens):
             (item_qty, item.title) for item_qty, item in items_here
         )
         return (
-            stmsg.pickup.ItemNotFound(
+            stmsg.pickup.ItemNotFoundGSM(
                 target_title, pick_up_quantity, *items_here_qtys_titles
             ),
         )
@@ -156,7 +156,7 @@ def pick_up_command(game_state, tokens):
     # trying-to-pick-up-more-than-is-present error is returned.
     if quantity_here < pick_up_quantity:
         return (
-            stmsg.pickup.TryingToPickUpMoreThanIsPresent(
+            stmsg.pickup.TryingToPickUpMoreThanIsPresentGSM(
                 target_title, pick_up_quantity, quantity_here
             ),
         )
@@ -179,5 +179,5 @@ def pick_up_command(game_state, tokens):
         # returned.
         quantity_had_now = quantity_in_inventory + pick_up_quantity
         return (
-            stmsg.pickup.ItemPickedUp(target_title, pick_up_quantity, quantity_had_now),
+            stmsg.pickup.ItemPickedUpGSM(target_title, pick_up_quantity, quantity_had_now),
         )

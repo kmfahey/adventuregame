@@ -20,18 +20,18 @@ def drop_command(game_state, tokens):
     DROP <number> <item name>
 
     * If the item specified isn't in inventory, returns a
-    .stmsg.drop.TryingToDropItemYouDontHave object.
+    .stmsg.drop.TryingToDropItemYouDontHaveGSM object.
 
     * If a number is specified, and that's more than how many of the item
     are in inventory, returns a
-    .stmsg.drop.TryingToDropMorethanYouHave object.
+    .stmsg.drop.TryingToDropMorethanYouHaveGSM object.
 
     * If no number is used and the item is equipped, returns a
-    .stmsg.various.ItemUnequipped object and a .stmsg.drop.DroppedItem
+    .stmsg.various.ItemUnequippedGSM object and a .stmsg.drop.DroppedItemGSM
     object.
 
     * Otherwise, the item is removed— or the specified number of the item
-    are removed— from inventory and a .stmsg.drop.DroppedItem object is
+    are removed— from inventory and a .stmsg.drop.DroppedItemGSM object is
     returned.
     """
     # pick_up_command() and drop_command()
@@ -79,7 +79,7 @@ def drop_command(game_state, tokens):
     # that title, so a trying-to-drop-an-item-you-don't-have error
     # is returned.
     if not len(items_had_pair):
-        return (stmsg.drop.TryingToDropItemYouDontHave(item_title, drop_quantity),)
+        return (stmsg.drop.TryingToDropItemYouDontHaveGSM(item_title, drop_quantity),)
 
     # The item was found, so its object and quantity are saved.
     ((item_had_qty, item),) = items_had_pair
@@ -90,7 +90,7 @@ def drop_command(game_state, tokens):
         # quantity in inventory, a trying-to-drop-more-than-you-have
         # error is returned.
         return (
-            stmsg.drop.TryingToDropMoreThanYouHave(
+            stmsg.drop.TryingToDropMoreThanYouHaveGSM(
                 item_title, drop_quantity, item_had_qty
             ),
         )
@@ -130,7 +130,7 @@ def drop_command(game_state, tokens):
         ):
             game_state.character.unequip_armor()
             unequip_return = (
-                stmsg.various.ItemUnequipped(
+                stmsg.various.ItemUnequippedGSM(
                     item.title,
                     item.item_type,
                     armor_class=game_state.character.armor_class,
@@ -146,7 +146,7 @@ def drop_command(game_state, tokens):
         ):
             game_state.character.unequip_shield()
             unequip_return = (
-                stmsg.various.ItemUnequipped(
+                stmsg.various.ItemUnequippedGSM(
                     item_title,
                     "shield",
                     armor_class=game_state.character.armor_class,
@@ -169,7 +169,7 @@ def drop_command(game_state, tokens):
                 # equipped wand always takes precedence over a
                 # weapon for a Mage.)
                 unequip_return = (
-                    stmsg.various.ItemUnequipped(
+                    stmsg.various.ItemUnequippedGSM(
                         item_title,
                         "weapon",
                         attack_bonus=game_state.character.attack_bonus,
@@ -181,7 +181,7 @@ def drop_command(game_state, tokens):
                 # Otherwise, the player will be informed that they
                 # now can't attack.
                 unequip_return = (
-                    stmsg.various.ItemUnequipped(
+                    stmsg.various.ItemUnequippedGSM(
                         item_title, "weapon", now_cant_attack=True
                     ),
                 )
@@ -199,7 +199,7 @@ def drop_command(game_state, tokens):
                 # attack values are included since they will fall
                 # back on it.
                 unequip_return = (
-                    stmsg.various.ItemUnequipped(
+                    stmsg.various.ItemUnequippedGSM(
                         item_title,
                         "wand",
                         attack_bonus=game_state.character.attack_bonus,
@@ -211,7 +211,7 @@ def drop_command(game_state, tokens):
                 # Otherwise, the player will be informed that they
                 # now can't attack.
                 unequip_return = (
-                    stmsg.various.ItemUnequipped(
+                    stmsg.various.ItemUnequippedGSM(
                         item_title, "wand", now_cant_attack=True
                     ),
                 )
@@ -237,7 +237,7 @@ def drop_command(game_state, tokens):
     # inventory.
     quantity_had_now = item_had_qty - drop_quantity
     return unequip_return + (
-        stmsg.drop.DroppedItem(
+        stmsg.drop.DroppedItemGSM(
             item_title,
             item.item_type,
             drop_quantity,

@@ -21,16 +21,16 @@ def help_command(game_state, tokens):
     HELP
     HELP <command name>
 
-    * If that syntax is not followed, returns a .stmsg.command.BadSyntax
+    * If that syntax is not followed, returns a .stmsg.command.BadSyntaxGSM
     object.
 
     * If the command is used with no arguments, returns a
-    .stmsg.help_.DisplayCommands object.
+    .stmsg.help_.DisplayCommandsGSM object.
 
     * If the argument is not a recognized command, returns a
-    .stmsg.help_.NotRecognized object.
+    .stmsg.help_.NotRecognizedGSM object.
 
-    * Otherwise, returns a .stmsg.help_.DisplayHelpForCommand object.
+    * Otherwise, returns a .stmsg.help_.DisplayHelpForCommandGSM object.
     """
     # An ordered tuple of all commands in uppercase is displayed in
     # some return values so it is computed.
@@ -44,7 +44,7 @@ def help_command(game_state, tokens):
         commands_tuple = tuple(
             sorted(strval.replace("_", " ").upper() for strval in commands_set)
         )
-        return (stmsg.help_.DisplayCommands(commands_tuple, game_state.game_has_begun),)
+        return (stmsg.help_.DisplayCommandsGSM(commands_tuple, game_state.game_has_begun),)
 
     # A specific command was included as an argument.
     else:
@@ -60,12 +60,12 @@ def help_command(game_state, tokens):
                     for strval in INGAME_COMMANDS | PREGAME_COMMANDS
                 )
             )
-            return (stmsg.help_.NotRecognized(command_uc, commands_tuple),)
+            return (stmsg.help_.NotRecognizedGSM(command_uc, commands_tuple),)
         else:
             # Otherwise, a help message for the command specified is
             # returned.
             return (
-                stmsg.help_.DisplayHelpForCommand(
+                stmsg.help_.DisplayHelpForCommandGSM(
                     command_uc,
                     COMMANDS_SYNTAX[command_uc],
                     COMMANDS_HELP[command_uc],

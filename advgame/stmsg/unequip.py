@@ -8,7 +8,7 @@ from advgame.stmsg.gsm import GameStateMessage
 __all__ = ("ItemNotEquipped",)
 
 
-class ItemNotEquipped(GameStateMessage):
+class ItemNotEquippedGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.unequip_command() when the
     player tries to unequip an item that is not equipped.

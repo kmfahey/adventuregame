@@ -7,7 +7,7 @@ from advgame.stmsg.gsm import GameStateMessage
 __all__ = ("InvalidPart", "NameSet")
 
 
-class InvalidPart(GameStateMessage):
+class InvalidPartGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.set_name_command() when the
     player tries to set a name that is not one or more alphabetic titelcased
@@ -27,7 +27,7 @@ class InvalidPart(GameStateMessage):
         self.name_part = name_part
 
 
-class NameSet(GameStateMessage):
+class NameSetGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.set_name_command() when the
     player sets a name.

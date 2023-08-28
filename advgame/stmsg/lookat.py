@@ -14,7 +14,7 @@ __all__ = (
 )
 
 
-class FoundContainerHere(GameStateMessage):
+class FoundContainerHereGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.look_at_command() when the
     player targets a chest or a corpse. If it's a chest and it's unlocked,
@@ -119,7 +119,7 @@ class FoundContainerHere(GameStateMessage):
             )
 
 
-class FoundCreatureHere(GameStateMessage):
+class FoundCreatureHereGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.look_command() when the
     player targets a creature in the dungeon's current room.
@@ -135,7 +135,7 @@ class FoundCreatureHere(GameStateMessage):
         self.creature_description = creature_description
 
 
-class FoundDoorOrDoorway(GameStateMessage):
+class FoundDoorOrDoorwayGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.look_at_command() when the
     player targets a door or doorway in the current dungeon room.
@@ -165,7 +165,7 @@ class FoundDoorOrDoorway(GameStateMessage):
         self.door = door
 
 
-class FoundItemOrItemsHere(GameStateMessage):
+class FoundItemOrItemsHereGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.look_at_command() when the
     player targets an item that is present on the floor of current room or
@@ -206,7 +206,7 @@ class FoundItemOrItemsHere(GameStateMessage):
         self.container_type = container_type
 
 
-class FoundNothing(GameStateMessage):
+class FoundNothingGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.look_at_command() when the
     player targets an item that can't be found where they said it was.

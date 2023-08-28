@@ -4,14 +4,14 @@ from advgame.stmsg.gsm import GameStateMessage
 
 
 __all__ = (
-    "ElementNotUnlockable",
+    "ElementNotLockpickable",
     "TargetHasBeenUnlocked",
     "TargetNotFound",
     "TargetNotLocked",
 )
 
 
-class ElementNotUnlockable(GameStateMessage):
+class ElementNotLockpickableGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.pick_lock_command() when
     the player attempts to pick a lock on a corpse, creature, doorway or
@@ -41,7 +41,7 @@ class ElementNotUnlockable(GameStateMessage):
         self.target_type = target_type
 
 
-class TargetHasBeenUnlocked(GameStateMessage):
+class TargetHasBeenUnlockedGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.pick_lock_command() when
     the player successfully unlocks the chest or door.
@@ -57,7 +57,7 @@ class TargetHasBeenUnlocked(GameStateMessage):
         self.target_title = target_title
 
 
-class TargetNotFound(GameStateMessage):
+class TargetNotFoundGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.pick_lock_command() when
     the player targets a door or chest that is not present in the current
@@ -74,7 +74,7 @@ class TargetNotFound(GameStateMessage):
         self.target_title = target_title
 
 
-class TargetNotLocked(GameStateMessage):
+class TargetNotLockedGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.pick_lock_command() when
     the player targets a door or chest that is not locked.

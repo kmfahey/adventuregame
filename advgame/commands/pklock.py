@@ -25,29 +25,29 @@ def pick_lock_command(game_state, tokens):
     PICK LOCK ON [THE] <chest name>
     PICK LOCK ON [THE] <door name>
 
-    * If that syntax is not followed, returns a .stmsg.command.BadSyntax
+    * If that syntax is not followed, returns a .stmsg.command.BadSyntaxGSM
     object.
 
     * If the player tries to use this command while playing a Warrior, Mage
-    or Priest, returns a .stmsg.command.ClassRestricted object.
+    or Priest, returns a .stmsg.command.ClassRestrictedGSM object.
 
     * If the arguments specify a door, and that door is not present in the
-    current room, returns a .stmsg.various.DoorNotPresent object.
+    current room, returns a .stmsg.various.DoorNotPresentGSM object.
 
     * If the arguments specify a door, and more than one door matches that
-    specification, returns a .stmsg.various.AmbiguousDoorSpecifier object.
+    specification, returns a .stmsg.various.AmbiguousDoorSpecifierGSM object.
 
     * If the arguments specify a doorway, creature, item, or corpse, returns
-    a .stmsg.pklock.ElementNotUnlockable object.
+    a .stmsg.pklock.ElementNotLockpickableGSM object.
 
     * If the arguments specify a chest that is not present in the current
-    room, returns a .stmsg.pklock.TargetNotFound object.
+    room, returns a .stmsg.pklock.TargetNotFoundGSM object.
 
     * If the arguments specify a door or chest is that is already unlocked,
-    returns a .stmsg.pklock.TargetNotLocked object.
+    returns a .stmsg.pklock.TargetNotLockedGSM object.
 
     * Otherwise, the specified door or chest has its is_locked attribute set
-    to False, and a .stmsg.pklock.TargetHasBeenUnlocked object is returned.
+    to False, and a .stmsg.pklock.TargetHasBeenUnlockedGSM object is returned.
     """
     # These error booleans are initialized to False so they can be
     # checked for True values later.
@@ -60,7 +60,7 @@ def pick_lock_command(game_state, tokens):
     # is of another class, a command-class-restricted error is
     # returned.
     if game_state.character_class != "Thief":
-        return (stmsg.command.ClassRestricted("PICK LOCK", "thief"),)
+        return (stmsg.command.ClassRestrictedGSM("PICK LOCK", "thief"),)
 
     # This command requires an argument. If called with no argument
     # or a patently invalid one, a syntax error is returned.
@@ -74,7 +74,7 @@ def pick_lock_command(game_state, tokens):
             "the",
         )
     ):
-        return (stmsg.command.BadSyntax("PICK LOCK", COMMANDS_SYNTAX["PICK LOCK"]),)
+        return (stmsg.command.BadSyntaxGSM("PICK LOCK", COMMANDS_SYNTAX["PICK LOCK"]),)
     elif tokens[:2] == ("on", "the"):
         tokens = tokens[2:]
     elif tokens[0] == "on":
@@ -107,7 +107,7 @@ def pick_lock_command(game_state, tokens):
         elif not door.is_locked:
             # Otherwise if the door isn't locked, a
             # target-not-locked error value is returned.
-            return (stmsg.pklock.TargetNotLocked(target_title),)
+            return (stmsg.pklock.TargetNotLockedGSM(target_title),)
         else:
             # This is a door object, and it only represents _this
             # side_ of the door game element; I use _matching_door()
@@ -121,7 +121,7 @@ def pick_lock_command(game_state, tokens):
             # The door's is_locked attribute is set to False, and a
             # target-has-been-unlocked value is returned.
             door.is_locked = False
-            return (stmsg.pklock.TargetHasBeenUnlocked(target_title),)
+            return (stmsg.pklock.TargetHasBeenUnlockedGSM(target_title),)
     # The target isn't a door. If there is a container here and its
     # title matches....
     elif container is not None and container.title == target_title:
@@ -131,12 +131,12 @@ def pick_lock_command(game_state, tokens):
         elif not getattr(container, "is_locked", False):
             # Otherwise if it's not locked, a target-not-locked
             # error value is returned.
-            return (stmsg.pklock.TargetNotLocked(target_title),)
+            return (stmsg.pklock.TargetNotLockedGSM(target_title),)
         else:
             # Otherwise, its is_locked attribute is set to False,
             # and a target-has-been-unlocked error is returned.
             container.is_locked = False
-            return (stmsg.pklock.TargetHasBeenUnlocked(target_title),)
+            return (stmsg.pklock.TargetHasBeenUnlockedGSM(target_title),)
 
     # The Door and Chest case have been handled and any possible
     # success value has been rejected. Everything from here on down
@@ -185,8 +185,8 @@ def pick_lock_command(game_state, tokens):
             if tried_to_operate_on_creature
             else item_targetted.__class__.__name__.lower()
         }
-        return (stmsg.pklock.ElementNotUnlockable(target_title, **argd),)
+        return (stmsg.pklock.ElementNotLockpickableGSM(target_title, **argd),)
     else:
         # The target_title didn't match anything in the current
         # room, so a target-not-found error value is returned.
-        return (stmsg.pklock.TargetNotFound(target_title),)
+        return (stmsg.pklock.TargetNotFoundGSM(target_title),)

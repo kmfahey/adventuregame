@@ -11,7 +11,7 @@ __all__ = (
 )
 
 
-class ElementNotCloseable(GameStateMessage):
+class ElementNotCloseableGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.close_command() when the
     player attempts to close a corpse, creature, doorway or item.
@@ -37,7 +37,7 @@ class ElementNotCloseable(GameStateMessage):
         self.target_type = target_type
 
 
-class ElementHasBeenClosed(GameStateMessage):
+class ElementHasBeenClosedGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.close_command() when the
     player succeeds in closing a door or chest.
@@ -53,7 +53,7 @@ class ElementHasBeenClosed(GameStateMessage):
         self.target = target
 
 
-class ElementIsAlreadyClosed(GameStateMessage):
+class ElementIsAlreadyClosedGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.close_command() when the
     closeable object the player targeted is already closed.
@@ -69,7 +69,7 @@ class ElementIsAlreadyClosed(GameStateMessage):
         self.target = target
 
 
-class ElementToCloseNotHere(GameStateMessage):
+class ElementToCloseNotHereGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.close_command() when the
     player specifies a target to the command that is not present in the

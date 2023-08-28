@@ -13,7 +13,7 @@ __all__ = (
 )
 
 
-class DrankManaPotion(GameStateMessage):
+class DrankManaPotionGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.drink_coomand() when the
     player uses it to drink a mana potion. It is only returned if the
@@ -57,7 +57,7 @@ class DrankManaPotion(GameStateMessage):
         self.mana_point_total = mana_point_total
 
 
-class DrankManaPotionWhenNotASpellcaster(GameStateMessage):
+class DrankManaPotionWhenNotASpellcasterGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.drink_command() when the
     player drinks a mana potion but they're playing a Warrior or Thief and
@@ -74,7 +74,7 @@ class DrankManaPotionWhenNotASpellcaster(GameStateMessage):
         pass
 
 
-class ItemNotDrinkable(GameStateMessage):
+class ItemNotDrinkableGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.drink_command() when the
     player targets an item that is not a potion.
@@ -90,7 +90,7 @@ class ItemNotDrinkable(GameStateMessage):
         self.item_title = item_title
 
 
-class ItemNotInInventory(GameStateMessage):
+class ItemNotInInventoryGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.drink_command() when the
     player tries to drink a potion that isn't in their inventory.
@@ -106,7 +106,7 @@ class ItemNotInInventory(GameStateMessage):
         self.item_title = item_title
 
 
-class TriedToDrinkMoreThanPossessed(GameStateMessage):
+class TriedToDrinkMoreThanPossessedGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.drink_command() when the
     player specifies drinking a quantity of potions that is greater than the
@@ -128,7 +128,7 @@ class TriedToDrinkMoreThanPossessed(GameStateMessage):
         self.possessed_qty = possessed_qty
 
 
-class AmountToDrinkUnclear(GameStateMessage):
+class AmountToDrinkUnclearGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.drink_command() when the
     player writes an ungrammatical sentence that is ambiguous as to how many

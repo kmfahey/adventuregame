@@ -14,18 +14,18 @@ def reroll_command(game_state, tokens):
     when it's of length 1. The REROLL command takes no arguments.
 
     * If the command is used with any arguments, this method returns a
-    .stmsg.command.BadSyntax object.
+    .stmsg.command.BadSyntaxGSM object.
 
     * If the character's name or class has not been set yet, returns a
-    .stmsg.reroll.NameOrClassNotSet object.
+    .stmsg.reroll.NameOrClassNotSetGSM object.
 
     * Otherwise, ability scores for the character are rolled, and a
-    .stmsg.various.DisplayRolledStats is returned.
+    .stmsg.various.DisplayRolledStatsGSM is returned.
     """
     # This command takes no arguments, so if any were supplied, I
     # return a syntax error.
     if len(tokens):
-        return (stmsg.command.BadSyntax("REROLL", COMMANDS_SYNTAX["REROLL"]),)
+        return (stmsg.command.BadSyntaxGSM("REROLL", COMMANDS_SYNTAX["REROLL"]),)
 
     # This command is only valid during the pregame after the
     # character's name and class have been set (and, therefore,
@@ -34,13 +34,13 @@ def reroll_command(game_state, tokens):
     character_name = getattr(game_state, "character_name", None)
     character_class = getattr(game_state, "character_class", None)
     if not character_name or not character_class:
-        return (stmsg.reroll.NameOrClassNotSet(character_name, character_class),)
+        return (stmsg.reroll.NameOrClassNotSetGSM(character_name, character_class),)
 
     # I reroll the player character's stats, and return a
     # display-rolled-stats value.
     game_state.character.ability_scores.roll_stats()
     return (
-        stmsg.various.DisplayRolledStats(
+        stmsg.various.DisplayRolledStatsGSM(
             strength=game_state.character.strength,
             dexterity=game_state.character.dexterity,
             constitution=game_state.character.constitution,

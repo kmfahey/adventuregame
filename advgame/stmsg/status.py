@@ -6,7 +6,7 @@ from advgame.stmsg.gsm import GameStateMessage
 __all__ = ("StatusOutput",)
 
 
-class StatusOutput(GameStateMessage):
+class StatusOutputGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.status_command() when the
     player executes it. The status line conveyed by the message property

@@ -6,7 +6,7 @@ from advgame.stmsg.gsm import GameStateMessage
 __all__ = ("NameOrClassNotSet",)
 
 
-class NameOrClassNotSet(GameStateMessage):
+class NameOrClassNotSetGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.reroll_command() when the
     player tries to use it before they have set their name and class. The

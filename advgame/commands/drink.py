@@ -17,35 +17,35 @@ def drink_command(game_state, tokens):
     DRINK [THE] <potion name>
     DRINK <number> <potion name>[s]
 
-    * If that syntax is not followed, returns a .stmsg.command.BadSyntax
+    * If that syntax is not followed, returns a .stmsg.command.BadSyntaxGSM
     object.
 
     * If the potion specified is not in the character's inventory, returns a
-    .stmsg.drink.ItemNotInInventory object.
+    .stmsg.drink.ItemNotInInventoryGSM object.
 
     * If the name matches an undrinkable item, or a door, chest, creature,
-    or corpse, returns a .stmsg.drink.ItemNotDrinkable object.
+    or corpse, returns a .stmsg.drink.ItemNotDrinkableGSM object.
 
     * If the <number> argument is used, and there's not that many of the
-    potion, returns a .stmsg.drink.TriedToDrinkMoreThanPossessed object.
+    potion, returns a .stmsg.drink.TriedToDrinkMoreThanPossessedGSM object.
 
     * Otherwise, if it's a health potion, then that potion is
     removed from inventory, the character is healed, and returns a
-    .stmsg.various.UnderwentHealingEffect object.
+    .stmsg.various.UnderwentHealingEffectGSM object.
 
     * If it's a mana potion, and the character is a Warrior or a
     Thief, the potion is removed from inventory, and returns a
-    .stmsg.drink.DrankManaPotionWhenNotASpellcaster object.
+    .stmsg.drink.DrankManaPotionWhenNotASpellcasterGSM object.
 
     * If it's a mana potion, and the character is a Mage or a Preist, then
     the potion is removed from inventory, the character has some mana
-    restored, and a .stmsg.drink.DrankManaPotion object is returned.
+    restored, and a .stmsg.drink.DrankManaPotionGSM object is returned.
     """
     # This command requires an argument, which may include a direct
     # or indirect article. If that standard isn't met, a syntax
     # error is returned.
     if not len(tokens) or len(tokens) == 1 and tokens[0] in ("the", "a", "an"):
-        return (stmsg.command.BadSyntax("DRINK", COMMANDS_SYNTAX["DRINK"]),)
+        return (stmsg.command.BadSyntaxGSM("DRINK", COMMANDS_SYNTAX["DRINK"]),)
 
     # Any leading article is stripped, but it signals that the
     # quantity to drink is 1, so qty_to_drink is set.
@@ -68,7 +68,7 @@ def drink_command(game_state, tokens):
         if (qty_to_drink > 1 and not tokens[-1].endswith("s")) or (
             qty_to_drink == 1 and tokens[-1].endswith("s")
         ):
-            return (stmsg.command.BadSyntax("DRINK", COMMANDS_SYNTAX["DRINK"]),)
+            return (stmsg.command.BadSyntaxGSM("DRINK", COMMANDS_SYNTAX["DRINK"]),)
 
         # The first token is dropped off the tokens tuple.
         tokens = tokens[1:]
@@ -80,7 +80,7 @@ def drink_command(game_state, tokens):
         # a quantity-unclear error is returned.
         qty_to_drink = 1
         if tokens[-1].endswith("s"):
-            return (stmsg.drink.AmountToDrinkUnclear(),)
+            return (stmsg.drink.AmountToDrinkUnclearGSM(),)
 
     # The initial error checking is out of the way, so we check the
     # Character's inventory for an item with a title that matches
@@ -96,7 +96,7 @@ def drink_command(game_state, tokens):
     # The character has no such item, so an item-not-in-inventory
     # error is returned.
     if not len(matching_items_qtys_objs):
-        return (stmsg.drink.ItemNotInInventory(item_title),)
+        return (stmsg.drink.ItemNotInInventoryGSM(item_title),)
 
     # An item by the title that the player specified was found, so
     # the object and its quantity are saved.
@@ -105,14 +105,14 @@ def drink_command(game_state, tokens):
     # If the item isn't a potion, an item-not-drinkable error is
     # returned.
     if not item.title.endswith(" potion"):
-        return (stmsg.drink.ItemNotDrinkable(item_title),)
+        return (stmsg.drink.ItemNotDrinkableGSM(item_title),)
 
     # If the arguments specify a quantity to drink
     # that's greater than the quantity in inventory, a
     # tried-to-drink-more-than-possessed error is returned.
     elif qty_to_drink > item_qty:
         return (
-            stmsg.drink.TriedToDrinkMoreThanPossessed(
+            stmsg.drink.TriedToDrinkMoreThanPossessedGSM(
                 item_title, qty_to_drink, item_qty
             ),
         )
@@ -128,7 +128,7 @@ def drink_command(game_state, tokens):
         healed_amt = game_state.character.heal_damage(hit_points_recovered)
         game_state.character.drop_item(item)
         return (
-            stmsg.various.UnderwentHealingEffect(
+            stmsg.various.UnderwentHealingEffectGSM(
                 healed_amt,
                 game_state.character.hit_points,
                 game_state.character.hit_point_total,
@@ -142,7 +142,7 @@ def drink_command(game_state, tokens):
         # drank-mana-potion-when-not-a-spellcaster error is
         # returned.
         if game_state.character_class not in ("Mage", "Priest"):
-            return (stmsg.drink.DrankManaPotionWhenNotASpellcaster(),)
+            return (stmsg.drink.DrankManaPotionWhenNotASpellcasterGSM(),)
 
         # The amount of mana recovery done by the potion is
         # granted to the character, and the potion is removed from
@@ -151,7 +151,7 @@ def drink_command(game_state, tokens):
         regained_amt = game_state.character.regain_mana(mana_points_recovered)
         game_state.character.drop_item(item)
         return (
-            stmsg.drink.DrankManaPotion(
+            stmsg.drink.DrankManaPotionGSM(
                 regained_amt,
                 game_state.character.mana_points,
                 game_state.character.mana_point_total,

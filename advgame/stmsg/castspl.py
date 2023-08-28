@@ -11,11 +11,11 @@ __all__ = (
 )
 
 
-class CastDamagingSpell(GameStateMessage):
+class CastDamagingSpellGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.cast_spell_command() when
     the player, while playing a Mage, has cast a damaging spell. Like
-    .stmsg.attack.AttackHit, it tracks whether the foe was slain, and adds a
+    .stmsg.attack.AttackHitGSM, it tracks whether the foe was slain, and adds a
     'they turn to attack' sentence if not.
     """
 
@@ -49,7 +49,7 @@ class CastDamagingSpell(GameStateMessage):
         self.creature_slain = creature_slain
 
 
-class CastHealingSpell(GameStateMessage):
+class CastHealingSpellGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.cast_spell_command() when
     used by a Priest. It doesn't need to mention how much damage was healed
@@ -67,7 +67,7 @@ class CastHealingSpell(GameStateMessage):
         pass
 
 
-class InsufficientMana(GameStateMessage):
+class InsufficientManaGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.cast_spell_command() when
     the player tries to cast a spell with insufficient mana points.
@@ -89,7 +89,7 @@ class InsufficientMana(GameStateMessage):
         self.spell_mana_cost = spell_mana_cost
 
 
-class NoCreatureToTarget(GameStateMessage):
+class NoCreatureToTargetGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.cast_spell_command() when
     the player uses the command in a room with no creature to attack.

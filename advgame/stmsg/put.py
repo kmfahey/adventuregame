@@ -11,7 +11,7 @@ __all__ = (
 )
 
 
-class PutAmountOfItem(GameStateMessage):
+class PutAmountOfItemGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.put_command() when the
     player successfully places one or more items in a chest or on a corpse's
@@ -60,7 +60,7 @@ class PutAmountOfItem(GameStateMessage):
         self.amount_left = amount_left
 
 
-class ItemNotInInventory(GameStateMessage):
+class ItemNotInInventoryGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.put_command() when the
     player attempts to put an item in a chest or on a corpse that is not in
@@ -81,7 +81,7 @@ class ItemNotInInventory(GameStateMessage):
         self.item_title = item_title
 
 
-class AmountToPutUnclear(GameStateMessage):
+class AmountToPutUnclearGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.put_command() when the
     player writes an ungrammatical sentence that is ambiguous as to how many
@@ -96,7 +96,7 @@ class AmountToPutUnclear(GameStateMessage):
         pass
 
 
-class TryingToPutMoreThanYouHave(GameStateMessage):
+class TryingToPutMoreThanYouHaveGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.put_command() when the
     player tries to put a quantity of an item in a chest or on a corpse that

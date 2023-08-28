@@ -16,28 +16,28 @@ def set_class_command(game_state, tokens):
 
     SET CLASS [TO] <Warrior, Thief, Mage or Priest>
 
-    * If that syntax is not followed, returns a .stmsg.command.BadSyntax
+    * If that syntax is not followed, returns a .stmsg.command.BadSyntaxGSM
     object.
 
     * If a class other than Warrior, Thief, Mage or Priest is specified,
-    returns a .stmsg.setcls.InvalidClass object.
+    returns a .stmsg.setcls.InvalidClassGSM object.
 
     * If the name has not yet been set, then the class is set, and a
-    .stmsg.setcls.ClassSet object is returned.
+    .stmsg.setcls.ClassSetGSM object is returned.
 
     * If the name has been set, then the class is set, ability scores for
-    the character are rolled, and a .stmsg.setcls.ClassSet object and a
+    the character are rolled, and a .stmsg.setcls.ClassSetGSM object and a
     Stmsg_Various_DisplayRolledStats object is returned.
     """
     # This command takes exactly one argument, so I return a syntax
     # error if I got 0 or more than 1.
     if len(tokens) == 0 or len(tokens) > 1:
-        return (stmsg.command.BadSyntax("SET CLASS", COMMANDS_SYNTAX["SET CLASS"]),)
+        return (stmsg.command.BadSyntaxGSM("SET CLASS", COMMANDS_SYNTAX["SET CLASS"]),)
 
     # If the user specified something other than one of the four
     # classes, I return an invalid-class error.
     elif tokens[0] not in ("Warrior", "Thief", "Mage", "Priest"):
-        return (stmsg.setcls.InvalidClass(tokens[0]),)
+        return (stmsg.setcls.InvalidClassGSM(tokens[0]),)
 
     # I assign the chosen classname, record whether this is the
     # first time this command is used, and set the class.
@@ -51,8 +51,8 @@ def set_class_command(game_state, tokens):
     # value and a display-rolled-stats value.
     if game_state.character_name is not None and class_was_none:
         return (
-            stmsg.setcls.ClassSet(class_str),
-            stmsg.various.DisplayRolledStats(
+            stmsg.setcls.ClassSetGSM(class_str),
+            stmsg.various.DisplayRolledStatsGSM(
                 strength=game_state.character.strength,
                 dexterity=game_state.character.dexterity,
                 constitution=game_state.character.constitution,
@@ -63,4 +63,4 @@ def set_class_command(game_state, tokens):
         )
     else:
         # Otherwise I return only the class-set value.
-        return (stmsg.setcls.ClassSet(class_str),)
+        return (stmsg.setcls.ClassSetGSM(class_str),)

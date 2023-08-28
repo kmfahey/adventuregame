@@ -20,22 +20,22 @@ def close_command(game_state, tokens):
     CLOSE <door name>
     CLOSE <chest name>
 
-    * If that syntax is not followed, returns a .stmsg.command.BadSyntax
+    * If that syntax is not followed, returns a .stmsg.command.BadSyntaxGSM
     object.
 
     * If there is no matching chest or door in the room, returns a
-    .stmsg.close.ElementToCloseNotHere object.
+    .stmsg.close.ElementToCloseNotHereGSM object.
 
-    * If there is no matching door, returns a .stmsg.various.DoorNotPresent
+    * If there is no matching door, returns a .stmsg.various.DoorNotPresentGSM
     object.
 
     * If more than one door in the room matches, returns a
-    .stmsg.various.AmbiguousDoorSpecifier object.
+    .stmsg.various.AmbiguousDoorSpecifierGSM object.
 
     * If the door or chest specified is already closed, returns a
-    .stmsg.close.ElementIsAlreadyClosed object.
+    .stmsg.close.ElementIsAlreadyClosedGSM object.
 
-    * Otherwise, returns a .stmsg.close.ElementHasBeenClosed object.
+    * Otherwise, returns a .stmsg.close.ElementHasBeenClosedGSM object.
     """
     # The open_command(), close_command(),
     # lock_command(), and unlock_command() share the
@@ -55,7 +55,7 @@ def close_command(game_state, tokens):
 
     # If the element to close is already closed, a
     if element_to_close.is_closed:
-        return (stmsg.close.ElementIsAlreadyClosed(element_to_close.title),)
+        return (stmsg.close.ElementIsAlreadyClosedGSM(element_to_close.title),)
     elif isinstance(element_to_close, Door):
         # This is a door object, and it only represents _this side_
         # of the door game element; I use _matching_door() to fetch
@@ -69,4 +69,4 @@ def close_command(game_state, tokens):
     # I set the element's is_closed attribute to True, and return an
     # element-has-been-closed value.
     element_to_close.is_closed = True
-    return (stmsg.close.ElementHasBeenClosed(element_to_close.title),)
+    return (stmsg.close.ElementHasBeenClosedGSM(element_to_close.title),)

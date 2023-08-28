@@ -6,7 +6,7 @@ from advgame.stmsg.gsm import GameStateMessage
 __all__ = ("HaveQuitTheGame",)
 
 
-class HaveQuitTheGame(GameStateMessage):
+class HaveQuitTheGameGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.quit_command() when the
     player executes the command. When advgame.py receives this object, it

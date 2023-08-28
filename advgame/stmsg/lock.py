@@ -5,14 +5,14 @@ from advgame.stmsg.gsm import GameStateMessage
 
 __all__ = (
     "DontPossessCorrectKey",
-    "ElementNotUnlockable",
+    "ElementNotLockable",
     "ElementHasBeenUnlocked",
     "ElementIsAlreadyUnlocked",
     "ElementToUnlockNotHere",
 )
 
 
-class DontPossessCorrectKey(GameStateMessage):
+class DontPossessCorrectKeyGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.lock_command() when the
     player tries to lock a chest while they don't possess the chest key, or
@@ -36,7 +36,7 @@ class DontPossessCorrectKey(GameStateMessage):
         self.key_needed = key_needed
 
 
-class ElementNotUnlockable(GameStateMessage):
+class ElementNotLockableGSM(GameStateMessage):
     __slots__ = "target_title", "target_type"
 
     @property
@@ -61,7 +61,7 @@ class ElementNotUnlockable(GameStateMessage):
         self.target_type = target_type
 
 
-class ElementHasBeenUnlocked(GameStateMessage):
+class ElementHasBeenUnlockedGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.lock_command() when the
     player successfully locks a chest or door.
@@ -77,7 +77,7 @@ class ElementHasBeenUnlocked(GameStateMessage):
         self.target = target
 
 
-class ElementIsAlreadyUnlocked(GameStateMessage):
+class ElementIsAlreadyUnlockedGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.lock_command() when the
     player tries to lock a chest or door that is already locked.
@@ -93,7 +93,7 @@ class ElementIsAlreadyUnlocked(GameStateMessage):
         self.target = target
 
 
-class ElementToUnlockNotHere(GameStateMessage):
+class ElementToUnlockNotHereGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.lock_command() when the
     player specifies an object to lock that is not present in the current

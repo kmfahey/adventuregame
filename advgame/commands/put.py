@@ -20,28 +20,28 @@ def put_command(game_state, tokens):
     PUT <item name> ON <corpse name>
     PUT <number> <item name> ON <corpse name>
 
-    * If that syntax is not followed, returns a .stmsg.command.BadSyntax
+    * If that syntax is not followed, returns a .stmsg.command.BadSyntaxGSM
     object.
 
     * If the arguments specify a chest or corpse that is not present in the
-    current room, returns a .stmsg.various.ContainerNotFound object.
+    current room, returns a .stmsg.various.ContainerNotFoundGSM object.
 
     * If the arguments specify a chest that is closed, returns a
-    .stmsg.various.ContainerIsClosed object.
+    .stmsg.various.ContainerIsClosedGSM object.
 
     * If the arguments are an ungrammatical sentence and are ambiguous about
-    the quantity to put, returns a .stmsg.take.AmountToPutUnclear object.
+    the quantity to put, returns a .stmsg.take.AmountToPutUnclearGSM object.
 
     * If the arguments specify an item to put that is not present in the
-    character's inventory, returns a .stmsg.put.ItemNotInInventory object.
+    character's inventory, returns a .stmsg.put.ItemNotInInventoryGSM object.
 
     * If the arguments specify a quantity of an item to put that is more
-    than the character has, returns a .stmsg.put.TryingToPutMorethanYouHave
+    than the character has, returns a .stmsg.put.TryingToPutMorethanYouHaveGSM
     object.
 
     * Otherwise, the item— or the quantity of the item— is removed from
     the character's inventory, placed in the chest or on the corpse, and
-    put in the chest or on the corpse, and a .stmsg.put.AmountPut object is
+    put in the chest or on the corpse, and a .stmsg.put.AmountPutGSM object is
     returned.
     """
     # The shared private workhorse method is called and it handles
@@ -75,7 +75,7 @@ def put_command(game_state, tokens):
     else:
 
         # Otherwise I return an item-not-in-inventory error.
-        return (stmsg.put.ItemNotInInventory(item_title, put_amount),)
+        return (stmsg.put.ItemNotInInventoryGSM(item_title, put_amount),)
 
     # I use the Item subclass object to get the internal_name, and
     # look it up in the container to see if any amount is already
@@ -89,7 +89,7 @@ def put_command(game_state, tokens):
     if put_amount > amount_possessed:
         # If the amount to put is more than the amount in inventory,
         # I return a trying-to-put-more-than-you-have error.
-        return (stmsg.put.TryingToPutMoreThanYouHave(item_title, amount_possessed),)
+        return (stmsg.put.TryingToPutMoreThanYouHaveGSM(item_title, amount_possessed),)
     elif put_amount is NaN:
         # Otherwise if _put_or_take_preproc returned nan for
         # the put_amount, that means it couldn't be determined from
@@ -109,7 +109,7 @@ def put_command(game_state, tokens):
     game_state.character.drop_item(item, qty=put_amount)
     container.set(item.internal_name, amount_in_container + put_amount, item)
     return (
-        stmsg.put.PutAmountOfItem(
+        stmsg.put.PutAmountOfItemGSM(
             item_title,
             container_title,
             container.container_type,

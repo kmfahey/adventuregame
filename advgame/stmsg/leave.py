@@ -6,7 +6,7 @@ from advgame.stmsg.gsm import GameStateMessage
 __all__ = ("DoorIsLocked", "LeftRoom", "WonTheGame")
 
 
-class DoorIsLocked(GameStateMessage):
+class DoorIsLockedGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.leave_command() if the
     player tries to leave through a door that is locked.
@@ -26,7 +26,7 @@ class DoorIsLocked(GameStateMessage):
         self.portal_type = portal_type
 
 
-class LeftRoom(GameStateMessage):
+class LeftRoomGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.leave_command() when the
     player uses it to leave the current dungeon room.
@@ -43,7 +43,7 @@ class LeftRoom(GameStateMessage):
         self.portal_type = portal_type
 
 
-class WonTheGame(GameStateMessage):
+class WonTheGameGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.leave_command() when the
     player chances upon the door that is the exit to the dungeon. They have

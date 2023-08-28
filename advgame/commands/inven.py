@@ -14,14 +14,14 @@ def inventory_command(game_state, tokens):
     even when it's of length 1. The INVENTORY command takes no arguments.
 
     * If the command is used with any arguments, returns a
-    .stmsg.command.BadSyntax object.
+    .stmsg.command.BadSyntaxGSM object.
 
-    * Otherwise, returns a .stmsg.inven.DisplayInventory object.
+    * Otherwise, returns a .stmsg.inven.DisplayInventoryGSM object.
     """
     # This command takes no arguments; if any are specified, a
     # syntax error is returned.
     if len(tokens):
-        return (stmsg.command.BadSyntax("INVENTORY", COMMANDS_SYNTAX["INVENTORY"]),)
+        return (stmsg.command.BadSyntaxGSM("INVENTORY", COMMANDS_SYNTAX["INVENTORY"]),)
 
     # There's not really any other error case, for once.
     # The inventory contents are stored in a tuple, and a
@@ -29,4 +29,4 @@ def inventory_command(game_state, tokens):
     inventory_contents = sorted(
         game_state.character.list_items(), key=lambda argl: argl[1].title
     )
-    return (stmsg.inven.DisplayInventory(inventory_contents),)
+    return (stmsg.inven.DisplayInventoryGSM(inventory_contents),)

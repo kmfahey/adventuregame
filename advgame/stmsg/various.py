@@ -19,7 +19,7 @@ __all__ = (
 )
 
 
-class AmbiguousDoorSpecifier(GameStateMessage):
+class AmbiguousDoorSpecifierGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.lock_command(),
     .unlock_command(), .open_command() and .close_command() when the player
@@ -57,7 +57,7 @@ class AmbiguousDoorSpecifier(GameStateMessage):
         self.door_type = door_type
 
 
-class ContainerIsClosed(GameStateMessage):
+class ContainerIsClosedGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.put_command() or
     .take_command() when the player tries to access a chest that is closed.
@@ -73,7 +73,7 @@ class ContainerIsClosed(GameStateMessage):
         self.target = target
 
 
-class ContainerNotFound(GameStateMessage):
+class ContainerNotFoundGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.put_command(),
     .take_command(), or .look_at_command() when trying to look in a chest
@@ -95,7 +95,7 @@ class ContainerNotFound(GameStateMessage):
         self.container_present_title = container_present_title
 
 
-class DisplayRolledStats(GameStateMessage):
+class DisplayRolledStatsGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.set_name_command() or
     .set_class_command() when both name and class have been set, or by
@@ -136,7 +136,7 @@ class DisplayRolledStats(GameStateMessage):
         self.charisma = charisma
 
 
-class DoorNotPresent(GameStateMessage):
+class DoorNotPresentGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.close_command(),
     .leave_command(), .lock_command(), .look_at_command(), .open_command(),
@@ -177,7 +177,7 @@ class DoorNotPresent(GameStateMessage):
         self.portal_type = portal_type
 
 
-class EnteredRoom(GameStateMessage):
+class EnteredRoomGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.leave_command() when the
     player leaves a room and enters a new one, or by .begin_command()
@@ -262,7 +262,7 @@ class EnteredRoom(GameStateMessage):
         self.room = room
 
 
-class FoeDeath(GameStateMessage):
+class FoeDeathGSM(GameStateMessage):
     __slots__ = ("creature_title",)
 
     @property
@@ -276,7 +276,7 @@ class FoeDeath(GameStateMessage):
         self.creature_title = creature_title
 
 
-class ItemEquipped(GameStateMessage):
+class ItemEquippedGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.begin_game() or
     .equip_command() when the player equips an item. It lists the item
@@ -344,7 +344,7 @@ class ItemEquipped(GameStateMessage):
         self.attacking_with = attacking_with
 
 
-class ItemUnequipped(GameStateMessage):
+class ItemUnequippedGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.equip_command(),
     .unequip_command(), or .drop_command(). It's returned by
@@ -437,7 +437,7 @@ class ItemUnequipped(GameStateMessage):
         self.now_cant_attack = now_cant_attack
 
 
-class UnderwentHealingEffect(GameStateMessage):
+class UnderwentHealingEffectGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.drink_command() or
     .cast_spell_command(). It's returned by .drink_command() if the player

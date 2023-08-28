@@ -12,7 +12,7 @@ __all__ = (
 )
 
 
-class ElementNotOpenable(GameStateMessage):
+class ElementNotOpenableGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.open_command() when the
     player attempts to open a corpse, creature, doorway or item.
@@ -41,7 +41,7 @@ class ElementNotOpenable(GameStateMessage):
         self.target_type = target_type
 
 
-class ElementHasBeenOpened(GameStateMessage):
+class ElementHasBeenOpenedGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.open_command() when the
     player successfully opens a chest or door.
@@ -57,7 +57,7 @@ class ElementHasBeenOpened(GameStateMessage):
         self.target = target
 
 
-class ElementIsAlreadyOpen(GameStateMessage):
+class ElementIsAlreadyOpenGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.open_command() when the
     player targets a door or chest that is already open.
@@ -73,7 +73,7 @@ class ElementIsAlreadyOpen(GameStateMessage):
         self.target = target
 
 
-class ElementIsLocked(GameStateMessage):
+class ElementIsLockedGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.open_command() when the
     player targets a door or chest that is locked.
@@ -89,7 +89,7 @@ class ElementIsLocked(GameStateMessage):
         self.target = target
 
 
-class ElementToOpenNotHere(GameStateMessage):
+class ElementToOpenNotHereGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.open_command() when the
     player targets a door or chest that is not present in the current

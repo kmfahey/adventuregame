@@ -1080,9 +1080,9 @@ while True:
     if isinstance(
         result[-1],
         (
-            advg.stmsg.quit.HaveQuitTheGame,
-            advg.stmsg.be_atkd.CharacterDeath,
-            advg.stmsg.leave.WonTheGame,
+            advg.stmsg.quit.HaveQuitTheGameGSM,
+            advg.stmsg.be_atkd.CharacterDeathGSM,
+            advg.stmsg.leave.WonTheGameGSM,
         ),
     ):
         exit(0)

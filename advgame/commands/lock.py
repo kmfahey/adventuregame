@@ -22,35 +22,35 @@ def lock_command(game_state, tokens):
     LOCK <door name>
     LOCK <chest name>
 
-    * If that syntax is not followed, returns a .stmsg.command.BadSyntax
+    * If that syntax is not followed, returns a .stmsg.command.BadSyntaxGSM
     object.
 
     * If no such door is present in the room, returns a
-    .stmsg.various.DoorNotPresent object.
+    .stmsg.various.DoorNotPresentGSM object.
 
     * If the command is ambiguous and matches more than one door in the
-    room, returns a .stmsg.various.AmbiguousDoorSpecifier object.
+    room, returns a .stmsg.various.AmbiguousDoorSpecifierGSM object.
 
     * If the object to lock is not present, returns a
-    .stmsg.lock.ElementToLockNotHere object.
+    .stmsg.lock.ElementToLockNotHereGSM object.
 
     * If the object to lock is already locked, returns a
-    .stmsg.lock.ElementIsAlreadyLocked object.
+    .stmsg.lock.ElementIsAlreadyLockedGSM object.
 
-    * If the object to lock is not present, a .stmsg.lock.ElementNotLockable
+    * If the object to lock is not present, a .stmsg.lock.ElementNotLockableGSM
     is returned.
 
     * If the character does not possess the requisite door or
     chest key to lock the specified door or chest, returns a
-    .stmsg.lock.DontPossessCorrectKey object.
+    .stmsg.lock.DontPossessCorrectKeyGSM object.
 
     * Otherwise, the object has its is_locked attribute set to True, and a
-    .stmsg.lock.ElementHasBeenLocked object is returned.
+    .stmsg.lock.ElementHasBeenLockedGSM object is returned.
     """
     # This command requires an argument, so if tokens is zero-length
     # a syntax error is returned.
     if not len(tokens):
-        return (stmsg.command.BadSyntax("LOCK", COMMANDS_SYNTAX["LOCK"]),)
+        return (stmsg.command.BadSyntaxGSM("LOCK", COMMANDS_SYNTAX["LOCK"]),)
 
     # A private workhorse method is used for logic shared
     # with unlock_command(), open_command(),
@@ -78,12 +78,12 @@ def lock_command(game_state, tokens):
     ):
         # Lacking the key, a don't-possess-correct-key error is
         # returned.
-        return (stmsg.lock.DontPossessCorrectKey(element_to_lock.title, key_required),)
+        return (stmsg.lock.DontPossessCorrectKeyGSM(element_to_lock.title, key_required),)
 
     # If the element_to_lock is already locked, a
     # element-is-already-locked error is returned.
     elif element_to_lock.is_locked:
-        return (stmsg.lock.ElementIsAlreadyUnlocked(element_to_lock.title),)
+        return (stmsg.lock.ElementIsAlreadyUnlockedGSM(element_to_lock.title),)
     elif isinstance(element_to_lock, Door):
         # This is a door object, and it only represents _this side_
         # of the door game element; I use _matching_door() to fetch
@@ -97,4 +97,4 @@ def lock_command(game_state, tokens):
     # The element_to_lock's is_locked attribute is set to rue, and a
     # Telement-has-been-locked value is returned.
     element_to_lock.is_locked = True
-    return (stmsg.lock.ElementHasBeenUnlocked(element_to_lock.title),)
+    return (stmsg.lock.ElementHasBeenUnlockedGSM(element_to_lock.title),)

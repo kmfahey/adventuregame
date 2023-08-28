@@ -10,7 +10,7 @@ __all__ = (
 )
 
 
-class AttackedAndHit(GameStateMessage):
+class AttackedAndHitGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor._be_attacked_by_command()
     when the foe's counterattack connects. It conveys the damage done and
@@ -35,7 +35,7 @@ class AttackedAndHit(GameStateMessage):
         self.hit_points_left = hit_points_left
 
 
-class AttackedAndNotHit(GameStateMessage):
+class AttackedAndNotHitGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor._be_attacked_by_command()
     when the foe's counterattack did not connect.
@@ -51,7 +51,7 @@ class AttackedAndNotHit(GameStateMessage):
         self.creature_title = creature_title
 
 
-class CharacterDeath(GameStateMessage):
+class CharacterDeathGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor._be_attacked_by_command()
     when the foe's counter attack killed the player's character. The game is

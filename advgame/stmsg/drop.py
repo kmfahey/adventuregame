@@ -11,7 +11,7 @@ __all__ = (
 )
 
 
-class DroppedItem(GameStateMessage):
+class DroppedItemGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.drop_command() when the
     player successfully drops an item on the floor.
@@ -92,7 +92,7 @@ class DroppedItem(GameStateMessage):
         self.amount_left = amount_left
 
 
-class AmountToDropUnclear(GameStateMessage):
+class AmountToDropUnclearGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.drop_command() when the
     player writes an ungrammatical sentence that is ambiguous as to how many
@@ -107,7 +107,7 @@ class AmountToDropUnclear(GameStateMessage):
         pass
 
 
-class TryingToDropItemYouDontHave(GameStateMessage):
+class TryingToDropItemYouDontHaveGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.drop_command() when the
     player specifies an item to drop that is not in their inventory.
@@ -138,7 +138,7 @@ class TryingToDropItemYouDontHave(GameStateMessage):
         self.amount_attempted = amount_attempted
 
 
-class TryingToDropMoreThanYouHave(GameStateMessage):
+class TryingToDropMoreThanYouHaveGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.drop_command() when the
     player specifies a quantity of a certain item to drop that is more than

@@ -14,14 +14,14 @@ def status_command(game_state, tokens):
     when it's of length 1. The STATUS command takes no arguments.
 
     * If the command is used with any arguments, returns a
-    .stmsg.command.BadSyntax object.
+    .stmsg.command.BadSyntaxGSM object.
 
-    * Otherwise, returns a .stmsg.status.StatusOutput object.
+    * Otherwise, returns a .stmsg.status.StatusOutputGSM object.
     """
     # This command takes no arguments so if any were supplied I
     # return a syntax error.
     if len(tokens):
-        return (stmsg.command.BadSyntax("STATUS", COMMANDS_SYNTAX["STATUS"]),)
+        return (stmsg.command.BadSyntaxGSM("STATUS", COMMANDS_SYNTAX["STATUS"]),)
 
     # A lot of data goes into a status command so I build the argd
     # to Stmsg_Status_StatusOutput key by key.
@@ -79,4 +79,4 @@ def status_command(game_state, tokens):
 
     # The entire argd has been assembled so I return a status-ouput
     # value.
-    return (stmsg.status.StatusOutput(**status_gsm_argd),)
+    return (stmsg.status.StatusOutputGSM(**status_gsm_argd),)

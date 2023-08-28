@@ -7,7 +7,7 @@ from advgame.utils import join_strs_w_comma_conj
 __all__ = ("DisplayInventory",)
 
 
-class DisplayInventory(GameStateMessage):
+class DisplayInventoryGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.inventory_command(). It
     lists all the items in the character's inventory by title and quantity.

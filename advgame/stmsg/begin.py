@@ -9,7 +9,7 @@ __all__ = (
 )
 
 
-class GameBegins(GameStateMessage):
+class GameBeginsGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.begin_game_command() when
     the command executes successfully. The game has begun.
@@ -23,7 +23,7 @@ class GameBegins(GameStateMessage):
         pass
 
 
-class NameOrClassNotSet(GameStateMessage):
+class NameOrClassNotSetGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.begin_game_command() when
     the player has used the BEGIN GAME command prematurely. The player

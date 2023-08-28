@@ -18,29 +18,29 @@ def take_command(game_state, tokens):
     TAKE <item name> FROM <container name>
     TAKE <number> <item name> FROM <container name>
 
-    * If that syntax is not followed, returns a .stmsg.command.BadSyntax
+    * If that syntax is not followed, returns a .stmsg.command.BadSyntaxGSM
     object.
 
     * If the specified container isn't present in the current room, returns
-    a .stmsg.various.ContainerNotFound object.
+    a .stmsg.various.ContainerNotFoundGSM object.
 
     * If the specified container is a chest and the chest is closed, returns
-    a .stmsg.various.ContainerIsClosed object.
+    a .stmsg.various.ContainerIsClosedGSM object.
 
     * If the arguments are an ungrammatical sentence and are
     ambiguous as to what quantity the player means to take, returns a
-    .stmsg.take.AmountToTakeUnclear object.
+    .stmsg.take.AmountToTakeUnclearGSM object.
 
     * If the specified item is not present in the specified chest or on the
-    specified corpse, returns a .stmsg.take.ItemNotFoundInContainer object.
+    specified corpse, returns a .stmsg.take.ItemNotFoundInContainerGSM object.
 
     * If the specified quantity of the item is greater than the quantity of
     that item in the chest or on the corpse, returns
-    a .stmsg.take.TryingToTakeMoreThanIsPresent object.
+    a .stmsg.take.TryingToTakeMoreThanIsPresentGSM object.
 
     * Otherwise, the item— or the quantity of the item— is removed from
     the chest or the corpse and added to the character's inventory, and a
-    .stmsg.take.ItemOrItemsTaken object is returned.
+    .stmsg.take.ItemOrItemsTakenGSM object is returned.
     """
     # take_command() shares logic with put_command() in a private
     # workhorse method _put_or_take_preproc().
@@ -64,7 +64,7 @@ def take_command(game_state, tokens):
     )
     if len(matching_item) == 0:
         return (
-            stmsg.take.ItemNotFoundInContainer(
+            stmsg.take.ItemNotFoundInContainerGSM(
                 container_title,
                 quantity_to_take,
                 container.container_type,
@@ -85,7 +85,7 @@ def take_command(game_state, tokens):
         # much is in the Container, so I return a
         # trying-to-take-more-than-is-present error.
         return (
-            stmsg.take.TryingToTakeMoreThanIsPresent(
+            stmsg.take.TryingToTakeMoreThanIsPresentGSM(
                 container_title,
                 container.container_type,
                 item_title,
@@ -107,4 +107,4 @@ def take_command(game_state, tokens):
     # I add the item in the given quantity to the player character's
     # inventory and return an item-or-items-taken value.
     game_state.character.pick_up_item(item, qty=quantity_to_take)
-    return (stmsg.take.ItemOrItemsTaken(container_title, item_title, quantity_to_take),)
+    return (stmsg.take.ItemOrItemsTakenGSM(container_title, item_title, quantity_to_take),)

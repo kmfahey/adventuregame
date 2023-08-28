@@ -19,20 +19,20 @@ def leave_command(context, tokens):
     LEAVE [USING or VIA] <door name>
     LEAVE [USING or VIA] <compass direction> <door name>
 
-    * If that syntax is not followed, returns a .stmsg.command.BadSyntax
+    * If that syntax is not followed, returns a .stmsg.command.BadSyntaxGSM
     object.
 
     * If the door by that name is not present in the room, returns a
-    .stmsg.various.DoorNotPresent object.
+    .stmsg.various.DoorNotPresentGSM object.
 
     * If the door specifier is ambiguous and matches more than one door in
-    the room, returns a .stmsg.various.AmbiguousDoorSpecifier object.
+    the room, returns a .stmsg.various.AmbiguousDoorSpecifierGSM object.
 
     * If the door is the exit to the dungeon, returns a
-    .stmsg.leave.LeftRoom object and a .stmsg.leave.WonTheGame object.
+    .stmsg.leave.LeftRoomGSM object and a .stmsg.leave.WonTheGameGSM object.
 
-    * Otherwise, a .stmsg.leave.LeftRoom object and a
-    .stmsg.various.EnteredRoom object are returned.
+    * Otherwise, a .stmsg.leave.LeftRoomGSM object and a
+    .stmsg.various.EnteredRoomGSM object are returned.
     """
     game_state = context.game_state
 
@@ -43,7 +43,7 @@ def leave_command(context, tokens):
         or not 2 <= len(tokens) <= 4
         or tokens[-1] not in ("door", "doorway")
     ):
-        return (stmsg.command.BadSyntax("LEAVE", COMMANDS_SYNTAX["LEAVE"]),)
+        return (stmsg.command.BadSyntaxGSM("LEAVE", COMMANDS_SYNTAX["LEAVE"]),)
 
     # The format for specifying doors is flexible, and is
     # implemented by a private workhorse method.
@@ -66,7 +66,7 @@ def leave_command(context, tokens):
 
     # If the door is locked, a door-is-locked error is returned.
     if door.is_locked:
-        return (stmsg.leave.DoorIsLocked(compass_dir, portal_type),)
+        return (stmsg.leave.DoorIsLockedGSM(compass_dir, portal_type),)
 
     # The exit to the dungeon is a special Door object marked with
     # is_exit=True. I test the Door object to see if this is the
@@ -76,8 +76,8 @@ def leave_command(context, tokens):
         # If so, a left-room value will be returned along with a
         # won-the-game value.
         return_tuple = (
-            stmsg.leave.LeftRoom(compass_dir, portal_type),
-            stmsg.leave.WonTheGame(),
+            stmsg.leave.LeftRoomGSM(compass_dir, portal_type),
+            stmsg.leave.WonTheGameGSM(),
         )
 
         # The game_has_ended boolean is set True, and the
@@ -93,6 +93,6 @@ def leave_command(context, tokens):
     # entered-room value.
     game_state.rooms_state.move(**{compass_dir: True})
     return (
-        stmsg.leave.LeftRoom(compass_dir, portal_type),
-        stmsg.various.EnteredRoom(game_state.rooms_state.cursor),
+        stmsg.leave.LeftRoomGSM(compass_dir, portal_type),
+        stmsg.various.EnteredRoomGSM(game_state.rooms_state.cursor),
     )

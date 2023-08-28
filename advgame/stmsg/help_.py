@@ -11,7 +11,7 @@ __all__ = (
 )
 
 
-class NotRecognized(GameStateMessage):
+class NotRecognizedGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.help_command() when the
     player tries to get help with a command that is not in the game.
@@ -40,7 +40,7 @@ class NotRecognized(GameStateMessage):
         self.commands_available = commands_available
 
 
-class DisplayCommands(GameStateMessage):
+class DisplayCommandsGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.help_command() when the
     player calls it with no arguments; it displays all the commands in the
@@ -72,7 +72,7 @@ class DisplayCommands(GameStateMessage):
         self.game_started = game_started
 
 
-class DisplayHelpForCommand(GameStateMessage):
+class DisplayHelpForCommandGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.help_command() when the
     player asks for help with a specific command. It summarizes the syntax

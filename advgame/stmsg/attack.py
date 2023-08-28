@@ -11,14 +11,14 @@ __all__ = (
 )
 
 
-class AttackHit(GameStateMessage):
+class AttackHitGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.attack_command() when
     the player's attack connected with their foe. attack_command() always
     triggers the hidden _be_attacked_by_command() pseudo-command, an
-    .stmsg.attack.AttackHit object tracks if the foe was slain. If so,
+    .stmsg.attack.AttackHitGSM object tracks if the foe was slain. If so,
     nothing relating to foe death is conveyed; describing foe death is
-    handled by the .stmsg.various.FoeDeath class. If not, its message
+    handled by the .stmsg.various.FoeDeathGSM class. If not, its message
     includes a clause about the foe turning to attack.
     """
 
@@ -66,10 +66,10 @@ class AttackHit(GameStateMessage):
         self.weapon_type = weapon_type
 
 
-class AttackMissed(GameStateMessage):
+class AttackMissedGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.attack_command() when the
-    player's attack missed. Like .stmsg.attack.AttackHit, it mentions the
+    player's attack missed. Like .stmsg.attack.AttackHitGSM, it mentions the
     foe turning to attack, because an attack on a foe always leads to a
     counterattack if they live.
     """
@@ -101,7 +101,7 @@ class AttackMissed(GameStateMessage):
         self.weapon_type = weapon_type
 
 
-class OpponentNotFound(GameStateMessage):
+class OpponentNotFoundGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.attack_command() when
     the player has used an attack command that refers to a foe that is not
@@ -133,7 +133,7 @@ class OpponentNotFound(GameStateMessage):
         self.opponent_present = opponent_present
 
 
-class YouHaveNoWeaponOrWandEquipped(GameStateMessage):
+class YouHaveNoWeaponOrWandEquippedGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.attack_method() when the
     player has used the attack command while having no weapon (or, for

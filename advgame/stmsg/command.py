@@ -7,7 +7,7 @@ from advgame.utils import join_strs_w_comma_conj
 __all__ = ("BadSyntax", "ClassRestricted", "NotAllowedNow", "NotRecognized")
 
 
-class BadSyntax(GameStateMessage):
+class BadSyntaxGSM(GameStateMessage):
     """
     Returned by command methods of advgame.process.CommandProcessor when
     incorrect syntax for a command has been used.
@@ -44,7 +44,7 @@ class BadSyntax(GameStateMessage):
         self.proper_syntax_options = proper_syntax_options
 
 
-class ClassRestricted(GameStateMessage):
+class ClassRestrictedGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.process() when the player
     has used a command that is restricted to a class other than their own.
@@ -73,7 +73,7 @@ class ClassRestricted(GameStateMessage):
         self.classes = classes
 
 
-class NotAllowedNow(GameStateMessage):
+class NotAllowedNowGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.process() when the
     player has used a command that is not allowed in the current
@@ -115,7 +115,7 @@ class NotAllowedNow(GameStateMessage):
         self.game_has_begun = game_has_begun
 
 
-class NotRecognized(GameStateMessage):
+class NotRecognizedGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.process() when a command
     was entered that is not known to the command processor.

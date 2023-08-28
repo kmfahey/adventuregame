@@ -6,7 +6,7 @@ from advgame.stmsg.gsm import GameStateMessage
 __all__ = ("ClassSet", "InvalidClass")
 
 
-class ClassSet(GameStateMessage):
+class ClassSetGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.set_class_command() when
     the player selects a class from the choices Warrior, Thief, Mage and
@@ -23,7 +23,7 @@ class ClassSet(GameStateMessage):
         self.class_str = class_str
 
 
-class InvalidClass(GameStateMessage):
+class InvalidClassGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.set_class_command() when
     the player specifies a class that is not one of Warrior, Thief, Mage or

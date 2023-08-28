@@ -11,7 +11,7 @@ __all__ = (
 )
 
 
-class ItemNotFoundInContainer(GameStateMessage):
+class ItemNotFoundInContainerGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.take_command() if the
     player specifies an item to take from a chest that is not in that chest
@@ -47,7 +47,7 @@ class ItemNotFoundInContainer(GameStateMessage):
         self.item_title = item_title
 
 
-class ItemOrItemsTaken(GameStateMessage):
+class ItemOrItemsTakenGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.take_command() when the
     player successfully acquires an item from a chest or corpse.
@@ -79,7 +79,7 @@ class ItemOrItemsTaken(GameStateMessage):
         self.amount_taken = amount_taken
 
 
-class AmountToTakeUnclear(GameStateMessage):
+class AmountToTakeUnclearGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.take_command() when the
     player writes an ungrammatical sentence that is ambiguous as to how many
@@ -94,7 +94,7 @@ class AmountToTakeUnclear(GameStateMessage):
         pass
 
 
-class TryingToTakeMoreThanIsPresent(GameStateMessage):
+class TryingToTakeMoreThanIsPresentGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.take_command() when the
     player specifies a quantity of an item to take from a chest that is more

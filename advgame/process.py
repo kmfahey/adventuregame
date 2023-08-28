@@ -124,7 +124,7 @@ class CommandProcessor:
     # For example, an ATTACK action that doesn't kill the foe
     # will prompt the foe to attack. The foe's attack might lead
     # to the character's death. So the return value might be a
-    # `.stmsg.attack.AttackHit` object, a `Stmsg_Batkby_AttackedAndHit`
+    # `.stmsg.attack.AttackHitGSM` object, a `Stmsg_Batkby_AttackedAndHit`
     # object, and a `Stmsg_Batkby_CharacterDeath` object, each bearing a
     # message in its `message` property. The frontend code will iterate
     # through the tuple printing each message in turn.
@@ -229,12 +229,12 @@ class CommandProcessor:
         """
         Process and dispatch a natural language command string. The return value
         is always a tuple even when it's length 1. If the command is not
-        recognized, returns a .stmsg.command.NotRecognized object.
+        recognized, returns a .stmsg.command.NotRecognizedGSM object.
 
         If a ingame command is used during the pregame (before name and class
         have been set and ability scores have been rolled and accepted)
         or a pregame command is used during the game proper, returns a
-         .stmsg.command.NotAllowedNow object.
+         .stmsg.command.NotAllowedNowGSM object.
 
         If this method is called after the game has ended, the same object that
         was returned when the game ended is returned again. Otherwise, the
@@ -258,7 +258,7 @@ class CommandProcessor:
         # The commands allowed in the current game mode are included.
         if command not in self.commands_set:
             return (
-                stmsg.command.NotRecognized(
+                stmsg.command.NotRecognizedGSM(
                     command,
                     INGAME_COMMANDS
                     if self.game_state.game_has_begun
@@ -273,13 +273,13 @@ class CommandProcessor:
         # commands included.
         elif self.game_state.game_has_begun and command not in INGAME_COMMANDS:
             return (
-                stmsg.command.NotAllowedNow(
+                stmsg.command.NotAllowedNowGSM(
                     command, INGAME_COMMANDS, self.game_state.game_has_begun
                 ),
             )
         elif not self.game_state.game_has_begun and command not in PREGAME_COMMANDS:
             return (
-                stmsg.command.NotAllowedNow(
+                stmsg.command.NotAllowedNowGSM(
                     command, PREGAME_COMMANDS, self.game_state.game_has_begun
                 ),
             )

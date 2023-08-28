@@ -15,7 +15,7 @@ __all__ = (
 )
 
 
-class CantPickUpChestCorpseCreatureOrDoor(GameStateMessage):
+class CantPickUpChestCorpseCreatureOrDoorGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.pick_up_command() when the
     player has specifies a game element that is a chest, corpse, creature or
@@ -36,7 +36,7 @@ class CantPickUpChestCorpseCreatureOrDoor(GameStateMessage):
         self.element_title = element_title
 
 
-class ItemNotFound(GameStateMessage):
+class ItemNotFoundGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.pick_up_command() when the
     player targets an item to pick up that is not present in the current
@@ -76,7 +76,7 @@ class ItemNotFound(GameStateMessage):
         self.items_here = tuple(sorted(items_here, key=itemgetter(1)))
 
 
-class ItemPickedUp(GameStateMessage):
+class ItemPickedUpGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.pick_up_command() when
     the player successfully acquires an item from the floor of the current
@@ -120,7 +120,7 @@ class ItemPickedUp(GameStateMessage):
         self.amount_had = amount_had
 
 
-class AmountToPickUpUnclear(GameStateMessage):
+class AmountToPickUpUnclearGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.pick_up_command() when the
     player has entered an ungrammatical sentence that is ambiguous as to how
@@ -135,7 +135,7 @@ class AmountToPickUpUnclear(GameStateMessage):
         pass
 
 
-class TryingToPickUpMoreThanIsPresent(GameStateMessage):
+class TryingToPickUpMoreThanIsPresentGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.pick_up_command() when
     the player has targeted an item that is present, but has specified a
