@@ -44,7 +44,7 @@ class IniFileTexts:
         self.filenames[ini_file_const] = tempfile_name
         return tempfile_name
 
-    def as_file_obj(self, ini_file_const):
+    def get_ini_tmpfile_name(self, ini_file_const):
         match ini_file_const:
             case self.ITEMS_INI:
                 return self._text_to_tempfile_name(self.ITEMS_INI, self._items_text)

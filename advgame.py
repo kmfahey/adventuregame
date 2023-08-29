@@ -1,33 +1,36 @@
 #!/usr/bin/python3
 
-import iniconfig
-import os
-import tempfile
-
-import advgame as advg
+from iniconfig import IniConfig
 
 from advgame.stmsg.quit import HaveQuitTheGameGSM
 from advgame.stmsg.be_atkd import CharacterDeathGSM
 from advgame.stmsg.leave import WonTheGameGSM
 from advgame.data import ini_file_texts
+from advgame.elements.characters import ItemsState
+from advgame.elements.doors import DoorsState
+from advgame.elements.containers import ContainersState
+from advgame.elements.characters import CreaturesState, GameState
+from advgame.elements.rooms import RoomsState
+from advgame.process import CommandProcessor
+from advgame.utils import textwrapper
 
 
-### Establishing the game data object environment ###
+# Stage 1: establishing the game data object environment
 
-items_ini_config = iniconfig.IniConfig(
-    ini_file_texts.as_file_obj(ini_file_texts.ITEMS_INI)
+items_ini_config = IniConfig(
+    ini_file_texts.get_ini_tmpfile_name(ini_file_texts.ITEMS_INI)
 )
-doors_ini_config = iniconfig.IniConfig(
-    ini_file_texts.as_file_obj(ini_file_texts.DOORS_INI)
+doors_ini_config = IniConfig(
+    ini_file_texts.get_ini_tmpfile_name(ini_file_texts.DOORS_INI)
 )
-containers_ini_config = iniconfig.IniConfig(
-    ini_file_texts.as_file_obj(ini_file_texts.CONTAINERS_INI)
+containers_ini_config = IniConfig(
+    ini_file_texts.get_ini_tmpfile_name(ini_file_texts.CONTAINERS_INI)
 )
-creatures_ini_config = iniconfig.IniConfig(
-    ini_file_texts.as_file_obj(ini_file_texts.CREATURES_INI)
+creatures_ini_config = IniConfig(
+    ini_file_texts.get_ini_tmpfile_name(ini_file_texts.CREATURES_INI)
 )
-rooms_ini_config = iniconfig.IniConfig(
-    ini_file_texts.as_file_obj(ini_file_texts.ROOMS_INI)
+rooms_ini_config = IniConfig(
+    ini_file_texts.get_ini_tmpfile_name(ini_file_texts.ROOMS_INI)
 )
 
 for ini_const in (
