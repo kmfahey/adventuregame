@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from .basics import IniEntry, State
-from .chrctr import Character, ItemsState, ItemsMultiState
+from .characters import Character, ItemsState, ItemsMultiState
 
 from ..errors import InternalError
 
