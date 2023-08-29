@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from advgame.stmsg.gsm import GameStateMessage
+from advgame.statemsgs.gsm import GameStateMessage
 
 
 __all__ = (
@@ -15,7 +15,7 @@ class CastDamagingSpellGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.cast_spell_command() when
     the player, while playing a Mage, has cast a damaging spell. Like
-    .stmsg.attack.AttackHitGSM, it tracks whether the foe was slain, and adds a
+    AttackHitGSM, it tracks whether the foe was slain, and adds a
     'they turn to attack' sentence if not.
     """
 

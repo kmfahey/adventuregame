@@ -13,17 +13,17 @@ from advgame.elements import (
     Wand,
     Weapon,
 )
-from advgame.stmsg import GameStateMessage
-from advgame.stmsg.close import ElementNotCloseableGSM, ElementToCloseNotHereGSM
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.drop import AmountToDropUnclearGSM
-from advgame.stmsg.lock import ElementNotLockableGSM, ElementToLockNotHereGSM
-from advgame.stmsg.open_ import ElementNotOpenableGSM, ElementToOpenNotHereGSM
-from advgame.stmsg.pickup import AmountToPickUpUnclearGSM
-from advgame.stmsg.put import AmountToPutUnclearGSM
-from advgame.stmsg.take import AmountToTakeUnclearGSM
-from advgame.stmsg.unlock import ElementNotUnlockableGSM, ElementToUnlockNotHereGSM
-from advgame.stmsg.various import (
+from advgame.statemsgs import GameStateMessage
+from advgame.statemsgs.close import ElementNotCloseableGSM, ElementToCloseNotHereGSM
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.drop import AmountToDropUnclearGSM
+from advgame.statemsgs.lock import ElementNotLockableGSM, ElementToLockNotHereGSM
+from advgame.statemsgs.open_ import ElementNotOpenableGSM, ElementToOpenNotHereGSM
+from advgame.statemsgs.pickup import AmountToPickUpUnclearGSM
+from advgame.statemsgs.put import AmountToPutUnclearGSM
+from advgame.statemsgs.take import AmountToTakeUnclearGSM
+from advgame.statemsgs.unlock import ElementNotUnlockableGSM, ElementToUnlockNotHereGSM
+from advgame.statemsgs.various import (
     AmbiguousDoorSpecifierGSM,
     ContainerIsClosedGSM,
     ContainerNotFoundGSM,

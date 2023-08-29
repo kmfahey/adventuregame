@@ -6,7 +6,7 @@ from advgame.commands.constants import (
     INGAME_COMMANDS,
     COMMANDS_HELP,
 )
-from advgame.stmsg.help_ import (
+from advgame.statemsgs.help_ import (
     DisplayCommandsGSM,
     DisplayHelpForCommandGSM,
     NotRecognizedGSM,

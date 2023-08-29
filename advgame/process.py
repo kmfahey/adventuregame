@@ -40,8 +40,8 @@ from advgame.commands import (
 )
 from advgame.elements import GameState
 from advgame.errors import InternalError
-from advgame.stmsg.command import NotRecognizedGSM, NotAllowedNowGSM
-from advgame.stmsg import GameStateMessage
+from advgame.statemsgs.command import NotRecognizedGSM, NotAllowedNowGSM
+from advgame.statemsgs import GameStateMessage
 
 
 __all__ = ("CommandProcessor",)
@@ -59,7 +59,7 @@ class Context:
 # command and dispatches it to the appropriate command method. Every
 # command in the game corresponds to a method of the CommandProcessor
 # class, and each method always returns a tuple of one or more
-# advgame.stmsg.GameStateMessage subclass objects. Typically,
+# GameStateMessage subclass objects. Typically,
 # the bulk of the logic in a given command method is devoted to
 # detecting player error and handling each error discretely. The
 # logic that completes the command task is often a brief coda to a
@@ -78,13 +78,13 @@ class CommandProcessor:
 
     # All return values from [a-z_]+_command methods in this class are
     # tuples. Every [a-z_]+_command method returns a tuple of one or
-    # more advgame.stmsg.GameStateMessage subclass objects
+    # more GameStateMessage subclass objects
     # reflecting a change or set of changes in game State.
     #
     # For example, an ATTACK action that doesn't kill the foe
     # will prompt the foe to attack. The foe's attack might lead
     # to the character's death. So the return value might be a
-    # `.stmsg.attack.AttackHitGSM` object, a `Stmsg_Batkby_AttackedAndHit`
+    # `AttackHitGSM` object, a `Stmsg_Batkby_AttackedAndHit`
     # object, and a `Stmsg_Batkby_CharacterDeath` object, each bearing a
     # message in its `message` property. The frontend code will iterate
     # through the tuple printing each message in turn.
@@ -198,12 +198,12 @@ class CommandProcessor:
         """
         Process and dispatch a natural language command string. The return value
         is always a tuple even when it's length 1. If the command is not
-        recognized, returns a .stmsg.command.NotRecognizedGSM object.
+        recognized, returns a NotRecognizedGSM object.
 
         If a ingame command is used during the pregame (before name and class
         have been set and ability scores have been rolled and accepted)
         or a pregame command is used during the game proper, returns a
-         .stmsg.command.NotAllowedNowGSM object.
+         NotAllowedNowGSM object.
 
         If this method is called after the game has ended, the same object that
         was returned when the game ended is returned again. Otherwise, the

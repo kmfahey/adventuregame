@@ -18,8 +18,8 @@ from advgame import (
     Wand,
     Weapon,
 )
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.inven import DisplayInventoryGSM
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.inven import DisplayInventoryGSM
 
 from ..context import (
     containers_ini_config,

@@ -13,19 +13,19 @@ from advgame import (
     ItemsState,
     RoomsState,
 )
-from advgame.stmsg.attack import (
+from advgame.statemsgs.attack import (
     AttackHitGSM,
     AttackMissedGSM,
     OpponentNotFoundGSM,
     YouHaveNoWeaponOrWandEquippedGSM,
 )
-from advgame.stmsg.be_atkd import (
+from advgame.statemsgs.be_atkd import (
     AttackedAndHitGSM,
     AttackedAndNotHitGSM,
     CharacterDeathGSM,
 )
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.various import FoeDeathGSM
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.various import FoeDeathGSM
 
 from ..context import (
     containers_ini_config,

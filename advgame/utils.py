@@ -6,16 +6,17 @@ functions used by other modules in the package to expedite common tasks in the
 codebase.
 """
 
-import math
-import random
 import re
-import textwrap
 
-import advgame.errors as excpt
+from math import nan as NaN
+from random import randint
+from textwrap import wrap
+
+from advgame.errors import InternalError
 
 
 # The task of joining a list that may be 1, 2, or more elements with commas and
-# a conjunction is a common one in advgame.stmsg, so I wrote this
+# a conjunction is a common one in advgame.statemsgs, so I wrote this
 # function to automate that task.
 
 
@@ -120,7 +121,7 @@ def lexical_number_to_digits(lexical_number):
     """
     This function parses a lexical representation of a number between one and
     ninety-nine, and returns an int that is equivalent to that number. For lexical
-    numbers outside of one to ninety-nine, math.nan is returned.
+    numbers outside of one to ninety-nine, NaN is returned.
 
     >>> lexical_number_to_digits('one')
     1
@@ -130,14 +131,14 @@ def lexical_number_to_digits(lexical_number):
     nan
 
     :lexical_number: The textual representation of a number to parse. Must be
-    between one and ninety-nine inclusive. :return: Returns an int, or math.nan
+    between one and ninety-nine inclusive. :return: Returns an int, or NaN
     (which is a float).
     """
 
     # The lexical number is not in the range this function can parse, so
-    # math.nan is returned as a signal value.
+    # NaN is returned as a signal value.
     if not lexical_number_in_1_99_re.match(lexical_number):
-        return math.nan
+        return NaN
 
     # The lexical number is not hyphenate, so I can use
     # _digit_lexical_number_map and return the matching int value.
@@ -153,7 +154,7 @@ def lexical_number_to_digits(lexical_number):
     return base_number + added_number
 
 
-# A simple convenience function used in advgame.stmsg to form natural
+# A simple convenience function used in advgame.statemsgs to form natural
 # language messages around types of equippable items.
 
 
@@ -200,7 +201,7 @@ _dice_expression_re = re.compile(r"([1-9]+)d([1-9][0-9]*)([-+][1-9][0-9]*)?")
 def roll_dice(dice_expr):
     """
     This function accepts a standard Dungeons & Dragons dice expression (such as
-    1d20+5, 1d8+2, or 3d10-3), uses random.randint() to simulate a dice roll or
+    1d20+5, 1d8+2, or 3d10-3), uses randint() to simulate a dice roll or
     rolls with the given modifier, and returns the computed random value>
 
     :dice_expr: A dice expression of the form #d#[±#]. return: A random number
@@ -214,7 +215,7 @@ def roll_dice(dice_expr):
     sidedness_of_dice = int(sidedness_of_dice)
     modifier_to_roll = int(modifier_to_roll) if modifier_to_roll is not None else 0
     return (
-        sum(random.randint(1, sidedness_of_dice) for _ in range(0, number_of_dice))
+        sum(randint(1, sidedness_of_dice) for _ in range(0, number_of_dice))
         + modifier_to_roll
     )
 
@@ -236,12 +237,12 @@ def textwrapper(paragraphs, width=80):
     :columns paragraph-by-paragraph.
     """
     # The text is broken into separate paragraph strings and applies
-    # textwrap.wrap to each one.
+    # wrap to each one.
     wrapped_lines = map(
-        lambda para: textwrap.wrap(para, width=width), paragraphs.split("\n")
+        lambda para: wrap(para, width=width), paragraphs.split("\n")
     )
 
-    # textwrap.wrap returns a list of lines, so I reassemble the paragraphs with
+    # wrap returns a list of lines, so I reassemble the paragraphs with
     # '\n'.join()
     wrapped_paragraphs = ["\n".join(paragraph) for paragraph in wrapped_lines]
 

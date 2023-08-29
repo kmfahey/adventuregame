@@ -11,8 +11,8 @@ from advgame import (
     ItemsState,
     RoomsState,
 )
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.drink import (
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.drink import (
     AmountToDrinkUnclearGSM,
     DrankManaPotionGSM,
     DrankManaPotionWhenNotASpellcasterGSM,
@@ -20,7 +20,7 @@ from advgame.stmsg.drink import (
     ItemNotInInventoryGSM,
     TriedToDrinkMoreThanPossessedGSM,
 )
-from advgame.stmsg.various import UnderwentHealingEffectGSM
+from advgame.statemsgs.various import UnderwentHealingEffectGSM
 
 from ..context import (
     containers_ini_config,

@@ -13,15 +13,15 @@ from advgame import (
     ItemsState,
     RoomsState,
 )
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.lookat import (
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.lookat import (
     FoundContainerHereGSM,
     FoundCreatureHereGSM,
     FoundDoorOrDoorwayGSM,
     FoundItemOrItemsHereGSM,
     FoundNothingGSM,
 )
-from advgame.stmsg.various import (
+from advgame.statemsgs.various import (
     AmbiguousDoorSpecifierGSM,
     ContainerNotFoundGSM,
     DoorNotPresentGSM,

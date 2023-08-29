@@ -11,12 +11,12 @@ from advgame import (
     ItemsState,
     RoomsState,
 )
-from advgame.stmsg.begin import GameBeginsGSM
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.reroll import NameOrClassNotSetGSM
-from advgame.stmsg.setcls import ClassSetGSM, InvalidClassGSM
-from advgame.stmsg.setname import InvalidPartGSM, NameSetGSM
-from advgame.stmsg.various import DisplayRolledStatsGSM
+from advgame.statemsgs.begin import GameBeginsGSM
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.reroll import NameOrClassNotSetGSM
+from advgame.statemsgs.setcls import ClassSetGSM, InvalidClassGSM
+from advgame.statemsgs.setname import InvalidPartGSM, NameSetGSM
+from advgame.statemsgs.various import DisplayRolledStatsGSM
 
 from ..context import (
     containers_ini_config,

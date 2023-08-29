@@ -4,14 +4,14 @@ from advgame.utils import roll_dice
 
 from advgame.commands.be_atkd import be_attacked_by_command
 from advgame.commands.constants import COMMANDS_SYNTAX, SPELL_DAMAGE, SPELL_MANA_COST
-from advgame.stmsg.castspl import (
+from advgame.statemsgs.castspl import (
     CastDamagingSpellGSM,
     CastHealingSpellGSM,
     InsufficientManaGSM,
     NoCreatureToTargetGSM,
 )
-from advgame.stmsg.command import BadSyntaxGSM, ClassRestrictedGSM
-from advgame.stmsg.various import FoeDeathGSM, UnderwentHealingEffectGSM
+from advgame.statemsgs.command import BadSyntaxGSM, ClassRestrictedGSM
+from advgame.statemsgs.various import FoeDeathGSM, UnderwentHealingEffectGSM
 
 
 __all__ = ("cast_spell_command",)

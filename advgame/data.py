@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
-import os
-
+from os import close, remove
 from dataclasses import dataclass
 from tempfile import mkstemp
 
@@ -38,7 +37,7 @@ class IniFileTexts:
 
     def _text_to_tempfile_name(self, ini_file_const, ini_file_text):
         file_descr, tempfile_name = mkstemp(".ini.")
-        os.close(file_descr)
+        close(file_descr)
         with open(tempfile_name, "w") as tmp_fh:
             tmp_fh.write(ini_file_text)
         self.filenames[ini_file_const] = tempfile_name
@@ -62,7 +61,7 @@ class IniFileTexts:
                 return self._text_to_tempfile_name(self.ROOMS_INI, self._rooms_text)
 
     def remove_tempfile(self, ini_file_const):
-        os.remove(self.filenames[ini_file_const])
+        remove(self.filenames[ini_file_const])
 
 
 ITEMS_INI_FILE_TEXT = """

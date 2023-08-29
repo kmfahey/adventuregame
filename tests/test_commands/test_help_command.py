@@ -11,7 +11,7 @@ from advgame import (
     ItemsState,
     RoomsState,
 )
-from advgame.stmsg.help_ import (
+from advgame.statemsgs.help_ import (
     DisplayCommandsGSM,
     DisplayHelpForCommandGSM,
     NotRecognizedGSM,

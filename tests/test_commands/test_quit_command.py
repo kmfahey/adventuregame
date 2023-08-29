@@ -11,8 +11,8 @@ from advgame import (
     ItemsState,
     RoomsState,
 )
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.quit import HaveQuitTheGameGSM
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.quit import HaveQuitTheGameGSM
 
 from ..context import (
     containers_ini_config,

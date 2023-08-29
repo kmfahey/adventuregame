@@ -5,14 +5,14 @@ from advgame.utils import roll_dice
 from advgame.commands.be_atkd import be_attacked_by_command
 from advgame.commands.constants import COMMANDS_SYNTAX
 
-from advgame.stmsg.attack import (
+from advgame.statemsgs.attack import (
     AttackHitGSM,
     AttackMissedGSM,
     OpponentNotFoundGSM,
     YouHaveNoWeaponOrWandEquippedGSM,
 )
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.various import FoeDeathGSM
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.various import FoeDeathGSM
 
 
 __all__ = ("attack_command",)

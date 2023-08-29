@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
 from advgame.commands.constants import COMMANDS_SYNTAX
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.reroll import NameOrClassNotSetGSM
-from advgame.stmsg.various import DisplayRolledStatsGSM
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.reroll import NameOrClassNotSetGSM
+from advgame.statemsgs.various import DisplayRolledStatsGSM
 
 
 __all__ = ("reroll_command",)

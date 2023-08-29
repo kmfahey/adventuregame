@@ -4,13 +4,13 @@ from math import nan as NaN
 
 from advgame.commands.utils import _pick_up_or_drop_preproc
 from advgame.elements import ItemsMultiState
-from advgame.stmsg import GameStateMessage
-from advgame.stmsg.drop import (
+from advgame.statemsgs import GameStateMessage
+from advgame.statemsgs.drop import (
     DroppedItemGSM,
     TryingToDropItemYouDontHaveGSM,
     TryingToDropMoreThanYouHaveGSM,
 )
-from advgame.stmsg.various import ItemUnequippedGSM
+from advgame.statemsgs.various import ItemUnequippedGSM
 
 
 __all__ = ("drop_command",)

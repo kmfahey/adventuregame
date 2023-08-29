@@ -11,14 +11,14 @@ from advgame import (
     ItemsState,
     RoomsState,
 )
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.unlock import (
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.unlock import (
     DontPossessCorrectKeyGSM,
     ElementHasBeenUnlockedGSM,
     ElementIsAlreadyUnlockedGSM,
     ElementNotUnlockableGSM,
 )
-from advgame.stmsg.various import DoorNotPresentGSM
+from advgame.statemsgs.various import DoorNotPresentGSM
 
 from ..context import (
     containers_ini_config,

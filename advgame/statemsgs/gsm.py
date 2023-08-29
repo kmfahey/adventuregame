@@ -2,7 +2,7 @@
 
 """
 Contains GameStateMessage, the abstract base calss for
-all game state message classes in advgame.stmsg.*.
+all game state message classes in advgame.statemsgs.*.
 advgame.process.CommandProcessor.process() processes a natural language
 command from the player and tail calls a command method of the
 advgame.process.CommandProcessor object. It always returns a tuple of

@@ -11,8 +11,8 @@ from advgame import (
     ItemsState,
     RoomsState,
 )
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.pickup import (
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.pickup import (
     AmountToPickUpUnclearGSM,
     CantPickUpChestCorpseCreatureOrDoorGSM,
     ItemNotFoundGSM,

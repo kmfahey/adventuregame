@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from advgame.utils import roll_dice
-from advgame.stmsg.be_atkd import (
+from advgame.statemsgs.be_atkd import (
     AttackedAndHitGSM,
     AttackedAndNotHitGSM,
     CharacterDeathGSM,

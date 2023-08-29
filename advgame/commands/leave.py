@@ -2,10 +2,10 @@
 
 from advgame.commands.constants import COMMANDS_SYNTAX
 from advgame.commands.utils import _door_selector
-from advgame.stmsg import GameStateMessage
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.leave import DoorIsLockedGSM, LeftRoomGSM, WonTheGameGSM
-from advgame.stmsg.various import EnteredRoomGSM
+from advgame.statemsgs import GameStateMessage
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.leave import DoorIsLockedGSM, LeftRoomGSM, WonTheGameGSM
+from advgame.statemsgs.various import EnteredRoomGSM
 
 
 __all__ = ("leave_command",)

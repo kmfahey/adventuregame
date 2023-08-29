@@ -22,7 +22,7 @@ character themself.
 * advgame.process comprises a higher-level layer that handles processing
 commands entered by the player and returning semantic return values.
 
-* advgame.stmsg comprises the return values used in advgame.process; an
+* advgame.statemsgs comprises the return values used in advgame.process; an
 abstract base class and a large collection of subclasses each of which
 implements a specific result case of one or more specific commands.
 """
@@ -62,7 +62,7 @@ from advgame.elements import (
 )
 from advgame.errors import BadCommandError, InternalError
 from advgame.process import CommandProcessor
-from advgame.stmsg import (
+from advgame.statemsgs import (
     attack,
     be_atkd,
     begin,
@@ -149,7 +149,7 @@ __all__ += (
 # From advgame.process
 __all__ += ("CommandProcessor",)
 
-# From advgame.stmsg
+# From advgame.statemsgs
 __all__ += (
     "attack",
     "be_atkd",

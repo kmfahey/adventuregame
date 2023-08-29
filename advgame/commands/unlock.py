@@ -6,9 +6,9 @@ from advgame.commands.utils import (
     _matching_door,
 )
 from advgame.elements import Door
-from advgame.stmsg import GameStateMessage
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.unlock import (
+from advgame.statemsgs import GameStateMessage
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.unlock import (
     DontPossessCorrectKeyGSM,
     ElementHasBeenUnlockedGSM,
     ElementIsAlreadyUnlockedGSM,

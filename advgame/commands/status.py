@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
 from advgame.commands.constants import COMMANDS_SYNTAX
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.status import StatusOutputGSM
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.status import StatusOutputGSM
 
 
 __all__ = ("status_command",)

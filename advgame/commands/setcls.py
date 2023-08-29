@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
 from advgame.commands.constants import COMMANDS_SYNTAX
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.setcls import ClassSetGSM, InvalidClassGSM
-from advgame.stmsg.various import DisplayRolledStatsGSM
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.setcls import ClassSetGSM, InvalidClassGSM
+from advgame.statemsgs.various import DisplayRolledStatsGSM
 
 
 __all__ = ("set_class_command",)

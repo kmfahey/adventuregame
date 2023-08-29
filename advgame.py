@@ -9,9 +9,9 @@ from advgame.elements.containers import ContainersState, CreaturesState
 from advgame.elements.doors import DoorsState
 from advgame.elements.rooms import RoomsState
 from advgame.process import CommandProcessor
-from advgame.stmsg.be_atkd import CharacterDeathGSM
-from advgame.stmsg.leave import WonTheGameGSM
-from advgame.stmsg.quit import HaveQuitTheGameGSM
+from advgame.statemsgs.be_atkd import CharacterDeathGSM
+from advgame.statemsgs.leave import WonTheGameGSM
+from advgame.statemsgs.quit import HaveQuitTheGameGSM
 from advgame.utils import textwrapper
 
 

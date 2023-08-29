@@ -3,8 +3,8 @@
 from math import nan as NaN
 
 from advgame.commands.utils import _pick_up_or_drop_preproc, _door_selector
-from advgame.stmsg import GameStateMessage
-from advgame.stmsg.pickup import (
+from advgame.statemsgs import GameStateMessage
+from advgame.statemsgs.pickup import (
     CantPickUpChestCorpseCreatureOrDoorGSM,
     ItemNotFoundGSM,
     ItemPickedUpGSM,

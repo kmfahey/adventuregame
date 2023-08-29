@@ -12,14 +12,14 @@ from advgame import (
     RoomsState,
 )
 from advgame.commands.constants import SPELL_MANA_COST
-from advgame.stmsg.be_atkd import AttackedAndHitGSM, AttackedAndNotHitGSM
-from advgame.stmsg.castspl import (
+from advgame.statemsgs.be_atkd import AttackedAndHitGSM, AttackedAndNotHitGSM
+from advgame.statemsgs.castspl import (
     CastDamagingSpellGSM,
     CastHealingSpellGSM,
     InsufficientManaGSM,
 )
-from advgame.stmsg.command import BadSyntaxGSM, ClassRestrictedGSM
-from advgame.stmsg.various import FoeDeathGSM, UnderwentHealingEffectGSM
+from advgame.statemsgs.command import BadSyntaxGSM, ClassRestrictedGSM
+from advgame.statemsgs.various import FoeDeathGSM, UnderwentHealingEffectGSM
 
 from ..context import (
     containers_ini_config,

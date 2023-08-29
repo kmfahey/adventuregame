@@ -12,9 +12,9 @@ from advgame import (
     Room,
     RoomsState,
 )
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.leave import DoorIsLockedGSM, LeftRoomGSM, WonTheGameGSM
-from advgame.stmsg.various import DoorNotPresentGSM, EnteredRoomGSM
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.leave import DoorIsLockedGSM, LeftRoomGSM, WonTheGameGSM
+from advgame.statemsgs.various import DoorNotPresentGSM, EnteredRoomGSM
 
 from ..context import (
     containers_ini_config,

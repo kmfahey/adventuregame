@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from advgame.stmsg.gsm import GameStateMessage
+from advgame.statemsgs.gsm import GameStateMessage
 from advgame.utils import join_strs_w_comma_conj
 
 

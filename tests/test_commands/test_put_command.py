@@ -11,10 +11,10 @@ from advgame import (
     ItemsState,
     RoomsState,
 )
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.put import PutAmountOfItemGSM
-from advgame.stmsg.take import ItemNotFoundInContainerGSM
-from advgame.stmsg.various import ContainerIsClosedGSM
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.put import PutAmountOfItemGSM
+from advgame.statemsgs.take import ItemNotFoundInContainerGSM
+from advgame.statemsgs.various import ContainerIsClosedGSM
 
 from ..context import (
     containers_ini_config,

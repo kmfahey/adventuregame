@@ -3,9 +3,9 @@
 from operator import itemgetter
 
 from advgame.commands.constants import COMMANDS_SYNTAX, STARTER_GEAR
-from advgame.stmsg.begin import GameBeginsGSM, NameOrClassNotSetGSM
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.various import EnteredRoomGSM, ItemEquippedGSM
+from advgame.statemsgs.begin import GameBeginsGSM, NameOrClassNotSetGSM
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.various import EnteredRoomGSM, ItemEquippedGSM
 
 
 __all__ = ("begin_game_command",)
@@ -15,7 +15,7 @@ def begin_game_command(game_state, tokens):
     """
     Execute the BEGIN GAME command. The return value is always
     in a tuple even when it's of length 1. Returns one or more
-    stmsg.GameStateMessage subclass instances. Takes no arguments.
+    GameStateMessage subclass instances. Takes no arguments.
 
     * If any arguments are given, returns a BadSyntaxGSM object.
 

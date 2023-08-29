@@ -5,8 +5,8 @@ from advgame.commands.utils import (
     _matching_door,
 )
 from advgame.elements import Door
-from advgame.stmsg import GameStateMessage
-from advgame.stmsg.close import ElementHasBeenClosedGSM, ElementIsAlreadyClosedGSM
+from advgame.statemsgs import GameStateMessage
+from advgame.statemsgs.close import ElementHasBeenClosedGSM, ElementIsAlreadyClosedGSM
 
 
 __all__ = ("close_command",)

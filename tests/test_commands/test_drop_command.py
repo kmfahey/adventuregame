@@ -11,14 +11,14 @@ from advgame import (
     ItemsState,
     RoomsState,
 )
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.drop import (
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.drop import (
     AmountToDropUnclearGSM,
     DroppedItemGSM,
     TryingToDropItemYouDontHaveGSM,
     TryingToDropMoreThanYouHaveGSM,
 )
-from advgame.stmsg.various import ItemUnequippedGSM
+from advgame.statemsgs.various import ItemUnequippedGSM
 
 from ..context import (
     containers_ini_config,

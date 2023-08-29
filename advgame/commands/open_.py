@@ -5,8 +5,8 @@ from advgame.commands.utils import (
     _preprocessing_for_lock_unlock_open_or_close,
 )
 from advgame.elements import Door
-from advgame.stmsg import GameStateMessage
-from advgame.stmsg.open_ import (
+from advgame.statemsgs import GameStateMessage
+from advgame.statemsgs.open_ import (
     ElementHasBeenOpenedGSM,
     ElementIsAlreadyOpenGSM,
     ElementIsLockedGSM,

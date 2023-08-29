@@ -2,8 +2,8 @@
 
 from advgame.commands.constants import COMMANDS_SYNTAX
 from advgame.utils import lexical_number_in_1_99_re, lexical_number_to_digits
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.drink import (
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.drink import (
     AmountToDrinkUnclearGSM,
     DrankManaPotionGSM,
     DrankManaPotionWhenNotASpellcasterGSM,
@@ -11,7 +11,7 @@ from advgame.stmsg.drink import (
     ItemNotInInventoryGSM,
     TriedToDrinkMoreThanPossessedGSM,
 )
-from advgame.stmsg.various import UnderwentHealingEffectGSM
+from advgame.statemsgs.various import UnderwentHealingEffectGSM
 
 
 __all__ = ("drink_command",)

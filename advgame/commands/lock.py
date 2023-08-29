@@ -6,9 +6,9 @@ from advgame.commands.utils import (
     _preprocessing_for_lock_unlock_open_or_close,
 )
 from advgame.elements import Door
-from advgame.stmsg import GameStateMessage
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.lock import (
+from advgame.statemsgs import GameStateMessage
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.lock import (
     DontPossessCorrectKeyGSM,
     ElementHasBeenLockedGSM,
     ElementIsAlreadyLockedGSM,

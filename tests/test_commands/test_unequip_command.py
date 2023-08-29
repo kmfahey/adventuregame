@@ -11,9 +11,9 @@ from advgame import (
     ItemsState,
     RoomsState,
 )
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.unequip import ItemNotEquippedGSM
-from advgame.stmsg.various import ItemUnequippedGSM
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.unequip import ItemNotEquippedGSM
+from advgame.statemsgs.various import ItemUnequippedGSM
 
 from ..context import (
     containers_ini_config,

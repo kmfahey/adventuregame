@@ -11,13 +11,13 @@ from advgame import (
     ItemsState,
     RoomsState,
 )
-from advgame.stmsg.close import (
+from advgame.statemsgs.close import (
     ElementHasBeenClosedGSM,
     ElementIsAlreadyClosedGSM,
     ElementNotCloseableGSM,
 )
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.various import DoorNotPresentGSM
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.various import DoorNotPresentGSM
 
 from ..context import (
     containers_ini_config,

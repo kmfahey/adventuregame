@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
 from advgame.commands.constants import COMMANDS_SYNTAX
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.unequip import ItemNotEquippedGSM
-from advgame.stmsg.various import ItemUnequippedGSM
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.unequip import ItemNotEquippedGSM
+from advgame.statemsgs.various import ItemUnequippedGSM
 
 
 __all__ = ("unequip_command",)

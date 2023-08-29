@@ -3,8 +3,8 @@
 from math import nan as NaN
 
 from advgame.commands.utils import _put_or_take_preproc
-from advgame.stmsg import GameStateMessage
-from advgame.stmsg.take import (
+from advgame.statemsgs import GameStateMessage
+from advgame.statemsgs.take import (
     ItemNotFoundInContainerGSM,
     ItemOrItemsTakenGSM,
     TryingToTakeMoreThanIsPresentGSM,

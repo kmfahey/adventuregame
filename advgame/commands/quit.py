@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
 from advgame.commands.constants import COMMANDS_SYNTAX
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.quit import HaveQuitTheGameGSM
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.quit import HaveQuitTheGameGSM
 
 
 __all__ = ("quit_command",)

@@ -11,7 +11,7 @@ from advgame import (
     ItemsState,
     RoomsState,
 )
-from advgame.stmsg.command import NotAllowedNowGSM, NotRecognizedGSM
+from advgame.statemsgs.command import NotAllowedNowGSM, NotRecognizedGSM
 
 from ..context import (
     containers_ini_config,

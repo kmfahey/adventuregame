@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from advgame.stmsg.gsm import GameStateMessage
+from advgame.statemsgs.gsm import GameStateMessage
 
 
 __all__ = (
@@ -16,9 +16,9 @@ class AttackHitGSM(GameStateMessage):
     Returned by advgame.process.CommandProcessor.attack_command() when
     the player's attack connected with their foe. attack_command() always
     triggers the hidden _be_attacked_by_command() pseudo-command, an
-    .stmsg.attack.AttackHitGSM object tracks if the foe was slain. If so,
+    AttackHitGSM object tracks if the foe was slain. If so,
     nothing relating to foe death is conveyed; describing foe death is
-    handled by the .stmsg.various.FoeDeathGSM class. If not, its message
+    handled by the FoeDeathGSM class. If not, its message
     includes a clause about the foe turning to attack.
     """
 
@@ -69,7 +69,7 @@ class AttackHitGSM(GameStateMessage):
 class AttackMissedGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.attack_command() when the
-    player's attack missed. Like .stmsg.attack.AttackHitGSM, it mentions the
+    player's attack missed. Like AttackHitGSM, it mentions the
     foe turning to attack, because an attack on a foe always leads to a
     counterattack if they live.
     """

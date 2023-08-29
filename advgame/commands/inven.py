@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
 from advgame.commands.constants import COMMANDS_SYNTAX
-from advgame.stmsg.command import BadSyntaxGSM
-from advgame.stmsg.inven import DisplayInventoryGSM
+from advgame.statemsgs.command import BadSyntaxGSM
+from advgame.statemsgs.inven import DisplayInventoryGSM
 
 
 __all__ = ("inventory_command",)
