@@ -50,15 +50,15 @@ for ini_const in (
 # data files. Some state objects require other ones as arguments to
 # initialize properly, so this proceeds in order from simple to complex.
 
-items_state = advg.ItemsState(**items_ini_config.sections)
+items_state = ItemsState(**items_ini_config.sections)
 
-doors_state = advg.DoorsState(**doors_ini_config.sections)
+doors_state = DoorsState(**doors_ini_config.sections)
 
-containers_state = advg.ContainersState(items_state, **containers_ini_config.sections)
+containers_state = ContainersState(items_state, **containers_ini_config.sections)
 
-creatures_state = advg.CreaturesState(items_state, **creatures_ini_config.sections)
+creatures_state = CreaturesState(items_state, **creatures_ini_config.sections)
 
-rooms_state = advg.RoomsState(
+rooms_state = RoomsState(
     creatures_state,
     containers_state,
     doors_state,
@@ -66,7 +66,7 @@ rooms_state = advg.RoomsState(
     **rooms_ini_config.sections
 )
 
-game_state = advg.GameState(
+game_state = GameState(
     rooms_state, creatures_state, containers_state, doors_state, items_state
 )
 
@@ -76,7 +76,7 @@ game_state = advg.GameState(
 # The state objects are summarized by a GameState object, which is the
 # sole argument to CommandProcessor.__init__. Its methods will consult
 # the game_state object to interact with the game's object environment.
-command_processor = advg.CommandProcessor(game_state)
+command_processor = CommandProcessor(game_state)
 
 
 ### Game data object environment established ###
@@ -118,7 +118,7 @@ that, enter BEGIN GAME and enter the dungeon!
 # input() builtin, and CommandProcessor.process() is used to interpret &
 # execute them.
 #
-# process() returns a tuple of advgame.stmsg.GameStateMessage subclass
+# process() returns a tuple of GameStateMessage subclass
 # objects; they always have a message property which returns a natural
 # language response to the command. It is either an error message or it
 # describes the results of a successful command.
@@ -136,10 +136,10 @@ while True:
     result = command_processor.process(command)
 
     # GameStateMessage subclass objects' message properties return one
-    # or more long lines of text, so advgame.utils.textwrapper is used
+    # or more long lines of text, so textwrapper is used
     # to wrap the messages to 80 columns.
     for game_state_message in result:
-        print(advg.textwrapper(game_state_message.message))
+        print(textwrapper(game_state_message.message))
 
     # Any one of these three GameStateMessage subclass objects signifies
     # the end of the game. If one of them occurs at the end of a list of
