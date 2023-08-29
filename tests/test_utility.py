@@ -4,7 +4,6 @@ from unittest import TestCase
 from math import nan as NaN
 
 from advgame.utils import (
-    isfloat,
     join_strs_w_comma_conj,
     lexical_number_to_digits,
     textwrapper,
@@ -77,23 +76,6 @@ class TestTextwrapper(TestCase):
     def test_textwrapper(self):
         wrapped_text = textwrapper(LOREM_IPSUM_UNWRAPPED)
         self.assertEqual(wrapped_text, LOREM_IPSUM_WRAPPED)
-
-
-class TestIsfloat(TestCase):
-    def __init__(self, *argl, **argd):
-        super().__init__(*argl, **argd)
-        self.maxDiff = None
-
-    def test_isfloat(self):
-        self.assertTrue(isfloat("+5.6"))
-        self.assertTrue(isfloat("-5.6"))
-        self.assertTrue(isfloat("5.6"))
-        self.assertTrue(isfloat("5."))
-        self.assertTrue(isfloat(".6"))
-        self.assertTrue(isfloat("6"))
-        self.assertFalse(isfloat("."))
-        self.assertFalse(isfloat("+"))
-        self.assertFalse(isfloat("-"))
 
 
 class TestLexicalNumberToDigits1(TestCase):

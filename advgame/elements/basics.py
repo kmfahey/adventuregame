@@ -4,8 +4,6 @@ import re
 
 from abc import ABC
 
-from ..utils import isfloat
-
 
 __all__ = "IniEntry", "State"
 
@@ -50,7 +48,7 @@ class IniEntry:
                     value = True
                 elif value.isdigit():
                     value = int(value)
-                elif isfloat(value):
+                elif value.replace(".", "").isdigit():
                     value = float(value)
             setattr(self, key, value)
 

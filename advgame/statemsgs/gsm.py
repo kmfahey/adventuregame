@@ -13,7 +13,7 @@ property which contains the logic for rendering the semantic value of
 the message object in natural language.
 """
 
-from abc import ABC
+from abc import ABC, abstractmethod
 
 
 class GameStateMessage(ABC):
@@ -24,7 +24,7 @@ class GameStateMessage(ABC):
     """
 
     @property
-    @abc.abstractmethod
+    @abstractmethod
     def message(self):
         """
         The message property of a GameStateMessage subclass renders the data
@@ -34,7 +34,7 @@ class GameStateMessage(ABC):
         """
         pass
 
-    @abc.abstractmethod
+    @abstractmethod
     def __init__(self, *argl, **argd):
         """
         The __init__ method of a GameStateMessage subclass stores its keyword

@@ -63,6 +63,7 @@ from advgame.elements import (
 from advgame.errors import BadCommandError, InternalError
 from advgame.process import CommandProcessor
 from advgame.statemsgs import (
+    GameStateMessage,
     attack,
     be_atkd,
     begin,
@@ -78,8 +79,8 @@ from advgame.statemsgs import (
     lock,
     lookat,
     open_,
-    pklock,
     pickup,
+    pklock,
     put,
     quit,
     reroll,
@@ -90,15 +91,13 @@ from advgame.statemsgs import (
     unequip,
     unlock,
     various,
-    GameStateMessage,
 )
 from advgame.utils import (
     join_strs_w_comma_conj,
-    isfloat,
     lexical_number_to_digits,
-    usage_verb,
     roll_dice,
     textwrapper,
+    usage_verb,
 )
 
 
@@ -184,7 +183,6 @@ __all__ += (
 # From advgame.utils
 __all__ = (
     "join_strs_w_comma_conj",
-    "isfloat",
     "lexical_number_to_digits",
     "usage_verb",
     "roll_dice",

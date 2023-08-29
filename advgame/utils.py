@@ -15,6 +15,15 @@ from textwrap import wrap
 from advgame.errors import InternalError
 
 
+__all__ = (
+    "join_strs_w_comma_conj",
+    "lexical_number_to_digits",
+    "roll_dice",
+    "textwrapper",
+    "usage_verb",
+)
+
+
 # The task of joining a list that may be 1, 2, or more elements with commas and
 # a conjunction is a common one in advgame.statemsgs, so I wrote this
 # function to automate that task.
@@ -45,21 +54,6 @@ def join_strs_w_comma_conj(str_list, conjunction="and"):
         return f"{str_list[0]} {conjunction} {str_list[1]}"
     else:
         return ", ".join(str_list[:-1]) + f", {conjunction} " + str_list[-1]
-
-
-# This regular expression matches a string representation of a floating-point
-# value.
-
-_float_re = re.compile(r"^[+-]?([0-9]+\.|\.[0-9]+|[0-9]+\.[0-9]+|[0-9]+)$")
-
-
-def isfloat(strval):
-    try:
-        float(strval)
-    except ValueError:
-        return False
-    else:
-        return True
 
 
 # The player can use lexical numbers (ie. 'one', 'fourteen', 'thirty') in
@@ -238,9 +232,7 @@ def textwrapper(paragraphs, width=80):
     """
     # The text is broken into separate paragraph strings and applies
     # wrap to each one.
-    wrapped_lines = map(
-        lambda para: wrap(para, width=width), paragraphs.split("\n")
-    )
+    wrapped_lines = map(lambda para: wrap(para, width=width), paragraphs.split("\n"))
 
     # wrap returns a list of lines, so I reassemble the paragraphs with
     # '\n'.join()
