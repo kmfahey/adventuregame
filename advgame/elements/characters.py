@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-import math
-import random
+from math import floor
+from random import randint
 
 from .basics import State
 from .items import Armor, Shield, Weapon, Wand, Item
@@ -502,7 +502,7 @@ class AbilityScores:
         """
         if not hasattr(self, ability_score):
             raise InternalError(f"unrecognized ability {ability_score}")
-        return math.floor((getattr(self, ability_score) - 10) / 2)
+        return floor((getattr(self, ability_score) - 10) / 2)
 
     def __init__(self, character_class_str):
         """
@@ -536,7 +536,7 @@ class AbilityScores:
         """
         results_list = list()
         for _ in range(0, 6):
-            four_rolls = sorted([random.randint(1, 6) for _ in range(0, 4)])
+            four_rolls = sorted([randint(1, 6) for _ in range(0, 4)])
             three_rolls = four_rolls[1:4]
             results_list.append(sum(three_rolls))
         results_list.sort()

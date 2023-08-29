@@ -13,10 +13,10 @@ property which contains the logic for rendering the semantic value of
 the message object in natural language.
 """
 
-import abc
+from abc import ABC
 
 
-class GameStateMessage(abc.ABC):
+class GameStateMessage(ABC):
     """
     This class is the abstract base class for all the game state message
     classes in this module. It defines an abstract property message and an

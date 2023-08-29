@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 
 import re
-import abc
+
+from abc import ABC
 
 from ..utils import isfloat
 
@@ -100,7 +101,7 @@ class IniEntry:
         return qty_strval_pairs
 
 
-class State(abc.ABC):
+class State(ABC):
     """
     A generic key-value container object that maintains an internal
     dictionary and provides access to it by method.

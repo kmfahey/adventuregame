@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import collections
+from collections import defaultdict
 
 from .basics import IniEntry
 from ..errors import InternalError
@@ -143,7 +143,7 @@ class DoorsState:
                           dict values which are key-value pairs to initialize an
                           individual Door object with.
         """
-        self._contents = collections.defaultdict(dict)
+        self._contents = defaultdict(dict)
 
         # The entries in doors.ini have internal_names that consist of
         # the internal names for the two rooms they connect, connected
