@@ -179,5 +179,7 @@ def pick_up_command(game_state, tokens):
         # returned.
         quantity_had_now = quantity_in_inventory + pick_up_quantity
         return (
-            stmsg.pickup.ItemPickedUpGSM(target_title, pick_up_quantity, quantity_had_now),
+            stmsg.pickup.ItemPickedUpGSM(
+                target_title, pick_up_quantity, quantity_had_now
+            ),
         )

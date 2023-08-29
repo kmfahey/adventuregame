@@ -75,7 +75,9 @@ def unlock_command(game_state, tokens):
         # If the required key is not present, I return a
         # don't-possess-correct-key error.
         return (
-            stmsg.unlock.DontPossessCorrectKeyGSM(element_to_unlock.title, key_required),
+            stmsg.unlock.DontPossessCorrectKeyGSM(
+                element_to_unlock.title, key_required
+            ),
         )
     elif element_to_unlock.is_locked is False:
         # Otherwise, if the item is already unlocked, I return an

@@ -134,7 +134,9 @@ class Test_Attack_1(unittest.TestCase):
                         results[index].message,
                         "Your attack on the kobold missed. It turns to attack!",
                     )
-                elif isinstance(command_results, advg.stmsg.be_atkd.AttackedAndNotHitGSM):
+                elif isinstance(
+                    command_results, advg.stmsg.be_atkd.AttackedAndNotHitGSM
+                ):
                     self.assertEqual(results[index].creature_title, "kobold")
                     self.assertEqual(
                         results[index].message,
@@ -251,7 +253,10 @@ class Test_Attack_2(unittest.TestCase):
             ) or (
                 isinstance(
                     results[-1],
-                    (advg.stmsg.attack.AttackHitGSM, advg.stmsg.be_atkd.CharacterDeathGSM),
+                    (
+                        advg.stmsg.attack.AttackHitGSM,
+                        advg.stmsg.be_atkd.CharacterDeathGSM,
+                    ),
                 )
             ):
                 results += self.command_processor.process("attack kobold")
@@ -600,7 +605,9 @@ class Test_Cast_Spell(unittest.TestCase):
             result[0].mana_point_total,
             self.command_processor.game_state.character.mana_point_total,
         )
-        self.assertEqual(result[0].spell_mana_cost, advg.commands.constants.SPELL_MANA_COST)
+        self.assertEqual(
+            result[0].spell_mana_cost, advg.commands.constants.SPELL_MANA_COST
+        )
         self.assertEqual(
             result[0].message,
             "You don't have enough mana points to cast a spell. Casting a spell costs "
@@ -1027,7 +1034,9 @@ class Test_Drink(unittest.TestCase):
         mana_potion = self.command_processor.game_state.items_state.get("Mana_Potion")
         self.command_processor.game_state.character.pick_up_item(mana_potion)
         result = self.command_processor.process("drink 3 mana potions")
-        self.assertIsInstance(result[0], advg.stmsg.drink.TriedToDrinkMoreThanPossessedGSM)
+        self.assertIsInstance(
+            result[0], advg.stmsg.drink.TriedToDrinkMoreThanPossessedGSM
+        )
         self.assertEqual(
             result[0].message,
             "You can't drink 3 mana potions. You only have 1 of them.",
@@ -1040,7 +1049,9 @@ class Test_Drink(unittest.TestCase):
         mana_potion = self.command_processor.game_state.items_state.get("Mana_Potion")
         self.command_processor.game_state.character.pick_up_item(mana_potion)
         result = self.command_processor.process("drink three mana potions")
-        self.assertIsInstance(result[0], advg.stmsg.drink.TriedToDrinkMoreThanPossessedGSM)
+        self.assertIsInstance(
+            result[0], advg.stmsg.drink.TriedToDrinkMoreThanPossessedGSM
+        )
         self.assertEqual(
             result[0].message,
             "You can't drink 3 mana potions. You only have 1 of them.",
@@ -3980,9 +3991,7 @@ class Test_Put(unittest.TestCase):
         result = self.command_processor.process(
             "take 20 gold coins from the wooden chest"
         )
-        result = self.command_processor.process(
-            "put 5 gold coins in the wooden chest"
-        )
+        result = self.command_processor.process("put 5 gold coins in the wooden chest")
         self.assertIsInstance(result[0], advg.stmsg.put.PutAmountOfItemGSM)
         self.assertEqual(result[0].item_title, "gold coin")
         self.assertEqual(result[0].container_title, "wooden chest")
@@ -4797,7 +4806,9 @@ class Test_Take(unittest.TestCase):
         result = self.command_processor.process(
             "take 3 small leather armors from the kobold corpse"
         )
-        self.assertIsInstance(result[0], advg.stmsg.take.TryingToTakeMoreThanIsPresentGSM)
+        self.assertIsInstance(
+            result[0], advg.stmsg.take.TryingToTakeMoreThanIsPresentGSM
+        )
         self.assertEqual(result[0].container_title, "kobold corpse")
         self.assertEqual(result[0].container_type, "corpse")
         self.assertEqual(result[0].item_title, "small leather armor")

@@ -107,4 +107,6 @@ def take_command(game_state, tokens):
     # I add the item in the given quantity to the player character's
     # inventory and return an item-or-items-taken value.
     game_state.character.pick_up_item(item, qty=quantity_to_take)
-    return (stmsg.take.ItemOrItemsTakenGSM(container_title, item_title, quantity_to_take),)
+    return (
+        stmsg.take.ItemOrItemsTakenGSM(container_title, item_title, quantity_to_take),
+    )

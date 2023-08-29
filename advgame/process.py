@@ -68,6 +68,7 @@ class Context:
 # sophisticated conditional handling all the cases where the command
 # can't complete.
 
+
 class CommandProcessor:
     """
     A processor that can parse a natural language command, modify the

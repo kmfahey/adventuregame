@@ -112,7 +112,9 @@ def _door_selector(game_state, tokens):
             else None
         )
         return (
-            stmsg.various.AmbiguousDoorSpecifierGSM(compass_dirs, tokens[-1], door_type),
+            stmsg.various.AmbiguousDoorSpecifierGSM(
+                compass_dirs, tokens[-1], door_type
+            ),
         )
     else:
         # Otherwise matching_doors is length 1; I have a match, so I
@@ -408,7 +410,9 @@ def _preprocessing_for_lock_unlock_open_or_close(game_state, command, tokens):
     # returned.
     if not len(tokens):
         return (
-            stmsg.command.BadSyntaxGSM(command.upper(), COMMANDS_SYNTAX[command.upper()]),
+            stmsg.command.BadSyntaxGSM(
+                command.upper(), COMMANDS_SYNTAX[command.upper()]
+            ),
         )
 
     # door is initialized to None so whether it's non-None later can
@@ -599,7 +603,9 @@ def _put_or_take_preproc(game_state, command, tokens):
     # end of the tokens tuple, I return a syntax error.
     if joinword_index == -1 or joinword_index == 0 or joinword_index + 1 == len(tokens):
         return (
-            stmsg.command.BadSyntaxGSM(command.upper(), COMMANDS_SYNTAX[command.upper()]),
+            stmsg.command.BadSyntaxGSM(
+                command.upper(), COMMANDS_SYNTAX[command.upper()]
+            ),
         )
 
     # I use the joinword_index to break the tokens tuple into an
@@ -658,7 +664,9 @@ def _put_or_take_preproc(game_state, command, tokens):
     if container_tokens[-1].endswith("s"):
         # The container title is plural, which is a syntax error.
         return (
-            stmsg.command.BadSyntaxGSM(command.upper(), COMMANDS_SYNTAX[command.upper()]),
+            stmsg.command.BadSyntaxGSM(
+                command.upper(), COMMANDS_SYNTAX[command.upper()]
+            ),
         )
 
     if (
@@ -704,7 +712,9 @@ def _put_or_take_preproc(game_state, command, tokens):
         # The joinword used doesn't match the one appropriate to the
         # type of container here, so I return a syntax error.
         return (
-            stmsg.command.BadSyntaxGSM(command.upper(), COMMANDS_SYNTAX[command.upper()]),
+            stmsg.command.BadSyntaxGSM(
+                command.upper(), COMMANDS_SYNTAX[command.upper()]
+            ),
         )
 
     elif container.is_closed:

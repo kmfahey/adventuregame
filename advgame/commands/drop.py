@@ -5,7 +5,11 @@ from math import nan as NaN
 from advgame.commands.utils import _pick_up_or_drop_preproc
 from advgame.elements import ItemsMultiState
 from advgame.stmsg import GameStateMessage
-from advgame.stmsg.drop import DroppedItemGSM, TryingToDropItemYouDontHaveGSM, TryingToDropMoreThanYouHaveGSM
+from advgame.stmsg.drop import (
+    DroppedItemGSM,
+    TryingToDropItemYouDontHaveGSM,
+    TryingToDropMoreThanYouHaveGSM,
+)
 from advgame.stmsg.various import ItemUnequippedGSM
 
 
@@ -91,9 +95,7 @@ def drop_command(game_state, tokens):
         # quantity in inventory, a trying-to-drop-more-than-you-have
         # error is returned.
         return (
-            TryingToDropMoreThanYouHaveGSM(
-                item_title, drop_quantity, item_had_qty
-            ),
+            TryingToDropMoreThanYouHaveGSM(item_title, drop_quantity, item_had_qty),
         )
     elif drop_quantity is NaN:
 
@@ -182,9 +184,7 @@ def drop_command(game_state, tokens):
                 # Otherwise, the player will be informed that they
                 # now can't attack.
                 unequip_return = (
-                    ItemUnequippedGSM(
-                        item_title, "weapon", now_cant_attack=True
-                    ),
+                    ItemUnequippedGSM(item_title, "weapon", now_cant_attack=True),
                 )
 
         # If the character's wand is being dropped, it's unequipped,
@@ -212,9 +212,7 @@ def drop_command(game_state, tokens):
                 # Otherwise, the player will be informed that they
                 # now can't attack.
                 unequip_return = (
-                    ItemUnequippedGSM(
-                        item_title, "wand", now_cant_attack=True
-                    ),
+                    ItemUnequippedGSM(item_title, "wand", now_cant_attack=True),
                 )
 
     # Finally, with all other preconditions handled, I actually drop

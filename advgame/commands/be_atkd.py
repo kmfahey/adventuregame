@@ -1,7 +1,11 @@
 #!/usr/bin/python3
 
 from advgame.utils import roll_dice
-from advgame.stmsg.be_atkd import AttackedAndHitGSM, AttackedAndNotHitGSM, CharacterDeathGSM
+from advgame.stmsg.be_atkd import (
+    AttackedAndHitGSM,
+    AttackedAndNotHitGSM,
+    CharacterDeathGSM,
+)
 
 
 __all__ = ("be_attacked_by_command",)
