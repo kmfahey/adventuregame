@@ -1,8 +1,26 @@
 #!/usr/bin/python3
 
-import unittest
+from unittest import TestCase
 
-import advgame as advg
+from advgame import (
+    CommandProcessor,
+    ContainersState,
+    CreaturesState,
+    DoorsState,
+    GameState,
+    ItemsState,
+    RoomsState,
+)
+from advgame.stmsg.command import BadSyntaxGSM
+from advgame.stmsg.drink import (
+    AmountToDrinkUnclearGSM,
+    DrankManaPotionGSM,
+    DrankManaPotionWhenNotASpellcasterGSM,
+    ItemNotDrinkableGSM,
+    ItemNotInInventoryGSM,
+    TriedToDrinkMoreThanPossessedGSM,
+)
+from advgame.stmsg.various import UnderwentHealingEffectGSM
 
 from ..context import (
     containers_ini_config,
@@ -15,35 +33,36 @@ from ..context import (
 
 __all__ = ("Test_Drink",)
 
-class Test_Drink(unittest.TestCase):
+
+class Test_Drink(TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
 
     def setUp(self):
-        self.items_state = advg.ItemsState(**items_ini_config.sections)
-        self.doors_state = advg.DoorsState(**doors_ini_config.sections)
-        self.containers_state = advg.ContainersState(
+        self.items_state = ItemsState(**items_ini_config.sections)
+        self.doors_state = DoorsState(**doors_ini_config.sections)
+        self.containers_state = ContainersState(
             self.items_state, **containers_ini_config.sections
         )
-        self.creatures_state = advg.CreaturesState(
+        self.creatures_state = CreaturesState(
             self.items_state, **creatures_ini_config.sections
         )
-        self.rooms_state = advg.RoomsState(
+        self.rooms_state = RoomsState(
             self.creatures_state,
             self.containers_state,
             self.doors_state,
             self.items_state,
             **rooms_ini_config.sections,
         )
-        self.game_state = advg.GameState(
+        self.game_state = GameState(
             self.rooms_state,
             self.creatures_state,
             self.containers_state,
             self.doors_state,
             self.items_state,
         )
-        self.command_processor = advg.CommandProcessor(self.game_state)
+        self.command_processor = CommandProcessor(self.game_state)
 
     def test_drink1(self):
         self.command_processor.game_state.character_name = "Niath"
@@ -56,7 +75,7 @@ class Test_Drink(unittest.TestCase):
             "drink 1 mana potions",
         ):
             result = self.command_processor.process(bad_argument_str)
-            self.assertIsInstance(result[0], advg.stmsg.command.BadSyntaxGSM)
+            self.assertIsInstance(result[0], BadSyntaxGSM)
             self.assertEqual(result[0].command, "DRINK")
             self.assertEqual(
                 result[0].message,
@@ -70,7 +89,7 @@ class Test_Drink(unittest.TestCase):
         self.command_processor.game_state.character_class = "Warrior"
         self.game_state.game_has_begun = True
         result = self.command_processor.process("drink health potion")
-        self.assertIsInstance(result[0], advg.stmsg.drink.ItemNotInInventoryGSM)
+        self.assertIsInstance(result[0], ItemNotInInventoryGSM)
         self.assertEqual(result[0].item_title, "health potion")
         self.assertEqual(
             result[0].message, "You don't have a health potion in your inventory."
@@ -86,7 +105,7 @@ class Test_Drink(unittest.TestCase):
         self.command_processor.game_state.character.pick_up_item(health_potion)
         self.command_processor.game_state.character.take_damage(10)
         result = self.command_processor.process("drink health potion")
-        self.assertIsInstance(result[0], advg.stmsg.various.UnderwentHealingEffectGSM)
+        self.assertIsInstance(result[0], UnderwentHealingEffectGSM)
         self.assertEqual(result[0].amount_healed, 10)
         self.assertRegex(
             result[0].message,
@@ -105,7 +124,7 @@ class Test_Drink(unittest.TestCase):
         self.command_processor.game_state.character.take_damage(30)
         result = self.command_processor.process("drink health potion")
         self.assertEqual(health_potion.hit_points_recovered, 20)
-        self.assertIsInstance(result[0], advg.stmsg.various.UnderwentHealingEffectGSM)
+        self.assertIsInstance(result[0], UnderwentHealingEffectGSM)
         self.assertEqual(result[0].amount_healed, 20)
         self.assertRegex(
             result[0].message,
@@ -121,7 +140,7 @@ class Test_Drink(unittest.TestCase):
         )
         self.command_processor.game_state.character.pick_up_item(health_potion)
         result = self.command_processor.process("drink health potion")
-        self.assertIsInstance(result[0], advg.stmsg.various.UnderwentHealingEffectGSM)
+        self.assertIsInstance(result[0], UnderwentHealingEffectGSM)
         self.assertEqual(result[0].amount_healed, 0)
         self.assertRegex(
             result[0].message,
@@ -138,7 +157,7 @@ class Test_Drink(unittest.TestCase):
         self.command_processor.game_state.character.spend_mana(10)
         result = self.command_processor.process("drink mana potion")
         self.assertEqual(mana_potion.mana_points_recovered, 20)
-        self.assertIsInstance(result[0], advg.stmsg.drink.DrankManaPotionGSM)
+        self.assertIsInstance(result[0], DrankManaPotionGSM)
         self.assertEqual(result[0].amount_regained, 10)
         self.assertRegex(
             result[0].message,
@@ -156,7 +175,7 @@ class Test_Drink(unittest.TestCase):
         self.command_processor.game_state.character.spend_mana(15)
         result = self.command_processor.process("drink mana potion")
         self.assertEqual(mana_potion.mana_points_recovered, 11)
-        self.assertIsInstance(result[0], advg.stmsg.drink.DrankManaPotionGSM)
+        self.assertIsInstance(result[0], DrankManaPotionGSM)
         self.assertEqual(result[0].amount_regained, 11)
         self.assertRegex(
             result[0].message,
@@ -171,7 +190,7 @@ class Test_Drink(unittest.TestCase):
         self.command_processor.game_state.character.pick_up_item(mana_potion)
         result = self.command_processor.process("drink mana potion")
         self.assertEqual(mana_potion.mana_points_recovered, 20)
-        self.assertIsInstance(result[0], advg.stmsg.drink.DrankManaPotionGSM)
+        self.assertIsInstance(result[0], DrankManaPotionGSM)
         self.assertEqual(result[0].amount_regained, 0)
         self.assertRegex(
             result[0].message,
@@ -186,9 +205,7 @@ class Test_Drink(unittest.TestCase):
         mana_potion = self.command_processor.game_state.items_state.get("Mana_Potion")
         self.command_processor.game_state.character.pick_up_item(mana_potion)
         result = self.command_processor.process("drink mana potion")
-        self.assertIsInstance(
-            result[0], advg.stmsg.drink.DrankManaPotionWhenNotASpellcasterGSM
-        )
+        self.assertIsInstance(result[0], DrankManaPotionWhenNotASpellcasterGSM)
         self.assertEqual(
             result[0].message,
             "You feel a little strange, but otherwise nothing happens.",
@@ -201,7 +218,7 @@ class Test_Drink(unittest.TestCase):
         gold_coin = self.command_processor.game_state.items_state.get("Gold_Coin")
         self.command_processor.game_state.character.pick_up_item(gold_coin)
         result = self.command_processor.process("drink gold coin")
-        self.assertIsInstance(result[0], advg.stmsg.drink.ItemNotDrinkableGSM)
+        self.assertIsInstance(result[0], ItemNotDrinkableGSM)
         self.assertEqual(result[0].message, "A gold coin is not drinkable.")
 
     def test_drink11(self):
@@ -211,9 +228,7 @@ class Test_Drink(unittest.TestCase):
         mana_potion = self.command_processor.game_state.items_state.get("Mana_Potion")
         self.command_processor.game_state.character.pick_up_item(mana_potion)
         result = self.command_processor.process("drink 3 mana potions")
-        self.assertIsInstance(
-            result[0], advg.stmsg.drink.TriedToDrinkMoreThanPossessedGSM
-        )
+        self.assertIsInstance(result[0], TriedToDrinkMoreThanPossessedGSM)
         self.assertEqual(
             result[0].message,
             "You can't drink 3 mana potions. You only have 1 of them.",
@@ -226,9 +241,7 @@ class Test_Drink(unittest.TestCase):
         mana_potion = self.command_processor.game_state.items_state.get("Mana_Potion")
         self.command_processor.game_state.character.pick_up_item(mana_potion)
         result = self.command_processor.process("drink three mana potions")
-        self.assertIsInstance(
-            result[0], advg.stmsg.drink.TriedToDrinkMoreThanPossessedGSM
-        )
+        self.assertIsInstance(result[0], TriedToDrinkMoreThanPossessedGSM)
         self.assertEqual(
             result[0].message,
             "You can't drink 3 mana potions. You only have 1 of them.",
@@ -241,7 +254,7 @@ class Test_Drink(unittest.TestCase):
         mana_potion = self.command_processor.game_state.items_state.get("Mana_Potion")
         self.command_processor.game_state.character.pick_up_item(mana_potion)
         result = self.command_processor.process("drink mana potions")
-        self.assertIsInstance(result[0], advg.stmsg.drink.AmountToDrinkUnclearGSM)
+        self.assertIsInstance(result[0], AmountToDrinkUnclearGSM)
         self.assertEqual(
             result[0].message, "Amount to drink unclear. How many do you mean?"
         )

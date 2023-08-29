@@ -1,8 +1,29 @@
 #!/usr/bin/python3
 
-import unittest
+from unittest import TestCase
 
-import advgame as advg
+from advgame import (
+    CommandProcessor,
+    ContainersState,
+    CreaturesState,
+    DoorsState,
+    GameState,
+    ItemsState,
+    RoomsState,
+)
+from advgame.stmsg.command import BadSyntaxGSM
+from advgame.stmsg.put import (
+    AmountToPutUnclearGSM,
+    ItemNotInInventoryGSM,
+    PutAmountOfItemGSM,
+    TryingToPutMoreThanYouHaveGSM,
+)
+from advgame.stmsg.take import (
+    ItemNotFoundInContainerGSM,
+    ItemOrItemsTakenGSM,
+    TryingToTakeMoreThanIsPresentGSM,
+)
+from advgame.stmsg.various import ContainerIsClosedGSM, ContainerNotFoundGSM
 
 from ..context import (
     containers_ini_config,
@@ -15,35 +36,36 @@ from ..context import (
 
 __all__ = ("Test_Take",)
 
-class Test_Take(unittest.TestCase):
+
+class Test_Take(TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
 
     def setUp(self):
-        self.items_state = advg.ItemsState(**items_ini_config.sections)
-        self.doors_state = advg.DoorsState(**doors_ini_config.sections)
-        self.containers_state = advg.ContainersState(
+        self.items_state = ItemsState(**items_ini_config.sections)
+        self.doors_state = DoorsState(**doors_ini_config.sections)
+        self.containers_state = ContainersState(
             self.items_state, **containers_ini_config.sections
         )
-        self.creatures_state = advg.CreaturesState(
+        self.creatures_state = CreaturesState(
             self.items_state, **creatures_ini_config.sections
         )
-        self.rooms_state = advg.RoomsState(
+        self.rooms_state = RoomsState(
             self.creatures_state,
             self.containers_state,
             self.doors_state,
             self.items_state,
             **rooms_ini_config.sections,
         )
-        self.game_state = advg.GameState(
+        self.game_state = GameState(
             self.rooms_state,
             self.creatures_state,
             self.containers_state,
             self.doors_state,
             self.items_state,
         )
-        self.command_processor = advg.CommandProcessor(self.game_state)
+        self.command_processor = CommandProcessor(self.game_state)
         self.game_state.character_name = "Niath"
         self.game_state.character_class = "Warrior"
         self.game_state.game_has_begun = True
@@ -73,7 +95,7 @@ class Test_Take(unittest.TestCase):
         result = self.command_processor.process(
             "take a health potion from the kobold corpse"
         )
-        self.assertIsInstance(result[0], advg.stmsg.take.ItemOrItemsTakenGSM)
+        self.assertIsInstance(result[0], ItemOrItemsTakenGSM)
         self.assertEqual(result[0].container_title, "kobold corpse")
         self.assertEqual(result[0].item_title, "health potion")
         self.assertEqual(result[0].amount_taken, 1)
@@ -102,7 +124,7 @@ class Test_Take(unittest.TestCase):
         result = self.command_processor.process(
             "take 15 gold coins from the kobold corpse"
         )
-        self.assertIsInstance(result[0], advg.stmsg.take.ItemOrItemsTakenGSM)
+        self.assertIsInstance(result[0], ItemOrItemsTakenGSM)
         self.assertEqual(result[0].container_title, "kobold corpse")
         self.assertEqual(result[0].item_title, "gold coin")
         self.assertEqual(result[0].amount_taken, 15)
@@ -141,7 +163,7 @@ class Test_Take(unittest.TestCase):
         result = self.command_processor.process(
             "take one short sword from the kobold corpse"
         )
-        self.assertIsInstance(result[0], advg.stmsg.take.ItemOrItemsTakenGSM)
+        self.assertIsInstance(result[0], ItemOrItemsTakenGSM)
 
     def test_take_4(self):
         self.command_processor.game_state.rooms_state.cursor.container_here = (
@@ -150,13 +172,13 @@ class Test_Take(unittest.TestCase):
         result = self.command_processor.process(
             "take one small leather armor from the kobold corpses"
         )
-        self.assertIsInstance(result[0], advg.stmsg.command.BadSyntaxGSM)
+        self.assertIsInstance(result[0], BadSyntaxGSM)
         result = self.command_processor.process("take one small leather armor")
-        self.assertIsInstance(result[0], advg.stmsg.command.BadSyntaxGSM)
+        self.assertIsInstance(result[0], BadSyntaxGSM)
         result = self.command_processor.process("take the from the kobold corpse")
-        self.assertIsInstance(result[0], advg.stmsg.command.BadSyntaxGSM)
+        self.assertIsInstance(result[0], BadSyntaxGSM)
         result = self.command_processor.process("take the short sword from the")
-        self.assertIsInstance(result[0], advg.stmsg.command.BadSyntaxGSM)
+        self.assertIsInstance(result[0], BadSyntaxGSM)
         self.assertEqual(result[0].command, "TAKE")
         self.assertEqual(
             result[0].message,
@@ -172,7 +194,7 @@ class Test_Take(unittest.TestCase):
         result = self.command_processor.process(
             "take the short sword from the sorcerer corpse"
         )  # check
-        self.assertIsInstance(result[0], advg.stmsg.various.ContainerNotFoundGSM)
+        self.assertIsInstance(result[0], ContainerNotFoundGSM)
         self.assertEqual(result[0].container_not_found_title, "sorcerer corpse")
         self.assertEqual(result[0].container_present_title, "kobold corpse")
         self.assertEqual(
@@ -191,7 +213,7 @@ class Test_Take(unittest.TestCase):
         result = self.command_processor.process(
             "take the short sword from the sorcerer corpse"
         )
-        self.assertIsInstance(result[0], advg.stmsg.various.ContainerNotFoundGSM)
+        self.assertIsInstance(result[0], ContainerNotFoundGSM)
         self.assertEqual(result[0].container_not_found_title, "sorcerer corpse")
         self.assertIs(result[0].container_present_title, None)
         self.assertEqual(result[0].message, "There is no sorcerer corpse here.")
@@ -204,9 +226,7 @@ class Test_Take(unittest.TestCase):
         result = self.command_processor.process(
             "take 3 small leather armors from the kobold corpse"
         )
-        self.assertIsInstance(
-            result[0], advg.stmsg.take.TryingToTakeMoreThanIsPresentGSM
-        )
+        self.assertIsInstance(result[0], TryingToTakeMoreThanIsPresentGSM)
         self.assertEqual(result[0].container_title, "kobold corpse")
         self.assertEqual(result[0].container_type, "corpse")
         self.assertEqual(result[0].item_title, "small leather armor")
@@ -226,7 +246,7 @@ class Test_Take(unittest.TestCase):
         result = self.command_processor.process(
             "take the short sword from the kobold corpse"
         )
-        self.assertIsInstance(result[0], advg.stmsg.take.ItemNotFoundInContainerGSM)
+        self.assertIsInstance(result[0], ItemNotFoundInContainerGSM)
         self.assertEqual(result[0].container_title, "kobold corpse")
         self.assertIs(result[0].amount_attempted, 1)
         self.assertEqual(result[0].container_type, "corpse")
@@ -243,7 +263,7 @@ class Test_Take(unittest.TestCase):
         result = self.command_processor.process(
             "take three short swords from the kobold corpse"
         )
-        self.assertIsInstance(result[0], advg.stmsg.take.ItemNotFoundInContainerGSM)
+        self.assertIsInstance(result[0], ItemNotFoundInContainerGSM)
         self.assertEqual(result[0].container_title, "kobold corpse")
         self.assertEqual(result[0].amount_attempted, 3)
         self.assertEqual(result[0].container_type, "corpse")
@@ -260,7 +280,7 @@ class Test_Take(unittest.TestCase):
         result = self.command_processor.process(
             "take fifteen gold coins from the kobold corpse"
         )
-        self.assertIsInstance(result[0], advg.stmsg.take.ItemOrItemsTakenGSM)
+        self.assertIsInstance(result[0], ItemOrItemsTakenGSM)
         self.assertEqual(result[0].container_title, "kobold corpse")
         self.assertEqual(result[0].amount_taken, 15)
         self.assertEqual(result[0].item_title, "gold coin")
@@ -278,7 +298,7 @@ class Test_Take(unittest.TestCase):
         result = self.command_processor.process(
             "take gold coins from the kobold corpse"
         )
-        self.assertIsInstance(result[0], advg.stmsg.take.ItemOrItemsTakenGSM)
+        self.assertIsInstance(result[0], ItemOrItemsTakenGSM)
         self.assertEqual(result[0].container_title, "kobold corpse")
         self.assertEqual(result[0].amount_taken, 15)
         self.assertEqual(result[0].item_title, "gold coin")
@@ -294,7 +314,7 @@ class Test_Take(unittest.TestCase):
             "Gold_Coin", 15, self.gold_coin
         )
         result = self.command_processor.process("take gold coin from the kobold corpse")
-        self.assertIsInstance(result[0], advg.stmsg.take.ItemOrItemsTakenGSM)
+        self.assertIsInstance(result[0], ItemOrItemsTakenGSM)
         self.assertEqual(result[0].container_title, "kobold corpse")
         self.assertEqual(result[0].amount_taken, 15)
         self.assertEqual(result[0].item_title, "gold coin")
@@ -312,7 +332,7 @@ class Test_Take(unittest.TestCase):
         result = self.command_processor.process(
             "take a small leather armor from the kobold corpse"
         )
-        self.assertIsInstance(result[0], advg.stmsg.take.ItemOrItemsTakenGSM)
+        self.assertIsInstance(result[0], ItemOrItemsTakenGSM)
         self.assertEqual(result[0].container_title, "kobold corpse")
         self.assertEqual(result[0].amount_taken, 1)
         self.assertEqual(result[0].item_title, "small leather armor")
@@ -334,7 +354,7 @@ class Test_Take(unittest.TestCase):
         result = self.command_processor.process(
             "put 15 gold coins on the kobold corpse"
         )
-        self.assertIsInstance(result[0], advg.stmsg.put.PutAmountOfItemGSM)
+        self.assertIsInstance(result[0], PutAmountOfItemGSM)
         self.assertEqual(result[0].item_title, "gold coin")
         self.assertEqual(result[0].container_title, "kobold corpse")
         self.assertEqual(result[0].container_type, "corpse")
@@ -357,7 +377,7 @@ class Test_Take(unittest.TestCase):
             "take 15 gold coins from the kobold corpse"
         )
         result = self.command_processor.process("put 1 gold coin on the kobold corpse")
-        self.assertIsInstance(result[0], advg.stmsg.put.PutAmountOfItemGSM)
+        self.assertIsInstance(result[0], PutAmountOfItemGSM)
         self.assertEqual(result[0].item_title, "gold coin")
         self.assertEqual(result[0].container_title, "kobold corpse")
         self.assertEqual(result[0].container_type, "corpse")
@@ -382,7 +402,7 @@ class Test_Take(unittest.TestCase):
         result = self.command_processor.process(
             "put 13 gold coins on the kobold corpse"
         )
-        self.assertIsInstance(result[0], advg.stmsg.put.PutAmountOfItemGSM)
+        self.assertIsInstance(result[0], PutAmountOfItemGSM)
         self.assertEqual(result[0].item_title, "gold coin")
         self.assertEqual(result[0].container_title, "kobold corpse")
         self.assertEqual(result[0].container_type, "corpse")
@@ -407,7 +427,7 @@ class Test_Take(unittest.TestCase):
         result = self.command_processor.process(
             "put thirteen gold coins on the kobold corpse"
         )
-        self.assertIsInstance(result[0], advg.stmsg.put.PutAmountOfItemGSM)
+        self.assertIsInstance(result[0], PutAmountOfItemGSM)
         self.assertEqual(result[0].item_title, "gold coin")
         self.assertEqual(result[0].container_title, "kobold corpse")
         self.assertEqual(result[0].container_type, "corpse")
@@ -430,7 +450,7 @@ class Test_Take(unittest.TestCase):
             "take 1 gold coin from the kobold corpse"
         )
         result = self.command_processor.process("put 1 gold coin on the kobold corpse")
-        self.assertIsInstance(result[0], advg.stmsg.put.PutAmountOfItemGSM)
+        self.assertIsInstance(result[0], PutAmountOfItemGSM)
         self.assertEqual(result[0].item_title, "gold coin")
         self.assertEqual(result[0].container_title, "kobold corpse")
         self.assertEqual(result[0].container_type, "corpse")
@@ -450,7 +470,7 @@ class Test_Take(unittest.TestCase):
             "Gold_Coin", 15, self.gold_coin
         )
         result = self.command_processor.process("put 2 gold coins on the kobold corpse")
-        self.assertIsInstance(result[0], advg.stmsg.put.ItemNotInInventoryGSM)
+        self.assertIsInstance(result[0], ItemNotInInventoryGSM)
         self.assertEqual(result[0].item_title, "gold coin")
         self.assertEqual(result[0].amount_attempted, 2)
         self.assertEqual(
@@ -465,7 +485,7 @@ class Test_Take(unittest.TestCase):
             "Gold_Coin", 15, self.gold_coin
         )
         result = self.command_processor.process("put 1 gold coin on the kobold corpse")
-        self.assertIsInstance(result[0], advg.stmsg.put.ItemNotInInventoryGSM)
+        self.assertIsInstance(result[0], ItemNotInInventoryGSM)
         self.assertEqual(result[0].item_title, "gold coin")
         self.assertEqual(result[0].amount_attempted, 1)
         self.assertEqual(
@@ -485,7 +505,7 @@ class Test_Take(unittest.TestCase):
         result = self.command_processor.process(
             "put ten gold coin on the kobold corpse"
         )
-        self.assertIsInstance(result[0], advg.stmsg.put.TryingToPutMoreThanYouHaveGSM)
+        self.assertIsInstance(result[0], TryingToPutMoreThanYouHaveGSM)
         self.assertEqual(result[0].item_title, "gold coin")
         self.assertEqual(result[0].amount_present, 5)
         self.assertEqual(
@@ -503,7 +523,7 @@ class Test_Take(unittest.TestCase):
             "take 5 gold coins from the kobold corpse"
         )
         result = self.command_processor.process("put 10 gold coin on the kobold corpse")
-        self.assertIsInstance(result[0], advg.stmsg.put.TryingToPutMoreThanYouHaveGSM)
+        self.assertIsInstance(result[0], TryingToPutMoreThanYouHaveGSM)
         self.assertEqual(result[0].item_title, "gold coin")
         self.assertEqual(result[0].amount_present, 5)
         self.assertEqual(
@@ -522,7 +542,7 @@ class Test_Take(unittest.TestCase):
         )
         result = self.command_processor.process("put 4 gold coins on the kobold corpse")
         result = self.command_processor.process("put 4 gold coins on the kobold corpse")
-        self.assertIsInstance(result[0], advg.stmsg.put.TryingToPutMoreThanYouHaveGSM)
+        self.assertIsInstance(result[0], TryingToPutMoreThanYouHaveGSM)
         self.assertEqual(result[0].item_title, "gold coin")
         self.assertEqual(result[0].amount_present, 1)
         self.assertEqual(
@@ -537,7 +557,7 @@ class Test_Take(unittest.TestCase):
             "Gold_Coin", 15, self.gold_coin
         )
         result = self.command_processor.process("put a gold coins on the kobold corpse")
-        self.assertIsInstance(result[0], advg.stmsg.put.AmountToPutUnclearGSM)
+        self.assertIsInstance(result[0], AmountToPutUnclearGSM)
         self.assertEqual(
             result[0].message, "Amount to put unclear. How many do you mean?"
         )
@@ -550,7 +570,7 @@ class Test_Take(unittest.TestCase):
             "Gold_Coin", 15, self.gold_coin
         )
         result = self.command_processor.process("put on the kobold corpse")
-        self.assertIsInstance(result[0], advg.stmsg.command.BadSyntaxGSM)
+        self.assertIsInstance(result[0], BadSyntaxGSM)
         self.assertEqual(result[0].command, "PUT")
         self.assertEqual(
             result[0].message,
@@ -571,7 +591,7 @@ class Test_Take(unittest.TestCase):
         result = self.command_processor.process(
             "put one small leather armor on"
         )  # check
-        self.assertIsInstance(result[0], advg.stmsg.command.BadSyntaxGSM)
+        self.assertIsInstance(result[0], BadSyntaxGSM)
         self.assertEqual(result[0].command, "PUT")
         self.assertEqual(
             result[0].message,
@@ -590,7 +610,7 @@ class Test_Take(unittest.TestCase):
             "Gold_Coin", 15, self.gold_coin
         )
         result = self.command_processor.process("put on")  # check
-        self.assertIsInstance(result[0], advg.stmsg.command.BadSyntaxGSM)
+        self.assertIsInstance(result[0], BadSyntaxGSM)
         self.assertEqual(result[0].command, "PUT")
         self.assertEqual(
             result[0].message,
@@ -611,7 +631,7 @@ class Test_Take(unittest.TestCase):
         result = self.command_processor.process(
             "put 1 gold coin in the kobold corpse"
         )  # check
-        self.assertIsInstance(result[0], advg.stmsg.command.BadSyntaxGSM)
+        self.assertIsInstance(result[0], BadSyntaxGSM)
         self.assertEqual(result[0].command, "PUT")
         self.assertEqual(
             result[0].message,
@@ -628,7 +648,7 @@ class Test_Take(unittest.TestCase):
         result = self.command_processor.process(
             "take three short swords from the wooden chest"
         )
-        self.assertIsInstance(result[0], advg.stmsg.take.ItemNotFoundInContainerGSM)
+        self.assertIsInstance(result[0], ItemNotFoundInContainerGSM)
         self.assertEqual(result[0].container_title, "wooden chest")
         self.assertEqual(result[0].amount_attempted, 3)
         self.assertEqual(result[0].container_type, "chest")
@@ -640,6 +660,6 @@ class Test_Take(unittest.TestCase):
     def test_take_30(self):
         self.game_state.rooms_state.cursor.container_here.is_closed = True
         result = self.command_processor.process("take gold coin from wooden chest")
-        self.assertIsInstance(result[0], advg.stmsg.various.ContainerIsClosedGSM)
+        self.assertIsInstance(result[0], ContainerIsClosedGSM)
         self.assertEqual(result[0].target, "wooden chest")
         self.assertEqual(result[0].message, "The wooden chest is closed.")

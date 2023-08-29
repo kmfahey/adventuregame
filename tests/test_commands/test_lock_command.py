@@ -1,8 +1,24 @@
 #!/usr/bin/python3
 
-import unittest
+from unittest import TestCase
 
-import advgame as advg
+from advgame import (
+    CommandProcessor,
+    ContainersState,
+    CreaturesState,
+    DoorsState,
+    GameState,
+    ItemsState,
+    RoomsState,
+)
+from advgame.stmsg.command import BadSyntaxGSM
+from advgame.stmsg.lock import (
+    DontPossessCorrectKeyGSM,
+    ElementHasBeenLockedGSM,
+    ElementIsAlreadyLockedGSM,
+    ElementNotLockableGSM,
+)
+from advgame.stmsg.various import DoorNotPresentGSM
 
 from ..context import (
     containers_ini_config,
@@ -15,35 +31,36 @@ from ..context import (
 
 __all__ = ("Test_Lock",)
 
-class Test_Lock(unittest.TestCase):
+
+class Test_Lock(TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
 
     def setUp(self):
-        self.items_state = advg.ItemsState(**items_ini_config.sections)
-        self.doors_state = advg.DoorsState(**doors_ini_config.sections)
-        self.containers_state = advg.ContainersState(
+        self.items_state = ItemsState(**items_ini_config.sections)
+        self.doors_state = DoorsState(**doors_ini_config.sections)
+        self.containers_state = ContainersState(
             self.items_state, **containers_ini_config.sections
         )
-        self.creatures_state = advg.CreaturesState(
+        self.creatures_state = CreaturesState(
             self.items_state, **creatures_ini_config.sections
         )
-        self.rooms_state = advg.RoomsState(
+        self.rooms_state = RoomsState(
             self.creatures_state,
             self.containers_state,
             self.doors_state,
             self.items_state,
             **rooms_ini_config.sections,
         )
-        self.game_state = advg.GameState(
+        self.game_state = GameState(
             self.rooms_state,
             self.creatures_state,
             self.containers_state,
             self.doors_state,
             self.items_state,
         )
-        self.command_processor = advg.CommandProcessor(self.game_state)
+        self.command_processor = CommandProcessor(self.game_state)
         self.command_processor.game_state.character_name = "Lidda"
         self.command_processor.game_state.character_class = "Thief"
         self.game_state.game_has_begun = True
@@ -58,7 +75,7 @@ class Test_Lock(unittest.TestCase):
 
     def test_lock_1(self):
         result = self.command_processor.process("lock")
-        self.assertIsInstance(result[0], advg.stmsg.command.BadSyntaxGSM)
+        self.assertIsInstance(result[0], BadSyntaxGSM)
         self.assertEqual(result[0].command, "LOCK")
         self.assertEqual(
             result[0].message,
@@ -68,7 +85,7 @@ class Test_Lock(unittest.TestCase):
 
     def test_lock_2(self):
         result = self.command_processor.process("lock west door")
-        self.assertIsInstance(result[0], advg.stmsg.various.DoorNotPresentGSM)
+        self.assertIsInstance(result[0], DoorNotPresentGSM)
         self.assertEqual(result[0].compass_dir, "west")
         self.assertEqual(result[0].portal_type, "door")
         self.assertEqual(result[0].message, "This room does not have a west door."),
@@ -80,7 +97,7 @@ class Test_Lock(unittest.TestCase):
     def test_lock_3(self):
         self.door.is_locked = False
         result = self.command_processor.process(f"lock {self.door_title}")
-        self.assertIsInstance(result[0], advg.stmsg.lock.DontPossessCorrectKeyGSM)
+        self.assertIsInstance(result[0], DontPossessCorrectKeyGSM)
         self.assertEqual(result[0].object_to_lock_title, self.door_title)
         self.assertEqual(result[0].key_needed, "door key")
         self.assertEqual(
@@ -93,14 +110,14 @@ class Test_Lock(unittest.TestCase):
         key = self.command_processor.game_state.items_state.get("Door_Key")
         self.command_processor.game_state.character.pick_up_item(key)
         result = self.command_processor.process(f"lock {self.door_title}")
-        self.assertIsInstance(result[0], advg.stmsg.lock.ElementIsAlreadyLockedGSM)
+        self.assertIsInstance(result[0], ElementIsAlreadyLockedGSM)
         self.assertEqual(result[0].target, self.door_title)
         self.assertEqual(result[0].message, f"The {self.door_title} is already locked.")
         self.assertTrue(self.door.is_locked)
 
         self.door.is_locked = False
         result = self.command_processor.process(f"lock {self.door_title}")
-        self.assertIsInstance(result[0], advg.stmsg.lock.ElementHasBeenLockedGSM)
+        self.assertIsInstance(result[0], ElementHasBeenLockedGSM)
         self.assertEqual(result[0].target, self.door_title)
         self.assertEqual(result[0].message, f"You have locked the {self.door_title}.")
         self.assertTrue(self.door.is_locked)
@@ -111,13 +128,13 @@ class Test_Lock(unittest.TestCase):
         result = self.command_processor.process("unlock west door")
         result = self.command_processor.process("leave via west door")
         result = self.command_processor.process("lock south door")
-        self.assertIsInstance(result[0], advg.stmsg.lock.ElementIsAlreadyLockedGSM)
+        self.assertIsInstance(result[0], ElementIsAlreadyLockedGSM)
         self.assertEqual(result[0].target, "south door")
         self.assertEqual(result[0].message, "The south door is already locked.")
 
     def test_lock_5(self):
         result = self.command_processor.process(f"lock {self.chest_title}")
-        self.assertIsInstance(result[0], advg.stmsg.lock.DontPossessCorrectKeyGSM)
+        self.assertIsInstance(result[0], DontPossessCorrectKeyGSM)
         self.assertEqual(result[0].object_to_lock_title, self.chest_title)
         self.assertEqual(result[0].key_needed, "chest key")
         self.assertEqual(
@@ -129,7 +146,7 @@ class Test_Lock(unittest.TestCase):
         key = self.command_processor.game_state.items_state.get("Chest_Key")
         self.command_processor.game_state.character.pick_up_item(key)
         result = self.command_processor.process(f"lock {self.chest_title}")
-        self.assertIsInstance(result[0], advg.stmsg.lock.ElementIsAlreadyLockedGSM)
+        self.assertIsInstance(result[0], ElementIsAlreadyLockedGSM)
         self.assertEqual(result[0].target, self.chest_title)
         self.assertEqual(
             result[0].message, f"The {self.chest_title} is already locked."
@@ -137,14 +154,14 @@ class Test_Lock(unittest.TestCase):
 
         self.chest.is_locked = False
         result = self.command_processor.process(f"lock {self.chest_title}")
-        self.assertIsInstance(result[0], advg.stmsg.lock.ElementHasBeenLockedGSM)
+        self.assertIsInstance(result[0], ElementHasBeenLockedGSM)
         self.assertEqual(result[0].target, self.chest_title)
         self.assertEqual(result[0].message, f"You have locked the {self.chest_title}.")
         self.assertTrue(self.chest.is_locked)
 
     def test_lock_7(self):
         result = self.command_processor.process("lock north iron door")
-        self.assertIsInstance(result[0], advg.stmsg.lock.DontPossessCorrectKeyGSM)
+        self.assertIsInstance(result[0], DontPossessCorrectKeyGSM)
         self.assertEqual(result[0].object_to_lock_title, "north door")
         self.assertEqual(result[0].key_needed, "door key")
         self.assertEqual(
@@ -153,7 +170,7 @@ class Test_Lock(unittest.TestCase):
 
     def test_lock_8(self):
         result = self.command_processor.process("lock mana potion")
-        self.assertIsInstance(result[0], advg.stmsg.lock.ElementNotLockableGSM)
+        self.assertIsInstance(result[0], ElementNotLockableGSM)
         self.assertEqual(result[0].target_title, "mana potion")
         self.assertEqual(result[0].target_type, "potion")
         self.assertEqual(
@@ -165,7 +182,7 @@ class Test_Lock(unittest.TestCase):
         studded_leather_armor = self.items_state.get("Studded_Leather")
         self.command_processor.game_state.character.pick_up_item(studded_leather_armor)
         result = self.command_processor.process("lock studded leather armor")
-        self.assertIsInstance(result[0], advg.stmsg.lock.ElementNotLockableGSM)
+        self.assertIsInstance(result[0], ElementNotLockableGSM)
         self.assertEqual(result[0].target_title, "studded leather armor")
         self.assertEqual(result[0].target_type, "armor")
         self.assertEqual(
@@ -176,7 +193,7 @@ class Test_Lock(unittest.TestCase):
 
     def test_lock_10(self):
         result = self.command_processor.process("lock mana potion")
-        self.assertIsInstance(result[0], advg.stmsg.lock.ElementNotLockableGSM)
+        self.assertIsInstance(result[0], ElementNotLockableGSM)
         self.assertEqual(result[0].target_title, "mana potion")
         self.assertEqual(result[0].target_type, "potion")
         self.assertEqual(
@@ -186,7 +203,7 @@ class Test_Lock(unittest.TestCase):
 
     def test_lock_11(self):
         result = self.command_processor.process("lock kobold")
-        self.assertIsInstance(result[0], advg.stmsg.lock.ElementNotLockableGSM)
+        self.assertIsInstance(result[0], ElementNotLockableGSM)
         self.assertEqual(result[0].target_title, "kobold")
         self.assertEqual(result[0].target_type, "creature")
         self.assertEqual(
@@ -198,7 +215,7 @@ class Test_Lock(unittest.TestCase):
             self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         )
         result = self.command_processor.process("lock kobold corpse")
-        self.assertIsInstance(result[0], advg.stmsg.lock.ElementNotLockableGSM)
+        self.assertIsInstance(result[0], ElementNotLockableGSM)
         self.assertEqual(result[0].target_title, "kobold corpse")
         self.assertEqual(result[0].target_type, "corpse")
         self.assertEqual(
@@ -210,7 +227,7 @@ class Test_Lock(unittest.TestCase):
         result = self.command_processor.process("pick lock on north door")
         self.command_processor.game_state.rooms_state.move(north=True)
         result = self.command_processor.process("lock east doorway")
-        self.assertIsInstance(result[0], advg.stmsg.lock.ElementNotLockableGSM)
+        self.assertIsInstance(result[0], ElementNotLockableGSM)
         self.assertEqual(result[0].target_title, "east doorway")
         self.assertEqual(result[0].target_type, "doorway")
         self.assertEqual(
@@ -222,7 +239,7 @@ class Test_Lock(unittest.TestCase):
         studded_leather_armor = self.items_state.get("Studded_Leather")
         self.command_processor.game_state.character.pick_up_item(studded_leather_armor)
         result = self.command_processor.process("lock studded leather armor")
-        self.assertIsInstance(result[0], advg.stmsg.lock.ElementNotLockableGSM)
+        self.assertIsInstance(result[0], ElementNotLockableGSM)
         self.assertEqual(result[0].target_title, "studded leather armor")
         self.assertEqual(result[0].target_type, "armor")
         self.assertEqual(

@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-import unittest
-import operator
+from unittest import TestCase
+from operator import itemgetter
 
 from advgame import (
     CommandProcessor,
@@ -42,7 +42,7 @@ __all__ = (
 )
 
 
-class Test_Attack_1(unittest.TestCase):
+class Test_Attack_1(TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
@@ -194,7 +194,7 @@ class Test_Attack_1(unittest.TestCase):
         self.assertIsInstance(self.game_state.rooms_state.cursor.container_here, Corpse)
         corpse_belonging_list = sorted(
             self.game_state.rooms_state.cursor.container_here.items(),
-            key=operator.itemgetter(0),
+            key=itemgetter(0),
         )
         self.gold_coin = self.game_state.items_state.get("Gold_Coin")
         health_potion = self.game_state.items_state.get("Health_Potion")
@@ -209,7 +209,7 @@ class Test_Attack_1(unittest.TestCase):
         self.assertEqual(corpse_belonging_list, expected_list)
 
 
-class Test_Attack_2(unittest.TestCase):
+class Test_Attack_2(TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None

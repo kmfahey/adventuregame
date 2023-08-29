@@ -1,8 +1,24 @@
 #!/usr/bin/python3
 
-import unittest
+from unittest import TestCase
 
-import advgame as advg
+from advgame import (
+    CommandProcessor,
+    ContainersState,
+    CreaturesState,
+    DoorsState,
+    GameState,
+    ItemsState,
+    RoomsState,
+)
+from advgame.stmsg.command import BadSyntaxGSM, ClassRestrictedGSM
+from advgame.stmsg.pklock import (
+    ElementNotLockpickableGSM,
+    TargetHasBeenUnlockedGSM,
+    TargetNotFoundGSM,
+    TargetNotLockedGSM,
+)
+from advgame.stmsg.various import DoorNotPresentGSM
 
 from ..context import (
     containers_ini_config,
@@ -15,42 +31,43 @@ from ..context import (
 
 __all__ = ("Test_Pick_Lock",)
 
-class Test_Pick_Lock(unittest.TestCase):
+
+class Test_Pick_Lock(TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
 
     def setUp(self):
-        self.items_state = advg.ItemsState(**items_ini_config.sections)
-        self.doors_state = advg.DoorsState(**doors_ini_config.sections)
-        self.containers_state = advg.ContainersState(
+        self.items_state = ItemsState(**items_ini_config.sections)
+        self.doors_state = DoorsState(**doors_ini_config.sections)
+        self.containers_state = ContainersState(
             self.items_state, **containers_ini_config.sections
         )
-        self.creatures_state = advg.CreaturesState(
+        self.creatures_state = CreaturesState(
             self.items_state, **creatures_ini_config.sections
         )
-        self.rooms_state = advg.RoomsState(
+        self.rooms_state = RoomsState(
             self.creatures_state,
             self.containers_state,
             self.doors_state,
             self.items_state,
             **rooms_ini_config.sections,
         )
-        self.game_state = advg.GameState(
+        self.game_state = GameState(
             self.rooms_state,
             self.creatures_state,
             self.containers_state,
             self.doors_state,
             self.items_state,
         )
-        self.command_processor = advg.CommandProcessor(self.game_state)
+        self.command_processor = CommandProcessor(self.game_state)
 
     def test_pick_lock_1(self):
         self.command_processor.game_state.character_name = "Niath"
         self.command_processor.game_state.character_class = "Warrior"
         self.game_state.game_has_begun = True
         result = self.command_processor.process("pick lock on wooden chest")
-        self.assertIsInstance(result[0], advg.stmsg.command.ClassRestrictedGSM)
+        self.assertIsInstance(result[0], ClassRestrictedGSM)
         self.assertEqual(result[0].command, "PICK LOCK")
         self.assertEqual(result[0].classes, ("thief",))
         self.assertEqual(
@@ -62,13 +79,13 @@ class Test_Pick_Lock(unittest.TestCase):
         self.command_processor.game_state.character_class = "Thief"
         self.game_state.game_has_begun = True
         result = self.command_processor.process("pick lock")
-        self.assertIsInstance(result[0], advg.stmsg.command.BadSyntaxGSM)
+        self.assertIsInstance(result[0], BadSyntaxGSM)
         result = self.command_processor.process("pick lock on")
-        self.assertIsInstance(result[0], advg.stmsg.command.BadSyntaxGSM)
+        self.assertIsInstance(result[0], BadSyntaxGSM)
         result = self.command_processor.process("pick lock on the")
-        self.assertIsInstance(result[0], advg.stmsg.command.BadSyntaxGSM)
+        self.assertIsInstance(result[0], BadSyntaxGSM)
         result = self.command_processor.process("pick lock wooden chest")
-        self.assertIsInstance(result[0], advg.stmsg.command.BadSyntaxGSM)
+        self.assertIsInstance(result[0], BadSyntaxGSM)
         self.assertEqual(result[0].command, "PICK LOCK")
         self.assertEqual(
             result[0].message,
@@ -82,7 +99,7 @@ class Test_Pick_Lock(unittest.TestCase):
         self.command_processor.game_state.character_class = "Thief"
         self.game_state.game_has_begun = True
         result = self.command_processor.process("pick lock on west door")
-        self.assertIsInstance(result[0], advg.stmsg.various.DoorNotPresentGSM)
+        self.assertIsInstance(result[0], DoorNotPresentGSM)
         self.assertEqual(result[0].compass_dir, "west")
         self.assertEqual(result[0].portal_type, "door")
         self.assertEqual(result[0].message, "This room does not have a west door.")
@@ -92,7 +109,7 @@ class Test_Pick_Lock(unittest.TestCase):
         self.command_processor.game_state.character_class = "Thief"
         self.game_state.game_has_begun = True
         result = self.command_processor.process("pick lock on north iron door")
-        self.assertIsInstance(result[0], advg.stmsg.pklock.TargetNotLockedGSM)
+        self.assertIsInstance(result[0], TargetNotLockedGSM)
         self.assertEqual(result[0].target_title, "north iron door")
         self.assertEqual(result[0].message, "The north iron door is not locked.")
 
@@ -101,7 +118,7 @@ class Test_Pick_Lock(unittest.TestCase):
         self.command_processor.game_state.character_class = "Thief"
         self.game_state.game_has_begun = True
         result = self.command_processor.process("pick lock on north door")
-        self.assertIsInstance(result[0], advg.stmsg.pklock.TargetNotLockedGSM)
+        self.assertIsInstance(result[0], TargetNotLockedGSM)
         self.assertEqual(result[0].target_title, "north door")
         self.assertEqual(result[0].message, "The north door is not locked.")
 
@@ -111,7 +128,7 @@ class Test_Pick_Lock(unittest.TestCase):
         self.game_state.game_has_begun = True
         self.command_processor.game_state.rooms_state.cursor.container_here = None
         result = self.command_processor.process("pick lock on wooden chest")
-        self.assertIsInstance(result[0], advg.stmsg.pklock.TargetNotFoundGSM)
+        self.assertIsInstance(result[0], TargetNotFoundGSM)
         self.assertEqual(result[0].target_title, "wooden chest")
         self.assertEqual(result[0].message, "This room has no wooden chest.")
 
@@ -123,7 +140,7 @@ class Test_Pick_Lock(unittest.TestCase):
             False
         )
         result = self.command_processor.process("pick lock on wooden chest")
-        self.assertIsInstance(result[0], advg.stmsg.pklock.TargetNotLockedGSM)
+        self.assertIsInstance(result[0], TargetNotLockedGSM)
         self.assertEqual(result[0].target_title, "wooden chest")
         self.assertEqual(result[0].message, "The wooden chest is not locked.")
         self.assertFalse(
@@ -138,7 +155,7 @@ class Test_Pick_Lock(unittest.TestCase):
             self.command_processor.game_state.rooms_state.cursor.east_door.is_locked
         )
         result = self.command_processor.process("pick lock on east door")
-        self.assertIsInstance(result[0], advg.stmsg.pklock.TargetHasBeenUnlockedGSM)
+        self.assertIsInstance(result[0], TargetHasBeenUnlockedGSM)
         self.assertEqual(result[0].target_title, "east door")
         self.assertEqual(result[0].message, "You have unlocked the east door.")
         self.assertFalse(
@@ -153,7 +170,7 @@ class Test_Pick_Lock(unittest.TestCase):
             self.command_processor.game_state.rooms_state.cursor.east_door.is_locked
         )
         result = self.command_processor.process("pick lock on east door")
-        self.assertIsInstance(result[0], advg.stmsg.pklock.TargetHasBeenUnlockedGSM)
+        self.assertIsInstance(result[0], TargetHasBeenUnlockedGSM)
         self.assertEqual(result[0].target_title, "east door")
         self.assertEqual(result[0].message, "You have unlocked the east door.")
         self.assertFalse(
@@ -161,7 +178,7 @@ class Test_Pick_Lock(unittest.TestCase):
         )
         result = self.command_processor.process("leave via east door")
         result = self.command_processor.process("pick lock on west door")
-        self.assertIsInstance(result[0], advg.stmsg.pklock.TargetNotLockedGSM)
+        self.assertIsInstance(result[0], TargetNotLockedGSM)
         self.assertEqual(result[0].target_title, "west door")
         self.assertEqual(result[0].message, "The west door is not locked.")
 
@@ -173,7 +190,7 @@ class Test_Pick_Lock(unittest.TestCase):
             self.command_processor.game_state.rooms_state.cursor.east_door.is_locked
         )
         result = self.command_processor.process("pick lock on east door")
-        self.assertIsInstance(result[0], advg.stmsg.pklock.TargetHasBeenUnlockedGSM)
+        self.assertIsInstance(result[0], TargetHasBeenUnlockedGSM)
         self.assertEqual(result[0].target_title, "east door")
         self.assertEqual(result[0].message, "You have unlocked the east door.")
         self.assertFalse(
@@ -188,7 +205,7 @@ class Test_Pick_Lock(unittest.TestCase):
             self.command_processor.game_state.rooms_state.cursor.container_here.is_locked
         )
         result = self.command_processor.process("pick lock on wooden chest")
-        self.assertIsInstance(result[0], advg.stmsg.pklock.TargetHasBeenUnlockedGSM)
+        self.assertIsInstance(result[0], TargetHasBeenUnlockedGSM)
         self.assertEqual(result[0].target_title, "wooden chest")
         self.assertEqual(result[0].message, "You have unlocked the wooden chest.")
         self.assertFalse(
@@ -200,7 +217,7 @@ class Test_Pick_Lock(unittest.TestCase):
         self.command_processor.game_state.character_class = "Thief"
         self.game_state.game_has_begun = True
         result = self.command_processor.process("pick lock on mana potion")
-        self.assertIsInstance(result[0], advg.stmsg.pklock.ElementNotLockpickableGSM)
+        self.assertIsInstance(result[0], ElementNotLockpickableGSM)
         self.assertEqual(result[0].target_title, "mana potion")
         self.assertEqual(result[0].target_type, "potion")
         self.assertEqual(
@@ -213,7 +230,7 @@ class Test_Pick_Lock(unittest.TestCase):
         self.command_processor.game_state.character_class = "Thief"
         self.game_state.game_has_begun = True
         result = self.command_processor.process("pick lock on kobold")
-        self.assertIsInstance(result[0], advg.stmsg.pklock.ElementNotLockpickableGSM)
+        self.assertIsInstance(result[0], ElementNotLockpickableGSM)
         self.assertEqual(result[0].target_title, "kobold")
         self.assertEqual(result[0].target_type, "creature")
         self.assertEqual(
@@ -229,7 +246,7 @@ class Test_Pick_Lock(unittest.TestCase):
             self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         )
         result = self.command_processor.process("pick lock on the kobold corpse")
-        self.assertIsInstance(result[0], advg.stmsg.pklock.ElementNotLockpickableGSM)
+        self.assertIsInstance(result[0], ElementNotLockpickableGSM)
         self.assertEqual(result[0].target_title, "kobold corpse")
         self.assertEqual(result[0].target_type, "corpse")
         self.assertEqual(
@@ -244,7 +261,7 @@ class Test_Pick_Lock(unittest.TestCase):
         self.game_state.game_has_begun = True
         self.command_processor.game_state.rooms_state.move(north=True)
         result = self.command_processor.process("pick lock on east doorway")
-        self.assertIsInstance(result[0], advg.stmsg.pklock.ElementNotLockpickableGSM)
+        self.assertIsInstance(result[0], ElementNotLockpickableGSM)
         self.assertEqual(result[0].target_title, "east doorway")
         self.assertEqual(result[0].target_type, "doorway")
         self.assertEqual(
@@ -260,7 +277,7 @@ class Test_Pick_Lock(unittest.TestCase):
         studded_leather_armor = self.items_state.get("Studded_Leather")
         self.command_processor.game_state.character.pick_up_item(studded_leather_armor)
         result = self.command_processor.process("pick lock on studded leather armor")
-        self.assertIsInstance(result[0], advg.stmsg.pklock.ElementNotLockpickableGSM)
+        self.assertIsInstance(result[0], ElementNotLockpickableGSM)
         self.assertEqual(result[0].target_title, "studded leather armor")
         self.assertEqual(result[0].target_type, "armor")
         self.assertEqual(

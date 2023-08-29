@@ -130,12 +130,8 @@ class Test_Character(TestCase):
 
     def test_character_ability_scores(self):
         character = Character("Regdar", "Warrior")
-        self.assertEqual(
-            floor((character.strength - 10) / 2), character.strength_mod
-        )
-        self.assertEqual(
-            floor((character.dexterity - 10) / 2), character.dexterity_mod
-        )
+        self.assertEqual(floor((character.strength - 10) / 2), character.strength_mod)
+        self.assertEqual(floor((character.dexterity - 10) / 2), character.dexterity_mod)
         self.assertEqual(
             floor((character.constitution - 10) / 2), character.constitution_mod
         )
@@ -143,9 +139,7 @@ class Test_Character(TestCase):
             floor((character.intelligence - 10) / 2), character.intelligence_mod
         )
         self.assertEqual(floor((character.wisdom - 10) / 2), character.wisdom_mod)
-        self.assertEqual(
-            floor((character.charisma - 10) / 2), character.charisma_mod
-        )
+        self.assertEqual(floor((character.charisma - 10) / 2), character.charisma_mod)
 
     def test_character_mana_points_and_spending_mana_and_regaining_it(self):
         character = Character("Mialee", "Mage")

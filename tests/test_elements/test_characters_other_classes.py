@@ -303,9 +303,7 @@ class Test_Item_and_ItemsState(TestCase):
         self.assertTrue(
             all(item in state_values for item in (longsword, rapier, heavy_mace, staff))
         )
-        state_items = tuple(
-            sorted(self.items_state.items(), key=itemgetter(0))
-        )
+        state_items = tuple(sorted(self.items_state.items(), key=itemgetter(0)))
         items_compare_with = (
             ("Buckler", buckler),
             ("Chest_Key", chest_key),

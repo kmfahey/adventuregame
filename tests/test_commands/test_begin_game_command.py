@@ -1,8 +1,20 @@
 #!/usr/bin/python3
 
-import unittest
+from unittest import TestCase
 
-import advgame as advg
+from advgame import (
+    CommandProcessor,
+    ContainersState,
+    CreaturesState,
+    DoorsState,
+    GameState,
+    ItemsState,
+    Room,
+    RoomsState,
+)
+from advgame.stmsg.begin import GameBeginsGSM, NameOrClassNotSetGSM
+from advgame.stmsg.command import BadSyntaxGSM
+from advgame.stmsg.various import EnteredRoomGSM, ItemEquippedGSM
 
 from ..context import (
     containers_ini_config,
@@ -15,39 +27,40 @@ from ..context import (
 
 __all__ = ("Test_Begin_Game",)
 
-class Test_Begin_Game(unittest.TestCase):
+
+class Test_Begin_Game(TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
 
     def setUp(self):
-        self.items_state = advg.ItemsState(**items_ini_config.sections)
-        self.doors_state = advg.DoorsState(**doors_ini_config.sections)
-        self.containers_state = advg.ContainersState(
+        self.items_state = ItemsState(**items_ini_config.sections)
+        self.doors_state = DoorsState(**doors_ini_config.sections)
+        self.containers_state = ContainersState(
             self.items_state, **containers_ini_config.sections
         )
-        self.creatures_state = advg.CreaturesState(
+        self.creatures_state = CreaturesState(
             self.items_state, **creatures_ini_config.sections
         )
-        self.rooms_state = advg.RoomsState(
+        self.rooms_state = RoomsState(
             self.creatures_state,
             self.containers_state,
             self.doors_state,
             self.items_state,
             **rooms_ini_config.sections,
         )
-        self.game_state = advg.GameState(
+        self.game_state = GameState(
             self.rooms_state,
             self.creatures_state,
             self.containers_state,
             self.doors_state,
             self.items_state,
         )
-        self.command_processor = advg.CommandProcessor(self.game_state)
+        self.command_processor = CommandProcessor(self.game_state)
 
     def test_begin_game_1(self):
         result = self.command_processor.process("begin game")
-        self.assertIsInstance(result[0], advg.stmsg.begin.NameOrClassNotSetGSM)
+        self.assertIsInstance(result[0], NameOrClassNotSetGSM)
         self.assertEqual(result[0].character_name, None)
         self.assertEqual(result[0].character_class, None)
         self.assertEqual(
@@ -60,7 +73,7 @@ class Test_Begin_Game(unittest.TestCase):
     def test_begin_game_2(self):
         self.command_processor.process("set class to Warrior")
         result = self.command_processor.process("begin game")
-        self.assertIsInstance(result[0], advg.stmsg.begin.NameOrClassNotSetGSM)
+        self.assertIsInstance(result[0], NameOrClassNotSetGSM)
         self.assertEqual(result[0].character_name, None)
         self.assertEqual(result[0].character_class, "Warrior")
         self.assertEqual(
@@ -72,7 +85,7 @@ class Test_Begin_Game(unittest.TestCase):
     def test_begin_game_3(self):
         self.command_processor.process("set name to Niath")
         result = self.command_processor.process("begin game")
-        self.assertIsInstance(result[0], advg.stmsg.begin.NameOrClassNotSetGSM)
+        self.assertIsInstance(result[0], NameOrClassNotSetGSM)
         self.assertEqual(result[0].character_name, "Niath")
         self.assertEqual(result[0].character_class, None)
         self.assertEqual(
@@ -86,7 +99,7 @@ class Test_Begin_Game(unittest.TestCase):
         self.command_processor.process("set class to Warrior")
         self.command_processor.process("set name to Niath")
         result = self.command_processor.process("begin game now")
-        self.assertIsInstance(result[0], advg.stmsg.command.BadSyntaxGSM)
+        self.assertIsInstance(result[0], BadSyntaxGSM)
         self.assertEqual(result[0].command, "BEGIN GAME")
         self.assertEqual(
             result[0].message,
@@ -97,11 +110,11 @@ class Test_Begin_Game(unittest.TestCase):
         self.command_processor.process("set class to Warrior")
         self.command_processor.process("set name to Niath")
         result = self.command_processor.process("begin game")
-        self.assertIsInstance(result[0], advg.stmsg.begin.GameBeginsGSM)
+        self.assertIsInstance(result[0], GameBeginsGSM)
         self.assertEqual(result[0].message, "The game has begun!")
         self.assertTrue(self.command_processor.game_state.game_has_begun)
-        self.assertIsInstance(result[-1], advg.stmsg.various.EnteredRoomGSM)
-        self.assertIsInstance(result[-1].room, advg.Room)
+        self.assertIsInstance(result[-1], EnteredRoomGSM)
+        self.assertIsInstance(result[-1].room, Room)
         self.assertEqual(
             result[-1].message,
             "Entrance room.\nYou see a wooden chest here.\nThere is a kobold "
@@ -114,10 +127,10 @@ class Test_Begin_Game(unittest.TestCase):
         self.command_processor.process("set class to Warrior")
         self.command_processor.process("set name to Niath")
         result = self.command_processor.process("begin game")
-        self.assertIsInstance(result[0], advg.stmsg.begin.GameBeginsGSM)
+        self.assertIsInstance(result[0], GameBeginsGSM)
         self.assertEqual(result[0].message, "The game has begun!")
         self.assertTrue(self.command_processor.game_state.game_has_begun)
-        self.assertIsInstance(result[1], advg.stmsg.various.ItemEquippedGSM)
+        self.assertIsInstance(result[1], ItemEquippedGSM)
         self.assertEqual(result[1].item_title, "studded leather armor")
         self.assertEqual(result[1].item_type, "armor")
         self.assertRegex(
@@ -125,14 +138,14 @@ class Test_Begin_Game(unittest.TestCase):
             r"^You're now wearing a suit of studded leather armor. Your armor "
             + r"class is now \d+.",
         )
-        self.assertIsInstance(result[2], advg.stmsg.various.ItemEquippedGSM)
+        self.assertIsInstance(result[2], ItemEquippedGSM)
         self.assertEqual(result[2].item_title, "buckler")
         self.assertEqual(result[2].item_type, "shield")
         self.assertRegex(
             result[2].message,
             r"^You're now carrying a buckler. Your armor class is now \d+.",
         )
-        self.assertIsInstance(result[3], advg.stmsg.various.ItemEquippedGSM)
+        self.assertIsInstance(result[3], ItemEquippedGSM)
         self.assertEqual(result[3].item_title, "longsword")
         self.assertEqual(result[3].item_type, "weapon")
         self.assertRegex(
@@ -140,8 +153,8 @@ class Test_Begin_Game(unittest.TestCase):
             r"^You're now wielding a longsword. Your attack bonus is now "
             + r"[\d+-]+ and your weapon damage is now [\dd+-]+.$",
         )
-        self.assertIsInstance(result[4], advg.stmsg.various.EnteredRoomGSM)
-        self.assertIsInstance(result[4].room, advg.Room)
+        self.assertIsInstance(result[4], EnteredRoomGSM)
+        self.assertIsInstance(result[4].room, Room)
         self.assertEqual(
             result[4].message,
             "Entrance room.\nYou see a wooden chest here.\nThere is a kobold "
@@ -154,10 +167,10 @@ class Test_Begin_Game(unittest.TestCase):
         self.command_processor.process("set class to Thief")
         self.command_processor.process("set name to Lidda")
         result = self.command_processor.process("begin game")
-        self.assertIsInstance(result[0], advg.stmsg.begin.GameBeginsGSM)
+        self.assertIsInstance(result[0], GameBeginsGSM)
         self.assertEqual(result[0].message, "The game has begun!")
         self.assertTrue(self.command_processor.game_state.game_has_begun)
-        self.assertIsInstance(result[1], advg.stmsg.various.ItemEquippedGSM)
+        self.assertIsInstance(result[1], ItemEquippedGSM)
         self.assertEqual(result[1].item_title, "studded leather armor")
         self.assertEqual(result[1].item_type, "armor")
         self.assertRegex(
@@ -165,7 +178,7 @@ class Test_Begin_Game(unittest.TestCase):
             r"^You're now wearing a suit of studded leather armor. Your armor "
             + r"class is now \d+",
         )
-        self.assertIsInstance(result[2], advg.stmsg.various.ItemEquippedGSM)
+        self.assertIsInstance(result[2], ItemEquippedGSM)
         self.assertEqual(result[2].item_title, "rapier")
         self.assertEqual(result[2].item_type, "weapon")
         self.assertRegex(
@@ -173,8 +186,8 @@ class Test_Begin_Game(unittest.TestCase):
             r"^You're now wielding a rapier. Your attack bonus is now [\d+-]+ "
             + r"and your weapon damage is now [\dd+-]+.$",
         )
-        self.assertIsInstance(result[3], advg.stmsg.various.EnteredRoomGSM)
-        self.assertIsInstance(result[3].room, advg.Room)
+        self.assertIsInstance(result[3], EnteredRoomGSM)
+        self.assertIsInstance(result[3].room, Room)
         self.assertEqual(
             result[3].message,
             "Entrance room.\nYou see a wooden chest here.\nThere is a kobold "
@@ -187,10 +200,10 @@ class Test_Begin_Game(unittest.TestCase):
         self.command_processor.process("set class to Priest")
         self.command_processor.process("set name to Tordek")
         result = self.command_processor.process("begin game")
-        self.assertIsInstance(result[0], advg.stmsg.begin.GameBeginsGSM)
+        self.assertIsInstance(result[0], GameBeginsGSM)
         self.assertEqual(result[0].message, "The game has begun!")
         self.assertTrue(self.command_processor.game_state.game_has_begun)
-        self.assertIsInstance(result[1], advg.stmsg.various.ItemEquippedGSM)
+        self.assertIsInstance(result[1], ItemEquippedGSM)
         self.assertEqual(result[1].item_title, "studded leather armor")
         self.assertEqual(result[1].item_type, "armor")
         self.assertRegex(
@@ -198,14 +211,14 @@ class Test_Begin_Game(unittest.TestCase):
             r"^You're now wearing a suit of studded leather armor. Your armor "
             + r"class is now \d+",
         )
-        self.assertIsInstance(result[2], advg.stmsg.various.ItemEquippedGSM)
+        self.assertIsInstance(result[2], ItemEquippedGSM)
         self.assertEqual(result[2].item_title, "buckler")
         self.assertEqual(result[2].item_type, "shield")
         self.assertRegex(
             result[2].message,
             r"^You're now carrying a buckler. Your armor class is now \d+.",
         )
-        self.assertIsInstance(result[3], advg.stmsg.various.ItemEquippedGSM)
+        self.assertIsInstance(result[3], ItemEquippedGSM)
         self.assertEqual(result[3].item_title, "mace")
         self.assertEqual(result[3].item_type, "weapon")
         self.assertRegex(
@@ -213,8 +226,8 @@ class Test_Begin_Game(unittest.TestCase):
             r"^You're now wielding a mace. Your attack bonus is now [\d+-]+ "
             + r"and your weapon damage is now [\dd+-]+.$",
         )
-        self.assertIsInstance(result[4], advg.stmsg.various.EnteredRoomGSM)
-        self.assertIsInstance(result[4].room, advg.Room)
+        self.assertIsInstance(result[4], EnteredRoomGSM)
+        self.assertIsInstance(result[4].room, Room)
         self.assertEqual(
             result[4].message,
             "Entrance room.\nYou see a wooden chest here.\nThere is a kobold "
@@ -227,10 +240,10 @@ class Test_Begin_Game(unittest.TestCase):
         self.command_processor.process("set class to Mage")
         self.command_processor.process("set name to Mialee")
         result = self.command_processor.process("begin game")
-        self.assertIsInstance(result[0], advg.stmsg.begin.GameBeginsGSM)
+        self.assertIsInstance(result[0], GameBeginsGSM)
         self.assertEqual(result[0].message, "The game has begun!")
         self.assertTrue(self.command_processor.game_state.game_has_begun)
-        self.assertIsInstance(result[1], advg.stmsg.various.ItemEquippedGSM)
+        self.assertIsInstance(result[1], ItemEquippedGSM)
         self.assertEqual(result[1].item_title, "staff")
         self.assertEqual(result[1].item_type, "weapon")
         self.assertRegex(
@@ -238,8 +251,8 @@ class Test_Begin_Game(unittest.TestCase):
             r"^You're now wielding a staff. Your attack bonus is now [\d+-]+ "
             + r"and your weapon damage is now [\dd+-]+.$",
         )
-        self.assertIsInstance(result[2], advg.stmsg.various.EnteredRoomGSM)
-        self.assertIsInstance(result[2].room, advg.Room)
+        self.assertIsInstance(result[2], EnteredRoomGSM)
+        self.assertIsInstance(result[2].room, Room)
         self.assertEqual(
             result[2].message,
             "Entrance room.\nYou see a wooden chest here.\nThere is a kobold "

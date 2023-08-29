@@ -1,8 +1,21 @@
 #!/usr/bin/python3
 
-import unittest
+from unittest import TestCase
 
-import advgame as advg
+from advgame import (
+    CommandProcessor,
+    ContainersState,
+    CreaturesState,
+    DoorsState,
+    GameState,
+    ItemsState,
+    RoomsState,
+)
+from advgame.stmsg.help_ import (
+    DisplayCommandsGSM,
+    DisplayHelpForCommandGSM,
+    NotRecognizedGSM,
+)
 
 from ..context import (
     containers_ini_config,
@@ -13,45 +26,48 @@ from ..context import (
 )
 
 
-__all__ = ( "Test_Help_1", "Test_Help_2",)
+__all__ = (
+    "Test_Help_1",
+    "Test_Help_2",
+)
 
 
-class Test_Help_1(unittest.TestCase):
+class Test_Help_1(TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
 
     def setUp(self):
-        self.items_state = advg.ItemsState(**items_ini_config.sections)
-        self.doors_state = advg.DoorsState(**doors_ini_config.sections)
-        self.containers_state = advg.ContainersState(
+        self.items_state = ItemsState(**items_ini_config.sections)
+        self.doors_state = DoorsState(**doors_ini_config.sections)
+        self.containers_state = ContainersState(
             self.items_state, **containers_ini_config.sections
         )
-        self.creatures_state = advg.CreaturesState(
+        self.creatures_state = CreaturesState(
             self.items_state, **creatures_ini_config.sections
         )
-        self.rooms_state = advg.RoomsState(
+        self.rooms_state = RoomsState(
             self.creatures_state,
             self.containers_state,
             self.doors_state,
             self.items_state,
             **rooms_ini_config.sections,
         )
-        self.game_state = advg.GameState(
+        self.game_state = GameState(
             self.rooms_state,
             self.creatures_state,
             self.containers_state,
             self.doors_state,
             self.items_state,
         )
-        self.command_processor = advg.CommandProcessor(self.game_state)
+        self.command_processor = CommandProcessor(self.game_state)
         self.command_processor.process("set name to Niath")
         self.command_processor.process("set class to Warrior")
         self.command_processor.process("begin game")
 
     def test_help_1(self):
         result = self.command_processor.process("help")
-        self.assertIsInstance(result[0], advg.stmsg.help_.DisplayCommandsGSM)
+        self.assertIsInstance(result[0], DisplayCommandsGSM)
         self.assertEqual(
             result[0].commands_available,
             (
@@ -90,7 +106,7 @@ Which one do you want help with?
 
     def test_help_2(self):
         result = self.command_processor.process("help juggle")
-        self.assertIsInstance(result[0], advg.stmsg.help_.NotRecognizedGSM)
+        self.assertIsInstance(result[0], NotRecognizedGSM)
         self.assertEqual(
             result[0].commands_available,
             (
@@ -134,7 +150,7 @@ Which one do you want help with?
 
     def test_help_3(self):
         result = self.command_processor.process("help attack")
-        self.assertIsInstance(result[0], advg.stmsg.help_.DisplayHelpForCommandGSM)
+        self.assertIsInstance(result[0], DisplayHelpForCommandGSM)
         self.assertEqual(result[0].command, "ATTACK")
         self.assertEqual(result[0].syntax_tuple, ("<creature\u00A0name>",))
         self.assertEqual(
@@ -152,7 +168,7 @@ take loot with the TAKE command.
 
     def test_help_4(self):
         result = self.command_processor.process("help close")
-        self.assertIsInstance(result[0], advg.stmsg.help_.DisplayHelpForCommandGSM)
+        self.assertIsInstance(result[0], DisplayHelpForCommandGSM)
         self.assertEqual(result[0].command, "CLOSE")
         self.assertEqual(
             result[0].syntax_tuple, ("<door\u00A0name>", "<chest\u00A0name>")
@@ -169,7 +185,7 @@ The CLOSE command can be used to close doors and chests.
 
     def test_help_5(self):
         result = self.command_processor.process("help put")
-        self.assertIsInstance(result[0], advg.stmsg.help_.DisplayHelpForCommandGSM)
+        self.assertIsInstance(result[0], DisplayHelpForCommandGSM)
         self.assertEqual(result[0].command, "PUT")
         self.assertEqual(
             result[0].syntax_tuple,
@@ -197,7 +213,7 @@ DROP.
 
     def test_help_6(self):
         result = self.command_processor.process("help begin game")
-        self.assertIsInstance(result[0], advg.stmsg.help_.DisplayHelpForCommandGSM)
+        self.assertIsInstance(result[0], DisplayHelpForCommandGSM)
         self.assertEqual(result[0].command, "BEGIN GAME")
         self.assertEqual(result[0].syntax_tuple, ("",)),
         self.assertEqual(
@@ -214,39 +230,39 @@ antechamber of the dungeon.
         )
 
 
-class Test_Help_2(unittest.TestCase):
+class Test_Help_2(TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
 
     def setUp(self):
-        self.items_state = advg.ItemsState(**items_ini_config.sections)
-        self.doors_state = advg.DoorsState(**doors_ini_config.sections)
-        self.containers_state = advg.ContainersState(
+        self.items_state = ItemsState(**items_ini_config.sections)
+        self.doors_state = DoorsState(**doors_ini_config.sections)
+        self.containers_state = ContainersState(
             self.items_state, **containers_ini_config.sections
         )
-        self.creatures_state = advg.CreaturesState(
+        self.creatures_state = CreaturesState(
             self.items_state, **creatures_ini_config.sections
         )
-        self.rooms_state = advg.RoomsState(
+        self.rooms_state = RoomsState(
             self.creatures_state,
             self.containers_state,
             self.doors_state,
             self.items_state,
             **rooms_ini_config.sections,
         )
-        self.game_state = advg.GameState(
+        self.game_state = GameState(
             self.rooms_state,
             self.creatures_state,
             self.containers_state,
             self.doors_state,
             self.items_state,
         )
-        self.command_processor = advg.CommandProcessor(self.game_state)
+        self.command_processor = CommandProcessor(self.game_state)
 
     def test_help_1(self):
         result = self.command_processor.process("help")
-        self.assertIsInstance(result[0], advg.stmsg.help_.DisplayCommandsGSM)
+        self.assertIsInstance(result[0], DisplayCommandsGSM)
         self.assertEqual(
             result[0].commands_available,
             ("BEGIN GAME", "HELP", "QUIT", "REROLL", "SET CLASS", "SET NAME"),
@@ -263,7 +279,7 @@ Which one do you want help with?
 
     def test_help_2(self):
         result = self.command_processor.process("help juggle")
-        self.assertIsInstance(result[0], advg.stmsg.help_.NotRecognizedGSM)
+        self.assertIsInstance(result[0], NotRecognizedGSM)
         self.assertEqual(
             result[0].commands_available,
             (
@@ -307,7 +323,7 @@ Which one do you want help with?
 
     def test_help_3(self):
         result = self.command_processor.process("help attack")
-        self.assertIsInstance(result[0], advg.stmsg.help_.DisplayHelpForCommandGSM)
+        self.assertIsInstance(result[0], DisplayHelpForCommandGSM)
         self.assertEqual(result[0].command, "ATTACK")
         self.assertEqual(result[0].syntax_tuple, ("<creature\u00A0name>",))
         self.assertEqual(
@@ -325,7 +341,7 @@ take loot with the TAKE command.
 
     def test_help_4(self):
         result = self.command_processor.process("help close")
-        self.assertIsInstance(result[0], advg.stmsg.help_.DisplayHelpForCommandGSM)
+        self.assertIsInstance(result[0], DisplayHelpForCommandGSM)
         self.assertEqual(result[0].command, "CLOSE")
         self.assertEqual(
             result[0].syntax_tuple, ("<door\u00A0name>", "<chest\u00A0name>")
@@ -342,7 +358,7 @@ The CLOSE command can be used to close doors and chests.
 
     def test_help_5(self):
         result = self.command_processor.process("help put")
-        self.assertIsInstance(result[0], advg.stmsg.help_.DisplayHelpForCommandGSM)
+        self.assertIsInstance(result[0], DisplayHelpForCommandGSM)
         self.assertEqual(result[0].command, "PUT")
         self.assertEqual(
             result[0].syntax_tuple,
@@ -370,7 +386,7 @@ DROP.
 
     def test_help_6(self):
         result = self.command_processor.process("help begin game")
-        self.assertIsInstance(result[0], advg.stmsg.help_.DisplayHelpForCommandGSM)
+        self.assertIsInstance(result[0], DisplayHelpForCommandGSM)
         self.assertEqual(result[0].command, "BEGIN GAME")
         self.assertEqual(result[0].syntax_tuple, ("",)),
         self.assertEqual(

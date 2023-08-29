@@ -51,9 +51,13 @@ class IniFileTexts:
             case self.DOORS_INI:
                 return self._text_to_tempfile_name(self.DOORS_INI, self._doors_text)
             case self.CONTAINERS_INI:
-                return self._text_to_tempfile_name(self.CONTAINERS_INI, self._containers_text)
+                return self._text_to_tempfile_name(
+                    self.CONTAINERS_INI, self._containers_text
+                )
             case self.CREATURES_INI:
-                return self._text_to_tempfile_name(self.CREATURES_INI, self._creatures_text)
+                return self._text_to_tempfile_name(
+                    self.CREATURES_INI, self._creatures_text
+                )
             case self.ROOMS_INI:
                 return self._text_to_tempfile_name(self.ROOMS_INI, self._rooms_text)
 

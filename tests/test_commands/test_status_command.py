@@ -1,8 +1,18 @@
 #!/usr/bin/python3
 
-import unittest
+from unittest import TestCase
 
-import advgame as advg
+from advgame import (
+    CommandProcessor,
+    ContainersState,
+    CreaturesState,
+    DoorsState,
+    GameState,
+    ItemsState,
+    RoomsState,
+)
+from advgame.stmsg.command import BadSyntaxGSM
+from advgame.stmsg.status import StatusOutputGSM
 
 from ..context import (
     containers_ini_config,
@@ -15,42 +25,43 @@ from ..context import (
 
 __all__ = ("Test_Status",)
 
-class Test_Status(unittest.TestCase):
+
+class Test_Status(TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
 
     def setUp(self):
-        self.items_state = advg.ItemsState(**items_ini_config.sections)
-        self.doors_state = advg.DoorsState(**doors_ini_config.sections)
-        self.containers_state = advg.ContainersState(
+        self.items_state = ItemsState(**items_ini_config.sections)
+        self.doors_state = DoorsState(**doors_ini_config.sections)
+        self.containers_state = ContainersState(
             self.items_state, **containers_ini_config.sections
         )
-        self.creatures_state = advg.CreaturesState(
+        self.creatures_state = CreaturesState(
             self.items_state, **creatures_ini_config.sections
         )
-        self.rooms_state = advg.RoomsState(
+        self.rooms_state = RoomsState(
             self.creatures_state,
             self.containers_state,
             self.doors_state,
             self.items_state,
             **rooms_ini_config.sections,
         )
-        self.game_state = advg.GameState(
+        self.game_state = GameState(
             self.rooms_state,
             self.creatures_state,
             self.containers_state,
             self.doors_state,
             self.items_state,
         )
-        self.command_processor = advg.CommandProcessor(self.game_state)
+        self.command_processor = CommandProcessor(self.game_state)
 
     def test_status1(self):
         self.command_processor.game_state.character_name = "Niath"
         self.command_processor.game_state.character_class = "Warrior"
         self.game_state.game_has_begun = True
         result = self.command_processor.process("status status")
-        self.assertIsInstance(result[0], advg.stmsg.command.BadSyntaxGSM)
+        self.assertIsInstance(result[0], BadSyntaxGSM)
         self.assertEqual(result[0].command, "STATUS")
         self.assertEqual(
             result[0].message, "STATUS command: bad syntax. Should be 'STATUS'."
@@ -72,7 +83,7 @@ class Test_Status(unittest.TestCase):
         self.command_processor.game_state.character.equip_armor(self.scale_mail)
         self.command_processor.game_state.character.equip_shield(self.shield)
         result = self.command_processor.process("status")
-        self.assertIsInstance(result[0], advg.stmsg.status.StatusOutputGSM)
+        self.assertIsInstance(result[0], StatusOutputGSM)
         self.assertRegex(
             result[0].message,
             r"Hit Points: \d+/\d+ \| Attack: [+-]\d+ \(\d+d[\d+-]+ damage\) - "
@@ -93,7 +104,7 @@ class Test_Status(unittest.TestCase):
         self.command_processor.game_state.character.equip_weapon(staff)
         self.command_processor.game_state.character.equip_wand(self.magic_wand)
         result = self.command_processor.process("status")
-        self.assertIsInstance(result[0], advg.stmsg.status.StatusOutputGSM)
+        self.assertIsInstance(result[0], StatusOutputGSM)
         self.assertRegex(
             result[0].message,
             r"Hit Points: \d+/\d+ - Mana Points: \d+/\d+ \| Attack: [+-]\d+ "
@@ -106,7 +117,7 @@ class Test_Status(unittest.TestCase):
         self.command_processor.game_state.character_class = "Mage"
         self.game_state.game_has_begun = True
         result = self.command_processor.process("status")
-        self.assertIsInstance(result[0], advg.stmsg.status.StatusOutputGSM)
+        self.assertIsInstance(result[0], StatusOutputGSM)
         self.assertRegex(
             result[0].message,
             r"Hit Points: \d+/\d+ - Mana Points: \d+/\d+ \| Attack: no wand "
@@ -119,7 +130,7 @@ class Test_Status(unittest.TestCase):
         self.command_processor.game_state.character_class = "Warrior"
         self.game_state.game_has_begun = True
         result = self.command_processor.process("status")
-        self.assertIsInstance(result[0], advg.stmsg.status.StatusOutputGSM)
+        self.assertIsInstance(result[0], StatusOutputGSM)
         self.assertRegex(
             result[0].message,
             r"Hit Points: \d+/\d+ \| Attack: no weapon equipped - Armor "
@@ -131,7 +142,7 @@ class Test_Status(unittest.TestCase):
         self.command_processor.game_state.character_class = "Priest"
         self.game_state.game_has_begun = True
         result = self.command_processor.process("status")
-        self.assertIsInstance(result[0], advg.stmsg.status.StatusOutputGSM)
+        self.assertIsInstance(result[0], StatusOutputGSM)
         self.assertRegex(
             result[0].message,
             r"Hit Points: \d+/\d+ - Mana Points: \d+/\d+ \| Attack: no weapon "
@@ -145,7 +156,7 @@ class Test_Status(unittest.TestCase):
         self.game_state.game_has_begun = True
         self.command_processor.game_state.character.take_damage(10)
         result = self.command_processor.process("status")
-        self.assertIsInstance(result[0], advg.stmsg.status.StatusOutputGSM)
+        self.assertIsInstance(result[0], StatusOutputGSM)
         self.assertRegex(
             result[0].message,
             r"Hit Points: (?!(\d+)/\1)\d+/\d+ - Mana Points: \d+/\d+ \| "
@@ -159,7 +170,7 @@ class Test_Status(unittest.TestCase):
         self.game_state.game_has_begun = True
         self.command_processor.game_state.character.spend_mana(10)
         result = self.command_processor.process("status")
-        self.assertIsInstance(result[0], advg.stmsg.status.StatusOutputGSM)
+        self.assertIsInstance(result[0], StatusOutputGSM)
         self.assertRegex(
             result[0].message,
             r"Hit Points: \d+/\d+ - Mana Points: (?!(\d+)/\1)\d+/\d+ \| "

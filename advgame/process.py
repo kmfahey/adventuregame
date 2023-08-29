@@ -130,7 +130,7 @@ class CommandProcessor:
         # said different ways.
 
         match command:
-            
+
             case "begin":
                 if (
                     len(tokens) >= 1

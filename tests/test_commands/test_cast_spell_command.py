@@ -1,8 +1,25 @@
 #!/usr/bin/python3
 
-import unittest
+from unittest import TestCase
 
-import advgame as advg
+from advgame import (
+    CommandProcessor,
+    ContainersState,
+    CreaturesState,
+    DoorsState,
+    GameState,
+    ItemsState,
+    RoomsState,
+)
+from advgame.commands.constants import SPELL_MANA_COST
+from advgame.stmsg.be_atkd import AttackedAndHitGSM, AttackedAndNotHitGSM
+from advgame.stmsg.castspl import (
+    CastDamagingSpellGSM,
+    CastHealingSpellGSM,
+    InsufficientManaGSM,
+)
+from advgame.stmsg.command import BadSyntaxGSM, ClassRestrictedGSM
+from advgame.stmsg.various import FoeDeathGSM, UnderwentHealingEffectGSM
 
 from ..context import (
     containers_ini_config,
@@ -15,42 +32,43 @@ from ..context import (
 
 __all__ = ("Test_Cast_Spell",)
 
-class Test_Cast_Spell(unittest.TestCase):
+
+class Test_Cast_Spell(TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
 
     def setUp(self):
-        self.items_state = advg.ItemsState(**items_ini_config.sections)
-        self.doors_state = advg.DoorsState(**doors_ini_config.sections)
-        self.containers_state = advg.ContainersState(
+        self.items_state = ItemsState(**items_ini_config.sections)
+        self.doors_state = DoorsState(**doors_ini_config.sections)
+        self.containers_state = ContainersState(
             self.items_state, **containers_ini_config.sections
         )
-        self.creatures_state = advg.CreaturesState(
+        self.creatures_state = CreaturesState(
             self.items_state, **creatures_ini_config.sections
         )
-        self.rooms_state = advg.RoomsState(
+        self.rooms_state = RoomsState(
             self.creatures_state,
             self.containers_state,
             self.doors_state,
             self.items_state,
             **rooms_ini_config.sections,
         )
-        self.game_state = advg.GameState(
+        self.game_state = GameState(
             self.rooms_state,
             self.creatures_state,
             self.containers_state,
             self.doors_state,
             self.items_state,
         )
-        self.command_processor = advg.CommandProcessor(self.game_state)
+        self.command_processor = CommandProcessor(self.game_state)
 
     def test_cast_spell1(self):
         self.command_processor.game_state.character_name = "Niath"
         self.command_processor.game_state.character_class = "Warrior"
         self.game_state.game_has_begun = True
         result = self.command_processor.process("cast spell")
-        self.assertIsInstance(result[0], advg.stmsg.command.ClassRestrictedGSM)
+        self.assertIsInstance(result[0], ClassRestrictedGSM)
         self.assertEqual(result[0].command, "CAST SPELL")
         self.assertEqual(
             result[0].classes,
@@ -72,7 +90,7 @@ class Test_Cast_Spell(unittest.TestCase):
             "cast spell at",
         ):
             result = self.command_processor.process(bad_argument_str)
-            self.assertIsInstance(result[0], advg.stmsg.command.BadSyntaxGSM)
+            self.assertIsInstance(result[0], BadSyntaxGSM)
             self.assertEqual(result[0].command, "CAST SPELL")
             self.assertEqual(
                 result[0].message,
@@ -90,7 +108,7 @@ class Test_Cast_Spell(unittest.TestCase):
         current_mana_points = 4
         self.assertTrue(mana_spending_outcome)
         result = self.command_processor.process("cast spell")
-        self.assertIsInstance(result[0], advg.stmsg.castspl.InsufficientManaGSM)
+        self.assertIsInstance(result[0], InsufficientManaGSM)
         self.assertEqual(
             result[0].current_mana_points,
             self.command_processor.game_state.character.mana_points,
@@ -99,13 +117,11 @@ class Test_Cast_Spell(unittest.TestCase):
             result[0].mana_point_total,
             self.command_processor.game_state.character.mana_point_total,
         )
-        self.assertEqual(
-            result[0].spell_mana_cost, advg.commands.constants.SPELL_MANA_COST
-        )
+        self.assertEqual(result[0].spell_mana_cost, SPELL_MANA_COST)
         self.assertEqual(
             result[0].message,
             "You don't have enough mana points to cast a spell. Casting a spell costs "
-            + f"{advg.commands.constants.SPELL_MANA_COST} mana points. Your mana points are "
+            + f"{SPELL_MANA_COST} mana points. Your mana points are "
             + f"{current_mana_points}/{mana_point_total}.",
         )
 
@@ -114,7 +130,7 @@ class Test_Cast_Spell(unittest.TestCase):
         self.command_processor.game_state.character_class = "Mage"
         self.game_state.game_has_begun = True
         result = self.command_processor.process("cast spell")
-        self.assertIsInstance(result[0], advg.stmsg.castspl.CastDamagingSpellGSM)
+        self.assertIsInstance(result[0], CastDamagingSpellGSM)
         self.assertEqual(result[0].creature_title, "kobold")
         self.assertIsInstance(result[0].damage_dealt, int)
         self.assertRegex(
@@ -125,12 +141,12 @@ class Test_Cast_Spell(unittest.TestCase):
         self.assertIsInstance(
             result[1],
             (
-                advg.stmsg.various.FoeDeathGSM,
-                advg.stmsg.be_atkd.AttackedAndNotHitGSM,
-                advg.stmsg.be_atkd.AttackedAndHitGSM,
+                FoeDeathGSM,
+                AttackedAndNotHitGSM,
+                AttackedAndHitGSM,
             ),
         )
-        if not isinstance(result[1], advg.stmsg.various.FoeDeathGSM):
+        if not isinstance(result[1], FoeDeathGSM):
             spell_cast_count = 1
             while result[0].damage_dealt >= 20:
                 self.command_processor.game_state.rooms_state.cursor.creature_here.heal_damage(
@@ -146,7 +162,7 @@ class Test_Cast_Spell(unittest.TestCase):
             )
             self.assertEqual(
                 self.command_processor.game_state.character.mana_points
-                + spell_cast_count * advg.commands.constants.SPELL_MANA_COST,
+                + spell_cast_count * SPELL_MANA_COST,
                 self.command_processor.game_state.character.mana_point_total,
             )
 
@@ -155,11 +171,10 @@ class Test_Cast_Spell(unittest.TestCase):
         self.command_processor.game_state.character_class = "Priest"
         self.game_state.game_has_begun = True
         result = self.command_processor.process("cast spell")
-        self.assertIsInstance(result[0], advg.stmsg.castspl.CastHealingSpellGSM)
+        self.assertIsInstance(result[0], CastHealingSpellGSM)
         self.assertRegex(result[0].message, r"You cast a healing spell on yourself.")
-        self.assertIsInstance(result[1], advg.stmsg.various.UnderwentHealingEffectGSM)
+        self.assertIsInstance(result[1], UnderwentHealingEffectGSM)
         self.assertEqual(
-            self.command_processor.game_state.character.mana_points
-            + advg.commands.constants.SPELL_MANA_COST,
+            self.command_processor.game_state.character.mana_points + SPELL_MANA_COST,
             self.command_processor.game_state.character.mana_point_total,
         )

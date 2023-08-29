@@ -1,8 +1,24 @@
 #!/usr/bin/python3
 
-import unittest
+from unittest import TestCase
 
-import advgame as advg
+from advgame import (
+    CommandProcessor,
+    ContainersState,
+    CreaturesState,
+    DoorsState,
+    GameState,
+    ItemsState,
+    RoomsState,
+)
+from advgame.stmsg.command import BadSyntaxGSM
+from advgame.stmsg.drop import (
+    AmountToDropUnclearGSM,
+    DroppedItemGSM,
+    TryingToDropItemYouDontHaveGSM,
+    TryingToDropMoreThanYouHaveGSM,
+)
+from advgame.stmsg.various import ItemUnequippedGSM
 
 from ..context import (
     containers_ini_config,
@@ -15,35 +31,36 @@ from ..context import (
 
 __all__ = ("Test_Drop",)
 
-class Test_Drop(unittest.TestCase):
+
+class Test_Drop(TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
 
     def setUp(self):
-        self.items_state = advg.ItemsState(**items_ini_config.sections)
-        self.doors_state = advg.DoorsState(**doors_ini_config.sections)
-        self.containers_state = advg.ContainersState(
+        self.items_state = ItemsState(**items_ini_config.sections)
+        self.doors_state = DoorsState(**doors_ini_config.sections)
+        self.containers_state = ContainersState(
             self.items_state, **containers_ini_config.sections
         )
-        self.creatures_state = advg.CreaturesState(
+        self.creatures_state = CreaturesState(
             self.items_state, **creatures_ini_config.sections
         )
-        self.rooms_state = advg.RoomsState(
+        self.rooms_state = RoomsState(
             self.creatures_state,
             self.containers_state,
             self.doors_state,
             self.items_state,
             **rooms_ini_config.sections,
         )
-        self.game_state = advg.GameState(
+        self.game_state = GameState(
             self.rooms_state,
             self.creatures_state,
             self.containers_state,
             self.doors_state,
             self.items_state,
         )
-        self.command_processor = advg.CommandProcessor(self.game_state)
+        self.command_processor = CommandProcessor(self.game_state)
 
     def test_drop_1(self):
         self.command_processor.game_state.character_name = "Niath"
@@ -52,7 +69,7 @@ class Test_Drop(unittest.TestCase):
         gold_coin = self.items_state.get("Gold_Coin")
         self.command_processor.game_state.character.pick_up_item(gold_coin, qty=30)
         result = self.command_processor.process("drop the")  # check
-        self.assertIsInstance(result[0], advg.stmsg.command.BadSyntaxGSM)
+        self.assertIsInstance(result[0], BadSyntaxGSM)
         self.assertEqual(result[0].command, "DROP")
         self.assertEqual(
             result[0].message,
@@ -67,7 +84,7 @@ class Test_Drop(unittest.TestCase):
         gold_coin = self.items_state.get("Gold_Coin")
         self.command_processor.game_state.character.pick_up_item(gold_coin, qty=30)
         result = self.command_processor.process("drop a gold coins")  # check
-        self.assertIsInstance(result[0], advg.stmsg.drop.AmountToDropUnclearGSM)
+        self.assertIsInstance(result[0], AmountToDropUnclearGSM)
         self.assertEqual(
             result[0].message, "Amount to drop unclear. How many do you mean?"
         )
@@ -79,7 +96,7 @@ class Test_Drop(unittest.TestCase):
         gold_coin = self.items_state.get("Gold_Coin")
         self.command_processor.game_state.character.pick_up_item(gold_coin, qty=30)
         result = self.command_processor.process("drop a mana potion")  # check
-        self.assertIsInstance(result[0], advg.stmsg.drop.TryingToDropItemYouDontHaveGSM)
+        self.assertIsInstance(result[0], TryingToDropItemYouDontHaveGSM)
         self.assertEqual(result[0].item_title, "mana potion")
         self.assertEqual(result[0].amount_attempted, 1)
         self.assertEqual(
@@ -93,7 +110,7 @@ class Test_Drop(unittest.TestCase):
         gold_coin = self.items_state.get("Gold_Coin")
         self.command_processor.game_state.character.pick_up_item(gold_coin, qty=30)
         result = self.command_processor.process("drop 45 gold coins")  # check
-        self.assertIsInstance(result[0], advg.stmsg.drop.TryingToDropMoreThanYouHaveGSM)
+        self.assertIsInstance(result[0], TryingToDropMoreThanYouHaveGSM)
         self.assertEqual(result[0].item_title, "gold coin")
         self.assertEqual(result[0].amount_attempted, 45)
         self.assertEqual(result[0].amount_had, 30)
@@ -110,7 +127,7 @@ class Test_Drop(unittest.TestCase):
         gold_coin = self.items_state.get("Gold_Coin")
         self.command_processor.game_state.character.pick_up_item(gold_coin, qty=30)
         result = self.command_processor.process("drop forty-five gold coins")  # check
-        self.assertIsInstance(result[0], advg.stmsg.drop.TryingToDropMoreThanYouHaveGSM)
+        self.assertIsInstance(result[0], TryingToDropMoreThanYouHaveGSM)
         self.assertEqual(result[0].item_title, "gold coin")
         self.assertEqual(result[0].amount_attempted, 45)
         self.assertEqual(result[0].amount_had, 30)
@@ -126,7 +143,7 @@ class Test_Drop(unittest.TestCase):
         gold_coin = self.items_state.get("Gold_Coin")
         self.command_processor.game_state.character.pick_up_item(gold_coin, qty=30)
         result = self.command_processor.process("drop 15 gold coins")  # check
-        self.assertIsInstance(result[0], advg.stmsg.drop.DroppedItemGSM)
+        self.assertIsInstance(result[0], DroppedItemGSM)
         self.assertEqual(result[0].item_title, "gold coin")
         self.assertEqual(result[0].amount_dropped, 15)
         self.assertEqual(result[0].amount_on_floor, 15)
@@ -138,7 +155,7 @@ class Test_Drop(unittest.TestCase):
         )
 
         result = self.command_processor.process("drop 14 gold coins")  # check
-        self.assertIsInstance(result[0], advg.stmsg.drop.DroppedItemGSM)
+        self.assertIsInstance(result[0], DroppedItemGSM)
         self.assertEqual(result[0].item_title, "gold coin")
         self.assertEqual(result[0].amount_dropped, 14)
         self.assertEqual(result[0].amount_on_floor, 29)
@@ -157,7 +174,7 @@ class Test_Drop(unittest.TestCase):
         self.command_processor.game_state.character.pick_up_item(gold_coin, qty=30)
         self.command_processor.process("pick up 29 gold coins")  # check
         result = self.command_processor.process("drop 1 gold coin")  # check
-        self.assertIsInstance(result[0], advg.stmsg.drop.DroppedItemGSM)
+        self.assertIsInstance(result[0], DroppedItemGSM)
         self.assertEqual(result[0].item_title, "gold coin")
         self.assertEqual(result[0].amount_dropped, 1)
         self.assertEqual(result[0].amount_on_floor, 1)
@@ -175,7 +192,7 @@ class Test_Drop(unittest.TestCase):
         gold_coin = self.items_state.get("Gold_Coin")
         self.command_processor.game_state.character.pick_up_item(gold_coin, qty=30)
         result = self.command_processor.process("drop 30 gold coins")  # check
-        self.assertIsInstance(result[0], advg.stmsg.drop.DroppedItemGSM)
+        self.assertIsInstance(result[0], DroppedItemGSM)
         self.assertEqual(result[0].item_title, "gold coin")
         self.assertEqual(result[0].amount_dropped, 30)
         self.assertEqual(result[0].amount_on_floor, 30)
@@ -194,14 +211,14 @@ class Test_Drop(unittest.TestCase):
         self.command_processor.game_state.character.pick_up_item(longsword)
         self.command_processor.game_state.character.equip_weapon(longsword)
         result = self.command_processor.process("drop longsword")  # check
-        self.assertIsInstance(result[0], advg.stmsg.various.ItemUnequippedGSM)
+        self.assertIsInstance(result[0], ItemUnequippedGSM)
         self.assertEqual(result[0].item_title, "longsword")
         self.assertEqual(result[0].item_type, "weapon")
         self.assertEqual(
             result[0].message,
             "You're no longer wielding a longsword. You now can't attack.",
         )
-        self.assertIsInstance(result[1], advg.stmsg.drop.DroppedItemGSM)
+        self.assertIsInstance(result[1], DroppedItemGSM)
         self.assertEqual(result[1].item_title, "longsword")
         self.assertEqual(result[1].amount_dropped, 1)
         self.assertEqual(result[1].amount_on_floor, 1)
@@ -220,14 +237,14 @@ class Test_Drop(unittest.TestCase):
         self.command_processor.game_state.character.pick_up_item(steel_shield)
         self.command_processor.game_state.character.equip_shield(steel_shield)
         result = self.command_processor.process("drop steel shield")  # check
-        self.assertIsInstance(result[0], advg.stmsg.various.ItemUnequippedGSM)
+        self.assertIsInstance(result[0], ItemUnequippedGSM)
         self.assertEqual(result[0].item_title, "steel shield")
         self.assertEqual(result[0].item_type, "shield")
         self.assertRegex(
             result[0].message,
             r"You're no longer carrying a steel shield. Your armor class is now \d+.",
         )
-        self.assertIsInstance(result[1], advg.stmsg.drop.DroppedItemGSM)
+        self.assertIsInstance(result[1], DroppedItemGSM)
         self.assertEqual(result[1].item_title, "steel shield")
         self.assertEqual(result[1].amount_dropped, 1)
         self.assertEqual(result[1].amount_on_floor, 1)
@@ -246,14 +263,14 @@ class Test_Drop(unittest.TestCase):
         self.command_processor.game_state.character.pick_up_item(magic_wand)
         self.command_processor.game_state.character.equip_wand(magic_wand)
         result = self.command_processor.process("drop magic wand")  # check
-        self.assertIsInstance(result[0], advg.stmsg.various.ItemUnequippedGSM)
+        self.assertIsInstance(result[0], ItemUnequippedGSM)
         self.assertEqual(result[0].item_title, "magic wand")
         self.assertEqual(result[0].item_type, "wand")
         self.assertRegex(
             result[0].message,
             r"You're no longer using a magic wand. You now can't attack.",
         )
-        self.assertIsInstance(result[1], advg.stmsg.drop.DroppedItemGSM)
+        self.assertIsInstance(result[1], DroppedItemGSM)
         self.assertEqual(result[1].item_title, "magic wand")
         self.assertEqual(result[1].amount_dropped, 1)
         self.assertEqual(result[1].amount_on_floor, 1)
@@ -275,7 +292,7 @@ class Test_Drop(unittest.TestCase):
         self.command_processor.game_state.character.pick_up_item(magic_wand)
         self.command_processor.game_state.character.equip_wand(magic_wand)
         result = self.command_processor.process("drop magic wand")  # check
-        self.assertIsInstance(result[0], advg.stmsg.various.ItemUnequippedGSM)
+        self.assertIsInstance(result[0], ItemUnequippedGSM)
         self.assertEqual(result[0].item_title, "magic wand")
         self.assertEqual(result[0].item_type, "wand")
         self.assertRegex(
@@ -283,7 +300,7 @@ class Test_Drop(unittest.TestCase):
             r"You're no longer using a magic wand. You're now attacking with "
             + r"your staff.",
         )
-        self.assertIsInstance(result[1], advg.stmsg.drop.DroppedItemGSM)
+        self.assertIsInstance(result[1], DroppedItemGSM)
         self.assertEqual(result[1].item_title, "magic wand")
         self.assertEqual(result[1].amount_dropped, 1)
         self.assertEqual(result[1].amount_on_floor, 1)
@@ -305,7 +322,7 @@ class Test_Drop(unittest.TestCase):
         self.command_processor.game_state.character.pick_up_item(magic_wand)
         self.command_processor.game_state.character.equip_wand(magic_wand)
         result = self.command_processor.process("drop staff")  # check
-        self.assertIsInstance(result[0], advg.stmsg.various.ItemUnequippedGSM)
+        self.assertIsInstance(result[0], ItemUnequippedGSM)
         self.assertEqual(result[0].item_title, "staff")
         self.assertEqual(result[0].item_type, "weapon")
         self.assertRegex(
@@ -314,7 +331,7 @@ class Test_Drop(unittest.TestCase):
             + r"magic wand. Your attack bonus is [\d+-]+ and your magic wand "
             + r"damage is \d+d\d+([+-]\d+)?.",
         )
-        self.assertIsInstance(result[1], advg.stmsg.drop.DroppedItemGSM)
+        self.assertIsInstance(result[1], DroppedItemGSM)
         self.assertEqual(result[1].item_title, "staff")
         self.assertEqual(result[1].amount_dropped, 1)
         self.assertEqual(result[1].amount_on_floor, 1)
@@ -332,7 +349,7 @@ class Test_Drop(unittest.TestCase):
         self.command_processor.game_state.character.pick_up_item(longsword, qty=3)
         self.command_processor.game_state.character.equip_weapon(longsword)
         result = self.command_processor.process("drop longsword")  # check
-        self.assertIsInstance(result[0], advg.stmsg.drop.DroppedItemGSM)
+        self.assertIsInstance(result[0], DroppedItemGSM)
         self.assertEqual(result[0].item_title, "longsword")
         self.assertEqual(result[0].amount_dropped, 1)
         self.assertEqual(result[0].amount_on_floor, 1)
@@ -351,7 +368,7 @@ class Test_Drop(unittest.TestCase):
         self.command_processor.game_state.character.pick_up_item(longsword, qty=3)
         self.command_processor.game_state.character.equip_weapon(longsword)
         result = self.command_processor.process("drop longsword")  # check
-        self.assertIsInstance(result[0], advg.stmsg.drop.DroppedItemGSM)
+        self.assertIsInstance(result[0], DroppedItemGSM)
         self.assertEqual(result[0].item_title, "longsword")
         self.assertEqual(result[0].amount_dropped, 1)
         self.assertEqual(result[0].amount_on_floor, 1)

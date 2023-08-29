@@ -1,8 +1,24 @@
 #!/usr/bin/python3
 
-import unittest
+from unittest import TestCase
 
-import advgame as advg
+from advgame import (
+    CommandProcessor,
+    ContainersState,
+    CreaturesState,
+    DoorsState,
+    GameState,
+    ItemsState,
+    RoomsState,
+)
+from advgame.stmsg.command import BadSyntaxGSM
+from advgame.stmsg.open_ import (
+    ElementHasBeenOpenedGSM,
+    ElementIsAlreadyOpenGSM,
+    ElementIsLockedGSM,
+    ElementNotOpenableGSM,
+)
+from advgame.stmsg.various import DoorNotPresentGSM
 
 from ..context import (
     containers_ini_config,
@@ -15,35 +31,36 @@ from ..context import (
 
 __all__ = ("Test_Open",)
 
-class Test_Open(unittest.TestCase):
+
+class Test_Open(TestCase):
     def __init__(self, *argl, **argd):
         super().__init__(*argl, **argd)
         self.maxDiff = None
 
     def setUp(self):
-        self.items_state = advg.ItemsState(**items_ini_config.sections)
-        self.doors_state = advg.DoorsState(**doors_ini_config.sections)
-        self.containers_state = advg.ContainersState(
+        self.items_state = ItemsState(**items_ini_config.sections)
+        self.doors_state = DoorsState(**doors_ini_config.sections)
+        self.containers_state = ContainersState(
             self.items_state, **containers_ini_config.sections
         )
-        self.creatures_state = advg.CreaturesState(
+        self.creatures_state = CreaturesState(
             self.items_state, **creatures_ini_config.sections
         )
-        self.rooms_state = advg.RoomsState(
+        self.rooms_state = RoomsState(
             self.creatures_state,
             self.containers_state,
             self.doors_state,
             self.items_state,
             **rooms_ini_config.sections,
         )
-        self.game_state = advg.GameState(
+        self.game_state = GameState(
             self.rooms_state,
             self.creatures_state,
             self.containers_state,
             self.doors_state,
             self.items_state,
         )
-        self.command_processor = advg.CommandProcessor(self.game_state)
+        self.command_processor = CommandProcessor(self.game_state)
         self.command_processor.game_state.character_name = "Niath"
         self.command_processor.game_state.character_class = "Warrior"
         self.game_state.game_has_begun = True
@@ -55,7 +72,7 @@ class Test_Open(unittest.TestCase):
 
     def test_open_1(self):
         result = self.command_processor.process("open")
-        self.assertIsInstance(result[0], advg.stmsg.command.BadSyntaxGSM)
+        self.assertIsInstance(result[0], BadSyntaxGSM)
         self.assertEqual(result[0].command, "OPEN")
         self.assertEqual(
             result[0].message,
@@ -67,7 +84,7 @@ class Test_Open(unittest.TestCase):
         self.chest.is_closed = True
         self.chest.is_locked = True
         result = self.command_processor.process(f"open {self.chest_title}")
-        self.assertIsInstance(result[0], advg.stmsg.open_.ElementIsLockedGSM)
+        self.assertIsInstance(result[0], ElementIsLockedGSM)
         self.assertEqual(result[0].target, self.chest_title)
         self.assertEqual(result[0].message, f"The {self.chest_title} is locked.")
 
@@ -76,28 +93,28 @@ class Test_Open(unittest.TestCase):
         self.chest.is_closed = False
         self.chest_title = self.chest.title
         result = self.command_processor.process(f"open {self.chest_title}")
-        self.assertIsInstance(result[0], advg.stmsg.open_.ElementIsAlreadyOpenGSM)
+        self.assertIsInstance(result[0], ElementIsAlreadyOpenGSM)
         self.assertEqual(result[0].target, self.chest_title)
         self.assertEqual(result[0].message, f"The {self.chest_title} is already open.")
         self.assertFalse(self.chest.is_closed)
 
         self.chest.is_closed = True
         result = self.command_processor.process(f"open {self.chest_title}")
-        self.assertIsInstance(result[0], advg.stmsg.open_.ElementHasBeenOpenedGSM)
+        self.assertIsInstance(result[0], ElementHasBeenOpenedGSM)
         self.assertEqual(result[0].target, self.chest_title)
         self.assertEqual(result[0].message, f"You have opened the {self.chest_title}.")
         self.assertFalse(self.chest.is_closed)
 
     def test_open_4(self):
         result = self.command_processor.process("open west door")
-        self.assertIsInstance(result[0], advg.stmsg.various.DoorNotPresentGSM)
+        self.assertIsInstance(result[0], DoorNotPresentGSM)
         self.assertEqual(result[0].compass_dir, "west")
         self.assertEqual(result[0].portal_type, "door")
         self.assertEqual(result[0].message, "This room does not have a west door."),
 
     def test_open_5(self):
         result = self.command_processor.process(f"open {self.door_title}")
-        self.assertIsInstance(result[0], advg.stmsg.open_.ElementIsAlreadyOpenGSM)
+        self.assertIsInstance(result[0], ElementIsAlreadyOpenGSM)
         self.assertEqual(result[0].target, self.door_title)
         self.assertEqual(result[0].message, f"The {self.door_title} is already open.")
         self.assertFalse(self.door.is_closed)
@@ -105,14 +122,14 @@ class Test_Open(unittest.TestCase):
     def test_open_6(self):
         self.door.is_closed = True
         result = self.command_processor.process(f"open {self.door_title}")
-        self.assertIsInstance(result[0], advg.stmsg.open_.ElementHasBeenOpenedGSM)
+        self.assertIsInstance(result[0], ElementHasBeenOpenedGSM)
         self.assertEqual(result[0].target, self.door_title)
         self.assertEqual(result[0].message, f"You have opened the {self.door_title}.")
         self.assertFalse(self.door.is_closed)
 
         result = self.command_processor.process(f"leave using {self.door_title}")
         result = self.command_processor.process("open south door")
-        self.assertIsInstance(result[0], advg.stmsg.open_.ElementIsAlreadyOpenGSM)
+        self.assertIsInstance(result[0], ElementIsAlreadyOpenGSM)
         self.assertEqual(result[0].target, "south door")
         self.assertEqual(result[0].message, "The south door is already open.")
         self.assertFalse(self.door.is_closed)
@@ -121,7 +138,7 @@ class Test_Open(unittest.TestCase):
         self.door.is_closed = True
         self.door.is_locked = True
         result = self.command_processor.process(f"open {self.door_title}")
-        self.assertIsInstance(result[0], advg.stmsg.open_.ElementIsLockedGSM)
+        self.assertIsInstance(result[0], ElementIsLockedGSM)
         self.assertEqual(result[0].target, self.door_title)
         self.assertEqual(result[0].message, f"The {self.door_title} is locked.")
         self.assertTrue(self.door.is_closed)
@@ -131,20 +148,20 @@ class Test_Open(unittest.TestCase):
         self.door.is_locked = True
         alternate_title = self.door.door_type.replace("_", " ")
         result = self.command_processor.process(f"open north {alternate_title}")
-        self.assertIsInstance(result[0], advg.stmsg.open_.ElementIsLockedGSM)
+        self.assertIsInstance(result[0], ElementIsLockedGSM)
         self.assertEqual(result[0].target, self.door_title)
         self.assertEqual(result[0].message, f"The {self.door_title} is locked.")
         self.assertTrue(self.door.is_closed)
 
     def test_open_9(self):
         result = self.command_processor.process("open north iron door")
-        self.assertIsInstance(result[0], advg.stmsg.open_.ElementIsAlreadyOpenGSM)
+        self.assertIsInstance(result[0], ElementIsAlreadyOpenGSM)
         self.assertEqual(result[0].target, "north door")
         self.assertEqual(result[0].message, "The north door is already open."),
 
     def test_open_10(self):
         result = self.command_processor.process("open mana potion")
-        self.assertIsInstance(result[0], advg.stmsg.open_.ElementNotOpenableGSM)
+        self.assertIsInstance(result[0], ElementNotOpenableGSM)
         self.assertEqual(result[0].target_title, "mana potion")
         self.assertEqual(result[0].target_type, "potion")
         self.assertEqual(
@@ -154,7 +171,7 @@ class Test_Open(unittest.TestCase):
 
     def test_open_11(self):
         result = self.command_processor.process("open kobold")
-        self.assertIsInstance(result[0], advg.stmsg.open_.ElementNotOpenableGSM)
+        self.assertIsInstance(result[0], ElementNotOpenableGSM)
         self.assertEqual(result[0].target_title, "kobold")
         self.assertEqual(result[0].target_type, "creature")
         self.assertEqual(
@@ -166,7 +183,7 @@ class Test_Open(unittest.TestCase):
             self.command_processor.game_state.rooms_state.cursor.creature_here.convert_to_corpse()
         )
         result = self.command_processor.process("open kobold corpse")
-        self.assertIsInstance(result[0], advg.stmsg.open_.ElementNotOpenableGSM)
+        self.assertIsInstance(result[0], ElementNotOpenableGSM)
         self.assertEqual(result[0].target_title, "kobold corpse")
         self.assertEqual(result[0].target_type, "corpse")
         self.assertEqual(
@@ -177,7 +194,7 @@ class Test_Open(unittest.TestCase):
     def test_open_13(self):
         self.command_processor.game_state.rooms_state.move(north=True)
         result = self.command_processor.process("open east doorway")
-        self.assertIsInstance(result[0], advg.stmsg.open_.ElementNotOpenableGSM)
+        self.assertIsInstance(result[0], ElementNotOpenableGSM)
         self.assertEqual(result[0].target_title, "east doorway")
         self.assertEqual(result[0].target_type, "doorway")
         self.assertEqual(
@@ -192,7 +209,7 @@ class Test_Open(unittest.TestCase):
         studded_leather_armor = self.items_state.get("Studded_Leather")
         self.command_processor.game_state.character.pick_up_item(studded_leather_armor)
         result = self.command_processor.process("open studded leather armor")
-        self.assertIsInstance(result[0], advg.stmsg.open_.ElementNotOpenableGSM)
+        self.assertIsInstance(result[0], ElementNotOpenableGSM)
         self.assertEqual(result[0].target_title, "studded leather armor")
         self.assertEqual(result[0].target_type, "armor")
         self.assertEqual(
