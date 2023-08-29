@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 
-from advgame import stmsg as stmsg
-
 from advgame.commands.constants import COMMANDS_SYNTAX
+from advgame.stmsg.command import BadSyntaxGSM
+from advgame.stmsg.unequip import ItemNotEquippedGSM
+from advgame.stmsg.various import ItemUnequippedGSM
 
 
 __all__ = ("unequip_command",)
@@ -18,19 +19,19 @@ def unequip_command(game_state, tokens):
     UNEQUIP <wand name>
     UNEQUIP <weapon name>
 
-    * If that syntax is not followed, returns a .stmsg.command.BadSyntaxGSM
+    * If that syntax is not followed, returns a BadSyntaxGSM
     object.
 
     * If the character does not have the item equipped, returns a
-    .stmsg.unequip.ItemNotEquippedGSM object.
+    ItemNotEquippedGSM object.
 
     * Otherwise, the specified item is unequipped, and a
-    .stmsg.various.ItemUnequippedGSM is returned.
+    ItemUnequippedGSM is returned.
     """
     # This command requires an argument so if none was supplied I
     # return a syntax error.
     if not tokens:
-        return (stmsg.command.BadSyntaxGSM("UNEQUIP", COMMANDS_SYNTAX["UNEQUIP"]),)
+        return (BadSyntaxGSM("UNEQUIP", COMMANDS_SYNTAX["UNEQUIP"]),)
 
     # I construct the item title and search for it in the player
     # character's inventory.
@@ -51,9 +52,9 @@ def unequip_command(game_state, tokens):
         )
         if matching_item_tuple:
             (item,) = matching_item_tuple[0:1]
-            return (stmsg.unequip.ItemNotEquippedGSM(item.title, item.item_type),)
+            return (ItemNotEquippedGSM(item.title, item.item_type),)
         else:
-            return (stmsg.unequip.ItemNotEquippedGSM(item_title),)
+            return (ItemNotEquippedGSM(item_title),)
 
     # I extract the matched item.
     (item,) = matching_item_tuple[0:1]
@@ -65,14 +66,14 @@ def unequip_command(game_state, tokens):
         if game_state.character.armor_equipped is None:
             # If I'm unequipping armor but the player character has
             # no armor equipped I return a item-not-equipped error.
-            return (stmsg.unequip.ItemNotEquippedGSM(item_title, "armor"),)
+            return (ItemNotEquippedGSM(item_title, "armor"),)
         else:
             if game_state.character.armor_equipped.title != item_title:
                 # If armor_equipped's title doesn't match the
                 # argument item_title, I return an item-not-equipped
                 # error.
                 return (
-                    stmsg.unequip.ItemNotEquippedGSM(
+                    ItemNotEquippedGSM(
                         item_title,
                         "armor",
                         game_state.character.armor_equipped.title,
@@ -83,7 +84,7 @@ def unequip_command(game_state, tokens):
                 # armor and return a item-unequipped value.
                 game_state.character.unequip_armor()
                 return (
-                    stmsg.various.ItemUnequippedGSM(
+                    ItemUnequippedGSM(
                         item_title,
                         "armor",
                         armor_class=game_state.character.armor_class,
@@ -94,14 +95,14 @@ def unequip_command(game_state, tokens):
             # If I'm unequipping a shield but the player character
             # has no shield equipped I return a item-not-equipped
             # error.
-            return (stmsg.unequip.ItemNotEquippedGSM(item_title, "shield"),)
+            return (ItemNotEquippedGSM(item_title, "shield"),)
         else:
             if game_state.character.shield_equipped.title != item_title:
                 # If shield_equipped's title doesn't match the
                 # argument item_title, I return an item-not-equipped
                 # error.
                 return (
-                    stmsg.unequip.ItemNotEquippedGSM(
+                    ItemNotEquippedGSM(
                         item_title,
                         "shield",
                         game_state.character.shield_equipped.title,
@@ -112,7 +113,7 @@ def unequip_command(game_state, tokens):
                 # shield and return a item-unequipped value.
                 game_state.character.unequip_shield()
                 return (
-                    stmsg.various.ItemUnequippedGSM(
+                    ItemUnequippedGSM(
                         item_title,
                         "shield",
                         armor_class=game_state.character.armor_class,
@@ -122,13 +123,13 @@ def unequip_command(game_state, tokens):
         if game_state.character.wand_equipped is None:
             # If I'm unequipping a wand but the player character has
             # no wand equipped I return a item-not-equipped error.
-            return (stmsg.unequip.ItemNotEquippedGSM(item_title, "wand"),)
+            return (ItemNotEquippedGSM(item_title, "wand"),)
         else:
             if game_state.character.wand_equipped.title != item_title:
                 # If wand_equipped's title doesn't match the
                 # argument item_title, I return an item-not-equipped
                 # error.
-                return (stmsg.unequip.ItemNotEquippedGSM(item_title, "wand"),)
+                return (ItemNotEquippedGSM(item_title, "wand"),)
             else:
                 # Otherwise, the title matches, so I unequip the
                 # wand.
@@ -140,7 +141,7 @@ def unequip_command(game_state, tokens):
                 # weapon's info.
                 if weapon_equipped is not None:
                     return (
-                        stmsg.various.ItemUnequippedGSM(
+                        ItemUnequippedGSM(
                             item_title,
                             "wand",
                             attack_bonus=game_state.character.attack_bonus,
@@ -151,22 +152,18 @@ def unequip_command(game_state, tokens):
                 else:
                     # Otherwise, I return an item-unequipped value
                     # with cant_attack set to True.
-                    return (
-                        stmsg.various.ItemUnequippedGSM(
-                            item_title, "wand", cant_attack=True
-                        ),
-                    )
+                    return (ItemUnequippedGSM(item_title, "wand", cant_attack=True),)
     elif item.item_type == "weapon":
         # If I'm unequipping a weapon but the player character has
         # no weapon equipped I return a item-not-equipped error.
         if game_state.character.weapon_equipped is None:
-            return (stmsg.unequip.ItemNotEquippedGSM(item.title, "weapon"),)
+            return (ItemNotEquippedGSM(item.title, "weapon"),)
         else:
             if game_state.character.weapon_equipped.title != item_title:
                 # If weapon_equipped's title doesn't match the
                 # argument item_title, I return an item-not-equipped
                 # error.
-                return (stmsg.unequip.ItemNotEquippedGSM(item.title, "weapon"),)
+                return (ItemNotEquippedGSM(item.title, "weapon"),)
             else:
                 # Otherwise, the title matches, so I unequip the
                 # weapon.
@@ -178,7 +175,7 @@ def unequip_command(game_state, tokens):
                 # initialized with the wand's info.
                 if wand_equipped is not None:
                     return (
-                        stmsg.various.ItemUnequippedGSM(
+                        ItemUnequippedGSM(
                             item_title,
                             "weapon",
                             attack_bonus=game_state.character.attack_bonus,
@@ -190,7 +187,5 @@ def unequip_command(game_state, tokens):
                     # Otherwise I return an item-unequipped value
                     # with now_cant_attack set to True.
                     return (
-                        stmsg.various.ItemUnequippedGSM(
-                            item_title, "weapon", now_cant_attack=True
-                        ),
+                        ItemUnequippedGSM(item_title, "weapon", now_cant_attack=True),
                     )

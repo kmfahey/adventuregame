@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 
-from advgame import stmsg as stmsg
-
 from advgame.commands.constants import COMMANDS_SYNTAX, VALID_NAME_RE
+from advgame.stmsg.command import BadSyntaxGSM
+from advgame.stmsg.setname import InvalidPartGSM, NameSetGSM
+from advgame.stmsg.various import DisplayRolledStatsGSM
 
 
 __all__ = ("set_name_command",)
@@ -15,23 +16,23 @@ def set_name_command(game_state, tokens):
 
     SET NAME [TO] <character name>
 
-    * If that syntax is not followed, returns a .stmsg.command.BadSyntaxGSM
+    * If that syntax is not followed, returns a BadSyntaxGSM
     object.
 
     * If a name is specified that doesn't match the pattern [A-Z][a-z]+(
-    [A-Z][a-z]+)*, returns a .stmsg.setname.InvalidPartGSM object.
+    [A-Z][a-z]+)*, returns a InvalidPartGSM object.
 
     * If the class has not yet been set, then the name is set, and a
-    .stmsg.setname.NameSetGSM object is returned.
+    NameSetGSM object is returned.
 
     * If the class has been set, then the name is set, ability scores for
-    the character are rolled, and a .stmsg.setname.NameSetGSM object and a
-    .stmsg.various.DisplayRolledStatsGSM object are returned.
+    the character are rolled, and a NameSetGSM object and a
+    DisplayRolledStatsGSM object are returned.
     """
     # This command requires one or more arguments, so if len(tokens)
     # == 0 I return a syntax error.
     if len(tokens) == 0:
-        return (stmsg.command.BadSyntaxGSM("SET NAME", COMMANDS_SYNTAX["SET NAME"]),)
+        return (BadSyntaxGSM("SET NAME", COMMANDS_SYNTAX["SET NAME"]),)
 
     # valid_name_re.pattern == '^[A-Z][a-z]+$'. I test each
     # token for a match, and non-matching name parts are saved.
@@ -44,7 +45,7 @@ def set_name_command(game_state, tokens):
             continue
         invalid_name_parts.append(name_part)
     if len(invalid_name_parts):
-        return tuple(map(stmsg.setname.InvalidPartGSM, invalid_name_parts))
+        return tuple(map(InvalidPartGSM, invalid_name_parts))
 
     # If the name wasn't set before this call, I save that fact,
     # then set the character name.
@@ -59,8 +60,8 @@ def set_name_command(game_state, tokens):
     # display-rolled-stats value.
     if game_state.character_class is not None and name_was_none:
         return (
-            stmsg.setname.NameSetGSM(name_str),
-            stmsg.various.DisplayRolledStatsGSM(
+            NameSetGSM(name_str),
+            DisplayRolledStatsGSM(
                 strength=game_state.character.strength,
                 dexterity=game_state.character.dexterity,
                 constitution=game_state.character.constitution,
@@ -71,4 +72,4 @@ def set_name_command(game_state, tokens):
         )
     else:
         # Otherwise I just return a name-set value.
-        return (stmsg.setname.NameSetGSM(game_state.character_name),)
+        return (NameSetGSM(game_state.character_name),)

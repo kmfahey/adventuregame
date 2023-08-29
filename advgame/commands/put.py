@@ -2,9 +2,13 @@
 
 from math import nan as NaN
 
-from advgame import stmsg as stmsg
-
 from advgame.commands.utils import _put_or_take_preproc
+from advgame.stmsg import GameStateMessage
+from advgame.stmsg.put import (
+    ItemNotInInventoryGSM,
+    PutAmountOfItemGSM,
+    TryingToPutMoreThanYouHaveGSM,
+)
 
 
 __all__ = ("put_command",)
@@ -20,28 +24,28 @@ def put_command(game_state, tokens):
     PUT <item name> ON <corpse name>
     PUT <number> <item name> ON <corpse name>
 
-    * If that syntax is not followed, returns a .stmsg.command.BadSyntaxGSM
+    * If that syntax is not followed, returns a BadSyntaxGSM
     object.
 
     * If the arguments specify a chest or corpse that is not present in the
-    current room, returns a .stmsg.various.ContainerNotFoundGSM object.
+    current room, returns a ContainerNotFoundGSM object.
 
     * If the arguments specify a chest that is closed, returns a
-    .stmsg.various.ContainerIsClosedGSM object.
+    ContainerIsClosedGSM object.
 
     * If the arguments are an ungrammatical sentence and are ambiguous about
-    the quantity to put, returns a .stmsg.take.AmountToPutUnclearGSM object.
+    the quantity to put, returns a AmountToPutUnclearGSM object.
 
     * If the arguments specify an item to put that is not present in the
-    character's inventory, returns a .stmsg.put.ItemNotInInventoryGSM object.
+    character's inventory, returns a ItemNotInInventoryGSM object.
 
     * If the arguments specify a quantity of an item to put that is more
-    than the character has, returns a .stmsg.put.TryingToPutMorethanYouHaveGSM
+    than the character has, returns a TryingToPutMorethanYouHaveGSM
     object.
 
     * Otherwise, the item— or the quantity of the item— is removed from
     the character's inventory, placed in the chest or on the corpse, and
-    put in the chest or on the corpse, and a .stmsg.put.AmountPutGSM object is
+    put in the chest or on the corpse, and a AmountPutGSM object is
     returned.
     """
     # The shared private workhorse method is called and it handles
@@ -49,7 +53,7 @@ def put_command(game_state, tokens):
     # that is passed along.
     results = _put_or_take_preproc(game_state, "PUT", tokens)
 
-    if len(results) == 1 and isinstance(results[0], stmsg.GameStateMessage):
+    if len(results) == 1 and isinstance(results[0], GameStateMessage):
         # If it returned an error, I return the tuple.
         return results
     else:
@@ -75,7 +79,7 @@ def put_command(game_state, tokens):
     else:
 
         # Otherwise I return an item-not-in-inventory error.
-        return (stmsg.put.ItemNotInInventoryGSM(item_title, put_amount),)
+        return (ItemNotInInventoryGSM(item_title, put_amount),)
 
     # I use the Item subclass object to get the internal_name, and
     # look it up in the container to see if any amount is already
@@ -89,7 +93,7 @@ def put_command(game_state, tokens):
     if put_amount > amount_possessed:
         # If the amount to put is more than the amount in inventory,
         # I return a trying-to-put-more-than-you-have error.
-        return (stmsg.put.TryingToPutMoreThanYouHaveGSM(item_title, amount_possessed),)
+        return (TryingToPutMoreThanYouHaveGSM(item_title, amount_possessed),)
     elif put_amount is NaN:
         # Otherwise if _put_or_take_preproc returned nan for
         # the put_amount, that means it couldn't be determined from
@@ -109,7 +113,7 @@ def put_command(game_state, tokens):
     game_state.character.drop_item(item, qty=put_amount)
     container.set(item.internal_name, amount_in_container + put_amount, item)
     return (
-        stmsg.put.PutAmountOfItemGSM(
+        PutAmountOfItemGSM(
             item_title,
             container_title,
             container.container_type,

@@ -2378,14 +2378,14 @@ class Test_Lock(unittest.TestCase):
         key = self.command_processor.game_state.items_state.get("Door_Key")
         self.command_processor.game_state.character.pick_up_item(key)
         result = self.command_processor.process(f"lock {self.door_title}")
-        self.assertIsInstance(result[0], advg.stmsg.lock.ElementIsAlreadyUnlockedGSM)
+        self.assertIsInstance(result[0], advg.stmsg.lock.ElementIsAlreadyLockedGSM)
         self.assertEqual(result[0].target, self.door_title)
         self.assertEqual(result[0].message, f"The {self.door_title} is already locked.")
         self.assertTrue(self.door.is_locked)
 
         self.door.is_locked = False
         result = self.command_processor.process(f"lock {self.door_title}")
-        self.assertIsInstance(result[0], advg.stmsg.lock.ElementHasBeenUnlockedGSM)
+        self.assertIsInstance(result[0], advg.stmsg.lock.ElementHasBeenLockedGSM)
         self.assertEqual(result[0].target, self.door_title)
         self.assertEqual(result[0].message, f"You have locked the {self.door_title}.")
         self.assertTrue(self.door.is_locked)
@@ -2396,7 +2396,7 @@ class Test_Lock(unittest.TestCase):
         result = self.command_processor.process("unlock west door")
         result = self.command_processor.process("leave via west door")
         result = self.command_processor.process("lock south door")
-        self.assertIsInstance(result[0], advg.stmsg.lock.ElementIsAlreadyUnlockedGSM)
+        self.assertIsInstance(result[0], advg.stmsg.lock.ElementIsAlreadyLockedGSM)
         self.assertEqual(result[0].target, "south door")
         self.assertEqual(result[0].message, "The south door is already locked.")
 
@@ -2414,7 +2414,7 @@ class Test_Lock(unittest.TestCase):
         key = self.command_processor.game_state.items_state.get("Chest_Key")
         self.command_processor.game_state.character.pick_up_item(key)
         result = self.command_processor.process(f"lock {self.chest_title}")
-        self.assertIsInstance(result[0], advg.stmsg.lock.ElementIsAlreadyUnlockedGSM)
+        self.assertIsInstance(result[0], advg.stmsg.lock.ElementIsAlreadyLockedGSM)
         self.assertEqual(result[0].target, self.chest_title)
         self.assertEqual(
             result[0].message, f"The {self.chest_title} is already locked."
@@ -2422,7 +2422,7 @@ class Test_Lock(unittest.TestCase):
 
         self.chest.is_locked = False
         result = self.command_processor.process(f"lock {self.chest_title}")
-        self.assertIsInstance(result[0], advg.stmsg.lock.ElementHasBeenUnlockedGSM)
+        self.assertIsInstance(result[0], advg.stmsg.lock.ElementHasBeenLockedGSM)
         self.assertEqual(result[0].target, self.chest_title)
         self.assertEqual(result[0].message, f"You have locked the {self.chest_title}.")
         self.assertTrue(self.chest.is_locked)
@@ -5519,7 +5519,7 @@ class Test_Unlock(unittest.TestCase):
         key = self.command_processor.game_state.items_state.get("Door_Key")
         self.command_processor.game_state.character.pick_up_item(key)
         result = self.command_processor.process(f"unlock {self.door_title}")
-        self.assertIsInstance(result[0], advg.stmsg.unlock.ElementIsAlreadyLockedGSM)
+        self.assertIsInstance(result[0], advg.stmsg.unlock.ElementIsAlreadyUnlockedGSM)
         self.assertEqual(result[0].target, self.door_title)
         self.assertEqual(
             result[0].message, f"The {self.door_title} is already unlocked."
@@ -5528,14 +5528,14 @@ class Test_Unlock(unittest.TestCase):
 
         self.door.is_locked = True
         result = self.command_processor.process(f"unlock {self.door_title}")
-        self.assertIsInstance(result[0], advg.stmsg.unlock.ElementHasBeenLockedGSM)
+        self.assertIsInstance(result[0], advg.stmsg.unlock.ElementHasBeenUnlockedGSM)
         self.assertEqual(result[0].target, self.door_title)
         self.assertEqual(result[0].message, f"You have unlocked the {self.door_title}.")
         self.assertFalse(self.door.is_locked)
         self.command_processor.game_state.rooms_state.move(north=True)
 
         result = self.command_processor.process("unlock south door")
-        self.assertIsInstance(result[0], advg.stmsg.unlock.ElementIsAlreadyLockedGSM)
+        self.assertIsInstance(result[0], advg.stmsg.unlock.ElementIsAlreadyUnlockedGSM)
         self.assertEqual(result[0].target, "south door")
         self.assertEqual(result[0].message, "The south door is already unlocked.")
 
@@ -5554,7 +5554,7 @@ class Test_Unlock(unittest.TestCase):
         key = self.command_processor.game_state.items_state.get("Chest_Key")
         self.command_processor.game_state.character.pick_up_item(key)
         result = self.command_processor.process(f"unlock {self.chest_title}")
-        self.assertIsInstance(result[0], advg.stmsg.unlock.ElementIsAlreadyLockedGSM)
+        self.assertIsInstance(result[0], advg.stmsg.unlock.ElementIsAlreadyUnlockedGSM)
         self.assertEqual(result[0].target, self.chest_title)
         self.assertEqual(
             result[0].message, f"The {self.chest_title} is already unlocked."
@@ -5563,7 +5563,7 @@ class Test_Unlock(unittest.TestCase):
 
         self.chest.is_locked = True
         result = self.command_processor.process(f"unlock {self.chest_title}")
-        self.assertIsInstance(result[0], advg.stmsg.unlock.ElementHasBeenLockedGSM)
+        self.assertIsInstance(result[0], advg.stmsg.unlock.ElementHasBeenUnlockedGSM)
         self.assertEqual(result[0].target, self.chest_title)
         self.assertEqual(
             result[0].message, f"You have unlocked the {self.chest_title}."

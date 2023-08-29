@@ -8,13 +8,6 @@ and generating a natural-language response.
 
 from dataclasses import dataclass
 
-from advgame.stmsg import GameStateMessage
-from advgame.stmsg.command import NotRecognizedGSM, NotAllowedNowGSM
-
-from advgame.commands import (
-    INGAME_COMMANDS,
-    PREGAME_COMMANDS,
-)
 from advgame.commands import (
     attack_command,
     begin_game_command,
@@ -41,9 +34,14 @@ from advgame.commands import (
     unequip_command,
     unlock_command,
 )
-
-from advgame.errors import InternalError
+from advgame.commands import (
+    INGAME_COMMANDS,
+    PREGAME_COMMANDS,
+)
 from advgame.elements import GameState
+from advgame.errors import InternalError
+from advgame.stmsg.command import NotRecognizedGSM, NotAllowedNowGSM
+from advgame.stmsg import GameStateMessage
 
 
 __all__ = ("CommandProcessor",)
@@ -132,6 +130,7 @@ class CommandProcessor:
         # said different ways.
 
         match command:
+            
             case "begin":
                 if (
                     len(tokens) >= 1
@@ -146,20 +145,25 @@ class CommandProcessor:
                     command += "_" + tokens.pop(0).lower()
                 elif not len(tokens):
                     command = "begin_game"
+
             case "cast" if len(tokens) and tokens[0].lower() == "spell":
                 # A two-word command.
                 command += "_" + tokens.pop(0).lower()
+
             case "leave" if len(tokens) and tokens[0].lower() in ("using", "via"):
                 # 'via' or 'using' is dropped.
                 tokens.pop(0)
+
             case "look" if len(tokens) and tokens[0].lower() == "at":
                 # A two-word command.
                 command += "_" + tokens.pop(0).lower()
+
             case "pick" if len(tokens) and (
                 tokens[0].lower() == "up" or tokens[0].lower() == "lock"
             ):
                 # Either 'pick lock' or 'pick up', a two-word command.
                 command += "_" + tokens.pop(0).lower()
+
             case "quit":
                 if (
                     len(tokens) >= 1
@@ -171,6 +175,7 @@ class CommandProcessor:
                         # 'quit the game' or 'quit game' becomes 'quit'.
                         tokens.pop(0)
                     tokens.pop(0)
+
             case "set" if len(tokens) and (
                 tokens[0].lower() == "name" or tokens[0].lower() == "class"
             ):
@@ -179,9 +184,11 @@ class CommandProcessor:
                 if len(tokens) and tokens[0].lower() == "to":
                     # 'set class to' becomes 'set class'.
                     tokens.pop(0)
+
             case "show" if len(tokens) and tokens[0].lower() == "inventory":
                 # 'show inventory' becomes 'inventory'.
                 command = tokens.pop(0).lower()
+
             case _:
                 pass
 

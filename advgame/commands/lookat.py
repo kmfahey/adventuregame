@@ -2,11 +2,18 @@
 
 import re
 
-from advgame import stmsg as stmsg
-
 from advgame.commands.constants import COMMANDS_SYNTAX
 from advgame.commands.utils import _look_at_item_detail, _door_selector
-
+from advgame.stmsg import GameStateMessage
+from advgame.stmsg.command import BadSyntaxGSM
+from advgame.stmsg.lookat import (
+    FoundContainerHereGSM,
+    FoundCreatureHereGSM,
+    FoundDoorOrDoorwayGSM,
+    FoundItemOrItemsHereGSM,
+    FoundNothingGSM,
+)
+from advgame.stmsg.various import ContainerNotFoundGSM
 from advgame.elements import Chest, Corpse
 
 
@@ -25,34 +32,34 @@ def look_at_command(game_state, tokens):
     LOOK AT <compass direction> DOOR
     LOOK AT <compass direction> DOORWAY
 
-    * If that syntax is not followed, returns a .stmsg.command.BadSyntaxGSM
+    * If that syntax is not followed, returns a BadSyntaxGSM
     object.
 
     * If looking at a door which is not present in the room, returns a
-    .stmsg.various.DoorNotPresentGSM object.
+    DoorNotPresentGSM object.
 
     * If looking at a door, but the arguments are ambiguous
     and match more than one door in the room, returns a
-    .stmsg.various.AmbiguousDoorSpecifierGSM object.
+    AmbiguousDoorSpecifierGSM object.
 
     * If looking at a chest or corpse which is not present in the room,
-    returns a .stmsg.various.ContainerNotFoundGSM object.
+    returns a ContainerNotFoundGSM object.
 
     * If looking at an item which isn't present (per the arguments)
     on the floor, in a chest, on a corpse, or in inventory, returns a
-    .stmsg.lookat.FoundNothingGSM object.
+    FoundNothingGSM object.
 
     * If looking at a chest or corpse which is present, returns a
-    .stmsg.lookat.FoundCreatureHereGSM object.
+    FoundCreatureHereGSM object.
 
     * If looking at a creature which is present, returns a
-    .stmsg.lookat.FoundCreatureHereGSM object.
+    FoundCreatureHereGSM object.
 
     * If looking at a door or doorway which is present, returns a
-    .stmsg.lookat.FoundDoorOrDoorwayGSM object.
+    FoundDoorOrDoorwayGSM object.
 
     * If looking at an item which is present, returns a
-    .stmsg.lookat.FoundItemOrItemsHereGSM object.
+    FoundItemOrItemsHereGSM object.
     """
     look_at_door_re = re.compile(
         r"""(
@@ -91,7 +98,7 @@ def look_at_command(game_state, tokens):
         or ("in" in tokens and tokens[-1] == "corpse")
         or ("on" in tokens and tokens[-1] == "chest")
     ):
-        return (stmsg.command.BadSyntaxGSM("LOOK AT", COMMANDS_SYNTAX["LOOK AT"]),)
+        return (BadSyntaxGSM("LOOK AT", COMMANDS_SYNTAX["LOOK AT"]),)
 
     # This conditional is more easily accomplished with a regex
     # than a multi-line boolean chain. `look_at_door_re` is defined
@@ -99,7 +106,7 @@ def look_at_command(game_state, tokens):
     elif tokens[-1] in ("door", "doorway") and not look_at_door_re.match(
         " ".join(tokens)
     ):
-        return (stmsg.command.BadSyntaxGSM("LOOK AT", COMMANDS_SYNTAX["LOOK AT"]),)
+        return (BadSyntaxGSM("LOOK AT", COMMANDS_SYNTAX["LOOK AT"]),)
 
     # These four booleans are initialized to False so they can be
     # tested for rue values later.
@@ -141,7 +148,7 @@ def look_at_command(game_state, tokens):
     # is 'door' or 'dooray', _door_selector is used.
     elif tokens[-1] == "door" or tokens[-1] == "doorway":
         result = _door_selector(game_state, tokens)
-        if isinstance(result, tuple) and isinstance(result[0], stmsg.GameStateMessage):
+        if isinstance(result, tuple) and isinstance(result[0], GameStateMessage):
             # If it returns an error, that's passed along.
             return result
         else:
@@ -149,7 +156,7 @@ def look_at_command(game_state, tokens):
             # found-door-or-doorway value is returned with that door
             # object informing the message.
             (door,) = result
-            return (stmsg.lookat.FoundDoorOrDoorwayGSM(door.title.split(" ")[0], door),)
+            return (FoundDoorOrDoorwayGSM(door.title.split(" ")[0], door),)
     else:
         # The tokens don't indicate a door and don't have a
         # location_title to break off the end. The target_title is
@@ -170,17 +177,17 @@ def look_at_command(game_state, tokens):
         or item_on_corpse
         and isinstance(container_here, Chest)
     ):
-        return (stmsg.command.BadSyntaxGSM("look at", COMMANDS_SYNTAX["LOOK AT"]),)
+        return (BadSyntaxGSM("look at", COMMANDS_SYNTAX["LOOK AT"]),)
 
     # If the target_title matches the creature in this room, a
     # found-creature-here value is returned.
     if creature_here is not None and creature_here.title == target_title.lower():
-        return (stmsg.lookat.FoundCreatureHereGSM(creature_here.description),)
+        return (FoundCreatureHereGSM(creature_here.description),)
 
     # If the container here is not None and matches, a
     # found-container-here value is returned.
     elif container_here is not None and container_here.title == target_title.lower():
-        return (stmsg.lookat.FoundContainerHereGSM(container_here),)
+        return (FoundContainerHereGSM(container_here),)
 
     # Otherwise, if the command specified an item that is contained
     # in something (including the inventory), so I test all the
@@ -198,12 +205,12 @@ def look_at_command(game_state, tokens):
                 # _look_at_item_detail() is used to supply a
                 # detailed accounting of the item.
                 return (
-                    stmsg.lookat.FoundItemOrItemsHereGSM(
+                    FoundItemOrItemsHereGSM(
                         _look_at_item_detail(item), item_qty, "inventory"
                     ),
                 )
             # Otherwise, a found-nothing value is returned.
-            return (stmsg.lookat.FoundNothingGSM(target_title, "inventory"),)
+            return (FoundNothingGSM(target_title, "inventory"),)
         else:
             # Otherwise, the item is in a chest or on a corpse.
             # Either one would need to be the value for
@@ -213,7 +220,7 @@ def look_at_command(game_state, tokens):
 
                 # If it doesn't match, a container-not-found error
                 # is returned.
-                return (stmsg.various.ContainerNotFoundGSM(location_title),)
+                return (ContainerNotFoundGSM(location_title),)
 
             # Otherwise, if the container is non-None and its title
             # matches, I iterate through the container's contents
@@ -226,7 +233,7 @@ def look_at_command(game_state, tokens):
                     # value. _look_at_item_detail() is used to
                     # supply a detailed accounting of the item.
                     return (
-                        stmsg.lookat.FoundItemOrItemsHereGSM(
+                        FoundItemOrItemsHereGSM(
                             _look_at_item_detail(item),
                             item_qty,
                             container_here.title,
@@ -235,7 +242,7 @@ def look_at_command(game_state, tokens):
                     )
                 # Otherwise, I return a found-nothing value.
                 return (
-                    stmsg.lookat.FoundNothingGSM(
+                    FoundNothingGSM(
                         target_title,
                         location_title,
                         "chest" if item_in_chest else "corpse",
@@ -244,7 +251,7 @@ def look_at_command(game_state, tokens):
             else:
                 # The container wasn't found, so I return a
                 # container-not-found error.
-                return (stmsg.various.ContainerNotFoundGSM(location_title),)
+                return (ContainerNotFoundGSM(location_title),)
     else:
 
         # The target isn't a creature, or a container, or in a
@@ -260,9 +267,7 @@ def look_at_command(game_state, tokens):
             # _look_at_item_detail() is used to supply a detailed
             # accounting of the item.
             return (
-                stmsg.lookat.FoundItemOrItemsHereGSM(
-                    _look_at_item_detail(item), item_qty, "floor"
-                ),
+                FoundItemOrItemsHereGSM(_look_at_item_detail(item), item_qty, "floor"),
             )
         # Otherwise, a found-nothing value is returned.
-        return (stmsg.lookat.FoundNothingGSM(target_title, "floor"),)
+        return (FoundNothingGSM(target_title, "floor"),)

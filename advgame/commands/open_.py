@@ -1,13 +1,16 @@
 #!/usr/bin/python3
 
-from advgame import stmsg as stmsg
-
 from advgame.commands.utils import (
     _matching_door,
     _preprocessing_for_lock_unlock_open_or_close,
 )
-
 from advgame.elements import Door
+from advgame.stmsg import GameStateMessage
+from advgame.stmsg.open_ import (
+    ElementHasBeenOpenedGSM,
+    ElementIsAlreadyOpenGSM,
+    ElementIsLockedGSM,
+)
 
 
 __all__ = ("open_command",)
@@ -21,36 +24,36 @@ def open_command(game_state, tokens):
     OPEN <door name>
     OPEN <chest name>
 
-    * If that syntax is not followed, returns a .stmsg.command.BadSyntaxGSM
+    * If that syntax is not followed, returns a BadSyntaxGSM
     object.
 
     * If trying to open a door which is not present in the room, returns a
-    .stmsg.various.DoorNotPresentGSM object.
+    DoorNotPresentGSM object.
 
     * If trying to open a door, but the command is ambiguous and matches
-    more than one door, returns a .stmsg.various.AmbiguousDoorSpecifierGSM
+    more than one door, returns a AmbiguousDoorSpecifierGSM
     object.
 
     * If trying to open an item, creature, corpse or doorway, returns a
-    .stmsg.open_.ElementNotOpenableGSM object.
+    ElementNotOpenableGSM object.
 
     * If trying to open a chest that is not present in the room, returns a
-    .stmsg.open_.ElementtoOpenNotHereGSM object.
+    ElementtoOpenNotHereGSM object.
 
     * If trying to open a door or chest that is locked, returns a
-    .stmsg.open_.ElementIsLockedGSM object.
+    ElementIsLockedGSM object.
 
     * If trying to open a door or chest that is already open, returns a
-    .stmsg.open_.ElementIsAlreadyOpenGSM object.
+    ElementIsAlreadyOpenGSM object.
 
     * Otherwise, the chest or door has its is_closed attribute set to False,
-    and returns returns a .stmsg.open_.ElementHasBeenOpenedGSM..
+    and returns returns a ElementHasBeenOpenedGSM..
     """
     # The shared private workhorse method is called and it handles
     # the majority of the error-checking. If it returns an error
     # that is passed along.
     result = _preprocessing_for_lock_unlock_open_or_close(game_state, "OPEN", tokens)
-    if isinstance(result[0], stmsg.GameStateMessage):
+    if isinstance(result[0], GameStateMessage):
         return result
     else:
         # Otherwise the element to open is extracted from the return
@@ -60,11 +63,11 @@ def open_command(game_state, tokens):
     # If the element is locked, a element-is-locked error is
     # returned.
     if element_to_open.is_locked:
-        return (stmsg.open_.ElementIsLockedGSM(element_to_open.title),)
+        return (ElementIsLockedGSM(element_to_open.title),)
     elif not element_to_open.is_closed:
         # Otherwise if it's alreadty open, an
         # element-is-already-open error is returned.
-        return (stmsg.open_.ElementIsAlreadyOpenGSM(element_to_open.title),)
+        return (ElementIsAlreadyOpenGSM(element_to_open.title),)
     elif isinstance(element_to_open, Door):
         # This is a door object, and it only represents _this side_
         # of the door game element; I use _matching_door() to fetch
@@ -78,4 +81,4 @@ def open_command(game_state, tokens):
     # The element has is_closed set to False and an
     # element-has-been-opened value is returned.
     element_to_open.is_closed = False
-    return (stmsg.open_.ElementHasBeenOpenedGSM(element_to_open.title),)
+    return (ElementHasBeenOpenedGSM(element_to_open.title),)

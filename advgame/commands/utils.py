@@ -3,8 +3,6 @@
 from math import nan as NaN
 from itertools import chain
 
-import advgame.stmsg as stmsg
-
 from advgame.commands.constants import COMMANDS_SYNTAX
 from advgame.elements import (
     Chest,
@@ -14,6 +12,22 @@ from advgame.elements import (
     Potion,
     Wand,
     Weapon,
+)
+from advgame.stmsg import GameStateMessage
+from advgame.stmsg.close import ElementNotCloseableGSM, ElementToCloseNotHereGSM
+from advgame.stmsg.command import BadSyntaxGSM
+from advgame.stmsg.drop import AmountToDropUnclearGSM
+from advgame.stmsg.lock import ElementNotLockableGSM, ElementToLockNotHereGSM
+from advgame.stmsg.open_ import ElementNotOpenableGSM, ElementToOpenNotHereGSM
+from advgame.stmsg.pickup import AmountToPickUpUnclearGSM
+from advgame.stmsg.put import AmountToPutUnclearGSM
+from advgame.stmsg.take import AmountToTakeUnclearGSM
+from advgame.stmsg.unlock import ElementNotUnlockableGSM, ElementToUnlockNotHereGSM
+from advgame.stmsg.various import (
+    AmbiguousDoorSpecifierGSM,
+    ContainerIsClosedGSM,
+    ContainerNotFoundGSM,
+    DoorNotPresentGSM,
 )
 from advgame.utils import (
     join_strs_w_comma_conj,
@@ -46,10 +60,10 @@ def _door_selector(game_state, tokens):
     # method.
     #
     # * If the door specifier doesn't match any door in the room, a
-    # .stmsg.various.DoorNotPresentGSM object is returned
+    # DoorNotPresentGSM object is returned
     #
     # * If the door specifier matches more than one door in the
-    # room, a .stmsg.various.AmbiguousDoorSpecifierGSM object is
+    # room, a AmbiguousDoorSpecifierGSM object is
     # returned.
 
     # These variables are initialized to None so they can be checked
@@ -98,7 +112,7 @@ def _door_selector(game_state, tokens):
 
     # If no doors matched, a door-not-present error is returned.
     if len(matching_doors) == 0:
-        return (stmsg.various.DoorNotPresentGSM(compass_dir, tokens[-1]),)
+        return (DoorNotPresentGSM(compass_dir, tokens[-1]),)
     elif len(matching_doors) > 1:
         # Otherwise if more than one door matches, a
         # ambiguous-door-specifier error is returned. If possible,
@@ -111,11 +125,7 @@ def _door_selector(game_state, tokens):
             if len(set(door.door_type for door in matching_doors)) == 1
             else None
         )
-        return (
-            stmsg.various.AmbiguousDoorSpecifierGSM(
-                compass_dirs, tokens[-1], door_type
-            ),
-        )
+        return (AmbiguousDoorSpecifierGSM(compass_dirs, tokens[-1], door_type),)
     else:
         # Otherwise matching_doors is length 1; I have a match, so I
         # return it.
@@ -261,12 +271,12 @@ def _pick_up_or_drop_preproc(command, tokens):
     # :The tokenized command arguments.
     #
     # * If invalid arguments are sent, returns a
-    # .stmsg.command.BadSyntaxGSM object.
+    # BadSyntaxGSM object.
     #
     # * If the player submitted an ungrammatical
     # sentence which is ambiguous as to the quantity
-    # intended, a .stmsg.drop.AmountToDropUnclearGSM object or a
-    # .stmsg.drop.AmountToPickUpUnclearGSM object is returned depending on
+    # intended, a AmountToDropUnclearGSM object or a
+    # AmountToPickUpUnclearGSM object is returned depending on
     # the value in command.
 
     # This long boolean checks whether the first token in tokens can
@@ -279,11 +289,7 @@ def _pick_up_or_drop_preproc(command, tokens):
         # If the quantity indicator is all there is, a syntax error
         # is returned.
         if len(tokens) == 1:
-            return (
-                stmsg.command.BadSyntaxGSM(
-                    command.upper(), COMMANDS_SYNTAX[command.upper()]
-                ),
-            )
+            return (BadSyntaxGSM(command.upper(), COMMANDS_SYNTAX[command.upper()]),)
         # The item title is formed from the rest of the tokens.
         item_title = " ".join(tokens[1:])
 
@@ -294,9 +300,9 @@ def _pick_up_or_drop_preproc(command, tokens):
                 # 's' on it, I return a quantity-unclear error
                 # appropriate to the caller.
                 return (
-                    (stmsg.drop.AmountToDropUnclearGSM(),)
+                    (AmountToDropUnclearGSM(),)
                     if command.lower() == "drop"
-                    else (stmsg.pickup.AmountToPickUpUnclearGSM(),)
+                    else (AmountToPickUpUnclearGSM(),)
                 )
             # Otherwise it implies a quantity of 1.
             item_quantity = 1
@@ -333,9 +339,7 @@ def _pick_up_or_drop_preproc(command, tokens):
             # so, I return a syntax error.
             if item_quantity is NaN:
                 return (
-                    stmsg.command.BadSyntaxGSM(
-                        command.upper(), COMMANDS_SYNTAX[command.upper()]
-                    ),
+                    BadSyntaxGSM(command.upper(), COMMANDS_SYNTAX[command.upper()]),
                 )
         if item_quantity == 1 and item_title.endswith("s"):
             # Repeating an earlier check on a wider set. If
@@ -343,9 +347,9 @@ def _pick_up_or_drop_preproc(command, tokens):
             # in a pluralizing 's', I return the appropriate
             # quantity-unclear value.
             return (
-                (stmsg.drop.AmountToDropUnclearGSM(),)
+                (AmountToDropUnclearGSM(),)
                 if command.lower() == "drop"
-                else (stmsg.drop.AmountToPickUpUnclearGSM(),)
+                else (AmountToPickUpUnclearGSM(),)
             )
     else:
         # I form the item title.
@@ -392,28 +396,24 @@ def _preprocessing_for_lock_unlock_open_or_close(game_state, command, tokens):
     # calling method's context
     #
     # * If the specified game element is not present in the
-    # current room, one of .stmsg.unlock.ElementToUnlockNotHereGSM,
-    # .stmsg.lock.ElementToLockNotHereGSM,
-    # .stmsg.open_.ElementtoOpenNotHereGSM, or
-    # .stmsg.close.ElementToCloseNotHereGSM is returned, depending on
+    # current room, one of ElementToUnlockNotHereGSM,
+    # ElementToLockNotHereGSM,
+    # ElementToOpenNotHereGSM, or
+    # ElementToCloseNotHereGSM is returned, depending on
     # the command argument
     #
     # * If the specified game element is a corpse, creature,
     # doorway or item, it's an invalid element for any of the
-    # calling methods; one of .stmsg.lock.ElementNotLockableGSM,
-    # .stmsg.unlock.ElementNotUnlockableGSM,
-    # .stmsg.open_.ElementNotOpenableGSM, or
-    # .stmsg.close.ElementNotClosableGSM is returned, depending on the
+    # calling methods; one of ElementNotLockableGSM,
+    # ElementNotUnlockableGSM,
+    # ElementNotOpenableGSM, or
+    # ElementNotClosableGSM is returned, depending on the
     # command argument.
 
     # If the command was used with no arguments, a syntax error is
     # returned.
     if not len(tokens):
-        return (
-            stmsg.command.BadSyntaxGSM(
-                command.upper(), COMMANDS_SYNTAX[command.upper()]
-            ),
-        )
+        return (BadSyntaxGSM(command.upper(), COMMANDS_SYNTAX[command.upper()]),)
 
     # door is initialized to None so whether it's non-None later can
     # be a signal.
@@ -433,7 +433,7 @@ def _preprocessing_for_lock_unlock_open_or_close(game_state, command, tokens):
     # error value. If so, the result tuple is returned.
     if tokens[-1] in ("door", "doorway"):
         result = _door_selector(game_state, tokens)
-        if isinstance(result[0], stmsg.GameStateMessage):
+        if isinstance(result[0], GameStateMessage):
             return result
         else:
             # Otherwise, the Door object is extracted. But it may be
@@ -517,25 +517,25 @@ def _preprocessing_for_lock_unlock_open_or_close(game_state, command, tokens):
             else item_targetted.__class__.__name__.lower()
         }
         if command.lower() == "unlock":
-            return (stmsg.unlock.ElementNotUnlockableGSM(target_title, **argd),)
+            return (ElementNotUnlockableGSM(target_title, **argd),)
         elif command.lower() == "lock":
-            return (stmsg.lock.ElementNotLockableGSM(target_title, **argd),)
+            return (ElementNotLockableGSM(target_title, **argd),)
         elif command.lower() == "open":
-            return (stmsg.open_.ElementNotOpenableGSM(target_title, **argd),)
+            return (ElementNotOpenableGSM(target_title, **argd),)
         else:
-            return (stmsg.close.ElementNotCloseableGSM(target_title, **argd),)
+            return (ElementNotCloseableGSM(target_title, **argd),)
     else:
         # Otherwise, the target didn't match *any* game element
         # within the player's reach, so the appropriate error value
         # is returned indicating the target isn't present.
         if command.lower() == "unlock":
-            return (stmsg.unlock.ElementToLockNotHereGSM(target_title),)
+            return (ElementToUnlockNotHereGSM(target_title),)
         elif command.lower() == "lock":
-            return (stmsg.lock.ElementToUnlockNotHereGSM(target_title),)
+            return (ElementToLockNotHereGSM(target_title),)
         elif command.lower() == "open":
-            return (stmsg.open_.ElementToOpenNotHereGSM(target_title),)
+            return (ElementToOpenNotHereGSM(target_title),)
         else:
-            return (stmsg.close.ElementToCloseNotHereGSM(target_title),)
+            return (ElementToCloseNotHereGSM(target_title),)
 
 
 def _put_or_take_preproc(game_state, command, tokens):
@@ -556,15 +556,15 @@ def _put_or_take_preproc(game_state, command, tokens):
     #
     # * If the arguments are an ungrammatical sentence
     # and are ambiguous about the quantity of the item,
-    # returns a .stmsg.take.AmountToPutUnclearGSM object or a
-    # .stmsg.take.AmountToTakeUnclearGSM object.
+    # returns a AmountToPutUnclearGSM object or a
+    # AmountToTakeUnclearGSM object.
     #
     # * If the arguments specify a container title that doesn't
     # match the title of the container in the current room, returns
-    # a .stmsg.various.ContainerNotFoundGSM object.
+    # a ContainerNotFoundGSM object.
     #
     # * If the arguments targeted a chest and the chest is closed,
-    # returns a .stmsg.various.ContainerIsClosedGSM object.
+    # returns a ContainerIsClosedGSM object.
 
     # The current room's container_here value is assigned to a local
     # variable.
@@ -602,11 +602,7 @@ def _put_or_take_preproc(game_state, command, tokens):
     # If the joinword wasn't found, or if it's at the beginning or
     # end of the tokens tuple, I return a syntax error.
     if joinword_index == -1 or joinword_index == 0 or joinword_index + 1 == len(tokens):
-        return (
-            stmsg.command.BadSyntaxGSM(
-                command.upper(), COMMANDS_SYNTAX[command.upper()]
-            ),
-        )
+        return (BadSyntaxGSM(command.upper(), COMMANDS_SYNTAX[command.upper()]),)
 
     # I use the joinword_index to break the tokens tuple into an
     # item_tokens tuple and a container_tokens tuple.
@@ -630,11 +626,7 @@ def _put_or_take_preproc(game_state, command, tokens):
         if len(item_tokens) == 1:
             # item_tokens is *just* ('a',) or ('an',) or ('the',)
             # which is a syntax error.
-            return (
-                stmsg.command.BadSyntaxGSM(
-                    command.upper(), COMMANDS_SYNTAX[command.upper()]
-                ),
-            )
+            return (BadSyntaxGSM(command.upper(), COMMANDS_SYNTAX[command.upper()]),)
         else:
             # Otherwise quantity is 1.
             quantity = 1
@@ -653,9 +645,9 @@ def _put_or_take_preproc(game_state, command, tokens):
             # quantity is 1 but the item title is plural, so I
             # return a syntax error.
             return (
-                (stmsg.take.AmountToTakeUnclearGSM(),)
+                (AmountToTakeUnclearGSM(),)
                 if command == "take"
-                else (stmsg.put.AmountToPutUnclearGSM(),)
+                else (AmountToPutUnclearGSM(),)
             )
 
         # I strip the plural s.
@@ -663,11 +655,7 @@ def _put_or_take_preproc(game_state, command, tokens):
 
     if container_tokens[-1].endswith("s"):
         # The container title is plural, which is a syntax error.
-        return (
-            stmsg.command.BadSyntaxGSM(
-                command.upper(), COMMANDS_SYNTAX[command.upper()]
-            ),
-        )
+        return (BadSyntaxGSM(command.upper(), COMMANDS_SYNTAX[command.upper()]),)
 
     if (
         container_tokens[0] == "a"
@@ -677,11 +665,7 @@ def _put_or_take_preproc(game_state, command, tokens):
         if len(container_tokens) == 1:
             # The container title is *just* ('a',) or ('an',) or
             # ('the',), so I return a syntax error.
-            return (
-                stmsg.command.BadSyntaxGSM(
-                    command.upper(), COMMANDS_SYNTAX[command.upper()]
-                ),
-            )
+            return (BadSyntaxGSM(command.upper(), COMMANDS_SYNTAX[command.upper()]),)
 
         # I strip the article from the container tokens.
         container_tokens = container_tokens[1:]
@@ -694,13 +678,13 @@ def _put_or_take_preproc(game_state, command, tokens):
 
         # There is no container in this room, so I return a
         # container-not-found error.
-        return (stmsg.various.ContainerNotFoundGSM(container_title),)
+        return (ContainerNotFoundGSM(container_title),)
     elif not container_title == container.title:
 
         # The container name specified doesn't match the name of the
         # container in this Room, so I return a container-not-found
         # error.
-        return (stmsg.various.ContainerNotFoundGSM(container_title, container.title),)
+        return (ContainerNotFoundGSM(container_title, container.title),)
 
     elif (
         isinstance(container, Chest)
@@ -711,17 +695,13 @@ def _put_or_take_preproc(game_state, command, tokens):
 
         # The joinword used doesn't match the one appropriate to the
         # type of container here, so I return a syntax error.
-        return (
-            stmsg.command.BadSyntaxGSM(
-                command.upper(), COMMANDS_SYNTAX[command.upper()]
-            ),
-        )
+        return (BadSyntaxGSM(command.upper(), COMMANDS_SYNTAX[command.upper()]),)
 
     elif container.is_closed:
 
         # The container is closed, so I return a container-is-closed
         # error.
-        return (stmsg.various.ContainerIsClosedGSM(container.title),)
+        return (ContainerIsClosedGSM(container.title),)
 
     # All the error checks passed, so I return the values determined
     # from the tokens argument.

@@ -15,7 +15,7 @@ def begin_game_command(game_state, tokens):
     """
     Execute the BEGIN GAME command. The return value is always
     in a tuple even when it's of length 1. Returns one or more
-    statemsgs.GameStateMessage subclass instances. Takes no arguments.
+    stmsg.GameStateMessage subclass instances. Takes no arguments.
 
     * If any arguments are given, returns a BadSyntaxGSM object.
 

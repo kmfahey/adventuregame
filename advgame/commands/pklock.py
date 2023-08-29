@@ -6,10 +6,17 @@ from advgame import stmsg as stmsg
 
 from advgame.commands.constants import COMMANDS_SYNTAX
 from advgame.commands.utils import _door_selector, _matching_door
-
 from advgame.elements import (
     Corpse,
     Doorway,
+)
+from advgame.stmsg import GameStateMessage
+from advgame.stmsg.command import BadSyntaxGSM, ClassRestrictedGSM
+from advgame.stmsg.pklock import (
+    ElementNotLockpickableGSM,
+    TargetHasBeenUnlockedGSM,
+    TargetNotFoundGSM,
+    TargetNotLockedGSM,
 )
 
 

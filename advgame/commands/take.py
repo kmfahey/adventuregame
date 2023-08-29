@@ -2,9 +2,13 @@
 
 from math import nan as NaN
 
-from advgame import stmsg as stmsg
-
 from advgame.commands.utils import _put_or_take_preproc
+from advgame.stmsg import GameStateMessage
+from advgame.stmsg.take import (
+    ItemNotFoundInContainerGSM,
+    ItemOrItemsTakenGSM,
+    TryingToTakeMoreThanIsPresentGSM,
+)
 
 
 __all__ = ("take_command",)
@@ -18,29 +22,29 @@ def take_command(game_state, tokens):
     TAKE <item name> FROM <container name>
     TAKE <number> <item name> FROM <container name>
 
-    * If that syntax is not followed, returns a .stmsg.command.BadSyntaxGSM
+    * If that syntax is not followed, returns a BadSyntaxGSM
     object.
 
     * If the specified container isn't present in the current room, returns
-    a .stmsg.various.ContainerNotFoundGSM object.
+    a ContainerNotFoundGSM object.
 
     * If the specified container is a chest and the chest is closed, returns
-    a .stmsg.various.ContainerIsClosedGSM object.
+    a ContainerIsClosedGSM object.
 
     * If the arguments are an ungrammatical sentence and are
     ambiguous as to what quantity the player means to take, returns a
-    .stmsg.take.AmountToTakeUnclearGSM object.
+    AmountToTakeUnclearGSM object.
 
     * If the specified item is not present in the specified chest or on the
-    specified corpse, returns a .stmsg.take.ItemNotFoundInContainerGSM object.
+    specified corpse, returns a ItemNotFoundInContainerGSM object.
 
     * If the specified quantity of the item is greater than the quantity of
     that item in the chest or on the corpse, returns
-    a .stmsg.take.TryingToTakeMoreThanIsPresentGSM object.
+    a TryingToTakeMoreThanIsPresentGSM object.
 
     * Otherwise, the item— or the quantity of the item— is removed from
     the chest or the corpse and added to the character's inventory, and a
-    .stmsg.take.ItemOrItemsTakenGSM object is returned.
+    ItemOrItemsTakenGSM object is returned.
     """
     # take_command() shares logic with put_command() in a private
     # workhorse method _put_or_take_preproc().
@@ -48,7 +52,7 @@ def take_command(game_state, tokens):
 
     # As always with private workhorse methods, it may have returned
     # an error value; if so, I return it.
-    if len(results) == 1 and isinstance(results[0], stmsg.GameStateMessage):
+    if len(results) == 1 and isinstance(results[0], GameStateMessage):
         return results
     else:
         # Otherwise, I extract the values parsed out of tokens from
@@ -64,7 +68,7 @@ def take_command(game_state, tokens):
     )
     if len(matching_item) == 0:
         return (
-            stmsg.take.ItemNotFoundInContainerGSM(
+            ItemNotFoundInContainerGSM(
                 container_title,
                 quantity_to_take,
                 container.container_type,
@@ -85,7 +89,7 @@ def take_command(game_state, tokens):
         # much is in the Container, so I return a
         # trying-to-take-more-than-is-present error.
         return (
-            stmsg.take.TryingToTakeMoreThanIsPresentGSM(
+            TryingToTakeMoreThanIsPresentGSM(
                 container_title,
                 container.container_type,
                 item_title,
@@ -107,6 +111,4 @@ def take_command(game_state, tokens):
     # I add the item in the given quantity to the player character's
     # inventory and return an item-or-items-taken value.
     game_state.character.pick_up_item(item, qty=quantity_to_take)
-    return (
-        stmsg.take.ItemOrItemsTakenGSM(container_title, item_title, quantity_to_take),
-    )
+    return (ItemOrItemsTakenGSM(container_title, item_title, quantity_to_take),)

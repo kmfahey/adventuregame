@@ -10,8 +10,8 @@ from advgame.stmsg import GameStateMessage
 from advgame.stmsg.command import BadSyntaxGSM
 from advgame.stmsg.lock import (
     DontPossessCorrectKeyGSM,
-    ElementHasBeenUnlockedGSM,
-    ElementIsAlreadyUnlockedGSM,
+    ElementHasBeenLockedGSM,
+    ElementIsAlreadyLockedGSM,
 )
 
 
@@ -87,7 +87,7 @@ def lock_command(game_state, tokens):
     # If the element_to_lock is already locked, a
     # element-is-already-locked error is returned.
     elif element_to_lock.is_locked:
-        return (ElementIsAlreadyUnlockedGSM(element_to_lock.title),)
+        return (ElementIsAlreadyLockedGSM(element_to_lock.title),)
     elif isinstance(element_to_lock, Door):
         # This is a door object, and it only represents _this side_
         # of the door game element; I use _matching_door() to fetch
@@ -101,4 +101,4 @@ def lock_command(game_state, tokens):
     # The element_to_lock's is_locked attribute is set to rue, and a
     # Telement-has-been-locked value is returned.
     element_to_lock.is_locked = True
-    return (ElementHasBeenUnlockedGSM(element_to_lock.title),)
+    return (ElementHasBeenLockedGSM(element_to_lock.title),)

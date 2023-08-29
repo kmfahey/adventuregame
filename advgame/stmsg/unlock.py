@@ -66,7 +66,7 @@ class ElementNotUnlockableGSM(GameStateMessage):
         self.target_type = target_type
 
 
-class ElementHasBeenLockedGSM(GameStateMessage):
+class ElementHasBeenUnlockedGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.unlock_command() when the
     player successfully unlocks a chest or door.
@@ -82,7 +82,7 @@ class ElementHasBeenLockedGSM(GameStateMessage):
         self.target = target
 
 
-class ElementIsAlreadyLockedGSM(GameStateMessage):
+class ElementIsAlreadyUnlockedGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.unlock_command() when the
     player tries to unlock a door or chest that is already unlocked.
@@ -98,7 +98,7 @@ class ElementIsAlreadyLockedGSM(GameStateMessage):
         self.target = target
 
 
-class ElementToLockNotHereGSM(GameStateMessage):
+class ElementToUnlockNotHereGSM(GameStateMessage):
     """
     Returned by advgame.process.CommandProcessor.unlock_command() when
     the player tries to unlock a door or chest that is not present in the

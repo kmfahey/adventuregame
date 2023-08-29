@@ -1,12 +1,17 @@
 #!/usr/bin/python3
 
-from advgame import stmsg as stmsg
-
-from advgame.elements import Door
 from advgame.commands.constants import COMMANDS_SYNTAX
 from advgame.commands.utils import (
     _preprocessing_for_lock_unlock_open_or_close,
     _matching_door,
+)
+from advgame.elements import Door
+from advgame.stmsg import GameStateMessage
+from advgame.stmsg.command import BadSyntaxGSM
+from advgame.stmsg.unlock import (
+    DontPossessCorrectKeyGSM,
+    ElementHasBeenUnlockedGSM,
+    ElementIsAlreadyUnlockedGSM,
 )
 
 
@@ -21,41 +26,41 @@ def unlock_command(game_state, tokens):
     UNLOCK <door\u00A0name>
     UNLOCK <chest\u00A0name>
 
-    * If that syntax is not followed, returns a .stmsg.command.BadSyntaxGSM
+    * If that syntax is not followed, returns a BadSyntaxGSM
     object.
 
     * If the arguments specify a door that is not present in the room,
-    returns a .stmsg.various.DoorNotPresentGSM object.
+    returns a DoorNotPresentGSM object.
 
     * If the arguments given match more than one door in the room, returns a
-    .stmsg.various.AmbiguousDoorSpecifierGSM object.
+    AmbiguousDoorSpecifierGSM object.
 
     * If the specified door or chest is not present in the current room,
-    returns a .stmsg.unlock.ElementToUnlockNotHereGSM object.
+    returns a ElementToUnlockNotHereGSM object.
 
     * If the specified element is a doorway, item, creature or corpse,
-    returns a .stmsg.unlock.ElementNotUnlockableGSM object.
+    returns a ElementNotUnlockableGSM object.
 
     * If the character does not possess the requisite door or
     chest key to lock the specified door or chest, returns an
-    .stmsg.unlock.DontPossessCorrectKeyGSM object.
+    DontPossessCorrectKeyGSM object.
 
     * If the specified door or chest is already unlocked, returns a
-    .stmsg.unlock.ElementIsAlreadyUnlockedGSM object.
+    ElementIsAlreadyUnlockedGSM object.
 
     * Otherwise, the specified door or chest is unlocked, and a
-    .stmsg.unlock.ElementHasBeenUnlockedGSM object is returned.
+    ElementHasBeenUnlockedGSM object is returned.
     """
     # This command requires an argument; so if it was called with no
     # arguments, I return a syntax error.
     if len(tokens) == 0:
-        return (stmsg.command.BadSyntaxGSM("UNLOCK", COMMANDS_SYNTAX["UNLOCK"]),)
+        return (BadSyntaxGSM("UNLOCK", COMMANDS_SYNTAX["UNLOCK"]),)
 
     # unlock_command() shares preprocessing logic with
     # lock_command(), open_command() and close_command(), so a
     # private workhorse method is called.
     result = _preprocessing_for_lock_unlock_open_or_close(game_state, "UNLOCK", tokens)
-    if isinstance(result[0], stmsg.GameStateMessage):
+    if isinstance(result[0], GameStateMessage):
         # If an error value is returned, I return it in turn.
         return result
     else:
@@ -74,15 +79,11 @@ def unlock_command(game_state, tokens):
     ):
         # If the required key is not present, I return a
         # don't-possess-correct-key error.
-        return (
-            stmsg.unlock.DontPossessCorrectKeyGSM(
-                element_to_unlock.title, key_required
-            ),
-        )
+        return (DontPossessCorrectKeyGSM(element_to_unlock.title, key_required),)
     elif element_to_unlock.is_locked is False:
         # Otherwise, if the item is already unlocked, I return an
         # element-is-already-unlocked error.
-        return (stmsg.unlock.ElementIsAlreadyLockedGSM(element_to_unlock.title),)
+        return (ElementIsAlreadyUnlockedGSM(element_to_unlock.title),)
     elif isinstance(element_to_unlock, Door):
         # This is a door object, and it only represents _this side_
         # of the door game element; I use _matching_door() to fetch
@@ -96,4 +97,4 @@ def unlock_command(game_state, tokens):
     # I unlock the element, and return an element-has-been-unlocked
     # value.
     element_to_unlock.is_locked = False
-    return (stmsg.unlock.ElementHasBeenLockedGSM(element_to_unlock.title),)
+    return (ElementHasBeenUnlockedGSM(element_to_unlock.title),)
