@@ -2,16 +2,16 @@
 
 from iniconfig import IniConfig
 
-from advgame.stmsg.quit import HaveQuitTheGameGSM
-from advgame.stmsg.be_atkd import CharacterDeathGSM
-from advgame.stmsg.leave import WonTheGameGSM
 from advgame.data import ini_file_texts
+from advgame.elements.characters import GameState
 from advgame.elements.characters import ItemsState
+from advgame.elements.containers import ContainersState, CreaturesState
 from advgame.elements.doors import DoorsState
-from advgame.elements.containers import ContainersState
-from advgame.elements.characters import CreaturesState, GameState
 from advgame.elements.rooms import RoomsState
 from advgame.process import CommandProcessor
+from advgame.stmsg.be_atkd import CharacterDeathGSM
+from advgame.stmsg.leave import WonTheGameGSM
+from advgame.stmsg.quit import HaveQuitTheGameGSM
 from advgame.utils import textwrapper
 
 
