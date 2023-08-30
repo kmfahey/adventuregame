@@ -24,15 +24,13 @@ def open_command(game_state, tokens):
     OPEN <door name>
     OPEN <chest name>
 
-    * If that syntax is not followed, returns a BadSyntaxGSM
-    object.
+    * If that syntax is not followed, returns a BadSyntaxGSM object.
 
     * If trying to open a door which is not present in the room, returns a
     DoorNotPresentGSM object.
 
     * If trying to open a door, but the command is ambiguous and matches
-    more than one door, returns a AmbiguousDoorSpecifierGSM
-    object.
+    more than one door, returns a AmbiguousDoorSpecifierGSM object.
 
     * If trying to open an item, creature, corpse or doorway, returns a
     ElementNotOpenableGSM object.

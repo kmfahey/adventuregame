@@ -13,8 +13,8 @@ __all__ = (
 
 class DroppedItemGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.drop_command() when the
-    player successfully drops an item on the floor.
+    Returned by drop_command() when the player successfully drops an item on
+    the floor.
     """
 
     __slots__ = (
@@ -94,9 +94,9 @@ class DroppedItemGSM(GameStateMessage):
 
 class AmountToDropUnclearGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.drop_command() when the
-    player writes an ungrammatical sentence that is ambiguous as to how many
-    of the item they intend to target.
+    Returned by drop_command() when the player writes an ungrammatical
+    sentence that is ambiguous as to how many of the item they intend to
+    target.
     """
 
     @property
@@ -109,8 +109,8 @@ class AmountToDropUnclearGSM(GameStateMessage):
 
 class TryingToDropItemYouDontHaveGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.drop_command() when the
-    player specifies an item to drop that is not in their inventory.
+    Returned by drop_command() when the player specifies an item to drop
+    that is not in their inventory.
     """
 
     __slots__ = "item_title", "amount_attempted"
@@ -140,9 +140,9 @@ class TryingToDropItemYouDontHaveGSM(GameStateMessage):
 
 class TryingToDropMoreThanYouHaveGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.drop_command() when the
-    player specifies a quantity of a certain item to drop that is more than
-    the quantity of that item that they actually possess.
+    Returned by drop_command() when the player specifies a quantity of a
+    certain item to drop that is more than the quantity of that item that
+    they actually possess.
     """
 
     __slots__ = "item_title", "amount_attempted", "amount_had"

@@ -16,10 +16,9 @@ __all__ = (
 
 class FoundContainerHereGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.look_at_command() when the
-    player targets a chest or a corpse. If it's a chest and it's unlocked,
-    the contents of the chest are conveyed. If it's a corpse, the corpse's
-    possessions are conveyed.
+    Returned by look_at_command() when the player targets a chest or a
+    corpse. If it's a chest and it's unlocked, the contents of the chest are
+    conveyed. If it's a corpse, the corpse's possessions are conveyed.
     """
 
     __slots__ = (
@@ -121,8 +120,8 @@ class FoundContainerHereGSM(GameStateMessage):
 
 class FoundCreatureHereGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.look_command() when the
-    player targets a creature in the dungeon's current room.
+    Returned by look_command() when the player targets a creature in the
+    dungeon's current room.
     """
 
     __slots__ = ("creature_description",)
@@ -137,8 +136,8 @@ class FoundCreatureHereGSM(GameStateMessage):
 
 class FoundDoorOrDoorwayGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.look_at_command() when the
-    player targets a door or doorway in the current dungeon room.
+    Returned by look_at_command() when the player targets a door or doorway
+    in the current dungeon room.
     """
 
     __slots__ = "compass_dir", "door"
@@ -167,11 +166,10 @@ class FoundDoorOrDoorwayGSM(GameStateMessage):
 
 class FoundItemOrItemsHereGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.look_at_command() when the
-    player targets an item that is present on the floor of current room or
-    in their inventory or in a chest or on a corpse's person as specified by
-    the player. It conveys the item's description attribute and specifies
-    how many are present.
+    Returned by look_at_command() when the player targets an item that is
+    present on the floor of current room or in their inventory or in a chest
+    or on a corpse's person as specified by the player. It conveys the
+    item's description attribute and specifies how many are present.
     """
 
     __slots__ = "item_description", "item_qty"
@@ -208,8 +206,8 @@ class FoundItemOrItemsHereGSM(GameStateMessage):
 
 class FoundNothingGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.look_at_command() when the
-    player targets an item that can't be found where they said it was.
+    Returned by look_at_command() when the player targets an item that can't
+    be found where they said it was.
     """
 
     __slots__ = "item_title", "item_location", "location_type"

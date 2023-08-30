@@ -17,17 +17,14 @@ def close_command(game_state, tokens):
     Execute the CLOSE command. The return value is always in a tuple even
     when it's of length 1. The CLOSE command has the following usage:
 
-    CLOSE <door name>
-    CLOSE <chest name>
+    CLOSE <door name> chest name>
 
-    * If that syntax is not followed, returns a BadSyntaxGSM
-    object.
+    * If that syntax is not followed, returns a BadSyntaxGSM object.
 
     * If there is no matching chest or door in the room, returns a
     ElementToCloseNotHereGSM object.
 
-    * If there is no matching door, returns a DoorNotPresentGSM
-    object.
+    * If there is no matching door, returns a DoorNotPresentGSM object.
 
     * If more than one door in the room matches, returns a
     AmbiguousDoorSpecifierGSM object.

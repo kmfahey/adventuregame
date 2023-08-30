@@ -2,8 +2,8 @@
 
 """
 The advgame.utils module comprises a small collection of utility
-functions used by other modules in the package to expedite common tasks in the
-codebase.
+functions used by other modules in the package to expedite common tasks
+in the codebase.
 """
 
 import re
@@ -32,8 +32,8 @@ __all__ = (
 
 def join_strs_w_comma_conj(str_list, conjunction="and"):
     """
-    This function automates the task of joining a sequence of strings with commas
-    and a conjunction.
+    This function automates the task of joining a sequence of strings with
+    commas and a conjunction.
 
     >>> join_strs_w_comma_conj(['foo'], 'and')
     'foo'
@@ -43,8 +43,8 @@ def join_strs_w_comma_conj(str_list, conjunction="and"):
     'foo, bar, and baz'
 
     :str_list:    The sequence of strings to join.
-    :conjunction: The conjunction to use with sequences longer than 1 element.
-                  Typical values include 'and' or 'or'.
+    :conjunction: The conjunction to use with sequences longer than 1
+    element. Typical values include 'and' or 'or'.
     :return:      Returns a grammatical comma-separated list string.
     """
     if len(str_list) == 0:
@@ -112,9 +112,9 @@ _digit_lexical_number_map = {
 
 def lexical_number_to_digits(lexical_number):
     """
-    This function parses a lexical representation of a number between one and
-    ninety-nine, and returns an int that is equivalent to that number. For lexical
-    numbers outside of one to ninety-nine, NaN is returned.
+    This function parses a lexical representation of a number between one
+    and ninety-nine, and returns an int that is equivalent to that number.
+    For lexical numbers outside of one to ninety-nine, NaN is returned.
 
     >>> lexical_number_to_digits('one')
     1
@@ -123,9 +123,9 @@ def lexical_number_to_digits(lexical_number):
     >>> lexical_number_to_digits('one hundred and sixty')
     nan
 
-    :lexical_number: The textual representation of a number to parse. Must be
-    between one and ninety-nine inclusive. :return: Returns an int, or NaN
-    (which is a float).
+    :lexical_number: The textual representation of a number to parse. Must
+    be between one and ninety-nine inclusive. :return: Returns an int, or
+    NaN (which is a float).
     """
 
     # The lexical number is not in the range this function can parse, so
@@ -153,8 +153,9 @@ def lexical_number_to_digits(lexical_number):
 
 def usage_verb(item_type, gerund=True):
     """
-    This convenience function returns the appropriate verb to use when referring to
-    how a character is described as using an equippable type of item.
+    This convenience function returns the appropriate verb to use when
+    referring to how a character is described as using an equippable type of
+    item.
 
     >>> usage_verb('armor', gerund=True)
     'wearing'
@@ -163,18 +164,19 @@ def usage_verb(item_type, gerund=True):
     >>> usage_verb('weapon', gerund=True)
     'wielding'
 
-    :item_type: Either 'armor', 'shield', 'weapon', or 'wand'. :gerund: Either True
-    (to receive the gerund) or False (to receive the present indicative). :return:
-    The verb string matching how the item is used.
+    :item_type: Either 'armor', 'shield', 'weapon', or 'wand'. :gerund:
+    Either True (to receive the gerund) or False (to receive the present
+    indicative). :return: The verb string matching how the item is used.
     """
-    if item_type == "armor":
-        return "wearing" if gerund else "wear"
-    elif item_type == "shield":
-        return "carrying" if gerund else "carry"
-    elif item_type == "weapon":
-        return "wielding" if gerund else "wield"
-    else:
-        return "using" if gerund else "use"
+    match item_type:
+        case "armor":
+            return "wearing" if gerund else "wear"
+        case "shield":
+            return "carrying" if gerund else "carry"
+        case "weapon":
+            return "wielding" if gerund else "wield"
+        case _:
+            return "using" if gerund else "use"
 
 
 # In D&D, the standard notation for dice rolling is of the form
@@ -193,12 +195,13 @@ _dice_expression_re = re.compile(r"([1-9]+)d([1-9][0-9]*)([-+][1-9][0-9]*)?")
 
 def roll_dice(dice_expr):
     """
-    This function accepts a standard Dungeons & Dragons dice expression (such as
-    1d20+5, 1d8+2, or 3d10-3), uses randint() to simulate a dice roll or
-    rolls with the given modifier, and returns the computed random value>
+    This function accepts a standard Dungeons & Dragons dice expression
+    (such as 1d20+5, 1d8+2, or 3d10-3), uses randint() to simulate a dice
+    roll or rolls with the given modifier, and returns the computed random
+    value>
 
-    :dice_expr: A dice expression of the form #d#[±#]. return: A random number
-    :value, as an int.
+    :dice_expr: A dice expression of the form #d#[±#]. return: A random
+    number value, as an int.
     """
     match = _dice_expression_re.match(dice_expr)
     if not match:
@@ -222,12 +225,12 @@ def roll_dice(dice_expr):
 
 def textwrapper(paragraphs, width=80):
     """
-    This function accepts a multiline string comprising paragraphs of unwrapped
-    text, separately wraps each one to 80 columns, and returns the wrapped
-    paragraphs as a string.
+    This function accepts a multiline string comprising paragraphs of
+    unwrapped text, separately wraps each one to 80 columns, and returns the
+    wrapped paragraphs as a string.
 
-    :paragraphs: A multi-line string of text. return: The text input wrapped to 80
-    :columns paragraph-by-paragraph.
+    :paragraphs: A multi-line string of text. return: The text input wrapped
+    to 80 columns paragraph-by-paragraph.
     """
     # The text is broken into separate paragraph strings and applies
     # wrap to each one.

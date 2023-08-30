@@ -55,8 +55,8 @@ class Door(IniEntry):
         detects which Door subclass should be instantiated from the arguments by
         reading the door_type value.
 
-        :**door_dict: The key-value pairs to initialize the Door subclass
-                      object with.
+        :**door_dict: The key-value pairs to initialize the Door subclass object
+        with.
         """
         if door_dict["door_type"] == "doorway":
             door = Doorway(**door_dict)
@@ -75,7 +75,7 @@ class Door(IniEntry):
         room in the linkage.
 
         :room_internal_name: The internal name of a Room object.
-        :return:             A Room object.
+        :return: A Room object.
         """
 
         if room_internal_name not in self._linked_rooms_internal_names:
@@ -140,8 +140,8 @@ class DoorsState:
         that's later in the sort order is the inner dict's key.
 
         :**dict_of_dicts: A structure of internal name keys corresponding to
-                          dict values which are key-value pairs to initialize an
-                          individual Door object with.
+        dict values which are key-value pairs to initialize an individual Door
+        object with.
         """
         self._contents = defaultdict(dict)
 
@@ -165,10 +165,10 @@ class DoorsState:
         **dict-of-dicts.
 
         :room_1_intern_name: The internal name of one of the two linked Room
-                             objects.
-        :room_2_intern_name: The internal name of the other of the two linked Room
-                             objects.
-        :return:             A boolean.
+        objects.
+        :room_2_intern_name: The internal name of the other of the two linked
+        Room objects.
+        :return: A boolean.
         """
         return (
             room_1_intrn_name in self._contents
@@ -182,10 +182,10 @@ class DoorsState:
         present.
 
         :room_1_intern_name: The internal name of one of the two linked Room
-                             objects.
-        :room_2_intern_name: The internal name of the other of the two linked Room
-                             objects.
-        :return:             A Door object.
+        objects.
+        :room_2_intern_name: The internal name of the other of the two linked
+        Room objects.
+        :return: A Door object.
         """
         return self._contents[room_1_intrn_name][room_2_intrn_name]
 
@@ -197,11 +197,11 @@ class DoorsState:
         internal name as the key to the inner dictionary.
 
         :room_1_intern_name: The internal name of one of the two linked Room
-                             objects.
-        :room_2_intern_name: The internal name of the other of the two linked Room
-                             objects.
-        :door:               A Door object.
-        :return:             None.
+        objects.
+        :room_2_intern_name: The internal name of the other of the two linked
+        Room objects.
+        :door: A Door object.
+        :return: None.
         """
         self._contents[room_1_intrn_name][room_2_intrn_name] = door
 
@@ -212,11 +212,11 @@ class DoorsState:
         keys.
 
         :room_1_intern_name: The internal name of one of the two linked Room
-                             objects.
-        :room_2_intern_name: The internal name of the other of the two linked Room
-                             objects.
-        :door:               A Door object.
-        :return:             None.
+        objects.
+        :room_2_intern_name: The internal name of the other of the two linked
+        Room objects.
+        :door: A Door object.
+        :return: None.
         """
         del self._contents[room_1_intrn_name][room_2_intrn_name]
 
@@ -227,7 +227,7 @@ class DoorsState:
         retrieve a Door subclass object.
 
         :return: A list of 2-tuples comprising pairs of Room internal name
-                 strings.
+        strings.
         """
         keys_list = list()
         for room_1_name in self._contents.keys():
@@ -253,8 +253,8 @@ class DoorsState:
         subclass object internal names that are a key to the container, coupled
         with the Door subclass object that is the value to that key.
 
-        :return: A list of 3-tuples, comprised of a string (the internal
-                 name), an int (the quantity) and an Item subclass object.
+        :return: A list of 3-tuples, comprised of a string (the internal name),
+        an int (the quantity) and an Item subclass object.
         """
         items_list = list()
         for room_1_name in self._contents.keys():

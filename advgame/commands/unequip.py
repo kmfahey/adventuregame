@@ -19,14 +19,13 @@ def unequip_command(game_state, tokens):
     UNEQUIP <wand name>
     UNEQUIP <weapon name>
 
-    * If that syntax is not followed, returns a BadSyntaxGSM
-    object.
+    * If that syntax is not followed, returns a BadSyntaxGSM object.
 
     * If the character does not have the item equipped, returns a
     ItemNotEquippedGSM object.
 
-    * Otherwise, the specified item is unequipped, and a
-    ItemUnequippedGSM is returned.
+    * Otherwise, the specified item is unequipped, and a ItemUnequippedGSM
+    is returned.
     """
     # This command requires an argument so if none was supplied I
     # return a syntax error.

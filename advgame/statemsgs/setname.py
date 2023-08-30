@@ -9,9 +9,8 @@ __all__ = ("InvalidPart", "NameSet")
 
 class InvalidPartGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.set_name_command() when the
-    player tries to set a name that is not one or more alphabetic titelcased
-    strings.
+    Returned by set_name_command() when the player tries to set a name that
+    is not one or more alphabetic titelcased strings.
     """
 
     __slots__ = ("name_part",)
@@ -29,8 +28,7 @@ class InvalidPartGSM(GameStateMessage):
 
 class NameSetGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.set_name_command() when the
-    player sets a name.
+    Returned by set_name_command() when the player sets a name.
     """
 
     __slots__ = ("name",)

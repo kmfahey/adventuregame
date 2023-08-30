@@ -41,12 +41,11 @@ class Container(IniEntry, ItemsMultiState):
         it can be used to look up Item subclass objects' internal names and
         populate the container.
 
-        :items_state:       An Item_State object.
-        :internal_name:     The internal name of the container.
-        :*item_objs:        A tuple of the Item objects contained by the
-                            container.
+        :items_state: An Item_State object.
+        :internal_name: The internal name of the container.
+        :*item_objs: A tuple of the Item objects contained by the container.
         :**ini_constr_argd: The key-value pairs from containers.ini to
-                            instantiate the Container object with.
+        instantiate the Container object with.
         """
         contents_str = ini_constr_argd.pop("contents", None)
         IniEntry.__init__(self, internal_name=internal_name, **ini_constr_argd)
@@ -90,9 +89,9 @@ class Container(IniEntry, ItemsMultiState):
         featured in an IniConfig object's section attribute, and determines
         which Container subclass is appropriate to instantiate from the data.
 
-        :items_state:      An ItemsState object.
+        :items_state: An ItemsState object.
         :**container_dict: A dict of key-value pairs to instantiate the
-                           Container subclass with.
+        Container subclass with.
         """
         if container_dict["container_type"] == "chest":
             container = Chest(items_state, **container_dict)
@@ -115,10 +114,10 @@ class ContainersState(ItemsState):
         **dict-of-dicts, which it iterates down to instantiate the Container
         subclass objects that the container is populated with.
 
-        :items_state:     An ItemsState object.
+        :items_state: An ItemsState object.
         :**dict_of_dicts: A structure of internal name keys corresponding to
-                          dict values which are key-value pairs to initialize an
-                          individual Container subclass object with.
+        dict values which are key-value pairs to initialize an individual
+        Container subclass object with.
         """
         self._contents = dict()
         for container_internal_name, container_dict in dict_of_dicts.items():
@@ -182,10 +181,10 @@ class Creature(IniEntry, Character):
         scores, populates its inventory, and sets up its equipment from its ini
         file data.
 
-        :items_state:   An ItemsState object.
+        :items_state: An ItemsState object.
         :internal_name: A string, the internal name of the creature.
-        :**argd:        A dict, the key-value pairs to instantiate the
-                        Creature object from.
+        :**argd: A dict, the key-value pairs to instantiate the Creature object
+        from.
         """
 
         # _separate_argd_into_different_arg_sets() is a utility function
@@ -226,10 +225,10 @@ class Creature(IniEntry, Character):
         it into Character.__init__() arguments, IniEntry.__init__() arguments,
         inventory quantity-internal name pairs, and an equipment dict.
 
-        :items_state:   An ItemsState object.
+        :items_state: An ItemsState object.
         :intrn_name: A string, the creature's internal name.
-        :**argd:        The key-value pairs to differentiate into different
-                        sets of arguments.
+        :**argd: The key-value pairs to differentiate into different sets of
+        arguments.
         """
 
         # Character's __init__ args are formed first. dict.pop is used
@@ -304,10 +303,10 @@ class Creature(IniEntry, Character):
         name pairs, and the equipment dict, and uses them to initialize the
         creature's inventory and equipped items.
 
-        :items_state:              An ItemsState object.
-        :invent_qty_name_pairs: A tuple of 2-tuples of item quantity ints
-                                   and internal name strings.
-        :equip_argd:           A dictionary of equipment assignments.
+        :items_state: An ItemsState object.
+        :invent_qty_name_pairs: A tuple of 2-tuples of item quantity ints and
+        internal name strings.
+        :equip_argd: A dictionary of equipment assignments.
         """
 
         # The internal_name pairs in invent_qty_name_pairs are used to
@@ -381,10 +380,10 @@ class CreaturesState(State):
         because the Creature class is not subclassed to delineate different
         types of creature.
 
-        :items_state:     An ItemsState object.
+        :items_state: An ItemsState object.
         :**dict_of_dicts: A structure of internal name keys corresponding to
-                          dict values which are key-value pairs to initialize an
-                          individual Creature object with.
+        dict values which are key-value pairs to initialize an individual
+        Creature object with.
         """
         self._contents = dict()
         for creature_internal_name, creature_dict in dict_of_dicts.items():

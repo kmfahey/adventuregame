@@ -19,11 +19,10 @@ def equip_command(game_state, tokens):
     EQUIP <wand name>
     EQUIP <weapon name>
 
-    * If that syntax is not followed, returns a BadSyntaxGSM
-    object.
+    * If that syntax is not followed, returns a BadSyntaxGSM object.
 
-    * If the item isn't in inventory, returns a
-    NoSuchItemInInventoryGSM object.
+    * If the item isn't in inventory, returns a NoSuchItemInInventoryGSM
+    object.
 
     * If the item can't be used by the character due to their class, returns
     a ClassCantUseItemGSM object.
@@ -31,11 +30,10 @@ def equip_command(game_state, tokens):
     * If an item of the same kind is already equipped (for example trying
     to equip a suit of armor when the character is already wearing armor),
     that item is unequipped, the specified item is equipped, and a
-    ItemUnequippedGSM object and a ItemEquippedGSM
-    object are returned.
+    ItemUnequippedGSM object and a ItemEquippedGSM object are returned.
 
-    * Otherwise, the item is equipped, and a ItemEquippedGSM
-    object is returned.
+    * Otherwise, the item is equipped, and a ItemEquippedGSM object is
+    returned.
     """
     # The equip command requires an argument; if none was given, a
     # syntax error is returned.

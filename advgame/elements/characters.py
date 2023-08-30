@@ -33,8 +33,8 @@ class ItemsState(State):
         dict.
 
         :**dict_of_dicts: A structure of internal name keys corresponding to
-                          dict values which are key-value pairs to initialize an
-                          individual Item subclass object with.
+        dict values which are key-value pairs to initialize an individual Item
+        subclass object with.
         """
         self._contents = dict()
         for item_internal_name, item_dict in dict_of_dicts.items():
@@ -115,7 +115,7 @@ class Equipment:
         """
         This method equips the given Armor object.
 
-        :item:    An Armor object.
+        :item: An Armor object.
         :returns: None.
         """
         if not isinstance(item, Armor):
@@ -129,7 +129,7 @@ class Equipment:
         """
         This method equips the given Shield object.
 
-        :item:    A Shield object.
+        :item: A Shield object.
         :returns: None.
         """
         if not isinstance(item, Shield):
@@ -143,7 +143,7 @@ class Equipment:
         """
         This method equips the given Weapon object.
 
-        :item:    A Weapon object.
+        :item: A Weapon object.
         :returns: None.
         """
         if not isinstance(item, Weapon):
@@ -157,7 +157,7 @@ class Equipment:
         """
         This method equips the given Wand object.
 
-        :item:    A Wand object.
+        :item: A Wand object.
         :returns: None.
         """
         if not isinstance(item, Wand):
@@ -205,8 +205,8 @@ class Equipment:
         the given slot.
 
         :equipment_slot: A string, one of 'armor', 'shield', 'weapon', or
-                         'wand'.
-        :return:         None.
+        'wand'.
+        :return: None.
         """
         if equipment_slot not in ("armor", "shield", "weapon", "wand"):
             raise InternalError(f"equipment slot {equipment_slot} not recognized")
@@ -224,8 +224,8 @@ class Equipment:
         This private method unequips the given EquippableItem subclass object.
 
         :equipment_slot: A string, one of 'armor', 'shield', 'weapon', or
-                         'wand'.
-        :return:         None.
+        'wand'.
+        :return: None.
         """
         if equipment_slot not in ("armor", "shield", "weapon", "wand"):
             raise InternalError(f"equipment slot {equipment_slot} not recognized")
@@ -314,7 +314,7 @@ class ItemsMultiState(ItemsState):
         name is present in the private dictionary.
 
         :item_internal_name: The internal name of the Item subclass object.
-        :return:             A boolean.
+        :return: A boolean.
         """
         return any(
             contained_item.internal_name == item_internal_name
@@ -329,9 +329,9 @@ class ItemsMultiState(ItemsState):
         dict raises a KeyError.
 
         :item_internal_name: The internal name of the Item subclass object.
-        :item_qty:           An int value of the item quantity.
-        :item:               The Item subclass object.
-        :return:             None.
+        :item_qty: An int value of the item quantity.
+        :item: The Item subclass object.
+        :return: None.
         """
         self._contents[item_internal_name] = item_qty, item
 
@@ -342,8 +342,8 @@ class ItemsMultiState(ItemsState):
         given internal name with a quantity of 1.
 
         :item_internal_name: The internal name of the Item subclass object.
-        :item:               The Item subclass object.
-        :return:             None.
+        :item: The Item subclass object.
+        :return: None.
         """
         if self.contains(item_internal_name):
             self._contents[item_internal_name] = (
@@ -361,7 +361,7 @@ class ItemsMultiState(ItemsState):
         deleted from the internal dictionary.
 
         :item_internal_name: The internal name of the Item subclass object.
-        :return:             None.
+        :return: None.
         """
         if item_internal_name not in self._contents:
             raise KeyError(item_internal_name)
@@ -479,7 +479,8 @@ class AbilityScores:
     @property
     def charisma_mod(self):
         """
-        This property computes the Charisma modifier from the stored Charisma score.
+        This property computes the Charisma modifier from the stored Charisma
+        score.
 
         :return: An int.
         """
@@ -497,8 +498,8 @@ class AbilityScores:
         an arbitrary ability score.
 
         :ability_score: A string, one of 'Strength', 'Dexterity',
-                        'Constitution', 'Intelligence', 'Wisdom' or 'Charisma'.
-        :return:        An int.
+        'Constitution', 'Intelligence', 'Wisdom' or 'Charisma'.
+        :return: An int.
         """
         if not hasattr(self, ability_score):
             raise InternalError(f"unrecognized ability {ability_score}")
@@ -606,34 +607,31 @@ class Character:
     ):
         """
         This __init__ method sets the character's name and class. It
-        instantiates a subordinate AbilityScores object, and initialized
-        it with the ability scores arguments (which does nothing if they
-        are the default of zero). It instantiates the subordinate inventory
-        ItemsMultiState() object and the subordinate Equipment object, and
-        sets up the hit point and (optionally) mana point values. It also sets
-        the magic key stat if any.
-                                                                               |
-        :character_name_str:  A string, the name for the character.
+        instantiates a subordinate AbilityScores object, and initialized it with
+        the ability scores arguments (which does nothing if they are the default
+        of zero). It instantiates the subordinate inventory ItemsMultiState()
+        object and the subordinate Equipment object, and sets up the hit point
+        and (optionally) mana point values. It also sets the magic key stat if
+        any. | :character_name_str: A string, the name for the character.
+
         :character_class_str: A string one of 'Warrior', 'Thief', 'Priest', or
-                              'Mage'.
-        :base_hit_points:     An int, the character's base hit points
-                              (optional).
-        :base_mana_points:    An int, the character's base mana points
-                              (optional).
-        :magic_key_stat:      A string, the character's magic key stat (one of
-                              'Intelligence', 'Wisdom', or 'Charisma').
-        :strength:            An int, the set value for the character's
-                              Strength score (optional).
-        :dexterity:           An int, the set value for the character's
-                              Dexterity score (optional).
-        :constitution:        An int, the set value for the character's
-                              Constitution score (optional).
-        :intelligence:        An int, the set value for the character's
-                              Intelligence score (optional).
-        :wisdom:              An int, the set value for the character's Wisdom
-                              score (optional).
-        :charisma:            An int, the set value for the character's
-                              Charisma score (optional).
+        'Mage'.
+        :base_hit_points: An int, the character's base hit points (optional).
+        :base_mana_points: An int, the character's base mana points (optional).
+        :magic_key_stat: A string, the character's magic key stat (one of
+        'Intelligence', 'Wisdom', or 'Charisma').
+        :strength: An int, the set value for the character's Strength score
+        (optional).
+        :dexterity: An int, the set value for the character's Dexterity score
+        (optional).
+        :constitution: An int, the set value for the character's Constitution
+        score (optional).
+        :intelligence: An int, the set value for the character's Intelligence
+        score (optional).
+        :wisdom: An int, the set value for the character's Wisdom score
+        (optional).
+        :charisma: An int, the set value for the character's Charisma score
+        (optional).
         """
         if character_class_str not in {"Warrior", "Thief", "Priest", "Mage"}:
             raise InternalError(
@@ -674,18 +672,18 @@ class Character:
         are nonzero. It is used by __init__ to set ability scores from its
         arguments if furnished.
 
-        :strength:     An int, the set value for the character's Strength
-                       score (optional).
-        :dexterity:    An int, the set value for the character's Dexterity
-                       score (optional).
+        :strength: An int, the set value for the character's Strength score
+        (optional).
+        :dexterity: An int, the set value for the character's Dexterity score
+        (optional).
         :constitution: An int, the set value for the character's Constitution
-                       score (optional).
+        score (optional).
         :intelligence: An int, the set value for the character's Intelligence
-                       score (optional).
-        :wisdom:       An int, the set value for the character's Wisdom score
-                       (optional).
-        :charisma:     An int, the set value for the character's Charisma
-                       score (optional).
+        score (optional).
+        :wisdom: An int, the set value for the character's Wisdom score
+        (optional).
+        :charisma: An int, the set value for the character's Charisma score
+        (optional).
         """
         if all((strength, dexterity, constitution, intelligence, wisdom, charisma)):
             self.ability_scores.strength = strength
@@ -714,11 +712,11 @@ class Character:
         are calculated from the specified magic key ability score (Intelligence
         for Mages, and Wisdom for Priests).
 
-        :base_hit_points:  An int, the character's base hit points.
+        :base_hit_points: An int, the character's base hit points.
         :base_mana_points: An int, the character's base mana points.
-        :magic_key_stat:   A string, the character's magic key stat (one of
-                           'Intelligence', 'Wisdom', or 'Charisma').
-        :return:           None.
+        :magic_key_stat: A string, the character's magic key stat (one of
+        'Intelligence', 'Wisdom', or 'Charisma').
+        :return: None.
         """
 
         # When the Character is instanced by a GameState object, none
@@ -860,7 +858,7 @@ class Character:
         instead. The method returns the amount of damage assessed.
 
         :damage_value: An int, the number of hit points to lose.
-        :return:       An int.
+        :return: An int.
         """
         if self._current_hit_points - damage_value < 0:
             taken_amount = self._current_hit_points
@@ -879,7 +877,7 @@ class Character:
         done.
 
         :healing_value: An int, the number of hit points to recover.
-        :return:        An int.
+        :return: An int.
         """
         if self._current_hit_points + healing_value > self._hit_point_maximum:
             amount_healed = self._hit_point_maximum - self._current_hit_points
@@ -897,7 +895,7 @@ class Character:
         zero, no spending takes place, and 0 is returned to indicate failure.
 
         :spent_amount: An int, the number of mana points to spend.
-        :return:       An int.
+        :return: An int.
         """
         if self._current_mana_points < spent_amount:
             return 0
@@ -914,7 +912,7 @@ class Character:
         amount of mana points regained.
 
         :regaining_value: An int, the number of mana points to regain.
-        :return:          An int.
+        :return: An int.
         """
         if self._current_mana_points + regaining_value > self._mana_point_maximum:
             amount_regained = self._mana_point_maximum - self._current_mana_points
@@ -992,9 +990,9 @@ class Character:
     def damage_roll(self):
         r"""
         This property returns a dice expression usable by
-        advgame.utilsities.roll_dice() to execute a damage roll during an
-        ATTACK command. It calculates the damage dice value from the equipped
-        wand or weapon, and the relevant ability score modifier.
+        advgame.utilsities.roll_dice() to execute a damage roll during an ATTACK
+        command. It calculates the damage dice value from the equipped wand or
+        weapon, and the relevant ability score modifier.
 
         :return: A string of the form '\d+d\d+([+-]\d+)?'.
         """
@@ -1054,8 +1052,8 @@ class Character:
         This method adds the given Item subclass object to the character's
         inventory in the quantity specified, default 1.
 
-        :item:   An Item subclass object.
-        :qty:    An int, the quantity to add to the container, default 1.
+        :item: An Item subclass object.
+        :qty: An int, the quantity to add to the container, default 1.
         :return: None.
         """
         have_qty = self.item_have_qty(item)
@@ -1069,8 +1067,8 @@ class Character:
         This method removes the specified quantity (default 1) of the given Item
         subclass object from the character's inventory.
 
-        :item:   An Item subclass object.
-        :qty:    An int, the quantity to remove from the container, default 1.
+        :item: An Item subclass object.
+        :qty: An int, the quantity to remove from the container, default 1.
         :return: None.
         """
         have_qty = self.item_have_qty(item)
@@ -1087,7 +1085,7 @@ class Character:
         the character's inventory. If so, it returns the quantity possessed. If
         not, it returns 0.
 
-        :item:   An Item subclass object.
+        :item: An Item subclass object.
         :return: An int.
         """
         if not self.inventory.contains(item.internal_name):
@@ -1101,7 +1099,7 @@ class Character:
         This method checks whether the given Item subclass object is present in
         the character's inventory. It returns True or False.
 
-        :item:   An Item subclass object.
+        :item: An Item subclass object.
         :return: A boolean.
         """
         return self.inventory.contains(item.internal_name)
@@ -1325,7 +1323,7 @@ class Character:
         This method calls the equip_armor method on the subordinate Equipment
         object with the given argument.
 
-        :item:   An Armor object.
+        :item: An Armor object.
         :return: None.
         """
         if not self.inventory.contains(item.internal_name):
@@ -1340,7 +1338,7 @@ class Character:
         This method calls the equip_shield method on the subordinate Equipment
         object with the given argument.
 
-        :item:   A Shield object.
+        :item: A Shield object.
         :return: None.
         """
         if not self.inventory.contains(item.internal_name):
@@ -1355,7 +1353,7 @@ class Character:
         This method calls the equip_weapon method on the subordinate Equipment
         object with the given argument.
 
-        :item:   A Weapon object.
+        :item: A Weapon object.
         :return: None.
         """
         if not self.inventory.contains(item.internal_name):
@@ -1370,7 +1368,7 @@ class Character:
         This method calls the equip_wand method on the subordinate Equipment
         object with the given argument.
 
-        :item:   A Wand object.
+        :item: A Wand object.
         :return: None.
         """
         if not self.inventory.contains(item.internal_name):
@@ -1487,8 +1485,8 @@ class Character:
 
 class GameState:
     """
-    This class represents the entire GameState needed to run a
-    session of AdventureGame. It is the top-level object, and stores an
+    This class represents the entire GameState needed to run a session
+    of AdventureGame. It is the top-level object, and stores an
     items_state object, a doors_state object, a containers_state object,
     a creatures_state object, a rooms_state object, and (once it can be
     instantiated) a character object.
@@ -1524,7 +1522,7 @@ class GameState:
         set.
 
         :name_str: A string, the character name.
-        :return:   None.
+        :return: None.
         """
         setattr(self, "_character_name", name_str)
         self._incept_character_obj_if_possible()
@@ -1546,7 +1544,7 @@ class GameState:
         set.
 
         :name_str: A string, the character class.
-        :return:   None.
+        :return: None.
         """
         setattr(self, "_character_class", class_str)
         self._incept_character_obj_if_possible()
@@ -1559,11 +1557,11 @@ class GameState:
         a containers_state object, a creatures_state object, and a rooms_state
         object from its arguments.
 
-        :rooms_state:      A RoomsState object.
-        :creatures_state:  A CreaturesState object.
+        :rooms_state: A RoomsState object.
+        :creatures_state: A CreaturesState object.
         :containers_state: A ContainersState object.
-        :doors_state:      A DoorsState object.
-        :items_state:      An ItemsState object.
+        :doors_state: A DoorsState object.
+        :items_state: An ItemsState object.
         """
         self.items_state = items_state
         self.doors_state = doors_state

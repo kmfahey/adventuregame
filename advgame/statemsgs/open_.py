@@ -14,8 +14,8 @@ __all__ = (
 
 class ElementNotOpenableGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.open_command() when the
-    player attempts to open a corpse, creature, doorway or item.
+    Returned by open_command() when the player attempts to open a corpse,
+    creature, doorway or item.
     """
 
     __slots__ = "target_title", "target_type"
@@ -43,8 +43,8 @@ class ElementNotOpenableGSM(GameStateMessage):
 
 class ElementHasBeenOpenedGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.open_command() when the
-    player successfully opens a chest or door.
+    Returned by open_command() when the player successfully opens a chest or
+    door.
     """
 
     __slots__ = ("target",)
@@ -59,8 +59,8 @@ class ElementHasBeenOpenedGSM(GameStateMessage):
 
 class ElementIsAlreadyOpenGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.open_command() when the
-    player targets a door or chest that is already open.
+    Returned by open_command() when the player targets a door or chest that
+    is already open.
     """
 
     __slots__ = ("target",)
@@ -75,8 +75,8 @@ class ElementIsAlreadyOpenGSM(GameStateMessage):
 
 class ElementIsLockedGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.open_command() when the
-    player targets a door or chest that is locked.
+    Returned by open_command() when the player targets a door or chest that
+    is locked.
     """
 
     __slots__ = ("target",)
@@ -91,9 +91,8 @@ class ElementIsLockedGSM(GameStateMessage):
 
 class ElementToOpenNotHereGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.open_command() when the
-    player targets a door or chest that is not present in the current
-    dungeon room.
+    Returned by open_command() when the player targets a door or chest that
+    is not present in the current dungeon room.
     """
 
     __slots__ = ("target_title",)

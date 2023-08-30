@@ -28,16 +28,13 @@ def drop_command(game_state, tokens):
     TryingToDropItemYouDontHaveGSM object.
 
     * If a number is specified, and that's more than how many of the item
-    are in inventory, returns a
-    TryingToDropMorethanYouHaveGSM object.
+    are in inventory, returns a TryingToDropMorethanYouHaveGSM object.
 
     * If no number is used and the item is equipped, returns a
-    ItemUnequippedGSM object and a DroppedItemGSM
-    object.
+    ItemUnequippedGSM object and a DroppedItemGSM object.
 
     * Otherwise, the item is removed— or the specified number of the item
-    are removed— from inventory and a DroppedItemGSM object is
-    returned.
+    are removed— from inventory and a DroppedItemGSM object is returned.
     """
     # pick_up_command() and drop_command()
     # share a lot of logic in a private workhorse method

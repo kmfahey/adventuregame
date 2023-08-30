@@ -11,8 +11,8 @@ __all__ = (
 
 class GameBeginsGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.begin_game_command() when
-    the command executes successfully. The game has begun.
+    Returned by begin_game_command() when the command executes successfully.
+    The game has begun.
     """
 
     @property
@@ -25,10 +25,9 @@ class GameBeginsGSM(GameStateMessage):
 
 class NameOrClassNotSetGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.begin_game_command() when
-    the player has used the BEGIN GAME command prematurely. The player
-    must set a name and a class before the game can begin; this object is
-    returned if they fail to.
+    Returned by begin_game_command() when the player has used the BEGIN GAME
+    command prematurely. The player must set a name and a class before the
+    game can begin; this object is returned if they fail to.
     """
 
     __slots__ = "character_name", "character_class"

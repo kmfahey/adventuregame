@@ -1,13 +1,12 @@
 #!/usr/bin/python3
 
 """
-Run a text-adventure
-game in the style of the old BSD UNIX game ADVENT, augmented with
-limited Dungeons-&-Dragons-style rules. Can model a player playing a
-specific class (one of Warrior, Thief, Mage or Priest), exploring a
-dungeon room to room, fighting creatures, looting chests and corpses,
-finding keys and discovering the exit to the dungeon (which is the win
-condition).
+Run a text-adventure game in the style of the old BSD UNIX game ADVENT,
+augmented with limited Dungeons-&-Dragons-style rules. Can model a
+player playing a specific class (one of Warrior, Thief, Mage or Priest),
+exploring a dungeon room to room, fighting creatures, looting chests and
+corpses, finding keys and discovering the exit to the dungeon (which is
+the win condition).
 
 * advgame.errors comprises the exceptions used by the package.
 
@@ -22,9 +21,10 @@ character themself.
 * advgame.process comprises a higher-level layer that handles processing
 commands entered by the player and returning semantic return values.
 
-* advgame.statemsgs comprises the return values used in advgame.process; an
-abstract base class and a large collection of subclasses each of which
-implements a specific result case of one or more specific commands.
+* advgame.statemsgs comprises the return values used in advgame.process;
+an abstract base class and a large collection of subclasses each
+of which implements a specific result case of one or more specific
+commands.
 """
 
 from advgame.elements import (

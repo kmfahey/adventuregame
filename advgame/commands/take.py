@@ -22,8 +22,7 @@ def take_command(game_state, tokens):
     TAKE <item name> FROM <container name>
     TAKE <number> <item name> FROM <container name>
 
-    * If that syntax is not followed, returns a BadSyntaxGSM
-    object.
+    * If that syntax is not followed, returns a BadSyntaxGSM object.
 
     * If the specified container isn't present in the current room, returns
     a ContainerNotFoundGSM object.
@@ -31,16 +30,16 @@ def take_command(game_state, tokens):
     * If the specified container is a chest and the chest is closed, returns
     a ContainerIsClosedGSM object.
 
-    * If the arguments are an ungrammatical sentence and are
-    ambiguous as to what quantity the player means to take, returns a
-    AmountToTakeUnclearGSM object.
+    * If the arguments are an ungrammatical sentence and are ambiguous as to
+    what quantity the player means to take, returns a AmountToTakeUnclearGSM
+    object.
 
     * If the specified item is not present in the specified chest or on the
     specified corpse, returns a ItemNotFoundInContainerGSM object.
 
-    * If the specified quantity of the item is greater than the quantity of
-    that item in the chest or on the corpse, returns
-    a TryingToTakeMoreThanIsPresentGSM object.
+    * If the specified quantity of the item is greater than the
+    quantity of that item in the chest or on the corpse, returns a
+    TryingToTakeMoreThanIsPresentGSM object.
 
     * Otherwise, the item— or the quantity of the item— is removed from
     the chest or the corpse and added to the character's inventory, and a

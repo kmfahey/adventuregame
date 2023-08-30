@@ -13,18 +13,17 @@ __all__ = ("begin_game_command",)
 
 def begin_game_command(game_state, tokens):
     """
-    Execute the BEGIN GAME command. The return value is always
-    in a tuple even when it's of length 1. Returns one or more
-    GameStateMessage subclass instances. Takes no arguments.
+    Execute the BEGIN GAME command. The return value is always in a tuple
+    even when it's of length 1. Returns one or more GameStateMessage
+    subclass instances. Takes no arguments.
 
     * If any arguments are given, returns a BadSyntaxGSM object.
 
     * If the command is used before the character's name and class have been
     set, returns a NameOrClassNotSetGSM object.
 
-    * Otherwise, returns a GameBeginsGSM object, one or more
-    ItemEquippedGSM objects, and a EnteredRoomGSM
-    object.
+    * Otherwise, returns a GameBeginsGSM object, one or more ItemEquippedGSM
+    objects, and a EnteredRoomGSM object.
     """
     # This command begins the game. Most of the work done is devoted
     # to creating the character's starting gear and equipping all of

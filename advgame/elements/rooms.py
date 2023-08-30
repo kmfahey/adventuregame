@@ -88,12 +88,11 @@ class Room(IniEntry):
         creature_here, container_here, items_here and the {compass_dir}_door
         attributes.
 
-        :creatures_state:  A CreaturesState object.
+        :creatures_state: A CreaturesState object.
         :containers_state: A ContainersState object.
-        :doors_state:      A DoorsState object.
-        :items_state:      An ItemsState object.
-        :**argd:           A dict of key-value pairs to instantiate the Room
-                           object with.
+        :doors_state: A DoorsState object.
+        :items_state: An ItemsState object.
+        :**argd: A dict of key-value pairs to instantiate the Room object with.
         """
         super().__init__(**argd)
         self._containers_state = containers_state
@@ -223,13 +222,13 @@ class RoomsState:
         and an items_state object to initialize them with, and a **dict-of-dicts
         from rooms.ini as furnished by an IniConfig's sections attribute.
 
-        :creatures_state:  A CreaturesState object.
+        :creatures_state: A CreaturesState object.
         :containers_state: A ContainersState object.
-        :doors_state:      A DoorsState object.
-        :items_state:      A ItemsState object.
-        :**dict_of_dicts:  A structure of internal name keys corresponding to
-                           dict values which are key-value pairs to initialize
-                           an individual Creature object with.
+        :doors_state: A DoorsState object.
+        :items_state: A ItemsState object.
+        :**dict_of_dicts: A structure of internal name keys corresponding to
+        dict values which are key-value pairs to initialize an individual
+        Creature object with.
         """
         self._rooms_objs = dict()
         self._creatures_state = creatures_state
@@ -263,7 +262,7 @@ class RoomsState:
         the given internal name.
 
         :room_internal_name: A string, the internal name of the Room object.
-        :return:             A Room object.
+        :return: A Room object.
         """
         return self._rooms_objs[internal_name]
 
@@ -273,8 +272,8 @@ class RoomsState:
         given internal name.
 
         :room_internal_name: A string, the internal name of the Room object.
-        :room:               A Room object.
-        :return:             None.
+        :room: A Room object.
+        :return: None.
         """
         self._rooms_objs[internal_name] = room
 
@@ -283,14 +282,14 @@ class RoomsState:
         This method directs the RoomsState object to move the cursor from the
         current room to an adjacent room by the given compass direction.
 
-        :north:  A boolean, True if movement to the north is intended, False
-                 otherwise.
-        :east:   A boolean, True if movement to the east is intended, False
-                 otherwise.
-        :south:  A boolean, True if movement to the south is intended, False
-                 otherwise.
-        :west:   A boolean, True if movement to the west is intended, False
-                 otherwise.
+        :north: A boolean, True if movement to the north is intended, False
+        otherwise.
+        :east: A boolean, True if movement to the east is intended, False
+        otherwise.
+        :south: A boolean, True if movement to the south is intended, False
+        otherwise.
+        :west: A boolean, True if movement to the west is intended, False
+        otherwise.
         :return: None.
         """
 

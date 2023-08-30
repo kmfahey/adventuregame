@@ -13,13 +13,12 @@ __all__ = (
 
 class AttackHitGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.attack_command() when
-    the player's attack connected with their foe. attack_command() always
-    triggers the hidden _be_attacked_by_command() pseudo-command, an
-    AttackHitGSM object tracks if the foe was slain. If so,
-    nothing relating to foe death is conveyed; describing foe death is
-    handled by the FoeDeathGSM class. If not, its message
-    includes a clause about the foe turning to attack.
+    Returned by attack_command() when the player's attack connected
+    with their foe. attack_command() always triggers the hidden
+    _be_attacked_by_command() pseudo-command, an AttackHitGSM object tracks
+    if the foe was slain. If so, nothing relating to foe death is conveyed;
+    describing foe death is handled by the FoeDeathGSM class. If not, its
+    message includes a clause about the foe turning to attack.
     """
 
     __slots__ = "creature_title", "damage_done", "creature_slain"
@@ -68,10 +67,9 @@ class AttackHitGSM(GameStateMessage):
 
 class AttackMissedGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.attack_command() when the
-    player's attack missed. Like AttackHitGSM, it mentions the
-    foe turning to attack, because an attack on a foe always leads to a
-    counterattack if they live.
+    Returned by attack_command() when the player's attack missed. Like
+    AttackHitGSM, it mentions the foe turning to attack, because an attack
+    on a foe always leads to a counterattack if they live.
     """
 
     __slots__ = "creature_title", "weapon_type"
@@ -103,9 +101,8 @@ class AttackMissedGSM(GameStateMessage):
 
 class OpponentNotFoundGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.attack_command() when
-    the player has used an attack command that refers to a foe that is not
-    present in the game's current room.
+    Returned by attack_command() when the player has used an attack command
+    that refers to a foe that is not present in the game's current room.
     """
 
     __slots__ = "creature_title_given", "opponent_present"
@@ -135,10 +132,9 @@ class OpponentNotFoundGSM(GameStateMessage):
 
 class YouHaveNoWeaponOrWandEquippedGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.attack_method() when the
-    player has used the attack command while having no weapon (or, for
-    Mages, no wand) equipped. It tracks player class so it knows to display
-    the wand option for Mages.
+    Returned by attack_command() when the player has used the attack command
+    while having no weapon (or, for Mages, no wand) equipped. It tracks
+    player class so it knows to display the wand option for Mages.
     """
 
     __slots__ = ("character_class",)

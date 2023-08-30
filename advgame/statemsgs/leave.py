@@ -8,8 +8,8 @@ __all__ = ("DoorIsLocked", "LeftRoom", "WonTheGame")
 
 class DoorIsLockedGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.leave_command() if the
-    player tries to leave through a door that is locked.
+    Returned by leave_command() if the player tries to leave through a door
+    that is locked.
     """
 
     __slots__ = "compass_dir", "portal_type"
@@ -28,8 +28,8 @@ class DoorIsLockedGSM(GameStateMessage):
 
 class LeftRoomGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.leave_command() when the
-    player uses it to leave the current dungeon room.
+    Returned by leave_command() when the player uses it to leave the current
+    dungeon room.
     """
 
     __slots__ = "compass_dir", "portal_type"
@@ -45,10 +45,10 @@ class LeftRoomGSM(GameStateMessage):
 
 class WonTheGameGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.leave_command() when the
-    player chances upon the door that is the exit to the dungeon. They have
-    won the game; when advgame.py receives this game state message it prints
-    its message and then exits the program.
+    Returned by leave_command() when the player chances upon the door that
+    is the exit to the dungeon. They have won the game; when advgame.py
+    receives this game state message it prints its message and then exits
+    the program.
     """
 
     __slots__ = ()

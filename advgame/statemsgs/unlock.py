@@ -14,9 +14,9 @@ __all__ = (
 
 class DontPossessCorrectKeyGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.unlock_command() when the
-    player tries to unlock a door while not possessing the door key, or
-    unlock a chest while not possessing the chest key.
+    Returned by unlock_command() when the player tries to unlock a door
+    while not possessing the door key, or unlock a chest while not
+    possessing the chest key.
     """
 
     __slots__ = (
@@ -38,8 +38,8 @@ class DontPossessCorrectKeyGSM(GameStateMessage):
 
 class ElementNotUnlockableGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.unlock_command() when the
-    player attempts to unlock a corpse, creature, doorway or item.
+    Returned by unlock_command() when the player attempts to unlock a
+    corpse, creature, doorway or item.
     """
 
     __slots__ = "target_title", "target_type"
@@ -68,8 +68,8 @@ class ElementNotUnlockableGSM(GameStateMessage):
 
 class ElementHasBeenUnlockedGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.unlock_command() when the
-    player successfully unlocks a chest or door.
+    Returned by unlock_command() when the player successfully unlocks a
+    chest or door.
     """
 
     __slots__ = ("target",)
@@ -84,8 +84,8 @@ class ElementHasBeenUnlockedGSM(GameStateMessage):
 
 class ElementIsAlreadyUnlockedGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.unlock_command() when the
-    player tries to unlock a door or chest that is already unlocked.
+    Returned by unlock_command() when the player tries to unlock a door or
+    chest that is already unlocked.
     """
 
     __slots__ = ("target",)
@@ -100,9 +100,8 @@ class ElementIsAlreadyUnlockedGSM(GameStateMessage):
 
 class ElementToUnlockNotHereGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.unlock_command() when
-    the player tries to unlock a door or chest that is not present in the
-    current dungeon room.
+    Returned by unlock_command() when the player tries to unlock a door or
+    chest that is not present in the current dungeon room.
     """
 
     __slots__ = ("target_title",)

@@ -8,9 +8,8 @@ __all__ = ("ClassSet", "InvalidClass")
 
 class ClassSetGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.set_class_command() when
-    the player selects a class from the choices Warrior, Thief, Mage and
-    Priest.
+    Returned by set_class_command() when the player selects a class from the
+    choices Warrior, Thief, Mage and Priest.
     """
 
     __slots__ = ("class_str",)
@@ -25,9 +24,8 @@ class ClassSetGSM(GameStateMessage):
 
 class InvalidClassGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.set_class_command() when
-    the player specifies a class that is not one of Warrior, Thief, Mage or
-    Priest.
+    Returned by set_class_command() when the player specifies a class that
+    is not one of Warrior, Thief, Mage or Priest.
     """
 
     __slots__ = ("bad_class",)

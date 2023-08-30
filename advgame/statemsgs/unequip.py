@@ -10,8 +10,8 @@ __all__ = ("ItemNotEquipped",)
 
 class ItemNotEquippedGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.unequip_command() when the
-    player tries to unequip an item that is not equipped.
+    Returned by unequip_command() when the player tries to unequip an item
+    that is not equipped.
     """
 
     __slots__ = "item_specified_title", "item_specified_type", "item_present_title"

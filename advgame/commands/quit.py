@@ -13,11 +13,11 @@ def quit_command(context, tokens):
     Execute the QUIT command. The return value is always in a tuple even
     when it's of length 1. The QUIT command takes no arguments.
 
-    * If the command is used with any arguments, returns a
-    BadSyntaxGSM object.
+    * If the command is used with any arguments, returns a BadSyntaxGSM
+    object.
 
-    * Otherwise, the game is ended, and a HaveQuitTheGameGSM object
-    is returned.
+    * Otherwise, the game is ended, and a HaveQuitTheGameGSM object is
+    returned.
     """
     # This command takes no arguments, so if any were supplied, I
     # return a syntax error.

@@ -32,15 +32,13 @@ def look_at_command(game_state, tokens):
     LOOK AT <compass direction> DOOR
     LOOK AT <compass direction> DOORWAY
 
-    * If that syntax is not followed, returns a BadSyntaxGSM
-    object.
+    * If that syntax is not followed, returns a BadSyntaxGSM object.
 
     * If looking at a door which is not present in the room, returns a
     DoorNotPresentGSM object.
 
-    * If looking at a door, but the arguments are ambiguous
-    and match more than one door in the room, returns a
-    AmbiguousDoorSpecifierGSM object.
+    * If looking at a door, but the arguments are ambiguous and match more
+    than one door in the room, returns a AmbiguousDoorSpecifierGSM object.
 
     * If looking at a chest or corpse which is not present in the room,
     returns a ContainerNotFoundGSM object.
@@ -82,7 +80,7 @@ def look_at_command(game_state, tokens):
             # so I use 2.
             (?<! iron \s doorway)
             (?<! wooden \s doorway)
-    """,
+        """,
         re.X,
     )
 

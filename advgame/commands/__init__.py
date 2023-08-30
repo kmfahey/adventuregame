@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from advgame.commands.attack import attack_command
-from advgame.commands.be_atkd import be_attacked_by_command
+from advgame.commands.be_atkd import _be_attacked_by_command
 from advgame.commands.begin import begin_game_command
 from advgame.commands.castspl import cast_spell_command
 from advgame.commands.close import close_command
@@ -47,7 +47,7 @@ __all__ = (
     "STARTER_GEAR",
     "VALID_NAME_RE",
     "attack_command",
-    "be_attacked_by_command",
+    "_be_attacked_by_command",
     "begin_game_command",
     "cast_spell_command",
     "close_command",

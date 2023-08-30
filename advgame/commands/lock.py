@@ -26,11 +26,10 @@ def lock_command(game_state, tokens):
     LOCK <door name>
     LOCK <chest name>
 
-    * If that syntax is not followed, returns a BadSyntaxGSM
-    object.
+    * If that syntax is not followed, returns a BadSyntaxGSM object.
 
-    * If no such door is present in the room, returns a
-    DoorNotPresentGSM object.
+    * If no such door is present in the room, returns a DoorNotPresentGSM
+    object.
 
     * If the command is ambiguous and matches more than one door in the
     room, returns a AmbiguousDoorSpecifierGSM object.
@@ -41,12 +40,12 @@ def lock_command(game_state, tokens):
     * If the object to lock is already locked, returns a
     ElementIsAlreadyLockedGSM object.
 
-    * If the object to lock is not present, a ElementNotLockableGSM
-    is returned.
+    * If the object to lock is not present, a ElementNotLockableGSM is
+    returned.
 
-    * If the character does not possess the requisite door or
-    chest key to lock the specified door or chest, returns a
-    DontPossessCorrectKeyGSM object.
+    * If the character does not possess the requisite door or chest key to
+    lock the specified door or chest, returns a DontPossessCorrectKeyGSM
+    object.
 
     * Otherwise, the object has its is_locked attribute set to True, and a
     ElementHasBeenLockedGSM object is returned.

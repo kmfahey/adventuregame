@@ -13,8 +13,8 @@ __all__ = (
 
 class NotRecognizedGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.help_command() when the
-    player tries to get help with a command that is not in the game.
+    Returned by help_command() when the player tries to get help with a
+    command that is not in the game.
     """
 
     __slots__ = (
@@ -42,9 +42,9 @@ class NotRecognizedGSM(GameStateMessage):
 
 class DisplayCommandsGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.help_command() when the
-    player calls it with no arguments; it displays all the commands in the
-    game and prompts the player to ask for help with one of them.
+    Returned by help_command() when the player calls it with no arguments;
+    it displays all the commands in the game and prompts the player to ask
+    for help with one of them.
     """
 
     __slots__ = "commands_available", "game_started"
@@ -74,9 +74,9 @@ class DisplayCommandsGSM(GameStateMessage):
 
 class DisplayHelpForCommandGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.help_command() when the
-    player asks for help with a specific command. It summarizes the syntax
-    for them and prints an informative blurb about the command.
+    Returned by help_command() when the player asks for help with a specific
+    command. It summarizes the syntax for them and prints an informative
+    blurb about the command.
     """
 
     __slots__ = (

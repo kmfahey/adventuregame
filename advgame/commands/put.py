@@ -24,8 +24,7 @@ def put_command(game_state, tokens):
     PUT <item name> ON <corpse name>
     PUT <number> <item name> ON <corpse name>
 
-    * If that syntax is not followed, returns a BadSyntaxGSM
-    object.
+    * If that syntax is not followed, returns a BadSyntaxGSM object.
 
     * If the arguments specify a chest or corpse that is not present in the
     current room, returns a ContainerNotFoundGSM object.
@@ -40,13 +39,11 @@ def put_command(game_state, tokens):
     character's inventory, returns a ItemNotInInventoryGSM object.
 
     * If the arguments specify a quantity of an item to put that is more
-    than the character has, returns a TryingToPutMorethanYouHaveGSM
-    object.
+    than the character has, returns a TryingToPutMorethanYouHaveGSM object.
 
     * Otherwise, the item— or the quantity of the item— is removed from
-    the character's inventory, placed in the chest or on the corpse, and
-    put in the chest or on the corpse, and a AmountPutGSM object is
-    returned.
+    the character's inventory, placed in the chest or on the corpse, and put
+    in the chest or on the corpse, and a AmountPutGSM object is returned.
     """
     # The shared private workhorse method is called and it handles
     # the majority of the error-checking. If it returns an error

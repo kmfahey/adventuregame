@@ -4,6 +4,7 @@ from .gsm import GameStateMessage
 
 
 __all__ = (
+    "GameStateMessage",
     "attack",
     "be_atkd",
     "begin",
@@ -19,8 +20,8 @@ __all__ = (
     "lock",
     "lookat",
     "open_",
-    "pklock",
     "pickup",
+    "pklock",
     "put",
     "quit",
     "reroll",
@@ -31,5 +32,4 @@ __all__ = (
     "unequip",
     "unlock",
     "various",
-    "GameStateMessage",
 )

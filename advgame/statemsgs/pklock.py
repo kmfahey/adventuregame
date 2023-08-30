@@ -13,9 +13,8 @@ __all__ = (
 
 class ElementNotLockpickableGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.pick_lock_command() when
-    the player attempts to pick a lock on a corpse, creature, doorway or
-    item.
+    Returned by pick_lock_command() when the player attempts to pick a lock
+    on a corpse, creature, doorway or item.
     """
 
     __slots__ = "target_title", "target_type"
@@ -43,8 +42,8 @@ class ElementNotLockpickableGSM(GameStateMessage):
 
 class TargetHasBeenUnlockedGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.pick_lock_command() when
-    the player successfully unlocks the chest or door.
+    Returned by pick_lock_command() when the player successfully unlocks the
+    chest or door.
     """
 
     __slots__ = ("target_title",)
@@ -59,9 +58,8 @@ class TargetHasBeenUnlockedGSM(GameStateMessage):
 
 class TargetNotFoundGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.pick_lock_command() when
-    the player targets a door or chest that is not present in the current
-    dungeon room.
+    Returned by pick_lock_command() when the player targets a door or chest
+    that is not present in the current dungeon room.
     """
 
     __slots__ = ("target_title",)
@@ -76,8 +74,8 @@ class TargetNotFoundGSM(GameStateMessage):
 
 class TargetNotLockedGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.pick_lock_command() when
-    the player targets a door or chest that is not locked.
+    Returned by pick_lock_command() when the player targets a door or chest
+    that is not locked.
     """
 
     __slots__ = ("target_title",)

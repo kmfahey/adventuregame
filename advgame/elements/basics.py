@@ -54,7 +54,8 @@ class IniEntry:
 
     def __eq__(self, other):
         """
-        Test two IniEntry objects or objects that subclass IniEntry for equality.
+        Test two IniEntry objects or objects that subclass IniEntry for
+        equality.
         """
         if not isinstance(other, type(self)):
             return False
@@ -70,8 +71,7 @@ class IniEntry:
         explicitly.
 
         :slots: The __slots__ value of the class the method is being called
-        from.
-        :returns: None.
+        from. :returns: None.
         """
         for key in slots:
             if not hasattr(self, key):

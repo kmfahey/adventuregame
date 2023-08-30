@@ -14,9 +14,9 @@ __all__ = (
 
 class DontPossessCorrectKeyGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.lock_command() when the
-    player tries to lock a chest while they don't possess the chest key, or
-    a door while they don't possess the door key.
+    Returned by lock_command() when the player tries to lock a chest while
+    they don't possess the chest key, or a door while they don't possess the
+    door key.
     """
 
     __slots__ = (
@@ -63,8 +63,8 @@ class ElementNotLockableGSM(GameStateMessage):
 
 class ElementHasBeenLockedGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.lock_command() when the
-    player successfully locks a chest or door.
+    Returned by lock_command() when the player successfully locks a chest or
+    door.
     """
 
     __slots__ = ("target",)
@@ -79,8 +79,8 @@ class ElementHasBeenLockedGSM(GameStateMessage):
 
 class ElementIsAlreadyLockedGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.lock_command() when the
-    player tries to lock a chest or door that is already locked.
+    Returned by lock_command() when the player tries to lock a chest or door
+    that is already locked.
     """
 
     __slots__ = ("target",)
@@ -95,9 +95,8 @@ class ElementIsAlreadyLockedGSM(GameStateMessage):
 
 class ElementToLockNotHereGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.lock_command() when the
-    player specifies an object to lock that is not present in the current
-    dungeon room.
+    Returned by lock_command() when the player specifies an object to lock
+    that is not present in the current dungeon room.
     """
 
     __slots__ = ("target_title",)

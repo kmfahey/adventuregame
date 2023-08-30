@@ -17,9 +17,9 @@ __all__ = (
 
 class CantPickUpChestCorpseCreatureOrDoorGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.pick_up_command() when the
-    player has specifies a game element that is a chest, corpse, creature or
-    door and can't be picked up.
+    Returned by pick_up_command() when the player has specifies a game
+    element that is a chest, corpse, creature or door and can't be picked
+    up.
     """
 
     __slots__ = "element_type", "element_title"
@@ -38,10 +38,10 @@ class CantPickUpChestCorpseCreatureOrDoorGSM(GameStateMessage):
 
 class ItemNotFoundGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.pick_up_command() when the
-    player targets an item to pick up that is not present in the current
-    dungeon room. If they meant to acquire an item from a chest or corpse,
-    they need to say `TAKE <item name> FROM <corpse or chest name>`.
+    Returned by pick_up_command() when the player targets an item to pick
+    up that is not present in the current dungeon room. If they meant to
+    acquire an item from a chest or corpse, they need to say `TAKE <item
+    name> FROM <corpse or chest name>`.
     """
 
     __slots__ = "item_title", "amount_attempted", "items_here"
@@ -78,9 +78,8 @@ class ItemNotFoundGSM(GameStateMessage):
 
 class ItemPickedUpGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.pick_up_command() when
-    the player successfully acquires an item from the floor of the current
-    dungeon room.
+    Returned by pick_up_command() when the player successfully acquires an
+    item from the floor of the current dungeon room.
     """
 
     __slots__ = "item_title", "pick_up_amount", "amount_had"
@@ -122,9 +121,9 @@ class ItemPickedUpGSM(GameStateMessage):
 
 class AmountToPickUpUnclearGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.pick_up_command() when the
-    player has entered an ungrammatical sentence that is ambiguous as to how
-    many it means to specify.
+    Returned by pick_up_command() when the player has entered an
+    ungrammatical sentence that is ambiguous as to how many it means to
+    specify.
     """
 
     @property
@@ -137,10 +136,9 @@ class AmountToPickUpUnclearGSM(GameStateMessage):
 
 class TryingToPickUpMoreThanIsPresentGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.pick_up_command() when
-    the player has targeted an item that is present, but has specified a
-    quantity to pick up that is greater than the number of that item that is
-    present in the current dungeon room.
+    Returned by pick_up_command() when the player has targeted an item that
+    is present, but has specified a quantity to pick up that is greater than
+    the number of that item that is present in the current dungeon room.
     """
 
     __slots__ = "item_title", "amount_attempted", "amount_present"

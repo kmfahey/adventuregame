@@ -21,8 +21,7 @@ def leave_command(context, tokens):
     LEAVE [USING or VIA] <door name>
     LEAVE [USING or VIA] <compass direction> <door name>
 
-    * If that syntax is not followed, returns a BadSyntaxGSM
-    object.
+    * If that syntax is not followed, returns a BadSyntaxGSM object.
 
     * If the door by that name is not present in the room, returns a
     DoorNotPresentGSM object.
@@ -30,11 +29,11 @@ def leave_command(context, tokens):
     * If the door specifier is ambiguous and matches more than one door in
     the room, returns a AmbiguousDoorSpecifierGSM object.
 
-    * If the door is the exit to the dungeon, returns a
-    LeftRoomGSM object and a WonTheGameGSM object.
+    * If the door is the exit to the dungeon, returns a LeftRoomGSM object
+    and a WonTheGameGSM object.
 
-    * Otherwise, a LeftRoomGSM object and a
-    EnteredRoomGSM object are returned.
+    * Otherwise, a LeftRoomGSM object and a EnteredRoomGSM object are
+    returned.
     """
     game_state = context.game_state
 

@@ -8,10 +8,10 @@ from advgame.statemsgs.be_atkd import (
 )
 
 
-__all__ = ("be_attacked_by_command",)
+__all__ = ("_be_attacked_by_command",)
 
 
-def be_attacked_by_command(context, creature):
+def _be_attacked_by_command(context, creature):
     # Called when a attack_command() execution included a
     # successful attack but didn't end in foe death. This is a
     # pseudo-command-method that can only be called internally. An

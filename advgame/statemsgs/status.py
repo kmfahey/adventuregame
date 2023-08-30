@@ -8,13 +8,12 @@ __all__ = ("StatusOutput",)
 
 class StatusOutputGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.status_command() when the
-    player executes it. The status line conveyed by the message property
-    includes the player's current and total hit points, current and total
-    mana points if they're a spellcaster, their attack and damage, their
-    armor class, their armor equipped if not a Mage, their shield equipped
-    if a Warrior or Priest, their Wand equipped if a Mage, and their Weapon
-    equipped.
+    Returned by status_command() when the player executes it. The status
+    line conveyed by the message property includes the player's current
+    and total hit points, current and total mana points if they're a
+    spellcaster, their attack and damage, their armor class, their armor
+    equipped if not a Mage, their shield equipped if a Warrior or Priest,
+    their Wand equipped if a Mage, and their Weapon equipped.
     """
 
     __slots__ = (

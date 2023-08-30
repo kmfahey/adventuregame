@@ -30,8 +30,7 @@ def pick_lock_command(game_state, tokens):
     PICK LOCK ON [THE] <chest name>
     PICK LOCK ON [THE] <door name>
 
-    * If that syntax is not followed, returns a BadSyntaxGSM
-    object.
+    * If that syntax is not followed, returns a BadSyntaxGSM object.
 
     * If the player tries to use this command while playing a Warrior, Mage
     or Priest, returns a ClassRestrictedGSM object.

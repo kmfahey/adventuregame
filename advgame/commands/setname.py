@@ -16,8 +16,7 @@ def set_name_command(game_state, tokens):
 
     SET NAME [TO] <character name>
 
-    * If that syntax is not followed, returns a BadSyntaxGSM
-    object.
+    * If that syntax is not followed, returns a BadSyntaxGSM object.
 
     * If a name is specified that doesn't match the pattern [A-Z][a-z]+(
     [A-Z][a-z]+)*, returns a InvalidPartGSM object.
@@ -25,8 +24,8 @@ def set_name_command(game_state, tokens):
     * If the class has not yet been set, then the name is set, and a
     NameSetGSM object is returned.
 
-    * If the class has been set, then the name is set, ability scores for
-    the character are rolled, and a NameSetGSM object and a
+    * If the class has been set, then the name is set, ability scores
+    for the character are rolled, and a NameSetGSM object and a
     DisplayRolledStatsGSM object are returned.
     """
     # This command requires one or more arguments, so if len(tokens)

@@ -13,8 +13,8 @@ def inventory_command(game_state, tokens):
     Execute the INVENTORY command. The return value is always in a tuple
     even when it's of length 1. The INVENTORY command takes no arguments.
 
-    * If the command is used with any arguments, returns a
-    BadSyntaxGSM object.
+    * If the command is used with any arguments, returns a BadSyntaxGSM
+    object.
 
     * Otherwise, returns a DisplayInventoryGSM object.
     """

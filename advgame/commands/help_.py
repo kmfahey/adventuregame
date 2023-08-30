@@ -24,11 +24,10 @@ def help_command(game_state, tokens):
     HELP
     HELP <command name>
 
-    * If that syntax is not followed, returns a BadSyntaxGSM
-    object.
+    * If that syntax is not followed, returns a BadSyntaxGSM object.
 
-    * If the command is used with no arguments, returns a
-    DisplayCommandsGSM object.
+    * If the command is used with no arguments, returns a DisplayCommandsGSM
+    object.
 
     * If the argument is not a recognized command, returns a
     NotRecognizedGSM object.

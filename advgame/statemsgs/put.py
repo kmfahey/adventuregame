@@ -13,9 +13,8 @@ __all__ = (
 
 class PutAmountOfItemGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.put_command() when the
-    player successfully places one or more items in a chest or on a corpse's
-    person.
+    Returned by put_command() when the player successfully places one or
+    more items in a chest or on a corpse's person.
     """
 
     __slots__ = (
@@ -62,9 +61,8 @@ class PutAmountOfItemGSM(GameStateMessage):
 
 class ItemNotInInventoryGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.put_command() when the
-    player attempts to put an item in a chest or on a corpse that is not in
-    their inventory.
+    Returned by put_command() when the player attempts to put an item in a
+    chest or on a corpse that is not in their inventory.
     """
 
     __slots__ = "amount_attempted", "item_title"
@@ -83,9 +81,9 @@ class ItemNotInInventoryGSM(GameStateMessage):
 
 class AmountToPutUnclearGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.put_command() when the
-    player writes an ungrammatical sentence that is ambiguous as to how many
-    of the item they mean to put in the chest or on the corpse.
+    Returned by put_command() when the player writes an ungrammatical
+    sentence that is ambiguous as to how many of the item they mean to put
+    in the chest or on the corpse.
     """
 
     @property
@@ -98,9 +96,9 @@ class AmountToPutUnclearGSM(GameStateMessage):
 
 class TryingToPutMoreThanYouHaveGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.put_command() when the
-    player tries to put a quantity of an item in a chest or on a corpse that
-    that is more than they have in their inventory.
+    Returned by put_command() when the player tries to put a quantity of an
+    item in a chest or on a corpse that that is more than they have in their
+    inventory.
     """
 
     __slots__ = "item_title", "amount_present"

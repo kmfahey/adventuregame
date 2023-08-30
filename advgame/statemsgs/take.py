@@ -13,9 +13,9 @@ __all__ = (
 
 class ItemNotFoundInContainerGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.take_command() if the
-    player specifies an item to take from a chest that is not in that chest
-    or from a corpse that is not on the corpse.
+    Returned by take_command() if the player specifies an item to take from
+    a chest that is not in that chest or from a corpse that is not on the
+    corpse.
     """
 
     __slots__ = "container_title", "amount_attempted", "container_type", "item_title"
@@ -49,8 +49,8 @@ class ItemNotFoundInContainerGSM(GameStateMessage):
 
 class ItemOrItemsTakenGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.take_command() when the
-    player successfully acquires an item from a chest or corpse.
+    Returned by take_command() when the player successfully acquires an item
+    from a chest or corpse.
     """
 
     __slots__ = "container_title", "item_title", "amount_taken"
@@ -81,9 +81,9 @@ class ItemOrItemsTakenGSM(GameStateMessage):
 
 class AmountToTakeUnclearGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.take_command() when the
-    player writes an ungrammatical sentence that is ambiguous as to how many
-    of the item the player means to take.
+    Returned by take_command() when the player writes an ungrammatical
+    sentence that is ambiguous as to how many of the item the player means
+    to take.
     """
 
     @property
@@ -96,10 +96,9 @@ class AmountToTakeUnclearGSM(GameStateMessage):
 
 class TryingToTakeMoreThanIsPresentGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.take_command() when the
-    player specifies a quantity of an item to take from a chest that is more
-    than is present in that chest, or from a corpse that is more than is
-    present on that corpse.
+    Returned by take_command() when the player specifies a quantity of an
+    item to take from a chest that is more than is present in that chest, or
+    from a corpse that is more than is present on that corpse.
     """
 
     __slots__ = (

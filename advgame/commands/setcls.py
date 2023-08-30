@@ -15,10 +15,9 @@ def set_class_command(game_state, tokens):
     even when it's of length 1. The SET CLASS command has the following
     usage:
 
-    SET CLASS [TO] <Warrior, Thief, Mage or Priest>
+    SET CLASS [TO] <Warrior | Thief | Mage | Priest>
 
-    * If that syntax is not followed, returns a BadSyntaxGSM
-    object.
+    * If that syntax is not followed, returns a BadSyntaxGSM object.
 
     * If a class other than Warrior, Thief, Mage or Priest is specified,
     returns a InvalidClassGSM object.
@@ -26,8 +25,8 @@ def set_class_command(game_state, tokens):
     * If the name has not yet been set, then the class is set, and a
     ClassSetGSM object is returned.
 
-    * If the name has been set, then the class is set, ability scores for
-    the character are rolled, and a ClassSetGSM object and a
+    * If the name has been set, then the class is set, ability scores
+    for the character are rolled, and a ClassSetGSM object and a
     Stmsg_Various_DisplayRolledStats object is returned.
     """
     # This command takes exactly one argument, so I return a syntax

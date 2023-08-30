@@ -21,11 +21,10 @@ __all__ = (
 
 class AmbiguousDoorSpecifierGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.lock_command(),
-    .unlock_command(), .open_command() and .close_command() when the player
-    has used a specifier for a door that matches more than one door in the
-    current dungeon room; for example, saying 'unlock wooden door' when
-    there's two wooden doors.
+    Returned by lock_command(), unlock_command(), open_command() and
+    close_command() when the player has used a specifier for a door that
+    matches more than one door in the current dungeon room; for example,
+    saying 'unlock wooden door' when there's two wooden doors.
     """
 
     __slots__ = "compass_dirs", "door_or_doorway", "door_type"
@@ -59,8 +58,8 @@ class AmbiguousDoorSpecifierGSM(GameStateMessage):
 
 class ContainerIsClosedGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.put_command() or
-    .take_command() when the player tries to access a chest that is closed.
+    Returned by put_command() or take_command() when the player tries to
+    access a chest that is closed.
     """
 
     __slots__ = ("target",)
@@ -75,10 +74,9 @@ class ContainerIsClosedGSM(GameStateMessage):
 
 class ContainerNotFoundGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.put_command(),
-    .take_command(), or .look_at_command() when trying to look in a chest
-    that isn't present in the current dungeon room, or check a corpse that
-    isn't present in the current dungeon room.
+    Returned by put_command(), take_command(), or look_at_command() when
+    trying to look in a chest that isn't present in the current dungeon
+    room, or check a corpse that isn't present in the current dungeon room.
     """
 
     __slots__ = "container_not_found_title", "container_present_title"
@@ -97,10 +95,9 @@ class ContainerNotFoundGSM(GameStateMessage):
 
 class DisplayRolledStatsGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.set_name_command() or
-    .set_class_command() when both name and class have been set, or by
-    .reroll_command(). It displays the character's randomly generated
-    ability scores.
+    Returned by set_name_command() or set_class_command() when both name and
+    class have been set, or by reroll_command(). It displays the character's
+    randomly generated ability scores.
     """
 
     __slots__ = (
@@ -138,10 +135,10 @@ class DisplayRolledStatsGSM(GameStateMessage):
 
 class DoorNotPresentGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.close_command(),
-    .leave_command(), .lock_command(), .look_at_command(), .open_command(),
-    .pick_lock_command(), or .unlock_command() when the player specifies a
-    door that is not present in the current dungeon room.
+    Returned by close_command(), leave_command(), lock_command(),
+    look_at_command(), open_command(), pick_lock_command(), and
+    unlock_command() when the player specifies a door that is not present in
+    the current dungeon room.
     """
 
     __slots__ = "compass_dir", "portal_type"
@@ -179,11 +176,11 @@ class DoorNotPresentGSM(GameStateMessage):
 
 class EnteredRoomGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.leave_command() when the
-    player leaves a room and enters a new one, or by .begin_command()
-    when the player starts the game in the first room. It prints the room
-    description, lists the items on the floor if any, mentions any chest or
-    creature, and lists the exits to the room by compass direction.
+    Returned by leave_command() when the player leaves a room and enters a
+    new one, or by .begin_command() when the player starts the game in the
+    first room. It prints the room description, lists the items on the floor
+    if any, mentions any chest or creature, and lists the exits to the room
+    by compass direction.
     """
 
     __slots__ = ("room",)
@@ -278,10 +275,9 @@ class FoeDeathGSM(GameStateMessage):
 
 class ItemEquippedGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.begin_game() or
-    .equip_command() when the player equips an item. It lists the item
-    equipped and mentions how the relevant game parameters have changed as a
-    result.
+    Returned by CommandProcessor.begin_game() or equip_command() when the
+    player equips an item. It lists the item equipped and mentions how the
+    relevant game parameters have changed as a result.
     """
 
     __slots__ = (
@@ -346,13 +342,12 @@ class ItemEquippedGSM(GameStateMessage):
 
 class ItemUnequippedGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.equip_command(),
-    .unequip_command(), or .drop_command(). It's returned by
-    .unequip_command() when the player unequips an item; .equip_command()
-    returns it if the player already had an item equipped in that slot to
-    convey the previous item's removal; and .drop_command() returns it if
-    the item the character dropped was equipped and they no longer have any
-    of the item in their inventory.
+    Returned by equip_command(), unequip_command(), or drop_command().
+    It's returned by unequip_command() when the player unequips an item;
+    equip_command() returns it if the player already had an item equipped
+    in that slot to convey the previous item's removal; and drop_command()
+    returns it if the item the character dropped was equipped and they no
+    longer have any of the item in their inventory.
     """
 
     __slots__ = (
@@ -439,10 +434,10 @@ class ItemUnequippedGSM(GameStateMessage):
 
 class UnderwentHealingEffectGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.drink_command() or
-    .cast_spell_command(). It's returned by .drink_command() if the player
-    drinks a health potion; and it's returned by the .cast_spell_command()
-    if the player is a Priest and they successfully cast a healing spell.
+    Returned by drink_command() or cast_spell_command(). It's returned by
+    drink_command() if the player drinks a health potion; and it's returned
+    by cast_spell_command() if the player is a Priest and they successfully
+    cast a healing spell.
     """
 
     __slots__ = (

@@ -12,9 +12,9 @@ __all__ = (
 
 class AttackedAndHitGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor._be_attacked_by_command()
-    when the foe's counterattack connects. It conveys the damage done and
-    how many hit points the player's character has left.
+    Returned by _be_attacked_by_command() when the foe's counterattack
+    connects. It conveys the damage done and how many hit points the
+    player's character has left.
     """
 
     __slots__ = "creature_title", "damage_done", "hit_points_left"
@@ -37,8 +37,8 @@ class AttackedAndHitGSM(GameStateMessage):
 
 class AttackedAndNotHitGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor._be_attacked_by_command()
-    when the foe's counterattack did not connect.
+    Returned by _be_attacked_by_command() when the foe's counterattack did
+    not connect.
     """
 
     __slots__ = ("creature_title",)
@@ -53,10 +53,10 @@ class AttackedAndNotHitGSM(GameStateMessage):
 
 class CharacterDeathGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor._be_attacked_by_command()
-    when the foe's counter attack killed the player's character. The game is
-    now over, and advgame.py responds to receiving this object by printing
-    its message and then exiting the program.
+    Returned by _be_attacked_by_command() when the foe's counter attack
+    killed the player's character. The game is now over, and advgame.py
+    responds to receiving this object by printing its message and then
+    exiting the program.
     """
 
     @property

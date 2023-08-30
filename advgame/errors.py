@@ -20,7 +20,8 @@ class InternalError(Exception):
 
 class BadCommandError(Exception):
     """
-    This Exception subclass represents an error caused by a misuse of a command.
+    This Exception subclass represents an error caused by a misuse of a
+    command.
     """
 
     __slots__ = "command", "message"
@@ -29,7 +30,8 @@ class BadCommandError(Exception):
         """
         This __init__ method initializes a BadCommandError.
 
-        :command_str: The command that was being executed when this error was encountered.
+        :command_str: The command that was being executed when this
+        error was encountered.
         :message:     The exception message.
         """
         self.command = command

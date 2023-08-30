@@ -13,10 +13,9 @@ __all__ = (
 
 class CastDamagingSpellGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.cast_spell_command() when
-    the player, while playing a Mage, has cast a damaging spell. Like
-    AttackHitGSM, it tracks whether the foe was slain, and adds a
-    'they turn to attack' sentence if not.
+    Returned by cast_spell_command() when the player, while playing a Mage,
+    has cast a damaging spell. Like AttackHitGSM, it tracks whether the foe
+    was slain, and adds a 'they turn to attack' sentence if not.
     """
 
     __slots__ = "creature_title", "damage_dealt"
@@ -51,10 +50,9 @@ class CastDamagingSpellGSM(GameStateMessage):
 
 class CastHealingSpellGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.cast_spell_command() when
-    used by a Priest. It doesn't need to mention how much damage was healed
-    because it's followed by a Stmsg_Various_UnderwentHealingEffect instance
-    that does that.
+    Returned by cast_spell_command() when used by a Priest. It doesn't
+    need to mention how much damage was healed because it's followed by a
+    Stmsg_Various_UnderwentHealingEffect instance that does that.
     """
 
     __slots__ = ()
@@ -69,8 +67,8 @@ class CastHealingSpellGSM(GameStateMessage):
 
 class InsufficientManaGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.cast_spell_command() when
-    the player tries to cast a spell with insufficient mana points.
+    Returned by cast_spell_command() when the player tries to cast a spell
+    with insufficient mana points.
     """
 
     __slots__ = "current_mana_points", "mana_point_total", "spell_mana_cost"
@@ -91,8 +89,8 @@ class InsufficientManaGSM(GameStateMessage):
 
 class NoCreatureToTargetGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.cast_spell_command() when
-    the player uses the command in a room with no creature to attack.
+    Returned by cast_spell_command() when the player uses the command in a
+    room with no creature to attack.
     """
 
     __slots__ = ()

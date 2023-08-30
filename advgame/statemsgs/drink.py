@@ -15,11 +15,10 @@ __all__ = (
 
 class DrankManaPotionGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.drink_coomand() when the
-    player uses it to drink a mana potion. It is only returned if the
-    player's character is a Mage or Priest. If they're playing a Warrior
-    or Thief, a Stmsg_Drink_DrankManaPotionWhenNotASpellcaster object is
-    returned instead.
+    Returned by drink_command() when the player uses it to drink
+    a mana potion. It is only returned if the player's character
+    is a Mage or Priest. If they're playing a Warrior or Thief, a
+    DrankManaPotionWhenNotASpellcasterGSM object is returned instead.
     """
 
     __slots__ = (
@@ -59,9 +58,8 @@ class DrankManaPotionGSM(GameStateMessage):
 
 class DrankManaPotionWhenNotASpellcasterGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.drink_command() when the
-    player drinks a mana potion but they're playing a Warrior or Thief and
-    have no mana points to restore.
+    Returned by drink_command() when the player drinks a mana potion but
+    they're playing a Warrior or Thief and have no mana points to restore.
     """
 
     __slots__ = ()
@@ -76,8 +74,8 @@ class DrankManaPotionWhenNotASpellcasterGSM(GameStateMessage):
 
 class ItemNotDrinkableGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.drink_command() when the
-    player targets an item that is not a potion.
+    Returned by drink_command() when the player targets an item that is not
+    a potion.
     """
 
     __slots__ = ("item_title",)
@@ -92,8 +90,8 @@ class ItemNotDrinkableGSM(GameStateMessage):
 
 class ItemNotInInventoryGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.drink_command() when the
-    player tries to drink a potion that isn't in their inventory.
+    Returned by drink_command() when the player tries to drink a potion that
+    isn't in their inventory.
     """
 
     __slots__ = ("item_title",)
@@ -108,9 +106,9 @@ class ItemNotInInventoryGSM(GameStateMessage):
 
 class TriedToDrinkMoreThanPossessedGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.drink_command() when the
-    player specifies drinking a quantity of potions that is greater than the
-    number they have in their inventory.
+    Returned by drink_command() when the player specifies drinking a
+    quantity of potions that is greater than the number they have in their
+    inventory.
     """
 
     __slots__ = "item_title", "attempted_qty", "possessed_qty"
@@ -130,9 +128,9 @@ class TriedToDrinkMoreThanPossessedGSM(GameStateMessage):
 
 class AmountToDrinkUnclearGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.drink_command() when the
-    player writes an ungrammatical sentence that is ambiguous as to how many
-    of the item they intend to target.
+    Returned by drink_command() when the player writes an ungrammatical
+    sentence that is ambiguous as to how many of the item they intend to
+    target.
     """
 
     @property

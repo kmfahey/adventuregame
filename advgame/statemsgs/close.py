@@ -13,8 +13,8 @@ __all__ = (
 
 class ElementNotCloseableGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.close_command() when the
-    player attempts to close a corpse, creature, doorway or item.
+    Returned by close_command() when the player attempts to close a corpse,
+    creature, doorway or item.
     """
 
     __slots__ = "target_title", "target_type"
@@ -39,8 +39,8 @@ class ElementNotCloseableGSM(GameStateMessage):
 
 class ElementHasBeenClosedGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.close_command() when the
-    player succeeds in closing a door or chest.
+    Returned by close_command() when the player succeeds in closing a door
+    or chest.
     """
 
     __slots__ = ("target",)
@@ -55,8 +55,8 @@ class ElementHasBeenClosedGSM(GameStateMessage):
 
 class ElementIsAlreadyClosedGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.close_command() when the
-    closeable object the player targeted is already closed.
+    Returned by close_command() when the closeable object the player
+    targeted is already closed.
     """
 
     __slots__ = ("target",)
@@ -71,9 +71,8 @@ class ElementIsAlreadyClosedGSM(GameStateMessage):
 
 class ElementToCloseNotHereGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.close_command() when the
-    player specifies a target to the command that is not present in the
-    current room of the game.
+    Returned by close_command() when the player specifies a target to the
+    command that is not present in the current room of the game.
     """
 
     __slots__ = ("target_title",)

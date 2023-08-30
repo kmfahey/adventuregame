@@ -8,9 +8,9 @@ __all__ = ("HaveQuitTheGame",)
 
 class HaveQuitTheGameGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.quit_command() when the
-    player executes the command. When advgame.py receives this object, it
-    prints the message and then exits the program.
+    Returned by quit_command() when the player executes the command. When
+    advgame.py receives this object, it prints the message and then exits
+    the program.
     """
 
     __slots__ = ()

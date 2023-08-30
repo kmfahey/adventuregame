@@ -25,8 +25,7 @@ def drink_command(game_state, tokens):
     DRINK [THE] <potion name>
     DRINK <number> <potion name>[s]
 
-    * If that syntax is not followed, returns a BadSyntaxGSM
-    object.
+    * If that syntax is not followed, returns a BadSyntaxGSM object.
 
     * If the potion specified is not in the character's inventory, returns a
     ItemNotInInventoryGSM object.
@@ -45,7 +44,7 @@ def drink_command(game_state, tokens):
     Thief, the potion is removed from inventory, and returns a
     DrankManaPotionWhenNotASpellcasterGSM object.
 
-    * If it's a mana potion, and the character is a Mage or a Preist, then
+    * If it's a mana potion, and the character is a Mage or a Priest, then
     the potion is removed from inventory, the character has some mana
     restored, and a DrankManaPotionGSM object is returned.
     """

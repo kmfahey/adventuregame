@@ -196,14 +196,14 @@ class CommandProcessor:
 
     def process(self, natural_language_str):
         """
-        Process and dispatch a natural language command string. The return value
-        is always a tuple even when it's length 1. If the command is not
+        Process and dispatch a natural language command string. The return
+        value is always a tuple even when it's length 1. If the command is not
         recognized, returns a NotRecognizedGSM object.
 
         If a ingame command is used during the pregame (before name and class
         have been set and ability scores have been rolled and accepted)
         or a pregame command is used during the game proper, returns a
-         NotAllowedNowGSM object.
+        NotAllowedNowGSM object.
 
         If this method is called after the game has ended, the same object that
         was returned when the game ended is returned again. Otherwise, the

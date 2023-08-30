@@ -9,8 +9,8 @@ __all__ = ("BadSyntax", "ClassRestricted", "NotAllowedNow", "NotRecognized")
 
 class BadSyntaxGSM(GameStateMessage):
     """
-    Returned by command methods of advgame.process.CommandProcessor when
-    incorrect syntax for a command has been used.
+    Returned by command methods of when incorrect syntax for a command has
+    been used.
     """
 
     __slots__ = "command", "proper_syntax_options"
@@ -46,9 +46,9 @@ class BadSyntaxGSM(GameStateMessage):
 
 class ClassRestrictedGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.process() when the player
-    has used a command that is restricted to a class other than their own.
-    (For example, only thieves can use PICK LOCK.)
+    Returned by CommandProcessor.process() when the player has used a
+    command that is restricted to a class other than their own. (For
+    example, only thieves can use PICK LOCK.)
     """
 
     __slots__ = (
@@ -75,13 +75,12 @@ class ClassRestrictedGSM(GameStateMessage):
 
 class NotAllowedNowGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.process() when the
-    player has used a command that is not allowed in the current
-    game mode. The game has two modes: pregame, when name and class
-    are chosen and ability scores are rolled, and in-game, when the
-    player plays the game. Different command sets are allowed in each
-    mode. See advgame.process.CommandProcessor.pregame_commands and
-    advgame.process.CommandProcessor.ingame_commands for the lists.
+    Returned by CommandProcessor.process() when the player has used a
+    command that is not allowed in the current game mode. The game has two
+    modes: pregame, when name and class are chosen and ability scores are
+    rolled, and in-game, when the player plays the game. Different command
+    sets are allowed in each mode. See pregame_commands and ingame_commands
+    for the lists.
     """
 
     __slots__ = "command", "allowed_commands", "game_has_begun"
@@ -117,8 +116,8 @@ class NotAllowedNowGSM(GameStateMessage):
 
 class NotRecognizedGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.process() when a command
-    was entered that is not known to the command processor.
+    Returned by CommandProcessor.process() when a command was entered that
+    is not known to the command processor.
     """
 
     __slots__ = "command", "allowed_commands", "game_has_begun"

@@ -13,11 +13,10 @@ __all__ = (
 
 class ClassCantUseItemGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.equip_command() when the
-    player tries to equip an item that is not allowed for their class. As an
-    example, a Mage would get this result if they tried to equip a suit of
-    armor or a shield, and anyone besides a Mage would get this result if
-    they tried to equip a wand.
+    Returned by equip_command() when the player tries to equip an item that
+    is not allowed for their class. As an example, a Mage would get this
+    result if they tried to equip a suit of armor or a shield, and anyone
+    besides a Mage would get this result if they tried to equip a wand.
     """
 
     __slots__ = "character_class", "item_title", "item_type"
@@ -43,8 +42,8 @@ class ClassCantUseItemGSM(GameStateMessage):
 
 class NoSuchItemInInventoryGSM(GameStateMessage):
     """
-    Returned by advgame.process.CommandProcessor.equip_command() when the
-    player tries to equip an item that they don't have in their inventory.
+    Returned by equip_command() when the player tries to equip an item that
+    they don't have in their inventory.
     """
 
     __slots__ = ("item_title",)

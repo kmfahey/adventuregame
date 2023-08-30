@@ -23,8 +23,7 @@ def pick_up_command(game_state, tokens):
     PICK UP <item name>
     PICK UP <number> <item name>),
 
-    * If that syntax is not followed, returns a BadSyntaxGSM
-    object.
+    * If that syntax is not followed, returns a BadSyntaxGSM object.
 
     * If the arguments are ungrammatical and are unclear about the quantity
     to pick up, returns a AmountToPickUpUnclearGSM object.
@@ -39,9 +38,9 @@ def pick_up_command(game_state, tokens):
     greater than the quantity present on the floor in the room, returns a
     TryingToPickUpMoreThanIsPresentGSM object.
 
-    * Otherwise, the item— or the quantity of the item— is removed
-    from the floor, and added to the character's inventory, and a
-    ItemPickedUpGSM object is returned.
+    * Otherwise, the item— or the quantity of the item— is removed from
+    the floor, and added to the character's inventory, and a ItemPickedUpGSM
+    object is returned.
     """
     # The door var is set to None so later it can be checked for a
     # non-None value.

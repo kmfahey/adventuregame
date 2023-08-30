@@ -1,16 +1,15 @@
 #!/usr/bin/python32
 
 """
-Contains GameStateMessage, the abstract base calss for
-all game state message classes in advgame.statemsgs.*.
-advgame.process.CommandProcessor.process() processes a natural language
-command from the player and tail calls a command method of the
-advgame.process.CommandProcessor object. It always returns a tuple of
-GameStateMessage subclass objects; each one represents a single possible
-outcome of a command. A GameStateMessage subclass has an __init__ method
-that assigns keyword arguments to object attributes and a message
-property which contains the logic for rendering the semantic value of
-the message object in natural language.
+Contains GameStateMessage, the abstract base calss for all game state
+message classes in advgame.statemsgs.*. CommandProcessor.process()
+processes a natural language command from the player and tail calls
+a command method of the CommandProcessor object. It always returns
+a tuple of GameStateMessage subclass objects; each one represents a
+single possible outcome of a command. A GameStateMessage subclass has an
+__init__ method that assigns keyword arguments to object attributes and
+a message property which contains the logic for rendering the semantic
+value of the message object in natural language.
 """
 
 from abc import ABC, abstractmethod

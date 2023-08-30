@@ -26,8 +26,7 @@ def unlock_command(game_state, tokens):
     UNLOCK <door\u00A0name>
     UNLOCK <chest\u00A0name>
 
-    * If that syntax is not followed, returns a BadSyntaxGSM
-    object.
+    * If that syntax is not followed, returns a BadSyntaxGSM object.
 
     * If the arguments specify a door that is not present in the room,
     returns a DoorNotPresentGSM object.
@@ -41,9 +40,9 @@ def unlock_command(game_state, tokens):
     * If the specified element is a doorway, item, creature or corpse,
     returns a ElementNotUnlockableGSM object.
 
-    * If the character does not possess the requisite door or
-    chest key to lock the specified door or chest, returns an
-    DontPossessCorrectKeyGSM object.
+    * If the character does not possess the requisite door or chest key to
+    lock the specified door or chest, returns an DontPossessCorrectKeyGSM
+    object.
 
     * If the specified door or chest is already unlocked, returns a
     ElementIsAlreadyUnlockedGSM object.
