@@ -458,6 +458,8 @@ def _preprocessing_for_lock_unlock_open_or_close(game_state, command, tokens):
             # it's returned.
             return (container,)
 
+    item_targetted = None
+
     # If I reach this point, the method is in a failure mode. If a door
     # or chest matched it would already have been returned. If the
     # other three failure modes don't obtain, the fourth-- an item-- is
@@ -555,6 +557,8 @@ def _put_or_take_preproc(game_state, command, tokens):
     container = game_state.rooms_state.cursor.container_here
 
     command = command.lower()
+
+    joinword = None
 
     # I seek the joinword in the tokens tuple and record its index so I
     # can use it to break the tokens tuple into an item-title-part and a

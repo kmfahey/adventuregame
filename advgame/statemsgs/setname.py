@@ -10,7 +10,7 @@ __all__ = ("InvalidPartGSM", "NameSetGSM")
 class InvalidPartGSM(GameStateMessage):
     """
     Returned by set_name_command() when the player tries to set a name that
-    is not one or more alphabetic titelcased strings.
+    is not one or more alphabetic titlecased strings.
     """
 
     __slots__ = ("name_part",)

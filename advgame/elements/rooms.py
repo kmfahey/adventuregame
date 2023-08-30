@@ -295,6 +295,8 @@ class RoomsState:
 
         # If more than one of north, east, south and west are True,
         # raise an exception.
+        exit_name = None
+        exit_key = None
 
         if (
             (north and west)

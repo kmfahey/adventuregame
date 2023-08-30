@@ -120,7 +120,8 @@ class CommandProcessor:
         # underscores) is the beginning of that name.
         self.commands_set = PREGAME_COMMANDS | INGAME_COMMANDS
 
-    def pre_process(self, natural_language_str):
+    @staticmethod
+    def pre_process(natural_language_str):
         tokens = natural_language_str.strip().split()
         command = tokens.pop(0).lower()
 

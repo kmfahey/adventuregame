@@ -90,6 +90,8 @@ def pick_lock_command(game_state, tokens):
     container = game_state.rooms_state.cursor.container_here
     creature = game_state.rooms_state.cursor.creature_here
 
+    item_targetted = None
+
     # If the target is a door or doorway. the _door_selector() is used.
     if tokens[-1] in ("door", "doorway"):
         result = _door_selector(game_state, tokens)

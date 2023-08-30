@@ -386,6 +386,9 @@ class ItemUnequippedGSM(GameStateMessage):
             return_str += f" Your armor class is now {self.armor_class}."
         elif self.attack_bonus is not None and self.damage is not None:
 
+            tense = None
+            implement = None
+
             # Only a mage can still have an attack bonus and damage
             # after unequipping something.
             plussign = "+" if self.attack_bonus >= 0 else ""

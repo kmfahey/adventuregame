@@ -32,7 +32,7 @@ class Container(IniEntry, ItemsMultiState):
         "container_type",
     )
 
-    def __init__(self, items_state, internal_name, *item_objs, **ini_constr_argd):
+    def __init__(self, items_state, internal_name, **ini_constr_argd):
         r"""
         This __init__ method calls both parent class's __init__ methods in
         sequence. It draws on the contents attribute of the source ini data,
@@ -54,6 +54,7 @@ class Container(IniEntry, ItemsMultiState):
         # is a compacted list of Item internal names and
         # quantities. _process_list_value unpacks it and returns
         # quantity-internal_name pairs.
+        contents_qtys_item_objs = []
 
         if contents_str:
             contents_qtys_names = self._process_list_value(contents_str)
@@ -93,6 +94,8 @@ class Container(IniEntry, ItemsMultiState):
         :**container_dict: A dict of key-value pairs to instantiate the
         Container subclass with.
         """
+        container = None
+
         if container_dict["container_type"] == "chest":
             container = Chest(items_state, **container_dict)
         elif container_dict["container_type"] == "corpse":
@@ -161,6 +164,8 @@ class Creature(IniEntry, Character):
         "description",
         "character_class",
         "species",
+        "description_dead",
+        "title",
         "_strength",
         "_dexterity",
         "_constitution",

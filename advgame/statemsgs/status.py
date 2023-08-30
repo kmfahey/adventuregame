@@ -38,6 +38,8 @@ class StatusOutputGSM(GameStateMessage):
         # current & max mana points (if a spellcaster), armor class,
         # attack & damage, and items equipped.
 
+        mp_str = None
+
         # The player character's hit points.
         hp_str = f"Hit Points: {self.hit_points}/{self.hit_point_total}"
 

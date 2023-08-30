@@ -12,8 +12,6 @@ from math import nan as NaN
 from random import randint
 from textwrap import wrap
 
-from advgame.errors import InternalError
-
 
 __all__ = (
     "LEXICAL_NUMBER_1_THRU_99_RE",

@@ -36,7 +36,7 @@ def open_command(game_state, tokens):
     ElementNotOpenableGSM object.
 
     * If trying to open a chest that is not present in the room, returns a
-    ElementtoOpenNotHereGSM object.
+    ElementToOpenNotHereGSM object.
 
     * If trying to open a door or chest that is locked, returns a
     ElementIsLockedGSM object.
@@ -45,7 +45,7 @@ def open_command(game_state, tokens):
     ElementIsAlreadyOpenGSM object.
 
     * Otherwise, the chest or door has its is_closed attribute set to False,
-    and returns returns a ElementHasBeenOpenedGSM..
+    and returns a ElementHasBeenOpenedGSM.
     """
     # The shared private workhorse method is called and it handles the
     # majority of the error-checking. If it returns an error that is

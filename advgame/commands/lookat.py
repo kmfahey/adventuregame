@@ -114,6 +114,8 @@ def look_at_command(game_state, tokens):
     # point it occurs into a left-hand value which is the title
     # of an item, and a right-hand value which is the title of a
     # container or is 'inventory'.
+    location_title = None
+
     if "in" in tokens or "on" in tokens:
         if "in" in tokens:
             # This signal value will control an upcoming conditional

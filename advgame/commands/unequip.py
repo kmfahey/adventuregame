@@ -146,7 +146,9 @@ def unequip_command(game_state, tokens):
                 else:
                     # Otherwise, I return an item-unequipped value with
                     # cant_attack set to True.
-                    return (ItemUnequippedGSM(item_title, "wand", cant_attack=True),)
+                    return (
+                        ItemUnequippedGSM(item_title, "wand", now_cant_attack=True),
+                    )
     elif item.item_type == "weapon":
         # If I'm unequipping a weapon but the player character has no
         # weapon equipped I return a item-not-equipped error.
