@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from advgame.commands.constants import COMMANDS_SYNTAX
-from advgame.utils import lexical_number_in_1_99_re, lexical_number_to_digits
+from advgame.utils import LEXICAL_NUMBER_1_THRU_99_RE, lexical_number_to_digits
 from advgame.statemsgs.command import BadSyntaxGSM
 from advgame.statemsgs.drink import (
     AmountToDrinkUnclearGSM,
@@ -63,7 +63,7 @@ def drink_command(game_state, tokens):
 
     # Otherwise, I check if the first token is a digital or lexical
     # integer.
-    elif tokens[0].isdigit() or lexical_number_in_1_99_re.match(tokens[0]):
+    elif tokens[0].isdigit() or LEXICAL_NUMBER_1_THRU_99_RE.match(tokens[0]):
         # If the first token parses as an int, I cast it and
         # set qty_to_drink. Otherwise, the utility function
         # advgame.utilsities.lexical_number_to_digits() is used

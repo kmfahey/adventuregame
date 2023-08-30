@@ -5,6 +5,16 @@ from advgame.commands.be_atkd import be_attacked_by_command
 from advgame.commands.begin import begin_game_command
 from advgame.commands.castspl import cast_spell_command
 from advgame.commands.close import close_command
+from advgame.commands.constants import (
+    COMMANDS_HELP,
+    COMMANDS_SYNTAX,
+    INGAME_COMMANDS,
+    PREGAME_COMMANDS,
+    SPELL_DAMAGE,
+    SPELL_MANA_COST,
+    STARTER_GEAR,
+    VALID_NAME_RE,
+)
 from advgame.commands.drink import drink_command
 from advgame.commands.drop import drop_command
 from advgame.commands.equip import equip_command
@@ -25,17 +35,6 @@ from advgame.commands.status import status_command
 from advgame.commands.take import take_command
 from advgame.commands.unequip import unequip_command
 from advgame.commands.unlock import unlock_command
-
-from advgame.commands.constants import (
-    COMMANDS_HELP,
-    COMMANDS_SYNTAX,
-    INGAME_COMMANDS,
-    PREGAME_COMMANDS,
-    SPELL_DAMAGE,
-    SPELL_MANA_COST,
-    STARTER_GEAR,
-    VALID_NAME_RE,
-)
 
 
 __all__ = (

@@ -16,6 +16,7 @@ from advgame.errors import InternalError
 
 
 __all__ = (
+    "LEXICAL_NUMBER_1_THRU_99_RE",
     "join_strs_w_comma_conj",
     "lexical_number_to_digits",
     "roll_dice",
@@ -61,11 +62,9 @@ def join_strs_w_comma_conj(str_list, conjunction="and"):
 # I wrote this utility function. The regular expressions it uses are defined
 # outside the function so they're only compiled once.
 
-digit_re = re.compile("^[0-9]+$")
-
 # This regular expression matches any lexical number from one to ninety-nine.
 
-lexical_number_in_1_99_re = re.compile(
+LEXICAL_NUMBER_1_THRU_99_RE = re.compile(
     """^(
             (one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)
         |
@@ -131,7 +130,7 @@ def lexical_number_to_digits(lexical_number):
 
     # The lexical number is not in the range this function can parse, so
     # NaN is returned as a signal value.
-    if not lexical_number_in_1_99_re.match(lexical_number):
+    if not LEXICAL_NUMBER_1_THRU_99_RE.match(lexical_number):
         return NaN
 
     # The lexical number is not hyphenate, so I can use

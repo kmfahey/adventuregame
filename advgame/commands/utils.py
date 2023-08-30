@@ -31,9 +31,8 @@ from advgame.statemsgs.various import (
 )
 from advgame.utils import (
     join_strs_w_comma_conj,
-    lexical_number_in_1_99_re,
+    LEXICAL_NUMBER_1_THRU_99_RE,
     lexical_number_to_digits,
-    digit_re,
 )
 
 
@@ -284,7 +283,7 @@ def _pick_up_or_drop_preproc(command, tokens):
     if (
         tokens[0] in ("a", "an", "the")
         or tokens[0].isdigit()
-        or lexical_number_in_1_99_re.match(tokens[0])
+        or LEXICAL_NUMBER_1_THRU_99_RE.match(tokens[0])
     ):
         # If the quantity indicator is all there is, a syntax error
         # is returned.
@@ -328,7 +327,7 @@ def _pick_up_or_drop_preproc(command, tokens):
                 item_quantity = 1
         else:
             # Based on the enclosing conditional, this else implies
-            # lexical_number_in_1_99_re.match(tokens[0]) ==
+            # LEXICAL_NUMBER_1_THRU_99_RE.match(tokens[0]) ==
             # True. So I use lexical_number_to_digits to parse
             # the 1st token to an int.
             item_quantity = lexical_number_to_digits(tokens[0])
@@ -611,13 +610,13 @@ def _put_or_take_preproc(game_state, command, tokens):
 
     # The first token is a digital number, so I cast it to int and
     # set quantity.
-    if digit_re.match(item_tokens[0]):
+    if item_tokens[0].isdigit():
         quantity = int(item_tokens[0])
         item_tokens = item_tokens[1:]
 
     # The first token is a lexical number, so I convert it and set
     # quantity.
-    elif lexical_number_in_1_99_re.match(tokens[0]):
+    elif LEXICAL_NUMBER_1_THRU_99_RE.match(tokens[0]):
         quantity = lexical_number_to_digits(item_tokens[0])
         item_tokens = item_tokens[1:]
 

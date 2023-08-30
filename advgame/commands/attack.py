@@ -1,10 +1,7 @@
 #!/usr/bin/python3
 
-from advgame.utils import roll_dice
-
 from advgame.commands.be_atkd import be_attacked_by_command
 from advgame.commands.constants import COMMANDS_SYNTAX
-
 from advgame.statemsgs.attack import (
     AttackHitGSM,
     AttackMissedGSM,
@@ -13,6 +10,7 @@ from advgame.statemsgs.attack import (
 )
 from advgame.statemsgs.command import BadSyntaxGSM
 from advgame.statemsgs.various import FoeDeathGSM
+from advgame.utils import roll_dice
 
 
 __all__ = ("attack_command",)

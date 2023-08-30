@@ -4,6 +4,7 @@ import re
 
 from advgame.commands.constants import COMMANDS_SYNTAX
 from advgame.commands.utils import _look_at_item_detail, _door_selector
+from advgame.elements import Chest, Corpse
 from advgame.statemsgs import GameStateMessage
 from advgame.statemsgs.command import BadSyntaxGSM
 from advgame.statemsgs.lookat import (
@@ -14,7 +15,6 @@ from advgame.statemsgs.lookat import (
     FoundNothingGSM,
 )
 from advgame.statemsgs.various import ContainerNotFoundGSM
-from advgame.elements import Chest, Corpse
 
 
 __all__ = ("look_at_command",)
