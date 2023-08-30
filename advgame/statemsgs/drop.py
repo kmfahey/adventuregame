@@ -4,10 +4,10 @@ from advgame.statemsgs.gsm import GameStateMessage
 
 
 __all__ = (
-    "DroppedItem",
-    "AmountToDropUnclear",
-    "TryingToDropItemYouDontHave",
-    "TryingToDropMoreThanYouHave",
+    "DroppedItemGSM",
+    "AmountToDropUnclearGSM",
+    "TryingToDropItemYouDontHaveGSM",
+    "TryingToDropMoreThanYouHaveGSM",
 )
 
 

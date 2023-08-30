@@ -4,11 +4,11 @@ from advgame.statemsgs.gsm import GameStateMessage
 
 
 __all__ = (
-    "DontPossessCorrectKey",
-    "ElementNotUnlockable",
-    "ElementHasBeenLocked",
-    "ElementIsAlreadyLocked",
-    "ElementToLockNotHere",
+    "DontPossessCorrectKeyGSM",
+    "ElementNotUnlockableGSM",
+    "ElementHasBeenLockedGSM",
+    "ElementIsAlreadyLockedGSM",
+    "ElementToLockNotHereGSM",
 )
 
 

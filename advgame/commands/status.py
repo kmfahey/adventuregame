@@ -24,7 +24,7 @@ def status_command(game_state, tokens):
         return (BadSyntaxGSM("STATUS", COMMANDS_SYNTAX["STATUS"]),)
 
     # A lot of data goes into a status command so I build the argd to
-    # Stmsg_Status_StatusOutput key by key.
+    # StatusOutputGSM key by key.
     character = game_state.character
     status_gsm_argd = dict()
     status_gsm_argd["hit_points"] = character.hit_points

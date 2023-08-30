@@ -4,7 +4,7 @@
 from advgame.statemsgs.gsm import GameStateMessage
 
 
-__all__ = ("InvalidPart", "NameSet")
+__all__ = ("InvalidPartGSM", "NameSetGSM")
 
 
 class InvalidPartGSM(GameStateMessage):

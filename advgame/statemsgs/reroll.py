@@ -3,7 +3,7 @@
 from advgame.statemsgs.gsm import GameStateMessage
 
 
-__all__ = ("NameOrClassNotSet",)
+__all__ = ("NameOrClassNotSetGSM",)
 
 
 class NameOrClassNotSetGSM(GameStateMessage):

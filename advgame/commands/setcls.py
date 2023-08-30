@@ -27,7 +27,7 @@ def set_class_command(game_state, tokens):
 
     * If the name has been set, then the class is set, ability scores
     for the character are rolled, and a ClassSetGSM object and a
-    Stmsg_Various_DisplayRolledStats object is returned.
+    DisplayRolledStatsGSM object is returned.
     """
     # This command takes exactly one argument, so I return a syntax
     # error if I got 0 or more than 1.

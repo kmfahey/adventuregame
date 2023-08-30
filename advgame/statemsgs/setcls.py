@@ -3,7 +3,7 @@
 from advgame.statemsgs.gsm import GameStateMessage
 
 
-__all__ = ("ClassSet", "InvalidClass")
+__all__ = ("ClassSetGSM", "InvalidClassGSM")
 
 
 class ClassSetGSM(GameStateMessage):

@@ -4,10 +4,10 @@ from advgame.statemsgs.gsm import GameStateMessage
 
 
 __all__ = (
-    "CastDamagingSpell",
-    "CastHealingSpell",
-    "InsufficientMana",
-    "NoCreatureToTarget",
+    "CastDamagingSpellGSM",
+    "CastHealingSpellGSM",
+    "InsufficientManaGSM",
+    "NoCreatureToTargetGSM",
 )
 
 
@@ -52,7 +52,7 @@ class CastHealingSpellGSM(GameStateMessage):
     """
     Returned by cast_spell_command() when used by a Priest. It doesn't
     need to mention how much damage was healed because it's followed by a
-    Stmsg_Various_UnderwentHealingEffect instance that does that.
+    UnderwentHealingEffectGSM instance that does that.
     """
 
     __slots__ = ()

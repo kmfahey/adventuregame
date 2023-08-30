@@ -3,7 +3,7 @@
 from advgame.statemsgs.gsm import GameStateMessage
 
 
-__all__ = ("StatusOutput",)
+__all__ = ("StatusOutputGSM",)
 
 
 class StatusOutputGSM(GameStateMessage):

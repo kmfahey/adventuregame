@@ -537,7 +537,7 @@ def _put_or_take_preproc(game_state, command, tokens):
     #
     # * If the tokens argument is zero-length or doesn't container the
     # appropriate joinword ('FROM' for TAKE, 'IN' for PUT with chests,
-    # or 'ON' for put with corpses), returns a BadSyntax object.
+    # or 'ON' for put with corpses), returns a BadSyntaxGSM object.
     #
     # * If the arguments are an ungrammatical sentence and are ambiguous
     # about the quantity of the item, returns a AmountToPutUnclearGSM

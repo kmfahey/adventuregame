@@ -6,16 +6,16 @@ from advgame.utils import join_strs_w_comma_conj, usage_verb
 
 
 __all__ = (
-    "AmbiguousDoorSpecifier",
-    "ContainerIsClosed",
-    "ContainerNotFound",
-    "DisplayRolledStats",
-    "DoorNotPresent",
-    "EnteredRoom",
-    "FoeDeath",
-    "ItemEquipped",
-    "ItemUnequipped",
-    "UnderwentHealingEffect",
+    "AmbiguousDoorSpecifierGSM",
+    "ContainerIsClosedGSM",
+    "ContainerNotFoundGSM",
+    "DisplayRolledStatsGSM",
+    "DoorNotPresentGSM",
+    "EnteredRoomGSM",
+    "FoeDeathGSM",
+    "ItemEquippedGSM",
+    "ItemUnequippedGSM",
+    "UnderwentHealingEffectGSM",
 )
 
 

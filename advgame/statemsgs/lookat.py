@@ -6,11 +6,11 @@ from advgame.utils import join_strs_w_comma_conj
 
 
 __all__ = (
-    "FoundContainerHere",
-    "FoundCreatureHere",
-    "FoundDoorOrDoorway",
-    "FoundItemOrItemsHere",
-    "FoundNothing",
+    "FoundContainerHereGSM",
+    "FoundCreatureHereGSM",
+    "FoundDoorOrDoorwayGSM",
+    "FoundItemOrItemsHereGSM",
+    "FoundNothingGSM",
 )
 
 
@@ -51,9 +51,9 @@ class FoundContainerHereGSM(GameStateMessage):
                 )
             elif self.is_locked is True and self.is_closed is False:
                 raise InternalError(
-                    "FoundContainerHere.message accessed to describe a chest "
-                    + "with the impossible combination of is_locked = True "
-                    + "and is_closed = False."
+                    "FoundContainerHereGSM.message accessed to describe a "
+                    + "chest with the impossible combination of is_locked = "
+                    + "True and is_closed = False."
                 )
             elif self.is_locked is None and self.is_closed is True:
                 return f"{self.container_description} It is closed."

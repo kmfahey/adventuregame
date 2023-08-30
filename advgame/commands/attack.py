@@ -88,8 +88,7 @@ def attack_command(context, tokens):
         # and the combined tuple is returned.
         #
         # Please note that it's possible for _be_attacked_by_command()
-        # to end in Stmsg_Batkby_CharacterDeath; the game might end
-        # right here.
+        # to end in CharacterDeathGSM; the game might end right here.
         be_attacked_by_result = _be_attacked_by_command(context, creature)
         return (attack_missed_result,) + be_attacked_by_result
     else:

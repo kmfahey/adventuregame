@@ -3,7 +3,7 @@
 from advgame.statemsgs.gsm import GameStateMessage
 
 
-__all__ = ("HaveQuitTheGame",)
+__all__ = ("HaveQuitTheGameGSM",)
 
 
 class HaveQuitTheGameGSM(GameStateMessage):

@@ -4,10 +4,10 @@ from advgame.statemsgs.gsm import GameStateMessage
 
 
 __all__ = (
-    "AttackHit",
-    "AttackMissed",
-    "OpponentNotFound",
-    "YouHaveNoWeaponOrWandEquipped",
+    "AttackHitGSM",
+    "AttackMissedGSM",
+    "OpponentNotFoundGSM",
+    "YouHaveNoWeaponOrWandEquippedGSM",
 )
 
 

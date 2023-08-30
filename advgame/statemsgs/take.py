@@ -4,10 +4,10 @@ from advgame.statemsgs.gsm import GameStateMessage
 
 
 __all__ = (
-    "ItemNotFoundInContainer",
-    "ItemOrItemsTaken",
-    "AmountToTakeUnclear",
-    "TryingToTakeMoreThanIsPresent",
+    "ItemNotFoundInContainerGSM",
+    "ItemOrItemsTakenGSM",
+    "AmountToTakeUnclearGSM",
+    "TryingToTakeMoreThanIsPresentGSM",
 )
 
 

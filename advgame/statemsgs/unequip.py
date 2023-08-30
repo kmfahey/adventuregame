@@ -5,7 +5,7 @@ from advgame.utils import usage_verb
 from advgame.statemsgs.gsm import GameStateMessage
 
 
-__all__ = ("ItemNotEquipped",)
+__all__ = ("ItemNotEquippedGSM",)
 
 
 class ItemNotEquippedGSM(GameStateMessage):

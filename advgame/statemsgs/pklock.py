@@ -4,10 +4,10 @@ from advgame.statemsgs.gsm import GameStateMessage
 
 
 __all__ = (
-    "ElementNotLockpickable",
-    "TargetHasBeenUnlocked",
-    "TargetNotFound",
-    "TargetNotLocked",
+    "ElementNotLockpickableGSM",
+    "TargetHasBeenUnlockedGSM",
+    "TargetNotFoundGSM",
+    "TargetNotLockedGSM",
 )
 
 

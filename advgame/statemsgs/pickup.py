@@ -7,11 +7,11 @@ from advgame.utils import join_strs_w_comma_conj
 
 
 __all__ = (
-    "CantPickUpChestCorpseCreatureOrDoor",
-    "ItemNotFound",
-    "ItemPickedUp",
-    "AmountToPickUpUnclear",
-    "TryingToPickUpMoreThanIsPresent",
+    "CantPickUpChestCorpseCreatureOrDoorGSM",
+    "ItemNotFoundGSM",
+    "ItemPickedUpGSM",
+    "AmountToPickUpUnclearGSM",
+    "TryingToPickUpMoreThanIsPresentGSM",
 )
 
 

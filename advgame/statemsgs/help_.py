@@ -5,9 +5,9 @@ from advgame.utils import join_strs_w_comma_conj
 
 
 __all__ = (
-    "NotRecognized",
-    "DisplayCommands",
-    "DisplayHelpForCommand",
+    "NotRecognizedGSM",
+    "DisplayCommandsGSM",
+    "DisplayHelpForCommandGSM",
 )
 
 
@@ -87,10 +87,10 @@ class DisplayHelpForCommandGSM(GameStateMessage):
 
     @property
     def message(self):
-        # Like BadSyntax, this message property accepts syntax outlines
-        # from COMMANDS_SYNTAX and assembles them into a list of valid
-        # usages, using unicode nonbreaking spaces so the usage examples
-        # aren't broken across lines by textwrapper().
+        # Like BadSyntaxGSM, this message property accepts syntax
+        # outlines from COMMANDS_SYNTAX and assembles them into a list
+        # of valid usages, using unicode nonbreaking spaces so the usage
+        # examples aren't broken across lines by textwrapper().
         syntax_str_list = [
             f"'{self.command}\u00A0{syntax_entry}'"
             if syntax_entry

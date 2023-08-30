@@ -6,8 +6,8 @@ from advgame.utils import usage_verb
 
 
 __all__ = (
-    "ClassCantUseItem",
-    "NoSuchItemInInventory",
+    "ClassCantUseItemGSM",
+    "NoSuchItemInInventoryGSM",
 )
 
 
@@ -25,8 +25,8 @@ class ClassCantUseItemGSM(GameStateMessage):
     def message(self):
         # This message property assembles a string to inform the player
         # that they can't equip an item due to class restrictions. Like
-        # Stmsg_Drop_DroppedItem.message, it omits the indirect article
-        # if the item is a suit of armor.
+        # DroppedItemGSM.message, it omits the indirect article if the
+        # item is a suit of armor.
         item_usage_verb = usage_verb(self.item_type, gerund=False)
         pluralizer = "s" if self.item_type != "armor" else ""
         return (

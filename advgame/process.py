@@ -53,18 +53,17 @@ class Context:
     game_ending_state_msg: GameStateMessage
 
 
-# This module consists solely of the CommandProcessor class and
-# its supporting data structures. CommandProcessor is a monolithic
-# class that has a process() method which accepts a natural language
-# command and dispatches it to the appropriate command method. Every
-# command in the game corresponds to a method of the CommandProcessor
-# class, and each method always returns a tuple of one or more
-# GameStateMessage subclass objects. Typically,
-# the bulk of the logic in a given command method is devoted to
-# detecting player error and handling each error discretely. The
-# logic that completes the command task is often a brief coda to a
-# sophisticated conditional handling all the cases where the command
-# can't complete.
+# This module consists solely of the CommandProcessor class and its
+# supporting data structures. CommandProcessor is a monolithic class
+# that has a process() method which accepts a natural language command
+# and dispatches it to the appropriate command method. Every command in
+# the game corresponds to a method of the CommandProcessor class, and
+# each method always returns a tuple of one or more GameStateMessage
+# subclass objects. Typically, the bulk of the logic in a given command
+# method is devoted to detecting player error and handling each error
+# discretely. The logic that completes the command task is often a brief
+# coda to a sophisticated conditional handling all the cases where the
+# command can't complete.
 
 
 class CommandProcessor:
@@ -78,16 +77,16 @@ class CommandProcessor:
 
     # All return values from [a-z_]+_command methods in this class are
     # tuples. Every [a-z_]+_command method returns a tuple of one or
-    # more GameStateMessage subclass objects
-    # reflecting a change or set of changes in game State.
+    # more GameStateMessage subclass objects reflecting a change or set
+    # of changes in game State.
     #
-    # For example, an ATTACK action that doesn't kill the foe
-    # will prompt the foe to attack. The foe's attack might lead
-    # to the character's death. So the return value might be a
-    # `AttackHitGSM` object, a `Stmsg_Batkby_AttackedAndHit`
-    # object, and a `Stmsg_Batkby_CharacterDeath` object, each bearing a
-    # message in its `message` property. The frontend code will iterate
-    # through the tuple printing each message in turn.
+    # For example, an ATTACK action that doesn't kill the foe will
+    # prompt the foe to attack. The foe's attack might lead to the
+    # character's death. So the return value might be a `AttackHitGSM`
+    # object, a `AttackedAndHitGSM` object, and a `CharacterDeathGSM`
+    # object, each bearing a message in its `message` property. The
+    # frontend code will iterate through the tuple printing each message
+    # in turn.
 
     def __init__(self, game_state):
         """
@@ -223,8 +222,9 @@ class CommandProcessor:
             tokens = tuple(map(str.lower, tokens))
 
         # With the command normalized, I check for it in the commands
-        # set. If it's not present, a NotRecognized error is returned.
-        # The commands allowed in the current game mode are included.
+        # set. If it's not present, a NotRecognizedGSM error is
+        # returned. The commands allowed in the current game mode are
+        # included.
         if command not in self.commands_set:
             return (
                 NotRecognizedGSM(
@@ -236,10 +236,10 @@ class CommandProcessor:
                 ),
             )
 
-        # If the player used an ingame command during the pregame, or
-        # a pregame command during the ingame, a NotAllowedNow
-        # error is returned with a list of the currently allowed
-        # commands included.
+        # If the player used an ingame command during the pregame, or a
+        # pregame command during the ingame, a NotAllowedNowGSM error
+        # is returned with a list of the currently allowed commands
+        # included.
         elif self.game_state.game_has_begun and command not in INGAME_COMMANDS:
             return (
                 NotAllowedNowGSM(

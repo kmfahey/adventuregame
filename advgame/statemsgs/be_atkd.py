@@ -4,9 +4,9 @@ from advgame.statemsgs.gsm import GameStateMessage
 
 
 __all__ = (
-    "AttackedAndHit",
-    "AttackedAndNotHit",
-    "CharacterDeath",
+    "AttackedAndHitGSM",
+    "AttackedAndNotHitGSM",
+    "CharacterDeathGSM",
 )
 
 

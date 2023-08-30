@@ -3,7 +3,7 @@
 from advgame.statemsgs.gsm import GameStateMessage
 
 
-__all__ = ("DoorIsLocked", "LeftRoom", "WonTheGame")
+__all__ = ("DoorIsLockedGSM", "LeftRoomGSM", "WonTheGameGSM")
 
 
 class DoorIsLockedGSM(GameStateMessage):

@@ -4,11 +4,11 @@ from advgame.statemsgs.gsm import GameStateMessage
 
 
 __all__ = (
-    "ElementNotOpenable",
-    "ElementHasBeenOpened",
-    "ElementIsAlreadyOpen",
-    "ElementIsLocked",
-    "ElementToOpenNotHere",
+    "ElementNotOpenableGSM",
+    "ElementHasBeenOpenedGSM",
+    "ElementIsAlreadyOpenGSM",
+    "ElementIsLockedGSM",
+    "ElementToOpenNotHereGSM",
 )
 
 
