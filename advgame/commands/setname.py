@@ -28,16 +28,15 @@ def set_name_command(game_state, tokens):
     for the character are rolled, and a NameSetGSM object and a
     DisplayRolledStatsGSM object are returned.
     """
-    # This command requires one or more arguments, so if len(tokens)
-    # == 0 I return a syntax error.
+    # This command requires one or more arguments, so if len(tokens) ==
+    # 0 I return a syntax error.
     if len(tokens) == 0:
         return (BadSyntaxGSM("SET NAME", COMMANDS_SYNTAX["SET NAME"]),)
 
     # valid_name_re.pattern == '^[A-Z][a-z]+$'. I test each
     # token for a match, and non-matching name parts are saved.
     # If invalid_name_parts is nonempty afterwards, a separate
-    # invalid-name-part error is returned for each failing name
-    # part.
+    # invalid-name-part error is returned for each failing name part.
     invalid_name_parts = list()
     for name_part in tokens:
         if VALID_NAME_RE.match(name_part):
@@ -46,17 +45,16 @@ def set_name_command(game_state, tokens):
     if len(invalid_name_parts):
         return tuple(map(InvalidPartGSM, invalid_name_parts))
 
-    # If the name wasn't set before this call, I save that fact,
-    # then set the character name.
+    # If the name wasn't set before this call, I save that fact, then
+    # set the character name.
     name_was_none = game_state.character_name is None
     name_str = " ".join(tokens)
     game_state.character_name = " ".join(tokens)
 
-    # If the character class is set and this command is the
-    # first time the name has been set, that means that
-    # game_state has instantiated a Character object as a
-    # side effect, so I return a 2-tuple of a name-set value and a
-    # display-rolled-stats value.
+    # If the character class is set and this command is the first time
+    # the name has been set, that means that game_state has instantiated
+    # a Character object as a side effect, so I return a 2-tuple of a
+    # name-set value and a display-rolled-stats value.
     if game_state.character_class is not None and name_was_none:
         return (
             NameSetGSM(name_str),

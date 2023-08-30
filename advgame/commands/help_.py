@@ -34,11 +34,11 @@ def help_command(game_state, tokens):
 
     * Otherwise, returns a DisplayHelpForCommandGSM object.
     """
-    # An ordered tuple of all commands in uppercase is displayed in
-    # some return values so it is computed.
+    # An ordered tuple of all commands in uppercase is displayed in some
+    # return values so it is computed.
 
-    # If called with no arguments, the help command displays a
-    # generic help message listing all available commands.
+    # If called with no arguments, the help command displays a generic
+    # help message listing all available commands.
     if len(tokens) == 0:
         commands_set = (
             INGAME_COMMANDS if game_state.game_has_begun else PREGAME_COMMANDS

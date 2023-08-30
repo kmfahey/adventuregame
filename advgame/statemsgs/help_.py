@@ -87,11 +87,10 @@ class DisplayHelpForCommandGSM(GameStateMessage):
 
     @property
     def message(self):
-        # Like BadSyntax, this message property accepts syntax
-        # outlines from advgame.process.COMMANDS_SYNTAX and assembles
-        # them into a list of valid usages, using unicode nonbreaking
-        # spaces so the usage examples aren't broken across lines by
-        # advgame.utilsities.textwrapper().
+        # Like BadSyntax, this message property accepts syntax outlines
+        # from COMMANDS_SYNTAX and assembles them into a list of valid
+        # usages, using unicode nonbreaking spaces so the usage examples
+        # aren't broken across lines by textwrapper().
         syntax_str_list = [
             f"'{self.command}\u00A0{syntax_entry}'"
             if syntax_entry

@@ -23,15 +23,15 @@ def reroll_command(game_state, tokens):
     * Otherwise, ability scores for the character are rolled, and a
     DisplayRolledStatsGSM is returned.
     """
-    # This command takes no arguments, so if any were supplied, I
-    # return a syntax error.
+    # This command takes no arguments, so if any were supplied, I return
+    # a syntax error.
     if len(tokens):
         return (BadSyntaxGSM("REROLL", COMMANDS_SYNTAX["REROLL"]),)
 
     # This command is only valid during the pregame after the
-    # character's name and class have been set (and, therefore,
-    # their stats have been rolled). If either one is None, I return
-    # a name-or-class-not-set error.
+    # character's name and class have been set (and, therefore, their
+    # stats have been rolled). If either one is None, I return a
+    # name-or-class-not-set error.
     character_name = getattr(game_state, "character_name", None)
     character_class = getattr(game_state, "character_class", None)
     if not character_name or not character_class:

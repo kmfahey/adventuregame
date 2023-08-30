@@ -204,8 +204,8 @@ class Creature(IniEntry, Character):
         self._post_init_slots_set_none(self.__slots__)
         Character.__init__(self, **char_init_argd)
 
-        # The IniEntry.__init__ and Character.__init__ steps
-        # are complete. _init_invent_and_equip handles the other
+        # The IniEntry.__init__ and Character.__init__ steps are
+        # complete. _init_invent_and_equip handles the other
         # initializations with invent_qty_pairs and equip_argd as
         # arguments.
 

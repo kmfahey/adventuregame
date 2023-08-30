@@ -16,8 +16,8 @@ class IniEntry:
 
     # This regular expression is used to parse the contents= attributes
     # used by rooms.ini and containers.ini to encode initializing data
-    # for an ItemsMultiState object into a single line of text. Used
-    # in IniEntry._process_list_value().
+    # for an ItemsMultiState object into a single line of text. Used in
+    # IniEntry._process_list_value().
 
     inventory_list_value_re = re.compile(
         r"""^\[(

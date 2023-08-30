@@ -39,7 +39,8 @@ class Door(IniEntry):
         The __init__ method uses super() to call IniEntry.__init__ to
         populate the object with attributes from argd. It then sets all unset
         attributes to None and parses the internal name (which has the form
-        'Room_#,#_x_Room_#,#') to detect which two rooms are joined by this
+        'Room_#,#_x_Room_#,#') to detect which two rooms are joined by
+        this
         door.
 
         :**argd: The key-value pairs to initialize the Door object with.

@@ -17,12 +17,11 @@ class BadSyntaxGSM(GameStateMessage):
 
     @property
     def message(self):
-        # The proper_syntax_options tuple is drawn from
-        # advgame.process.COMMANDS_SYNTAX; it is comprised of
-        # strings which spell out valid command arguments. \u00A0 (a
-        # nonbreaking space) is used in place of normal spaces to
-        # ensure that a syntax line is never broken across a newline
-        # by advgame.utilsities.textwrapper(). (They become kindof
+        # The proper_syntax_options tuple is drawn from COMMANDS_SYNTAX;
+        # it is comprised of strings which spell out valid command
+        # arguments. \u00A0 (a nonbreaking space) is used in place of
+        # normal spaces to ensure that a syntax line is never broken
+        # across a newline by textwrapper(). (They become kindof
         # unreadable if they're word-wrapped.)
         #
         # This message property joins the command with each line of

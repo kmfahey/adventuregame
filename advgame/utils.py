@@ -25,9 +25,9 @@ __all__ = (
 )
 
 
-# The task of joining a list that may be 1, 2, or more elements with commas and
-# a conjunction is a common one in advgame.statemsgs, so I wrote this
-# function to automate that task.
+# The task of joining a list that may be 1, 2, or more elements with
+# commas and a conjunction is a common one in advgame.statemsgs, so I
+# wrote this function to automate that task.
 
 
 def join_strs_w_comma_conj(str_list, conjunction="and"):
@@ -57,12 +57,13 @@ def join_strs_w_comma_conj(str_list, conjunction="and"):
         return ", ".join(str_list[:-1]) + f", {conjunction} " + str_list[-1]
 
 
-# The player can use lexical numbers (ie. 'one', 'fourteen', 'thirty') in
-# commands and the `CommandProcessor` needs to be able to interpret them, so
-# I wrote this utility function. The regular expressions it uses are defined
-# outside the function so they're only compiled once.
+# The player can use lexical numbers (ie. 'one', 'fourteen', 'thirty')
+# in commands and the `CommandProcessor` needs to be able to interpret
+# them, so I wrote this utility function. The regular expressions it
+# uses are defined outside the function so they're only compiled once.
 
-# This regular expression matches any lexical number from one to ninety-nine.
+# This regular expression matches any lexical number from one to
+# ninety-nine.
 
 LEXICAL_NUMBER_1_THRU_99_RE = re.compile(
     """^(
@@ -76,8 +77,8 @@ LEXICAL_NUMBER_1_THRU_99_RE = re.compile(
     re.X,
 )
 
-# This dictionary is a lookup table that's used to interpret the ones place and
-# (optionally) tens place of a lexical number.
+# This dictionary is a lookup table that's used to interpret the ones
+# place and (optionally) tens place of a lexical number.
 
 _digit_lexical_number_map = {
     "one": 1,
@@ -138,16 +139,16 @@ def lexical_number_to_digits(lexical_number):
     if lexical_number in _digit_lexical_number_map:
         return _digit_lexical_number_map[lexical_number]
 
-    # The lexical number is hyphenate, so I break it into a tens place and a
-    # ones place, look them up separately in _digit_lexical_number_map, and
-    # return the sum of the int values.
+    # The lexical number is hyphenated, so I break it into a
+    # tens place and a ones place, look them up separately in
+    # _digit_lexical_number_map, and return the sum of the int values.
     tens_place, ones_place = lexical_number.split("-")
     base_number = _digit_lexical_number_map[tens_place]
     added_number = _digit_lexical_number_map[ones_place]
     return base_number + added_number
 
 
-# A simple convenience function used in advgame.statemsgs to form natural
+# A convenience function used in advgame.statemsgs.* to form natural
 # language messages around types of equippable items.
 
 
@@ -180,15 +181,17 @@ def usage_verb(item_type, gerund=True):
 
 
 # In D&D, the standard notation for dice rolling is of the form
-# [1-9][0-9]*d[1-9]+[0-9]*([+-][1-9][0-9]*)?, where the first number indicates
-# how many dice to roll, the second number is the number of sides of the die to
-# roll, and the optional third number is a positive or negative value to add
-# to the result of the roll to reach the final outcome. As an example, 1d20+3
-# indicates a roll of one 20-sided die to which 3 should be added.
+# [1-9][0-9]*d[1-9]+[0-9]*([+-][1-9][0-9]*)?, where the first number
+# indicates how many dice to roll, the second number is the number of
+# sides of the die to roll, and the optional third number is a positive
+# or negative value to add to the result of the roll to reach the final
+# outcome. As an example, 1d20+3 indicates a roll of one 20-sided die to
+# which 3 should be added.
 #
-# I have used this notation in the items.ini file since it's the simplest way
-# to compactly express Weapon damage, and in the attack roll methods to call
-# for a d20 roll (the standard D&D conflict resolution roll).
+# I have used this notation in the items.ini file since it's the
+# simplest way to compactly express Weapon damage, and in the attack
+# roll methods to call for a d20 roll (the standard D&D conflict
+# resolution roll).
 
 _dice_expression_re = re.compile(r"([1-9]+)d([1-9][0-9]*)([-+][1-9][0-9]*)?")
 
@@ -216,11 +219,12 @@ def roll_dice(dice_expr):
     )
 
 
-# The return values from advgame.process.CommandProcessor.process() are
-# not wrapped; the wrapping is done at the UI level in advgame.py. Python comes
-# with a text wrapping library, textwrap, but it has a limitation: if it's fed a
-# multi-paragraph string, the paragraphs are run together and a single wrapped
-# paragraph is returned. This function extends it to handle multiple paragraphs.
+# The return values from CommandProcessor.process() are not wrapped; the
+# wrapping is done at the UI level in advgame.py. Python comes with a
+# text wrapping library, textwrap, but it has a limitation: if it's fed
+# a multi-paragraph string, the paragraphs are run together and a single
+# wrapped paragraph is returned. This function extends it to handle
+# multiple paragraphs.
 
 
 def textwrapper(paragraphs, width=80):

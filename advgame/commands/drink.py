@@ -48,14 +48,14 @@ def drink_command(game_state, tokens):
     the potion is removed from inventory, the character has some mana
     restored, and a DrankManaPotionGSM object is returned.
     """
-    # This command requires an argument, which may include a direct
-    # or indirect article. If that standard isn't met, a syntax
-    # error is returned.
+    # This command requires an argument, which may include a direct or
+    # indirect article. If that standard isn't met, a syntax error is
+    # returned.
     if not len(tokens) or len(tokens) == 1 and tokens[0] in ("the", "a", "an"):
         return (BadSyntaxGSM("DRINK", COMMANDS_SYNTAX["DRINK"]),)
 
-    # Any leading article is stripped, but it signals that the
-    # quantity to drink is 1, so qty_to_drink is set.
+    # Any leading article is stripped, but it signals that the quantity
+    # to drink is 1, so qty_to_drink is set.
     if tokens[0] == "the" or tokens[0] == "a":
         qty_to_drink = 1
         tokens = tokens[1:]
@@ -65,8 +65,8 @@ def drink_command(game_state, tokens):
     elif tokens[0].isdigit() or LEXICAL_NUMBER_1_THRU_99_RE.match(tokens[0]):
         # If the first token parses as an int, I cast it and
         # set qty_to_drink. Otherwise, the utility function
-        # advgame.utilsities.lexical_number_to_digits() is used
-        # to transform a number word to an int.
+        # advgame.utilsities.lexical_number_to_digits() is used to
+        # transform a number word to an int.
         qty_to_drink = (
             int(tokens[0])
             if tokens[0].isdigit()
@@ -83,15 +83,15 @@ def drink_command(game_state, tokens):
 
         # No quantifier was detected at the front of the tokens.
         # That implies qty_to_drink = 1; but if the last token has a
-        # plural 's', the arguments are ambiguous as to quantity. So
-        # a quantity-unclear error is returned.
+        # plural 's', the arguments are ambiguous as to quantity. So a
+        # quantity-unclear error is returned.
         qty_to_drink = 1
         if tokens[-1].endswith("s"):
             return (AmountToDrinkUnclearGSM(),)
 
     # The initial error checking is out of the way, so we check the
-    # Character's inventory for an item with a title that matches
-    # the arguments.
+    # Character's inventory for an item with a title that matches the
+    # arguments.
     item_title = " ".join(tokens).rstrip("s")
     matching_items_qtys_objs = tuple(
         filter(
@@ -100,13 +100,13 @@ def drink_command(game_state, tokens):
         )
     )
 
-    # The character has no such item, so an item-not-in-inventory
-    # error is returned.
+    # The character has no such item, so an item-not-in-inventory error
+    # is returned.
     if not len(matching_items_qtys_objs):
         return (ItemNotInInventoryGSM(item_title),)
 
-    # An item by the title that the player specified was found, so
-    # the object and its quantity are saved.
+    # An item by the title that the player specified was found, so the
+    # object and its quantity are saved.
     item_qty, item = matching_items_qtys_objs[0]
 
     # If the item isn't a potion, an item-not-drinkable error is
@@ -114,9 +114,9 @@ def drink_command(game_state, tokens):
     if not item.title.endswith(" potion"):
         return (ItemNotDrinkableGSM(item_title),)
 
-    # If the arguments specify a quantity to drink
-    # that's greater than the quantity in inventory, a
-    # tried-to-drink-more-than-possessed error is returned.
+    # If the arguments specify a quantity to drink that's greater than
+    # the quantity in inventory, a tried-to-drink-more-than-possessed
+    # error is returned.
     elif qty_to_drink > item_qty:
         return (TriedToDrinkMoreThanPossessedGSM(item_title, qty_to_drink, item_qty),)
 
@@ -142,14 +142,13 @@ def drink_command(game_state, tokens):
 
         # If the player character isn't a Mage or
         # a Priest, a mana potion does nothing; a
-        # drank-mana-potion-when-not-a-spellcaster error is
-        # returned.
+        # drank-mana-potion-when-not-a-spellcaster error is returned.
         if game_state.character_class not in ("Mage", "Priest"):
             return (DrankManaPotionWhenNotASpellcasterGSM(),)
 
-        # The amount of mana recovery done by the potion is
-        # granted to the character, and the potion is removed from
-        # inventory. A drank-mana-potion value is returned.
+        # The amount of mana recovery done by the potion is granted to
+        # the character, and the potion is removed from inventory. A
+        # drank-mana-potion value is returned.
         mana_points_recovered = item.mana_points_recovered
         regained_amt = game_state.character.regain_mana(mana_points_recovered)
         game_state.character.drop_item(item)

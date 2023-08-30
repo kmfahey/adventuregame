@@ -37,8 +37,8 @@ def leave_command(context, tokens):
     """
     game_state = context.game_state
 
-    # This method takes arguments of a specific form; if the
-    # arguments don't match it, a syntax error is returned.
+    # This method takes arguments of a specific form; if the arguments
+    # don't match it, a syntax error is returned.
     if (
         not len(tokens)
         or not 2 <= len(tokens) <= 4
@@ -46,18 +46,17 @@ def leave_command(context, tokens):
     ):
         return (BadSyntaxGSM("LEAVE", COMMANDS_SYNTAX["LEAVE"]),)
 
-    # The format for specifying doors is flexible, and is
-    # implemented by a private workhorse method.
+    # The format for specifying doors is flexible, and is implemented by
+    # a private workhorse method.
     result = _door_selector(game_state, tokens)
 
-    # Like all workhorse methods, it may return an error. result[0]
-    # is type-tested if it inherits from GameStateMessage. If it
-    # matches, the result tuple is returned.
+    # Like all workhorse methods, it may return an error. result[0] is
+    # type-tested if it inherits from GameStateMessage. If it matches,
+    # the result tuple is returned.
     if isinstance(result[0], GameStateMessage):
         return result
     else:
-        # Otherwise, the matching Door object is extracted from
-        # result.
+        # Otherwise, the matching Door object is extracted from result.
         (door,) = result
 
     # The compass direction door type are extracted from the Door
@@ -70,8 +69,7 @@ def leave_command(context, tokens):
         return (DoorIsLockedGSM(compass_dir, portal_type),)
 
     # The exit to the dungeon is a special Door object marked with
-    # is_exit=True. I test the Door object to see if this is the
-    # one.
+    # is_exit=True. I test the Door object to see if this is the one.
     if door.is_exit:
 
         # If so, a left-room value will be returned along with a
@@ -81,17 +79,15 @@ def leave_command(context, tokens):
             WonTheGameGSM(),
         )
 
-        # The game_has_ended boolean is set True, and the
-        # game-ending return value is saved so that process()
-        # can return it if the frontend accidentally tries to submit
-        # another command.
+        # The game_has_ended boolean is set True, and the game-ending
+        # return value is saved so that process() can return it if the
+        # frontend accidentally tries to submit another command.
         game_state.game_has_ended = True
         context.game_ending_state_msg = return_tuple[-1]
         return return_tuple
 
-    # Otherwise, RoomsState.move is called with the compass
-    # direction, and a left-room value is returned along with a
-    # entered-room value.
+    # Otherwise, RoomsState.move is called with the compass direction,
+    # and a left-room value is returned along with a entered-room value.
     game_state.rooms_state.move(**{compass_dir: True})
     return (
         LeftRoomGSM(compass_dir, portal_type),

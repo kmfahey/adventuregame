@@ -18,20 +18,20 @@ def status_command(game_state, tokens):
 
     * Otherwise, returns a StatusOutputGSM object.
     """
-    # This command takes no arguments so if any were supplied I
-    # return a syntax error.
+    # This command takes no arguments so if any were supplied I return a
+    # syntax error.
     if len(tokens):
         return (BadSyntaxGSM("STATUS", COMMANDS_SYNTAX["STATUS"]),)
 
-    # A lot of data goes into a status command so I build the argd
-    # to Stmsg_Status_StatusOutput key by key.
+    # A lot of data goes into a status command so I build the argd to
+    # Stmsg_Status_StatusOutput key by key.
     character = game_state.character
     status_gsm_argd = dict()
     status_gsm_argd["hit_points"] = character.hit_points
     status_gsm_argd["hit_point_total"] = character.hit_point_total
 
-    # Mana points are only part of a status line if the player
-    # character is a Mage or Priest.
+    # Mana points are only part of a status line if the player character
+    # is a Mage or Priest.
     if character.character_class in ("Mage", "Priest"):
         status_gsm_argd["mana_points"] = character.mana_points
         status_gsm_argd["mana_point_total"] = character.mana_point_total
@@ -41,9 +41,8 @@ def status_command(game_state, tokens):
 
     status_gsm_argd["armor_class"] = character.armor_class
 
-    # attack_bonus and damage are only set if a weapon is
-    # equipped... or if the player character is a Mage and a wand is
-    # equipped.
+    # attack_bonus and damage are only set if a weapon is equipped... or
+    # if the player character is a Mage and a wand is equipped.
     if character.weapon_equipped or (
         character.character_class == "Mage" and character.wand_equipped
     ):
@@ -53,12 +52,12 @@ def status_command(game_state, tokens):
         status_gsm_argd["attack_bonus"] = 0
         status_gsm_argd["damage"] = ""
 
-    # The status line can display the currently equipped armor,
-    # shield, weapon and wand, and if an item isn't equipped
-    # in a given slot it can display 'none'; but it only shows
-    # '<Equipment>: none' if that equipment type is one the player
-    # character's class can use. So I use class-tests to determine
-    # whether to add each equipment-type argument.
+    # The status line can display the currently equipped armor, shield,
+    # weapon and wand, and if an item isn't equipped in a given slot it
+    # can display 'none'; but it only shows '<Equipment>: none' if that
+    # equipment type is one the player character's class can use. So I
+    # use class-tests to determine whether to add each equipment-type
+    # argument.
     if character.character_class != "Mage":
         status_gsm_argd["armor"] = (
             character.armor.title if character.armor_equipped else None

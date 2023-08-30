@@ -46,9 +46,9 @@ def cast_spell_command(context, tokens):
     """
     game_state = context.game_state
 
-    # The first error check detects if the player has used this
-    # command while playing a Warrior or Thief. Those classes can't
-    # cast spells, so a command-class-restricted error is returned.
+    # The first error check detects if the player has used this command
+    # while playing a Warrior or Thief. Those classes can't cast spells,
+    # so a command-class-restricted error is returned.
     if game_state.character_class not in ("Mage", "Priest"):
         return (ClassRestrictedGSM("CAST SPELL", "mage", "priest"),)
 
@@ -57,8 +57,8 @@ def cast_spell_command(context, tokens):
     elif len(tokens):
         return (BadSyntaxGSM("CAST SPELL", COMMANDS_SYNTAX["CAST SPELL"]),)
 
-    # If the player character's mana is less than SPELL_MANA_COST,
-    # an insufficient-mana error is returned.
+    # If the player character's mana is less than SPELL_MANA_COST, an
+    # insufficient-mana error is returned.
     elif game_state.character.mana_points < SPELL_MANA_COST:
         return (
             InsufficientManaGSM(
@@ -78,16 +78,16 @@ def cast_spell_command(context, tokens):
             return (NoCreatureToTargetGSM(),)
         else:
             # Otherwise, spell damage is rolled and inflicted on
-            # creature_here. The spell always hits (it's styled
-            # after _magic missile_, a classic D&D spell that always
-            # hits its target.
+            # creature_here. The spell always hits (it's styled after
+            # _magic missile_, a classic D&D spell that always hits its
+            # target.
             damage_dealt = roll_dice(SPELL_DAMAGE)
             creature = game_state.rooms_state.cursor.creature_here
             damage_dealt = creature.take_damage(damage_dealt)
             game_state.character.spend_mana(SPELL_MANA_COST)
 
-            # If the creature died, a cast-damaging-spell value and
-            # a foe-death value are returned.
+            # If the creature died, a cast-damaging-spell value and a
+            # foe-death value are returned.
             if creature.is_dead:
                 corpse = creature.convert_to_corpse()
                 game_state.rooms_state.cursor.container_here = corpse
@@ -102,8 +102,8 @@ def cast_spell_command(context, tokens):
                 # Otherwise, like ATTACK, using this command and
                 # not killing your foe means they counterattack.
                 # cast-damaging-spell is conjoined with the outcome
-                # of _be_attacked_by_command() and the total
-                # tuple is returned.
+                # of _be_attacked_by_command() and the total tuple is
+                # returned.
                 be_attacked_by_result = _be_attacked_by_command(context, creature)
                 return (
                     CastDamagingSpellGSM(
@@ -111,11 +111,11 @@ def cast_spell_command(context, tokens):
                     ),
                 ) + be_attacked_by_result
     else:
-        # The Mage's spell is a damaging spell, but the Priest's
-        # spell is a self-heal. The same SPELL_DAMAGE dice are used.
-        # The healing is rolled and applied to the Character object.
-        # A cast-healing-spell value and a underwent-healing-effect
-        # value are returned.
+        # The Mage's spell is a damaging spell, but the Priest's spell
+        # is a self-heal. The same SPELL_DAMAGE dice are used. The
+        # healing is rolled and applied to the Character object. A
+        # cast-healing-spell value and a underwent-healing-effect value
+        # are returned.
         damage_rolled = roll_dice(SPELL_DAMAGE)
         healed_amt = game_state.character.heal_damage(damage_rolled)
         game_state.character.spend_mana(SPELL_MANA_COST)

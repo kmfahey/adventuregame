@@ -18,14 +18,14 @@ def inventory_command(game_state, tokens):
 
     * Otherwise, returns a DisplayInventoryGSM object.
     """
-    # This command takes no arguments; if any are specified, a
-    # syntax error is returned.
+    # This command takes no arguments; if any are specified, a syntax
+    # error is returned.
     if len(tokens):
         return (BadSyntaxGSM("INVENTORY", COMMANDS_SYNTAX["INVENTORY"]),)
 
-    # There's not really any other error case, for once.
-    # The inventory contents are stored in a tuple, and a
-    # display-inventory value is returned with the tuple to display.
+    # There's not really any other error case, for once. The inventory
+    # contents are stored in a tuple, and a display-inventory value is
+    # returned with the tuple to display.
     inventory_contents = sorted(
         game_state.character.list_items(), key=lambda argl: argl[1].title
     )

@@ -55,9 +55,9 @@ def unlock_command(game_state, tokens):
     if len(tokens) == 0:
         return (BadSyntaxGSM("UNLOCK", COMMANDS_SYNTAX["UNLOCK"]),)
 
-    # unlock_command() shares preprocessing logic with
-    # lock_command(), open_command() and close_command(), so a
-    # private workhorse method is called.
+    # unlock_command() shares preprocessing logic with lock_command(),
+    # open_command() and close_command(), so a private workhorse method
+    # is called.
     result = _preprocessing_for_lock_unlock_open_or_close(game_state, "UNLOCK", tokens)
     if isinstance(result[0], GameStateMessage):
         # If an error value is returned, I return it in turn.
@@ -67,11 +67,10 @@ def unlock_command(game_state, tokens):
         # tuple.
         (element_to_unlock,) = result
 
-    # A key is required to unlock something; the chest key for
-    # chests and the door key for doors. So I search the player
-    # character's inventory for it. The key is not consumed by use,
-    # so I only need to know it's there, not retrieve the Key object
-    # and operate on it.
+    # A key is required to unlock something; the chest key for chests
+    # and the door key for doors. So I search the player character's
+    # inventory for it. The key is not consumed by use, so I only need
+    # to know it's there, not retrieve the Key object and operate on it.
     key_required = "door key" if isinstance(element_to_unlock, Door) else "chest key"
     if not any(
         item.title == key_required for _, item in game_state.character.list_items()
@@ -84,11 +83,11 @@ def unlock_command(game_state, tokens):
         # element-is-already-unlocked error.
         return (ElementIsAlreadyUnlockedGSM(element_to_unlock.title),)
     elif isinstance(element_to_unlock, Door):
-        # This is a door object, and it only represents _this side_
-        # of the door game element; I use _matching_door() to fetch
-        # the door object representing the opposite side so that the
-        # door game element will be unlocked from the perspective of
-        # either room.
+        # This is a door object, and it only represents _this side_ of
+        # the door game element; I use _matching_door() to fetch the
+        # door object representing the opposite side so that the door
+        # game element will be unlocked from the perspective of either
+        # room.
         opposite_door = _matching_door(game_state, element_to_unlock)
         if opposite_door is not None:
             opposite_door.is_locked = False

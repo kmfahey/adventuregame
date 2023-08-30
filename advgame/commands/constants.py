@@ -29,13 +29,13 @@ STARTER_GEAR = {
 
 # The COMMAND_SYNTAX dict is a compendium of usage examples for
 # every command in the game. When a command method needs to return
-# BadSyntax object, it consults this dict for the second argument
-# to its constructor.
+# BadSyntax object, it consults this dict for the second argument to its
+# constructor.
 #
 # \u00A0 is a unicode nonbreaking space. I use it in the syntax examples
-# so that the use of advgame.utils.textwrapper() in advgame.py
-# doesn't break individual syntax examples across lines. The longer
-# syntax examples become difficult to read if wrapped across a line.
+# so that the use of advgame.utils.textwrapper() in advgame.py doesn't
+# break individual syntax examples across lines. The longer syntax
+# examples become difficult to read if wrapped across a line.
 
 COMMANDS_SYNTAX = {
     "ATTACK": ("<creature\xa0name>",),

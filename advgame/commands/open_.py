@@ -47,9 +47,9 @@ def open_command(game_state, tokens):
     * Otherwise, the chest or door has its is_closed attribute set to False,
     and returns returns a ElementHasBeenOpenedGSM..
     """
-    # The shared private workhorse method is called and it handles
-    # the majority of the error-checking. If it returns an error
-    # that is passed along.
+    # The shared private workhorse method is called and it handles the
+    # majority of the error-checking. If it returns an error that is
+    # passed along.
     result = _preprocessing_for_lock_unlock_open_or_close(game_state, "OPEN", tokens)
     if isinstance(result[0], GameStateMessage):
         return result
@@ -58,20 +58,18 @@ def open_command(game_state, tokens):
         # tuple.
         (element_to_open,) = result
 
-    # If the element is locked, a element-is-locked error is
-    # returned.
+    # If the element is locked, a element-is-locked error is returned.
     if element_to_open.is_locked:
         return (ElementIsLockedGSM(element_to_open.title),)
     elif not element_to_open.is_closed:
-        # Otherwise if it's alreadty open, an
-        # element-is-already-open error is returned.
+        # Otherwise if it's alreadty open, an element-is-already-open
+        # error is returned.
         return (ElementIsAlreadyOpenGSM(element_to_open.title),)
     elif isinstance(element_to_open, Door):
-        # This is a door object, and it only represents _this side_
-        # of the door game element; I use _matching_door() to fetch
-        # the door object representing the opposite side so that the
-        # door game element will be open from the perspective of
-        # either room.
+        # This is a door object, and it only represents _this side_ of
+        # the door game element; I use _matching_door() to fetch the
+        # door object representing the opposite side so that the door
+        # game element will be open from the perspective of either room.
         opposite_door = _matching_door(game_state, element_to_open)
         if opposite_door is not None:
             opposite_door.is_closed = False

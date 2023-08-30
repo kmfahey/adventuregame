@@ -50,31 +50,29 @@ def lock_command(game_state, tokens):
     * Otherwise, the object has its is_locked attribute set to True, and a
     ElementHasBeenLockedGSM object is returned.
     """
-    # This command requires an argument, so if tokens is zero-length
-    # a syntax error is returned.
+    # This command requires an argument, so if tokens is zero-length a
+    # syntax error is returned.
     if not len(tokens):
         return (BadSyntaxGSM("LOCK", COMMANDS_SYNTAX["LOCK"]),)
 
-    # A private workhorse method is used for logic shared
-    # with unlock_command(), open_command(),
-    # close_command().
+    # A private workhorse method is used for logic shared with
+    # unlock_command(), open_command(), close_command().
     result = _preprocessing_for_lock_unlock_open_or_close(game_state, "LOCK", tokens)
 
-    # As always with a workhorse method, the result is checked
-    # to see if it's an error value. If so, the result tuple is
-    # returned as-is.
+    # As always with a workhorse method, the result is checked to see if
+    # it's an error value. If so, the result tuple is returned as-is.
     if isinstance(result[0], GameStateMessage):
         return result
     else:
-        # Otherwise, the element to lock is extracted from the
-        # return value.
+        # Otherwise, the element to lock is extracted from the return
+        # value.
         (element_to_lock,) = result
 
     # Locking something requires the matching key in inventory. The
     # key's item title is determined, and the player character's
-    # inventory is searched for a matching Key object. The object
-    # isn't used for anything (it's not expended), so I don't save
-    # it, just check if it's there.
+    # inventory is searched for a matching Key object. The object isn't
+    # used for anything (it's not expended), so I don't save it, just
+    # check if it's there.
     key_required = "door key" if isinstance(element_to_lock, Door) else "chest key"
     if not any(
         item.title == key_required for _, item in game_state.character.list_items()
@@ -88,11 +86,11 @@ def lock_command(game_state, tokens):
     elif element_to_lock.is_locked:
         return (ElementIsAlreadyLockedGSM(element_to_lock.title),)
     elif isinstance(element_to_lock, Door):
-        # This is a door object, and it only represents _this side_
-        # of the door game element; I use _matching_door() to fetch
-        # the door object representing the opposite side so that the
-        # door game element will be locked from the perspective of
-        # either room.
+        # This is a door object, and it only represents _this side_ of
+        # the door game element; I use _matching_door() to fetch the
+        # door object representing the opposite side so that the door
+        # game element will be locked from the perspective of either
+        # room.
         opposite_door = _matching_door(game_state, element_to_lock)
         if opposite_door is not None:
             opposite_door.is_locked = True

@@ -146,9 +146,11 @@ class Test_AbilityScores(TestCase):
             ability_scores.wisdom,
         )
 
-        # This is a test of a method with a random element, so the results are nondeterministic. I'm looking for the
-        # second call to `roll_stats()` to yield different stats, but there's a chance that the results are identical;
-        # so I reroll until the results are different.
+        # This is a test of a method with a random element, so the
+        # results are nondeterministic. I'm looking for the second call
+        # to `roll_stats()` to yield different stats, but there's a
+        # chance that the results are identical; so I reroll until the
+        # results are different.
         while first_stat_roll == second_stat_roll:
             ability_scores.roll_stats()
             second_stat_roll = (

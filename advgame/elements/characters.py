@@ -23,7 +23,6 @@ class ItemsState(State):
     A container object which stores Item objects (an abstract class).
     """
 
-    # <<< HERE
     def __init__(self, **dict_of_dicts):
         """
         This __init__ method accepts a **dict-of-dicts -- such as offered by an
@@ -719,10 +718,10 @@ class Character:
         :return: None.
         """
 
-        # When the Character is instanced by a GameState object, none
-        # of these values are supplied to __init__. But the Creature
-        # object that subclasses Character draws its values from an .ini
-        # entry, and it does have all these values supplied to __init__.
+        # When the Character is instanced by a GameState object, none of
+        # these values are supplied to __init__. But the Creature object
+        # that subclasses Character draws its values from an .ini entry,
+        # and it does have all these values supplied to __init__.
         #
         # Base hit points are taken either from an argument to __init__
         # or from the class's default in the _hitpoint_base dict.
@@ -981,8 +980,8 @@ class Character:
         )
 
         # Attack rolls are resolved with a roll of a twenty-sided die.
-        # .utils.roll_dice can interpret this return value into a
-        # random number generation and execute it.
+        # .utils.roll_dice can interpret this return value into a random
+        # number generation and execute it.
 
         return "1d20" + mod_str
 
@@ -1039,9 +1038,9 @@ class Character:
     # This class keeps its `AbilityScores`, `Equipment` and
     # `ItemsMultiState` (Inventory) objects in private attributes,
     # just as a matter of good OOP design. In the cases of the
-    # `AbilityScores` and `Equipment` objects, these passthrough
-    # methods are necessary so the concealed objects' functionality can
-    # be accessed from code that only has the `Character` object.
+    # `AbilityScores` and `Equipment` objects, these passthrough methods
+    # are necessary so the concealed objects' functionality can be
+    # accessed from code that only has the `Character` object.
     #
     # The `ItemsMultiState` inventory object presents a customized
     # mapping interface that Character action management code doesn't
@@ -1420,8 +1419,8 @@ class Character:
     # values for these Character parameters that are informed only by
     # the Equipment it stores. At the level of the `Character` object,
     # these values should also be informed by the character's ability
-    # scores stores in the `AbilityScores`. A character's armor class
-    # is modified by their dexterity modifier; and their attack & damage
+    # scores stores in the `AbilityScores`. A character's armor class is
+    # modified by their dexterity modifier; and their attack & damage
     # values are modified by either their strength score (for Warriors,
     # Priests, and Mages using a Weapon), or Dexterity (for Thieves), or
     # Intelligence (for Mages using a Wand).

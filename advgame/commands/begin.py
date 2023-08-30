@@ -25,12 +25,11 @@ def begin_game_command(game_state, tokens):
     * Otherwise, returns a GameBeginsGSM object, one or more ItemEquippedGSM
     objects, and a EnteredRoomGSM object.
     """
-    # This command begins the game. Most of the work done is devoted
-    # to creating the character's starting gear and equipping all of
-    # it.
+    # This command begins the game. Most of the work done is devoted to
+    # creating the character's starting gear and equipping all of it.
 
-    # This command takes no argument; if any were used, a syntax
-    # error is returned.
+    # This command takes no argument; if any were used, a syntax error
+    # is returned.
     if len(tokens):
         return (BadSyntaxGSM("BEGIN GAME", COMMANDS_SYNTAX["BEGIN GAME"]),)
 
@@ -49,21 +48,21 @@ def begin_game_command(game_state, tokens):
     return_values = (GameBeginsGSM(),)
 
     # A player character receives starting equipment appropriate to
-    # their class, as laid out in the STARTER_GEAR dict. The value
-    # there is a dict of item types to item internal names. This
-    # loop looks up each internal name in the ItemsState object to
-    # get an Item subclass object.
+    # their class, as laid out in the STARTER_GEAR dict. The value there
+    # is a dict of item types to item internal names. This loop looks
+    # up each internal name in the ItemsState object to get an Item
+    # subclass object.
 
-    # (This is sorted just to make the results deterministic for
-    # ease of testing.) vvvvvv
+    # (This is sorted just to make the results deterministic for ease of
+    # testing.)                          vvvvvv
     for item_type, item_internal_name in sorted(
         STARTER_GEAR[character_class].items(), key=itemgetter(0)
     ):
         item = game_state.items_state.get(item_internal_name)
         game_state.character.pick_up_item(item)
-        # Character.equip_{item_type} is looked up and called with
-        # the Item subclass object to equip the character with this
-        # item of equipment.
+        # Character.equip_{item_type} is looked up and called with the
+        # Item subclass object to equip the character with this item of
+        # equipment.
         getattr(game_state.character, "equip_" + item_type)(item)
 
         # An appropriate item-equipped return value, complete with
@@ -117,8 +116,8 @@ def begin_game_command(game_state, tokens):
     # You're now wearing a suit of studded leather armor. Your armor
     # class is now 11.
     # You're now carrying a buckler. Your armor class is now 12.
-    # You're now wielding a mace. Your attack bonus is now +1 and
-    # your weapon damage is now 1d6+1.
+    # You're now wielding a mace. Your attack bonus is now +1 and your
+    # weapon damage is now 1d6+1.
     # Antechamber of dungeon. There is a doorway to the north.
 
     return return_values

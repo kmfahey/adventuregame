@@ -61,8 +61,8 @@ def equip_command(game_state, tokens):
     # The Item subclass object was found and is saved.
     (item,) = matching_item_tuple[0:1]
 
-    # I check that the item has a {class}_can_use = True attribute.
-    # If not, a class-can't-use-item error is returned.
+    # I check that the item has a {class}_can_use = True attribute. f
+    # Inot, a class-can't-use-item error is returned.
     can_use_attr = game_state.character_class.lower() + "_can_use"
     if not getattr(item, can_use_attr):
         return (
@@ -87,8 +87,8 @@ def equip_command(game_state, tokens):
             ),
         )
     elif item.item_type == "shield" and game_state.character.shield_equipped:
-        # The player is trying to equip shield but is already
-        # carrying a shield, so their existing shield is unequipped.
+        # The player is trying to equip shield but is already carrying a
+        # shield, so their existing shield is unequipped.
         old_equipped = game_state.character.shield_equipped
         game_state.character.unequip_shield()
         return_values += (
@@ -120,8 +120,8 @@ def equip_command(game_state, tokens):
                 ),
             )
     elif item.item_type == "weapon" and game_state.character.weapon_equipped:
-        # The player is trying to equip weapon but is already
-        # wielding a weapon, so their existing weapon is unequipped.
+        # The player is trying to equip weapon but is already wielding a
+        # weapon, so their existing weapon is unequipped.
         old_equipped = game_state.character.weapon_equipped
         game_state.character.unequip_weapon()
         if game_state.character.wand_equipped:
@@ -141,12 +141,11 @@ def equip_command(game_state, tokens):
                 ),
             )
 
-    # Now it's time to equip the new item; a item-equipped return
-    # value is appended to return_values.
+    # Now it's time to equip the new item; a item-equipped return value
+    # is appended to return_values.
     if item.item_type == "armor":
         # The player is equipping a suit of armor, so the
-        # Character.equip_armor() method is called with the item
-        # object.
+        # Character.equip_armor() method is called with the item object.
         game_state.character.equip_armor(item)
         return_values += (
             ItemEquippedGSM(
@@ -168,9 +167,8 @@ def equip_command(game_state, tokens):
             ),
         )
     elif item.item_type == "wand":
-        # The player is equipping a wand, so the
-        # Character.equip_wand() method is called with the item
-        # object.
+        # The player is equipping a wand, so the Character.equip_wand()
+        # method is called with the item object.
         game_state.character.equip_wand(item)
         return_values += (
             ItemEquippedGSM(
@@ -186,10 +184,9 @@ def equip_command(game_state, tokens):
         # object.
         game_state.character.equip_weapon(item)
 
-        # Because a wand equipped always supercedes any weapon
-        # equipped for a Mage, the item-equipped return value is
-        # different if a wand is equipped, so this extra conditional
-        # is necessary.
+        # Because a wand equipped always supercedes any weapon equipped
+        # for a Mage, the item-equipped return value is different if a
+        # wand is equipped, so this extra conditional is necessary.
         if game_state.character.wand_equipped:
             return_values += (
                 ItemEquippedGSM(
@@ -210,6 +207,6 @@ def equip_command(game_state, tokens):
                 ),
             )
 
-    # The optional item-unequipped value and the item-equipped value
-    # are returned.
+    # The optional item-unequipped value and the item-equipped value are
+    # returned.
     return return_values

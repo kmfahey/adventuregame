@@ -32,11 +32,13 @@ class DrankManaPotionGSM(GameStateMessage):
         # This message property handles three cases:
         #
         # * The player regained mana points and now has their maximum
-        #   hit points.
+        # hit points.
+        #
         # * The player regained mana points but are still short of their
-        #   maximum.
+        # maximum.
+        #
         # * The player didn't regain any mana points because their mana
-        #   points were already at maximum.
+        # points were already at maximum.
         return_str = (
             f"You regained {self.amount_regained} mana points."
             if self.amount_regained != 0

@@ -39,16 +39,16 @@ def set_class_command(game_state, tokens):
     elif tokens[0] not in ("Warrior", "Thief", "Mage", "Priest"):
         return (InvalidClassGSM(tokens[0]),)
 
-    # I assign the chosen classname, record whether this is the
-    # first time this command is used, and set the class.
+    # I assign the chosen classname, record whether this is the first
+    # time this command is used, and set the class.
     class_str = tokens[0]
     class_was_none = game_state.character_class is None
     game_state.character_class = class_str
 
-    # If character name was already set and this is the first
-    # setting of character class, the Character object will have
-    # been initialized as a side effect, so I return a class-set
-    # value and a display-rolled-stats value.
+    # If character name was already set and this is the first setting
+    # of character class, the Character object will have been
+    # initialized as a side effect, so I return a class-set value and a
+    # display-rolled-stats value.
     if game_state.character_name is not None and class_was_none:
         return (
             ClassSetGSM(class_str),

@@ -61,10 +61,8 @@ def look_at_command(game_state, tokens):
     """
     look_at_door_re = re.compile(
         r"""(
-                # For example, this regex
-                # matches 'north iron door',
-                # 'north door', 'iron door',
-                # and 'door'. But it won't
+                # For example, this regex matches 'north iron door',
+                # 'north door', 'iron door', and 'door'. But it won't
                 # match 'iron doorway'.
                 (north|east|south|west) \s
             |
@@ -76,8 +74,7 @@ def look_at_command(game_state, tokens):
                 )
             )?
             (door|doorway)
-            # Lookbehinds must be fixed-width
-            # so I use 2.
+            # Lookbehinds must be fixed-width so I use 2.
             (?<! iron \s doorway)
             (?<! wooden \s doorway)
         """,

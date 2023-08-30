@@ -49,19 +49,19 @@ def take_command(game_state, tokens):
     # workhorse method _put_or_take_preproc().
     results = _put_or_take_preproc(game_state, "TAKE", tokens)
 
-    # As always with private workhorse methods, it may have returned
-    # an error value; if so, I return it.
+    # As always with private workhorse methods, it may have returned an
+    # error value; if so, I return it.
     if len(results) == 1 and isinstance(results[0], GameStateMessage):
         return results
     else:
-        # Otherwise, I extract the values parsed out of tokens from
-        # the results tuple.
+        # Otherwise, I extract the values parsed out of tokens from the
+        # results tuple.
         quantity_to_take, item_title, container_title, container = results
 
-    # The following loop iterates over all the items in the
-    # Container. I use a while loop so it's possible for the search
-    # to fall off the end of the loop. If that code is reached, the
-    # specified Item isn't in this Container.
+    # The following loop iterates over all the items in the Container. I
+    # use a while loop so it's possible for the search to fall off the
+    # end of the loop. If that code is reached, the specified Item isn't
+    # in this Container.
     matching_item = tuple(
         filter(lambda argl: argl[1][1].title == item_title, container.items())
     )
@@ -78,15 +78,14 @@ def take_command(game_state, tokens):
     ((item_internal_name, (item_quantity, item)),) = matching_item
 
     # The private workhorse method couldn't determine a quantity and
-    # returned the signal value NaN, so I assume the entire
-    # amount present is intended, and set quantity_to_take to
-    # item_quantity.
+    # returned the signal value NaN, so I assume the entire amount
+    # present is intended, and set quantity_to_take to item_quantity.
     if quantity_to_take is NaN:
         quantity_to_take = item_quantity
     if quantity_to_take > item_quantity:
-        # The amount specified is more than how
-        # much is in the Container, so I return a
-        # trying-to-take-more-than-is-present error.
+        # The amount specified is more than how much is in the
+        # Container, so I return a trying-to-take-more-than-is-present
+        # error.
         return (
             TryingToTakeMoreThanIsPresentGSM(
                 container_title,
@@ -99,12 +98,12 @@ def take_command(game_state, tokens):
         )
 
     if quantity_to_take == item_quantity:
-        # The amount to remove is the total amount present, so I
-        # delete it from the container.
+        # The amount to remove is the total amount present, so I delete
+        # it from the container.
         container.delete(item_internal_name)
     else:
-        # The quantity to take is less thant the amount present, so
-        # I set the item in the container to the new lower quantity.
+        # The quantity to take is less thant the amount present, so I
+        # set the item in the container to the new lower quantity.
         container.set(item_internal_name, item_quantity - quantity_to_take, item)
 
     # I add the item in the given quantity to the player character's

@@ -34,16 +34,15 @@ def close_command(game_state, tokens):
 
     * Otherwise, returns a ElementHasBeenClosedGSM object.
     """
-    # The open_command(), close_command(),
-    # lock_command(), and unlock_command() share the
-    # majority of their logic in a private workhorse method,
-    # _preprocessing_for_lock_unlock_open_or_close().
+    # The open_command(), close_command(), lock_command(), and
+    # unlock_command() share the majority of their logic in a private
+    # workhorse method, _preprocessing_for_lock_unlock_open_or_close().
     result = _preprocessing_for_lock_unlock_open_or_close(game_state, "CLOSE", tokens)
 
-    # As with any workhorse method, it either returns an error value
-    # or the object to operate on. So I type test if the result
-    # tuple's 1st element is a GameStateMessage subclass object. If
-    # so, it's returned.
+    # As with any workhorse method, it either returns an error value or
+    # the object to operate on. So I type test if the result tuple's
+    # 1st element is a GameStateMessage subclass object. If so, it's
+    # returned.
     if isinstance(result[0], GameStateMessage):
         return result
     else:
@@ -54,11 +53,11 @@ def close_command(game_state, tokens):
     if element_to_close.is_closed:
         return (ElementIsAlreadyClosedGSM(element_to_close.title),)
     elif isinstance(element_to_close, Door):
-        # This is a door object, and it only represents _this side_
-        # of the door game element; I use _matching_door() to fetch
-        # the door object representing the opposite side so that the
-        # door game element will be closed from the perspective of
-        # either room.
+        # This is a door object, and it only represents _this side_ of
+        # the door game element; I use _matching_door() to fetch the
+        # door object representing the opposite side so that the door
+        # game element will be closed from the perspective of either
+        # room.
         opposite_door = _matching_door(game_state, element_to_close)
         if opposite_door is not None:
             opposite_door.is_closed = True

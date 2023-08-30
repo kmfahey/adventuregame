@@ -19,14 +19,14 @@ def quit_command(context, tokens):
     * Otherwise, the game is ended, and a HaveQuitTheGameGSM object is
     returned.
     """
-    # This command takes no arguments, so if any were supplied, I
-    # return a syntax error.
+    # This command takes no arguments, so if any were supplied, I return
+    # a syntax error.
     if len(tokens):
         return (BadSyntaxGSM("QUIT", COMMANDS_SYNTAX["QUIT"]),)
 
-    # I devise the quit-the-game return value, set game_has_ended
-    # to True, store the return value in game_ending_state_msg so
-    # process() can reuse it if needs be, and return the value.
+    # I devise the quit-the-game return value, set game_has_ended to
+    # True, store the return value in game_ending_state_msg so process()
+    # can reuse it if needs be, and return the value.
     return_tuple = (HaveQuitTheGameGSM(),)
     context.game_state.game_has_ended = True
     context.game_ending_state_msg = return_tuple[-1]

@@ -60,14 +60,13 @@ def pick_lock_command(game_state, tokens):
     tried_to_operate_on_corpse = False
     tried_to_operate_on_item = False
 
-    # This command is restricted to Thieves; if the player character
-    # is of another class, a command-class-restricted error is
-    # returned.
+    # This command is restricted to Thieves; if the player character is
+    # of another class, a command-class-restricted error is returned.
     if game_state.character_class != "Thief":
         return (ClassRestrictedGSM("PICK LOCK", "thief"),)
 
-    # This command requires an argument. If called with no argument
-    # or a patently invalid one, a syntax error is returned.
+    # This command requires an argument. If called with no argument or a
+    # patently invalid one, a syntax error is returned.
     if (
         not len(tokens)
         or tokens[0] != "on"
@@ -87,37 +86,35 @@ def pick_lock_command(game_state, tokens):
     # I form the target_title from the tokens.
     target_title = " ".join(tokens)
 
-    # container_here and creature_here are assigned to local
-    # variables.
+    # container_here and creature_here are assigned to local variables.
     container = game_state.rooms_state.cursor.container_here
     creature = game_state.rooms_state.cursor.creature_here
 
-    # If the target is a door or doorway. the _door_selector() is
-    # used.
+    # If the target is a door or doorway. the _door_selector() is used.
     if tokens[-1] in ("door", "doorway"):
         result = _door_selector(game_state, tokens)
         # If it returns an error, the error value is returned.
         if isinstance(result[0], GameStateMessage):
             return result
         else:
-            # Otherwise, the Door object is extracted from its
-            # return value.
+            # Otherwise, the Door object is extracted from its return
+            # value.
             (door,) = result
 
-        # If the Door is a doorway, it can't be unlocked; a failure
-        # mode boolean is assigned.
+        # If the Door is a doorway, it can't be unlocked; a failure mode
+        # boolean is assigned.
         if isinstance(door, Doorway):
             tried_to_operate_on_doorway = True
         elif not door.is_locked:
-            # Otherwise if the door isn't locked, a
-            # target-not-locked error value is returned.
+            # Otherwise if the door isn't locked, a target-not-locked
+            # error value is returned.
             return (TargetNotLockedGSM(target_title),)
         else:
-            # This is a door object, and it only represents _this
-            # side_ of the door game element; I use _matching_door()
-            # to fetch the door object representing the opposite
-            # side so that the door game element will be unlocked
-            # from the perspective of either room.
+            # This is a door object, and it only represents _this side_
+            # of the door game element; I use _matching_door() to fetch
+            # the door object representing the opposite side so that the
+            # door game element will be unlocked from the perspective of
+            # either room.
             opposite_door = _matching_door(game_state, door)
             if opposite_door is not None:
                 opposite_door.is_locked = False
@@ -133,26 +130,26 @@ def pick_lock_command(game_state, tokens):
         if isinstance(container, Corpse):
             tried_to_operate_on_corpse = True
         elif not getattr(container, "is_locked", False):
-            # Otherwise if it's not locked, a target-not-locked
-            # error value is returned.
+            # Otherwise if it's not locked, a target-not-locked error
+            # value is returned.
             return (TargetNotLockedGSM(target_title),)
         else:
-            # Otherwise, its is_locked attribute is set to False,
-            # and a target-has-been-unlocked error is returned.
+            # Otherwise, its is_locked attribute is set to False, and a
+            # target-has-been-unlocked error is returned.
             container.is_locked = False
             return (TargetHasBeenUnlockedGSM(target_title),)
 
-    # The Door and Chest case have been handled and any possible
-    # success value has been rejected. Everything from here on down
-    # is error handling.
+    # The Door and Chest case have been handled and any possible success
+    # value has been rejected. Everything from here on down is error
+    # handling.
     elif creature is not None and creature.title == target_title:
-        # If there's a creature here and its title matches
-        # target_title, that failure mode boolean is set.
+        # If there's a creature here and its title matches target_title,
+        # that failure mode boolean is set.
         tried_to_operate_on_creature = True
     else:
-        # I check through items_here (if any) and the player
-        # character's inventory looking for an item with a title
-        # matching target_title.
+        # I check through items_here (if any) and the player character's
+        # inventory looking for an item with a title matching
+        # target_title.
         for _, item in chain(
             (
                 game_state.rooms_state.cursor.items_here.values()
@@ -163,15 +160,15 @@ def pick_lock_command(game_state, tokens):
         ):
             if item.title != target_title:
                 continue
-            # If one is found, the appropriate failure mode boolean
-            # is set, and the loop is broken.
+            # If one is found, the appropriate failure mode boolean is
+            # set, and the loop is broken.
             tried_to_operate_on_item = True
             item_targetted = item
             break
 
     # If any of the failure mode booleans were set, the appropriate
-    # argd is constructed, and a element-not-unlockable error value
-    # is instanced with it and returned.
+    # argd is constructed, and a element-not-unlockable error value is
+    # instanced with it and returned.
     if any(
         (
             tried_to_operate_on_doorway,
@@ -191,6 +188,6 @@ def pick_lock_command(game_state, tokens):
         }
         return (ElementNotLockpickableGSM(target_title, **argd),)
     else:
-        # The target_title didn't match anything in the current
-        # room, so a target-not-found error value is returned.
+        # The target_title didn't match anything in the current room, so
+        # a target-not-found error value is returned.
         return (TargetNotFoundGSM(target_title),)

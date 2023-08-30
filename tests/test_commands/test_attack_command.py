@@ -80,7 +80,6 @@ class Test_Attack_1(TestCase):
         self.game_state.character.equip_weapon(self.items_state.get("Longsword"))
         self.game_state.character.equip_armor(self.items_state.get("Studded_Leather"))
         self.game_state.character.equip_shield(self.items_state.get("Steel_Shield"))
-        # (_, self.gold_coin) = self.command_processor.game_state.rooms_state.cursor.container_here.get('Gold_Coin')
 
     def test_attack_1(self):
         result = self.command_processor.process("attack")
@@ -181,10 +180,13 @@ class Test_Attack_1(TestCase):
                 command_results.__class__.__name__ for command_results in results
             )
 
-            # Got a little clever here. The sequence of `GameStateMessage` subclass objects that are returned during
-            # a combat follows a particular pattern, and any deviation from that pattern is an error. I conjoin the
-            # classnames into a string and use regular expressions to parse the sequence to verify that the required
-            # pattern is conformed to.
+            # Got a little clever here. The sequence of
+            # `GameStateMessage` subclass objects that are returned
+            # during a combat follows a particular pattern, and any
+            # deviation from that pattern is an error. I conjoin the
+            # classnames into a string and use regular expressions to
+            # parse the sequence to verify that the required pattern is
+            # conformed to.
 
             self.assertRegex(
                 results_str_join,
