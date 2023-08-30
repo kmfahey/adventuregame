@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module advgame.utils</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="advgame.html"><font color="#ffffff">advgame</font></a>.utils</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/adventuregame/advgame/utils.py">/home/kmfahey/Workspace/adventuregame/advgame/utils.py</a></font></td></tr></table>
+    <p><tt>The&nbsp;advgame.utils&nbsp;module&nbsp;comprises&nbsp;a&nbsp;small&nbsp;collection&nbsp;of&nbsp;utility<br>
+functions&nbsp;used&nbsp;by&nbsp;other&nbsp;modules&nbsp;in&nbsp;the&nbsp;package&nbsp;to&nbsp;expedite&nbsp;common&nbsp;tasks<br>
+in&nbsp;the&nbsp;codebase.</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="re.html">re</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-join_strs_w_comma_conj"><strong>join_strs_w_comma_conj</strong></a>(str_list, conjunction='and')</dt><dd><tt>This&nbsp;function&nbsp;automates&nbsp;the&nbsp;task&nbsp;of&nbsp;joining&nbsp;a&nbsp;sequence&nbsp;of&nbsp;strings&nbsp;with<br>
+commas&nbsp;and&nbsp;a&nbsp;conjunction.<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;<a href="#-join_strs_w_comma_conj">join_strs_w_comma_conj</a>(['foo'],&nbsp;'and')<br>
+'foo'<br>
+&gt;&gt;&gt;&nbsp;<a href="#-join_strs_w_comma_conj">join_strs_w_comma_conj</a>(['foo',&nbsp;'bar'],&nbsp;'and')<br>
+'foo&nbsp;and&nbsp;bar'<br>
+&gt;&gt;&gt;&nbsp;<a href="#-join_strs_w_comma_conj">join_strs_w_comma_conj</a>(['foo',&nbsp;'bar',&nbsp;'baz'],&nbsp;'and')<br>
+'foo,&nbsp;bar,&nbsp;and&nbsp;baz'<br>
+&nbsp;<br>
+:str_list:&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;sequence&nbsp;of&nbsp;strings&nbsp;to&nbsp;join.<br>
+:conjunction:&nbsp;The&nbsp;conjunction&nbsp;to&nbsp;use&nbsp;with&nbsp;sequences&nbsp;longer&nbsp;than&nbsp;1<br>
+element.&nbsp;Typical&nbsp;values&nbsp;include&nbsp;'and'&nbsp;or&nbsp;'or'.<br>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns&nbsp;a&nbsp;grammatical&nbsp;comma-separated&nbsp;list&nbsp;string.</tt></dd></dl>
+ <dl><dt><a name="-lexical_number_to_digits"><strong>lexical_number_to_digits</strong></a>(lexical_number)</dt><dd><tt>This&nbsp;function&nbsp;parses&nbsp;a&nbsp;lexical&nbsp;representation&nbsp;of&nbsp;a&nbsp;number&nbsp;between&nbsp;one<br>
+and&nbsp;ninety-nine,&nbsp;and&nbsp;returns&nbsp;an&nbsp;int&nbsp;that&nbsp;is&nbsp;equivalent&nbsp;to&nbsp;that&nbsp;number.<br>
+For&nbsp;lexical&nbsp;numbers&nbsp;outside&nbsp;of&nbsp;one&nbsp;to&nbsp;ninety-nine,&nbsp;NaN&nbsp;is&nbsp;returned.<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;<a href="#-lexical_number_to_digits">lexical_number_to_digits</a>('one')<br>
+1<br>
+&gt;&gt;&gt;&nbsp;<a href="#-lexical_number_to_digits">lexical_number_to_digits</a>('ninety-nine')<br>
+99<br>
+&gt;&gt;&gt;&nbsp;<a href="#-lexical_number_to_digits">lexical_number_to_digits</a>('one&nbsp;hundred&nbsp;and&nbsp;sixty')<br>
+nan<br>
+&nbsp;<br>
+:lexical_number:&nbsp;The&nbsp;textual&nbsp;representation&nbsp;of&nbsp;a&nbsp;number&nbsp;to&nbsp;parse.&nbsp;Must<br>
+be&nbsp;between&nbsp;one&nbsp;and&nbsp;ninety-nine&nbsp;inclusive.&nbsp;:return:&nbsp;Returns&nbsp;an&nbsp;int,&nbsp;or<br>
+NaN&nbsp;(which&nbsp;is&nbsp;a&nbsp;float).</tt></dd></dl>
+ <dl><dt><a name="-roll_dice"><strong>roll_dice</strong></a>(dice_expr)</dt><dd><tt>This&nbsp;function&nbsp;accepts&nbsp;a&nbsp;standard&nbsp;Dungeons&nbsp;&amp;&nbsp;Dragons&nbsp;dice&nbsp;expression<br>
+(such&nbsp;as&nbsp;1d20+5,&nbsp;1d8+2,&nbsp;or&nbsp;3d10-3),&nbsp;uses&nbsp;randint()&nbsp;to&nbsp;simulate&nbsp;a&nbsp;dice<br>
+roll&nbsp;or&nbsp;rolls&nbsp;with&nbsp;the&nbsp;given&nbsp;modifier,&nbsp;and&nbsp;returns&nbsp;the&nbsp;computed&nbsp;random<br>
+value&gt;<br>
+&nbsp;<br>
+:dice_expr:&nbsp;A&nbsp;dice&nbsp;expression&nbsp;of&nbsp;the&nbsp;form&nbsp;#d#[±#].&nbsp;return:&nbsp;A&nbsp;random<br>
+number&nbsp;value,&nbsp;as&nbsp;an&nbsp;int.</tt></dd></dl>
+ <dl><dt><a name="-textwrapper"><strong>textwrapper</strong></a>(paragraphs, width=80)</dt><dd><tt>This&nbsp;function&nbsp;accepts&nbsp;a&nbsp;multiline&nbsp;string&nbsp;comprising&nbsp;paragraphs&nbsp;of<br>
+unwrapped&nbsp;text,&nbsp;separately&nbsp;wraps&nbsp;each&nbsp;one&nbsp;to&nbsp;80&nbsp;columns,&nbsp;and&nbsp;returns&nbsp;the<br>
+wrapped&nbsp;paragraphs&nbsp;as&nbsp;a&nbsp;string.<br>
+&nbsp;<br>
+:paragraphs:&nbsp;A&nbsp;multi-line&nbsp;string&nbsp;of&nbsp;text.&nbsp;return:&nbsp;The&nbsp;text&nbsp;input&nbsp;wrapped<br>
+to&nbsp;80&nbsp;columns&nbsp;paragraph-by-paragraph.</tt></dd></dl>
+ <dl><dt><a name="-usage_verb"><strong>usage_verb</strong></a>(item_type, gerund=True)</dt><dd><tt>This&nbsp;convenience&nbsp;function&nbsp;returns&nbsp;the&nbsp;appropriate&nbsp;verb&nbsp;to&nbsp;use&nbsp;when<br>
+referring&nbsp;to&nbsp;how&nbsp;a&nbsp;character&nbsp;is&nbsp;described&nbsp;as&nbsp;using&nbsp;an&nbsp;equippable&nbsp;type&nbsp;of<br>
+item.<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;<a href="#-usage_verb">usage_verb</a>('armor',&nbsp;gerund=True)<br>
+'wearing'<br>
+&gt;&gt;&gt;&nbsp;<a href="#-usage_verb">usage_verb</a>('shield',&nbsp;gerund=False)<br>
+'carry'<br>
+&gt;&gt;&gt;&nbsp;<a href="#-usage_verb">usage_verb</a>('weapon',&nbsp;gerund=True)<br>
+'wielding'<br>
+&nbsp;<br>
+:item_type:&nbsp;Either&nbsp;'armor',&nbsp;'shield',&nbsp;'weapon',&nbsp;or&nbsp;'wand'.&nbsp;:gerund:<br>
+Either&nbsp;True&nbsp;(to&nbsp;receive&nbsp;the&nbsp;gerund)&nbsp;or&nbsp;False&nbsp;(to&nbsp;receive&nbsp;the&nbsp;present<br>
+indicative).&nbsp;:return:&nbsp;The&nbsp;verb&nbsp;string&nbsp;matching&nbsp;how&nbsp;the&nbsp;item&nbsp;is&nbsp;used.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>LEXICAL_NUMBER_1_THRU_99_RE</strong> = re.compile('^(\n            (one|two|three|four|...      (twen|thir|for|fif|six|seven|e, re.VERBOSE)<br>
+<strong>__all__</strong> = ('LEXICAL_NUMBER_1_THRU_99_RE', 'join_strs_w_comma_conj', 'lexical_number_to_digits', 'roll_dice', 'textwrapper', 'usage_verb')</td></tr></table>
+</body></html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module advgame.statemsgs.drink</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="advgame.html"><font color="#ffffff">advgame</font></a>.<a href="advgame.statemsgs.html"><font color="#ffffff">statemsgs</font></a>.drink</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/adventuregame/advgame/statemsgs/drink.py">/home/kmfahey/Workspace/adventuregame/advgame/statemsgs/drink.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>(<a href="abc.html#ABC">abc.ABC</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.statemsgs.drink.html#AmountToDrinkUnclearGSM">AmountToDrinkUnclearGSM</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.statemsgs.drink.html#DrankManaPotionGSM">DrankManaPotionGSM</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.statemsgs.drink.html#DrankManaPotionWhenNotASpellcasterGSM">DrankManaPotionWhenNotASpellcasterGSM</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.statemsgs.drink.html#ItemNotDrinkableGSM">ItemNotDrinkableGSM</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.statemsgs.drink.html#ItemNotInInventoryGSM">ItemNotInInventoryGSM</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.statemsgs.drink.html#TriedToDrinkMoreThanPossessedGSM">TriedToDrinkMoreThanPossessedGSM</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="AmountToDrinkUnclearGSM">class <strong>AmountToDrinkUnclearGSM</strong></a>(<a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Returned&nbsp;by&nbsp;drink_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;writes&nbsp;an&nbsp;ungrammatical<br>
+sentence&nbsp;that&nbsp;is&nbsp;ambiguous&nbsp;as&nbsp;to&nbsp;how&nbsp;many&nbsp;of&nbsp;the&nbsp;item&nbsp;they&nbsp;intend&nbsp;to<br>
+target.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.statemsgs.drink.html#AmountToDrinkUnclearGSM">AmountToDrinkUnclearGSM</a></dd>
+<dd><a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="AmountToDrinkUnclearGSM-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>The&nbsp;__init__&nbsp;method&nbsp;of&nbsp;a&nbsp;<a href="advgame.statemsgs.gsm.html#GameStateMessage">GameStateMessage</a>&nbsp;subclass&nbsp;stores&nbsp;its&nbsp;keyword<br>
+arguments&nbsp;to&nbsp;object&nbsp;attributes,&nbsp;and&nbsp;performs&nbsp;no&nbsp;other&nbsp;task.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>message</strong></dt>
+<dd><tt>The&nbsp;message&nbsp;property&nbsp;of&nbsp;a&nbsp;GameStateMessage&nbsp;subclass&nbsp;renders&nbsp;the&nbsp;data<br>
+stored&nbsp;in&nbsp;the&nbsp;object&nbsp;attributes&nbsp;to&nbsp;a&nbsp;natural&nbsp;language&nbsp;string&nbsp;which<br>
+communicates&nbsp;the&nbsp;semantic&nbsp;content&nbsp;of&nbsp;the&nbsp;object&nbsp;to&nbsp;the&nbsp;player.&nbsp;The<br>
+message&nbsp;property&nbsp;is&nbsp;accessed&nbsp;and&nbsp;printed&nbsp;by&nbsp;advgame.py.</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="DrankManaPotionGSM">class <strong>DrankManaPotionGSM</strong></a>(<a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#DrankManaPotionGSM">DrankManaPotionGSM</a>(amount_regained,&nbsp;current_mana_points,&nbsp;mana_point_total)<br>
+&nbsp;<br>
+Returned&nbsp;by&nbsp;drink_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;uses&nbsp;it&nbsp;to&nbsp;drink<br>
+a&nbsp;mana&nbsp;potion.&nbsp;It&nbsp;is&nbsp;only&nbsp;returned&nbsp;if&nbsp;the&nbsp;player's&nbsp;character<br>
+is&nbsp;a&nbsp;Mage&nbsp;or&nbsp;Priest.&nbsp;If&nbsp;they're&nbsp;playing&nbsp;a&nbsp;Warrior&nbsp;or&nbsp;Thief,&nbsp;a<br>
+<a href="#DrankManaPotionWhenNotASpellcasterGSM">DrankManaPotionWhenNotASpellcasterGSM</a>&nbsp;object&nbsp;is&nbsp;returned&nbsp;instead.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.statemsgs.drink.html#DrankManaPotionGSM">DrankManaPotionGSM</a></dd>
+<dd><a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="DrankManaPotionGSM-__init__"><strong>__init__</strong></a>(self, amount_regained, current_mana_points, mana_point_total)</dt><dd><tt>The&nbsp;__init__&nbsp;method&nbsp;of&nbsp;a&nbsp;<a href="advgame.statemsgs.gsm.html#GameStateMessage">GameStateMessage</a>&nbsp;subclass&nbsp;stores&nbsp;its&nbsp;keyword<br>
+arguments&nbsp;to&nbsp;object&nbsp;attributes,&nbsp;and&nbsp;performs&nbsp;no&nbsp;other&nbsp;task.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>message</strong></dt>
+<dd><tt>The&nbsp;message&nbsp;property&nbsp;of&nbsp;a&nbsp;GameStateMessage&nbsp;subclass&nbsp;renders&nbsp;the&nbsp;data<br>
+stored&nbsp;in&nbsp;the&nbsp;object&nbsp;attributes&nbsp;to&nbsp;a&nbsp;natural&nbsp;language&nbsp;string&nbsp;which<br>
+communicates&nbsp;the&nbsp;semantic&nbsp;content&nbsp;of&nbsp;the&nbsp;object&nbsp;to&nbsp;the&nbsp;player.&nbsp;The<br>
+message&nbsp;property&nbsp;is&nbsp;accessed&nbsp;and&nbsp;printed&nbsp;by&nbsp;advgame.py.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>amount_regained</strong></dt>
+</dl>
+<dl><dt><strong>current_mana_points</strong></dt>
+</dl>
+<dl><dt><strong>mana_point_total</strong></dt>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="DrankManaPotionWhenNotASpellcasterGSM">class <strong>DrankManaPotionWhenNotASpellcasterGSM</strong></a>(<a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Returned&nbsp;by&nbsp;drink_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;drinks&nbsp;a&nbsp;mana&nbsp;potion&nbsp;but<br>
+they're&nbsp;playing&nbsp;a&nbsp;Warrior&nbsp;or&nbsp;Thief&nbsp;and&nbsp;have&nbsp;no&nbsp;mana&nbsp;points&nbsp;to&nbsp;restore.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.statemsgs.drink.html#DrankManaPotionWhenNotASpellcasterGSM">DrankManaPotionWhenNotASpellcasterGSM</a></dd>
+<dd><a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="DrankManaPotionWhenNotASpellcasterGSM-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>The&nbsp;__init__&nbsp;method&nbsp;of&nbsp;a&nbsp;<a href="advgame.statemsgs.gsm.html#GameStateMessage">GameStateMessage</a>&nbsp;subclass&nbsp;stores&nbsp;its&nbsp;keyword<br>
+arguments&nbsp;to&nbsp;object&nbsp;attributes,&nbsp;and&nbsp;performs&nbsp;no&nbsp;other&nbsp;task.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>message</strong></dt>
+<dd><tt>The&nbsp;message&nbsp;property&nbsp;of&nbsp;a&nbsp;GameStateMessage&nbsp;subclass&nbsp;renders&nbsp;the&nbsp;data<br>
+stored&nbsp;in&nbsp;the&nbsp;object&nbsp;attributes&nbsp;to&nbsp;a&nbsp;natural&nbsp;language&nbsp;string&nbsp;which<br>
+communicates&nbsp;the&nbsp;semantic&nbsp;content&nbsp;of&nbsp;the&nbsp;object&nbsp;to&nbsp;the&nbsp;player.&nbsp;The<br>
+message&nbsp;property&nbsp;is&nbsp;accessed&nbsp;and&nbsp;printed&nbsp;by&nbsp;advgame.py.</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ItemNotDrinkableGSM">class <strong>ItemNotDrinkableGSM</strong></a>(<a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#ItemNotDrinkableGSM">ItemNotDrinkableGSM</a>(item_title)<br>
+&nbsp;<br>
+Returned&nbsp;by&nbsp;drink_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;targets&nbsp;an&nbsp;item&nbsp;that&nbsp;is&nbsp;not<br>
+a&nbsp;potion.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.statemsgs.drink.html#ItemNotDrinkableGSM">ItemNotDrinkableGSM</a></dd>
+<dd><a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="ItemNotDrinkableGSM-__init__"><strong>__init__</strong></a>(self, item_title)</dt><dd><tt>The&nbsp;__init__&nbsp;method&nbsp;of&nbsp;a&nbsp;<a href="advgame.statemsgs.gsm.html#GameStateMessage">GameStateMessage</a>&nbsp;subclass&nbsp;stores&nbsp;its&nbsp;keyword<br>
+arguments&nbsp;to&nbsp;object&nbsp;attributes,&nbsp;and&nbsp;performs&nbsp;no&nbsp;other&nbsp;task.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>message</strong></dt>
+<dd><tt>The&nbsp;message&nbsp;property&nbsp;of&nbsp;a&nbsp;GameStateMessage&nbsp;subclass&nbsp;renders&nbsp;the&nbsp;data<br>
+stored&nbsp;in&nbsp;the&nbsp;object&nbsp;attributes&nbsp;to&nbsp;a&nbsp;natural&nbsp;language&nbsp;string&nbsp;which<br>
+communicates&nbsp;the&nbsp;semantic&nbsp;content&nbsp;of&nbsp;the&nbsp;object&nbsp;to&nbsp;the&nbsp;player.&nbsp;The<br>
+message&nbsp;property&nbsp;is&nbsp;accessed&nbsp;and&nbsp;printed&nbsp;by&nbsp;advgame.py.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>item_title</strong></dt>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ItemNotInInventoryGSM">class <strong>ItemNotInInventoryGSM</strong></a>(<a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#ItemNotInInventoryGSM">ItemNotInInventoryGSM</a>(item_title)<br>
+&nbsp;<br>
+Returned&nbsp;by&nbsp;drink_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries&nbsp;to&nbsp;drink&nbsp;a&nbsp;potion&nbsp;that<br>
+isn't&nbsp;in&nbsp;their&nbsp;inventory.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.statemsgs.drink.html#ItemNotInInventoryGSM">ItemNotInInventoryGSM</a></dd>
+<dd><a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="ItemNotInInventoryGSM-__init__"><strong>__init__</strong></a>(self, item_title)</dt><dd><tt>The&nbsp;__init__&nbsp;method&nbsp;of&nbsp;a&nbsp;<a href="advgame.statemsgs.gsm.html#GameStateMessage">GameStateMessage</a>&nbsp;subclass&nbsp;stores&nbsp;its&nbsp;keyword<br>
+arguments&nbsp;to&nbsp;object&nbsp;attributes,&nbsp;and&nbsp;performs&nbsp;no&nbsp;other&nbsp;task.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>message</strong></dt>
+<dd><tt>The&nbsp;message&nbsp;property&nbsp;of&nbsp;a&nbsp;GameStateMessage&nbsp;subclass&nbsp;renders&nbsp;the&nbsp;data<br>
+stored&nbsp;in&nbsp;the&nbsp;object&nbsp;attributes&nbsp;to&nbsp;a&nbsp;natural&nbsp;language&nbsp;string&nbsp;which<br>
+communicates&nbsp;the&nbsp;semantic&nbsp;content&nbsp;of&nbsp;the&nbsp;object&nbsp;to&nbsp;the&nbsp;player.&nbsp;The<br>
+message&nbsp;property&nbsp;is&nbsp;accessed&nbsp;and&nbsp;printed&nbsp;by&nbsp;advgame.py.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>item_title</strong></dt>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="TriedToDrinkMoreThanPossessedGSM">class <strong>TriedToDrinkMoreThanPossessedGSM</strong></a>(<a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#TriedToDrinkMoreThanPossessedGSM">TriedToDrinkMoreThanPossessedGSM</a>(item_title,&nbsp;attempted_qty,&nbsp;possessed_qty)<br>
+&nbsp;<br>
+Returned&nbsp;by&nbsp;drink_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;specifies&nbsp;drinking&nbsp;a<br>
+quantity&nbsp;of&nbsp;potions&nbsp;that&nbsp;is&nbsp;greater&nbsp;than&nbsp;the&nbsp;number&nbsp;they&nbsp;have&nbsp;in&nbsp;their<br>
+inventory.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.statemsgs.drink.html#TriedToDrinkMoreThanPossessedGSM">TriedToDrinkMoreThanPossessedGSM</a></dd>
+<dd><a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="TriedToDrinkMoreThanPossessedGSM-__init__"><strong>__init__</strong></a>(self, item_title, attempted_qty, possessed_qty)</dt><dd><tt>The&nbsp;__init__&nbsp;method&nbsp;of&nbsp;a&nbsp;<a href="advgame.statemsgs.gsm.html#GameStateMessage">GameStateMessage</a>&nbsp;subclass&nbsp;stores&nbsp;its&nbsp;keyword<br>
+arguments&nbsp;to&nbsp;object&nbsp;attributes,&nbsp;and&nbsp;performs&nbsp;no&nbsp;other&nbsp;task.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>message</strong></dt>
+<dd><tt>The&nbsp;message&nbsp;property&nbsp;of&nbsp;a&nbsp;GameStateMessage&nbsp;subclass&nbsp;renders&nbsp;the&nbsp;data<br>
+stored&nbsp;in&nbsp;the&nbsp;object&nbsp;attributes&nbsp;to&nbsp;a&nbsp;natural&nbsp;language&nbsp;string&nbsp;which<br>
+communicates&nbsp;the&nbsp;semantic&nbsp;content&nbsp;of&nbsp;the&nbsp;object&nbsp;to&nbsp;the&nbsp;player.&nbsp;The<br>
+message&nbsp;property&nbsp;is&nbsp;accessed&nbsp;and&nbsp;printed&nbsp;by&nbsp;advgame.py.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>attempted_qty</strong></dt>
+</dl>
+<dl><dt><strong>item_title</strong></dt>
+</dl>
+<dl><dt><strong>possessed_qty</strong></dt>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ('DrankManaPotionGSM', 'DrankManaPotionWhenNotASpellcasterGSM', 'ItemNotDrinkableGSM', 'ItemNotInInventoryGSM', 'TriedToDrinkMoreThanPossessedGSM', 'AmountToDrinkUnclearGSM')</td></tr></table>
+</body></html>

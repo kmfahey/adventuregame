@@ -1,0 +1,241 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module advgame.statemsgs.attack</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="advgame.html"><font color="#ffffff">advgame</font></a>.<a href="advgame.statemsgs.html"><font color="#ffffff">statemsgs</font></a>.attack</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/adventuregame/advgame/statemsgs/attack.py">/home/kmfahey/Workspace/adventuregame/advgame/statemsgs/attack.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>(<a href="abc.html#ABC">abc.ABC</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.statemsgs.attack.html#AttackHitGSM">AttackHitGSM</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.statemsgs.attack.html#AttackMissedGSM">AttackMissedGSM</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.statemsgs.attack.html#OpponentNotFoundGSM">OpponentNotFoundGSM</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.statemsgs.attack.html#YouHaveNoWeaponOrWandEquippedGSM">YouHaveNoWeaponOrWandEquippedGSM</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="AttackHitGSM">class <strong>AttackHitGSM</strong></a>(<a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#AttackHitGSM">AttackHitGSM</a>(creature_title,&nbsp;damage_done,&nbsp;creature_slain,&nbsp;weapon_type)<br>
+&nbsp;<br>
+Returned&nbsp;by&nbsp;attack_command()&nbsp;when&nbsp;the&nbsp;player's&nbsp;attack&nbsp;connected<br>
+with&nbsp;their&nbsp;foe.&nbsp;attack_command()&nbsp;always&nbsp;triggers&nbsp;the&nbsp;hidden<br>
+_be_attacked_by_command()&nbsp;pseudo-command,&nbsp;an&nbsp;<a href="#AttackHitGSM">AttackHitGSM</a>&nbsp;object&nbsp;tracks<br>
+if&nbsp;the&nbsp;foe&nbsp;was&nbsp;slain.&nbsp;If&nbsp;so,&nbsp;nothing&nbsp;relating&nbsp;to&nbsp;foe&nbsp;death&nbsp;is&nbsp;conveyed;<br>
+describing&nbsp;foe&nbsp;death&nbsp;is&nbsp;handled&nbsp;by&nbsp;the&nbsp;FoeDeathGSM&nbsp;class.&nbsp;If&nbsp;not,&nbsp;its<br>
+message&nbsp;includes&nbsp;a&nbsp;clause&nbsp;about&nbsp;the&nbsp;foe&nbsp;turning&nbsp;to&nbsp;attack.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.statemsgs.attack.html#AttackHitGSM">AttackHitGSM</a></dd>
+<dd><a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="AttackHitGSM-__init__"><strong>__init__</strong></a>(self, creature_title, damage_done, creature_slain, weapon_type)</dt><dd><tt>The&nbsp;__init__&nbsp;method&nbsp;of&nbsp;a&nbsp;<a href="advgame.statemsgs.gsm.html#GameStateMessage">GameStateMessage</a>&nbsp;subclass&nbsp;stores&nbsp;its&nbsp;keyword<br>
+arguments&nbsp;to&nbsp;object&nbsp;attributes,&nbsp;and&nbsp;performs&nbsp;no&nbsp;other&nbsp;task.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>message</strong></dt>
+<dd><tt>The&nbsp;message&nbsp;property&nbsp;of&nbsp;a&nbsp;GameStateMessage&nbsp;subclass&nbsp;renders&nbsp;the&nbsp;data<br>
+stored&nbsp;in&nbsp;the&nbsp;object&nbsp;attributes&nbsp;to&nbsp;a&nbsp;natural&nbsp;language&nbsp;string&nbsp;which<br>
+communicates&nbsp;the&nbsp;semantic&nbsp;content&nbsp;of&nbsp;the&nbsp;object&nbsp;to&nbsp;the&nbsp;player.&nbsp;The<br>
+message&nbsp;property&nbsp;is&nbsp;accessed&nbsp;and&nbsp;printed&nbsp;by&nbsp;advgame.py.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>creature_slain</strong></dt>
+</dl>
+<dl><dt><strong>creature_title</strong></dt>
+</dl>
+<dl><dt><strong>damage_done</strong></dt>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="AttackMissedGSM">class <strong>AttackMissedGSM</strong></a>(<a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#AttackMissedGSM">AttackMissedGSM</a>(creature_title,&nbsp;weapon_type)<br>
+&nbsp;<br>
+Returned&nbsp;by&nbsp;attack_command()&nbsp;when&nbsp;the&nbsp;player's&nbsp;attack&nbsp;missed.&nbsp;Like<br>
+<a href="#AttackHitGSM">AttackHitGSM</a>,&nbsp;it&nbsp;mentions&nbsp;the&nbsp;foe&nbsp;turning&nbsp;to&nbsp;attack,&nbsp;because&nbsp;an&nbsp;attack<br>
+on&nbsp;a&nbsp;foe&nbsp;always&nbsp;leads&nbsp;to&nbsp;a&nbsp;counterattack&nbsp;if&nbsp;they&nbsp;live.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.statemsgs.attack.html#AttackMissedGSM">AttackMissedGSM</a></dd>
+<dd><a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="AttackMissedGSM-__init__"><strong>__init__</strong></a>(self, creature_title, weapon_type)</dt><dd><tt>The&nbsp;__init__&nbsp;method&nbsp;of&nbsp;a&nbsp;<a href="advgame.statemsgs.gsm.html#GameStateMessage">GameStateMessage</a>&nbsp;subclass&nbsp;stores&nbsp;its&nbsp;keyword<br>
+arguments&nbsp;to&nbsp;object&nbsp;attributes,&nbsp;and&nbsp;performs&nbsp;no&nbsp;other&nbsp;task.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>message</strong></dt>
+<dd><tt>The&nbsp;message&nbsp;property&nbsp;of&nbsp;a&nbsp;GameStateMessage&nbsp;subclass&nbsp;renders&nbsp;the&nbsp;data<br>
+stored&nbsp;in&nbsp;the&nbsp;object&nbsp;attributes&nbsp;to&nbsp;a&nbsp;natural&nbsp;language&nbsp;string&nbsp;which<br>
+communicates&nbsp;the&nbsp;semantic&nbsp;content&nbsp;of&nbsp;the&nbsp;object&nbsp;to&nbsp;the&nbsp;player.&nbsp;The<br>
+message&nbsp;property&nbsp;is&nbsp;accessed&nbsp;and&nbsp;printed&nbsp;by&nbsp;advgame.py.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>creature_title</strong></dt>
+</dl>
+<dl><dt><strong>weapon_type</strong></dt>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="OpponentNotFoundGSM">class <strong>OpponentNotFoundGSM</strong></a>(<a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#OpponentNotFoundGSM">OpponentNotFoundGSM</a>(creature_title_given,&nbsp;opponent_present='')<br>
+&nbsp;<br>
+Returned&nbsp;by&nbsp;attack_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;has&nbsp;used&nbsp;an&nbsp;attack&nbsp;command<br>
+that&nbsp;refers&nbsp;to&nbsp;a&nbsp;foe&nbsp;that&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;game's&nbsp;current&nbsp;room.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.statemsgs.attack.html#OpponentNotFoundGSM">OpponentNotFoundGSM</a></dd>
+<dd><a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="OpponentNotFoundGSM-__init__"><strong>__init__</strong></a>(self, creature_title_given, opponent_present='')</dt><dd><tt>The&nbsp;__init__&nbsp;method&nbsp;of&nbsp;a&nbsp;<a href="advgame.statemsgs.gsm.html#GameStateMessage">GameStateMessage</a>&nbsp;subclass&nbsp;stores&nbsp;its&nbsp;keyword<br>
+arguments&nbsp;to&nbsp;object&nbsp;attributes,&nbsp;and&nbsp;performs&nbsp;no&nbsp;other&nbsp;task.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>message</strong></dt>
+<dd><tt>The&nbsp;message&nbsp;property&nbsp;of&nbsp;a&nbsp;GameStateMessage&nbsp;subclass&nbsp;renders&nbsp;the&nbsp;data<br>
+stored&nbsp;in&nbsp;the&nbsp;object&nbsp;attributes&nbsp;to&nbsp;a&nbsp;natural&nbsp;language&nbsp;string&nbsp;which<br>
+communicates&nbsp;the&nbsp;semantic&nbsp;content&nbsp;of&nbsp;the&nbsp;object&nbsp;to&nbsp;the&nbsp;player.&nbsp;The<br>
+message&nbsp;property&nbsp;is&nbsp;accessed&nbsp;and&nbsp;printed&nbsp;by&nbsp;advgame.py.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>creature_title_given</strong></dt>
+</dl>
+<dl><dt><strong>opponent_present</strong></dt>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="YouHaveNoWeaponOrWandEquippedGSM">class <strong>YouHaveNoWeaponOrWandEquippedGSM</strong></a>(<a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#YouHaveNoWeaponOrWandEquippedGSM">YouHaveNoWeaponOrWandEquippedGSM</a>(character_class)<br>
+&nbsp;<br>
+Returned&nbsp;by&nbsp;attack_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;has&nbsp;used&nbsp;the&nbsp;attack&nbsp;command<br>
+while&nbsp;having&nbsp;no&nbsp;weapon&nbsp;(or,&nbsp;for&nbsp;Mages,&nbsp;no&nbsp;wand)&nbsp;equipped.&nbsp;It&nbsp;tracks<br>
+player&nbsp;class&nbsp;so&nbsp;it&nbsp;knows&nbsp;to&nbsp;display&nbsp;the&nbsp;wand&nbsp;option&nbsp;for&nbsp;Mages.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.statemsgs.attack.html#YouHaveNoWeaponOrWandEquippedGSM">YouHaveNoWeaponOrWandEquippedGSM</a></dd>
+<dd><a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="YouHaveNoWeaponOrWandEquippedGSM-__init__"><strong>__init__</strong></a>(self, character_class)</dt><dd><tt>The&nbsp;__init__&nbsp;method&nbsp;of&nbsp;a&nbsp;<a href="advgame.statemsgs.gsm.html#GameStateMessage">GameStateMessage</a>&nbsp;subclass&nbsp;stores&nbsp;its&nbsp;keyword<br>
+arguments&nbsp;to&nbsp;object&nbsp;attributes,&nbsp;and&nbsp;performs&nbsp;no&nbsp;other&nbsp;task.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>message</strong></dt>
+<dd><tt>The&nbsp;message&nbsp;property&nbsp;of&nbsp;a&nbsp;GameStateMessage&nbsp;subclass&nbsp;renders&nbsp;the&nbsp;data<br>
+stored&nbsp;in&nbsp;the&nbsp;object&nbsp;attributes&nbsp;to&nbsp;a&nbsp;natural&nbsp;language&nbsp;string&nbsp;which<br>
+communicates&nbsp;the&nbsp;semantic&nbsp;content&nbsp;of&nbsp;the&nbsp;object&nbsp;to&nbsp;the&nbsp;player.&nbsp;The<br>
+message&nbsp;property&nbsp;is&nbsp;accessed&nbsp;and&nbsp;printed&nbsp;by&nbsp;advgame.py.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>character_class</strong></dt>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ('AttackHitGSM', 'AttackMissedGSM', 'OpponentNotFoundGSM', 'YouHaveNoWeaponOrWandEquippedGSM')</td></tr></table>
+</body></html>

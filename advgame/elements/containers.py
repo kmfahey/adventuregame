@@ -1,9 +1,8 @@
 #!/usr/bin/python3
 
-from .basics import IniEntry, State
-from .characters import Character, ItemsState, ItemsMultiState
-
-from ..errors import InternalError
+from advgame.elements.basics import IniEntry, State
+from advgame.elements.characters import Character, ItemsState, ItemsMultiState
+from advgame.errors import InternalError
 
 
 __all__ = (

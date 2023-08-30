@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module advgame.statemsgs.help_</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="advgame.html"><font color="#ffffff">advgame</font></a>.<a href="advgame.statemsgs.html"><font color="#ffffff">statemsgs</font></a>.help_</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/adventuregame/advgame/statemsgs/help_.py">/home/kmfahey/Workspace/adventuregame/advgame/statemsgs/help_.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>(<a href="abc.html#ABC">abc.ABC</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.statemsgs.help_.html#DisplayCommandsGSM">DisplayCommandsGSM</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.statemsgs.help_.html#DisplayHelpForCommandGSM">DisplayHelpForCommandGSM</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.statemsgs.help_.html#NotRecognizedGSM">NotRecognizedGSM</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="DisplayCommandsGSM">class <strong>DisplayCommandsGSM</strong></a>(<a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#DisplayCommandsGSM">DisplayCommandsGSM</a>(commands_available,&nbsp;game_started=True)<br>
+&nbsp;<br>
+Returned&nbsp;by&nbsp;help_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;calls&nbsp;it&nbsp;with&nbsp;no&nbsp;arguments;<br>
+it&nbsp;displays&nbsp;all&nbsp;the&nbsp;commands&nbsp;in&nbsp;the&nbsp;game&nbsp;and&nbsp;prompts&nbsp;the&nbsp;player&nbsp;to&nbsp;ask<br>
+for&nbsp;help&nbsp;with&nbsp;one&nbsp;of&nbsp;them.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.statemsgs.help_.html#DisplayCommandsGSM">DisplayCommandsGSM</a></dd>
+<dd><a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="DisplayCommandsGSM-__init__"><strong>__init__</strong></a>(self, commands_available, game_started=True)</dt><dd><tt>The&nbsp;__init__&nbsp;method&nbsp;of&nbsp;a&nbsp;<a href="advgame.statemsgs.gsm.html#GameStateMessage">GameStateMessage</a>&nbsp;subclass&nbsp;stores&nbsp;its&nbsp;keyword<br>
+arguments&nbsp;to&nbsp;object&nbsp;attributes,&nbsp;and&nbsp;performs&nbsp;no&nbsp;other&nbsp;task.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>message</strong></dt>
+<dd><tt>The&nbsp;message&nbsp;property&nbsp;of&nbsp;a&nbsp;GameStateMessage&nbsp;subclass&nbsp;renders&nbsp;the&nbsp;data<br>
+stored&nbsp;in&nbsp;the&nbsp;object&nbsp;attributes&nbsp;to&nbsp;a&nbsp;natural&nbsp;language&nbsp;string&nbsp;which<br>
+communicates&nbsp;the&nbsp;semantic&nbsp;content&nbsp;of&nbsp;the&nbsp;object&nbsp;to&nbsp;the&nbsp;player.&nbsp;The<br>
+message&nbsp;property&nbsp;is&nbsp;accessed&nbsp;and&nbsp;printed&nbsp;by&nbsp;advgame.py.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>commands_available</strong></dt>
+</dl>
+<dl><dt><strong>game_started</strong></dt>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="DisplayHelpForCommandGSM">class <strong>DisplayHelpForCommandGSM</strong></a>(<a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#DisplayHelpForCommandGSM">DisplayHelpForCommandGSM</a>(command,&nbsp;syntax_tuple=None,&nbsp;instructions=None)<br>
+&nbsp;<br>
+Returned&nbsp;by&nbsp;help_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;asks&nbsp;for&nbsp;help&nbsp;with&nbsp;a&nbsp;specific<br>
+command.&nbsp;It&nbsp;summarizes&nbsp;the&nbsp;syntax&nbsp;for&nbsp;them&nbsp;and&nbsp;prints&nbsp;an&nbsp;informative<br>
+blurb&nbsp;about&nbsp;the&nbsp;command.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.statemsgs.help_.html#DisplayHelpForCommandGSM">DisplayHelpForCommandGSM</a></dd>
+<dd><a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="DisplayHelpForCommandGSM-__init__"><strong>__init__</strong></a>(self, command, syntax_tuple=None, instructions=None)</dt><dd><tt>The&nbsp;__init__&nbsp;method&nbsp;of&nbsp;a&nbsp;<a href="advgame.statemsgs.gsm.html#GameStateMessage">GameStateMessage</a>&nbsp;subclass&nbsp;stores&nbsp;its&nbsp;keyword<br>
+arguments&nbsp;to&nbsp;object&nbsp;attributes,&nbsp;and&nbsp;performs&nbsp;no&nbsp;other&nbsp;task.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>message</strong></dt>
+<dd><tt>The&nbsp;message&nbsp;property&nbsp;of&nbsp;a&nbsp;GameStateMessage&nbsp;subclass&nbsp;renders&nbsp;the&nbsp;data<br>
+stored&nbsp;in&nbsp;the&nbsp;object&nbsp;attributes&nbsp;to&nbsp;a&nbsp;natural&nbsp;language&nbsp;string&nbsp;which<br>
+communicates&nbsp;the&nbsp;semantic&nbsp;content&nbsp;of&nbsp;the&nbsp;object&nbsp;to&nbsp;the&nbsp;player.&nbsp;The<br>
+message&nbsp;property&nbsp;is&nbsp;accessed&nbsp;and&nbsp;printed&nbsp;by&nbsp;advgame.py.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>command</strong></dt>
+</dl>
+<dl><dt><strong>instructions</strong></dt>
+</dl>
+<dl><dt><strong>syntax_tuple</strong></dt>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="NotRecognizedGSM">class <strong>NotRecognizedGSM</strong></a>(<a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#NotRecognizedGSM">NotRecognizedGSM</a>(command_attempted,&nbsp;commands_available)<br>
+&nbsp;<br>
+Returned&nbsp;by&nbsp;help_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;tries&nbsp;to&nbsp;get&nbsp;help&nbsp;with&nbsp;a<br>
+command&nbsp;that&nbsp;is&nbsp;not&nbsp;in&nbsp;the&nbsp;game.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.statemsgs.help_.html#NotRecognizedGSM">NotRecognizedGSM</a></dd>
+<dd><a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="NotRecognizedGSM-__init__"><strong>__init__</strong></a>(self, command_attempted, commands_available)</dt><dd><tt>The&nbsp;__init__&nbsp;method&nbsp;of&nbsp;a&nbsp;<a href="advgame.statemsgs.gsm.html#GameStateMessage">GameStateMessage</a>&nbsp;subclass&nbsp;stores&nbsp;its&nbsp;keyword<br>
+arguments&nbsp;to&nbsp;object&nbsp;attributes,&nbsp;and&nbsp;performs&nbsp;no&nbsp;other&nbsp;task.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>message</strong></dt>
+<dd><tt>The&nbsp;message&nbsp;property&nbsp;of&nbsp;a&nbsp;GameStateMessage&nbsp;subclass&nbsp;renders&nbsp;the&nbsp;data<br>
+stored&nbsp;in&nbsp;the&nbsp;object&nbsp;attributes&nbsp;to&nbsp;a&nbsp;natural&nbsp;language&nbsp;string&nbsp;which<br>
+communicates&nbsp;the&nbsp;semantic&nbsp;content&nbsp;of&nbsp;the&nbsp;object&nbsp;to&nbsp;the&nbsp;player.&nbsp;The<br>
+message&nbsp;property&nbsp;is&nbsp;accessed&nbsp;and&nbsp;printed&nbsp;by&nbsp;advgame.py.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>command_attempted</strong></dt>
+</dl>
+<dl><dt><strong>commands_available</strong></dt>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ('NotRecognizedGSM', 'DisplayCommandsGSM', 'DisplayHelpForCommandGSM')</td></tr></table>
+</body></html>

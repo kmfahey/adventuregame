@@ -1,0 +1,815 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module advgame.elements.characters</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="advgame.html"><font color="#ffffff">advgame</font></a>.<a href="advgame.elements.html"><font color="#ffffff">elements</font></a>.characters</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/adventuregame/advgame/elements/characters.py">/home/kmfahey/Workspace/adventuregame/advgame/elements/characters.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="advgame.elements.basics.html#State">advgame.elements.basics.State</a>(<a href="abc.html#ABC">abc.ABC</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.elements.characters.html#ItemsState">ItemsState</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.elements.characters.html#ItemsMultiState">ItemsMultiState</a>
+</font></dt></dl>
+</dd>
+</dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.elements.characters.html#AbilityScores">AbilityScores</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.elements.characters.html#Character">Character</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.elements.characters.html#Equipment">Equipment</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.elements.characters.html#GameState">GameState</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="AbilityScores">class <strong>AbilityScores</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#AbilityScores">AbilityScores</a>(character_class_str)<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;is&nbsp;one&nbsp;of&nbsp;the&nbsp;dependencies&nbsp;of&nbsp;the&nbsp;<a href="#Character">Character</a>&nbsp;and&nbsp;Creature<br>
+classes&nbsp;and&nbsp;is&nbsp;only&nbsp;used&nbsp;as&nbsp;a&nbsp;subordinate&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;them.&nbsp;It&nbsp;abstracts<br>
+the&nbsp;six&nbsp;ability&nbsp;scores&nbsp;of&nbsp;a&nbsp;<a href="#Character">Character</a>&nbsp;or&nbsp;Creature&nbsp;and&nbsp;provides&nbsp;methods<br>
+for&nbsp;using&nbsp;them.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="AbilityScores-__init__"><strong>__init__</strong></a>(self, character_class_str)</dt><dd><tt>This&nbsp;__init__&nbsp;method&nbsp;instantiates&nbsp;the&nbsp;<a href="#Character">Character</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;from&nbsp;the&nbsp;given<br>
+character&nbsp;class.&nbsp;When&nbsp;the&nbsp;ability&nbsp;scores&nbsp;are&nbsp;randomly&nbsp;generated,&nbsp;they<br>
+will&nbsp;be&nbsp;assigned&nbsp;by&nbsp;order&nbsp;of&nbsp;priority&nbsp;as&nbsp;determined&nbsp;by&nbsp;the&nbsp;character<br>
+class;&nbsp;each&nbsp;class&nbsp;has&nbsp;a&nbsp;different&nbsp;ability&nbsp;priority&nbsp;ordering.<br>
+&nbsp;<br>
+:character_class_str:&nbsp;One&nbsp;of&nbsp;'Warrior',&nbsp;'Thief',&nbsp;'Priest'&nbsp;or&nbsp;'Mage'.</tt></dd></dl>
+
+<dl><dt><a name="AbilityScores-roll_stats"><strong>roll_stats</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;randomly&nbsp;generates&nbsp;the&nbsp;six&nbsp;ability&nbsp;scores&nbsp;and&nbsp;assigns&nbsp;them<br>
+in&nbsp;priority&nbsp;order&nbsp;as&nbsp;dictated&nbsp;by&nbsp;the&nbsp;weightings.&nbsp;For&nbsp;each&nbsp;ability&nbsp;score,<br>
+the&nbsp;roll&nbsp;of&nbsp;four&nbsp;6-sided&nbsp;dice&nbsp;is&nbsp;simulated.&nbsp;The&nbsp;lowest&nbsp;roll&nbsp;is&nbsp;dropped<br>
+and&nbsp;the&nbsp;remaining&nbsp;three&nbsp;are&nbsp;summed&nbsp;to&nbsp;yield&nbsp;an&nbsp;ability&nbsp;score&nbsp;value.<br>
+&nbsp;<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>charisma_mod</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;computes&nbsp;the&nbsp;Charisma&nbsp;modifier&nbsp;from&nbsp;the&nbsp;stored&nbsp;Charisma<br>
+score.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>constitution_mod</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;computes&nbsp;the&nbsp;Constitution&nbsp;modifier&nbsp;from&nbsp;the&nbsp;stored<br>
+Constitution&nbsp;score.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>dexterity_mod</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;computes&nbsp;the&nbsp;Dexterity&nbsp;modifier&nbsp;from&nbsp;the&nbsp;stored&nbsp;Dexterity<br>
+score.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>intelligence_mod</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;computes&nbsp;the&nbsp;Intelligence&nbsp;modifier&nbsp;from&nbsp;the&nbsp;stored<br>
+Intelligence&nbsp;score.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>strength_mod</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;computes&nbsp;the&nbsp;Strength&nbsp;modifier&nbsp;from&nbsp;the&nbsp;stored&nbsp;Strength<br>
+score.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>wisdom_mod</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;computes&nbsp;the&nbsp;Wisdom&nbsp;modifier&nbsp;from&nbsp;the&nbsp;stored&nbsp;Wisdom&nbsp;score.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>character_class</strong></dt>
+</dl>
+<dl><dt><strong>charisma</strong></dt>
+</dl>
+<dl><dt><strong>constitution</strong></dt>
+</dl>
+<dl><dt><strong>dexterity</strong></dt>
+</dl>
+<dl><dt><strong>intelligence</strong></dt>
+</dl>
+<dl><dt><strong>strength</strong></dt>
+</dl>
+<dl><dt><strong>wisdom</strong></dt>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>weightings</strong> = {'Mage': ('intelligence', 'dexterity', 'constitution', 'strength', 'wisdom', 'charisma'), 'Priest': ('wisdom', 'strength', 'constitution', 'charisma', 'intelligence', 'dexterity'), 'Thief': ('dexterity', 'constitution', 'charisma', 'strength', 'wisdom', 'intelligence'), 'Warrior': ('strength', 'constitution', 'dexterity', 'intelligence', 'charisma', 'wisdom')}</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Character">class <strong>Character</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Character">Character</a>(character_name_str,&nbsp;character_class_str,&nbsp;base_hit_points=0,&nbsp;base_mana_points=0,&nbsp;magic_key_stat=None,&nbsp;strength=0,&nbsp;dexterity=0,&nbsp;constitution=0,&nbsp;intelligence=0,&nbsp;wisdom=0,&nbsp;charisma=0)<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;represents&nbsp;a&nbsp;character.&nbsp;The&nbsp;player's&nbsp;interaction&nbsp;with&nbsp;the<br>
+game&nbsp;rules&nbsp;environment&nbsp;during&nbsp;play&nbsp;is&nbsp;mediated&nbsp;by&nbsp;an&nbsp;instance&nbsp;of&nbsp;this<br>
+class,&nbsp;which&nbsp;tracks&nbsp;their&nbsp;ability&nbsp;scores,&nbsp;equipment,&nbsp;hit&nbsp;points,&nbsp;mana<br>
+points&nbsp;if&nbsp;a&nbsp;spellcaster,&nbsp;and&nbsp;inventory.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Character-__init__"><strong>__init__</strong></a>(self, character_name_str, character_class_str, base_hit_points=0, base_mana_points=0, magic_key_stat=None, strength=0, dexterity=0, constitution=0, intelligence=0, wisdom=0, charisma=0)</dt><dd><tt>This&nbsp;__init__&nbsp;method&nbsp;sets&nbsp;the&nbsp;character's&nbsp;name&nbsp;and&nbsp;class.&nbsp;It<br>
+instantiates&nbsp;a&nbsp;subordinate&nbsp;<a href="#AbilityScores">AbilityScores</a>&nbsp;<a href="builtins.html#object">object</a>,&nbsp;and&nbsp;initialized&nbsp;it&nbsp;with<br>
+the&nbsp;ability&nbsp;scores&nbsp;arguments&nbsp;(which&nbsp;does&nbsp;nothing&nbsp;if&nbsp;they&nbsp;are&nbsp;the&nbsp;default<br>
+of&nbsp;zero).&nbsp;It&nbsp;instantiates&nbsp;the&nbsp;subordinate&nbsp;inventory&nbsp;<a href="#ItemsMultiState">ItemsMultiState</a>()<br>
+<a href="builtins.html#object">object</a>&nbsp;and&nbsp;the&nbsp;subordinate&nbsp;<a href="#Equipment">Equipment</a>&nbsp;<a href="builtins.html#object">object</a>,&nbsp;and&nbsp;sets&nbsp;up&nbsp;the&nbsp;hit&nbsp;point<br>
+and&nbsp;(optionally)&nbsp;mana&nbsp;point&nbsp;values.&nbsp;It&nbsp;also&nbsp;sets&nbsp;the&nbsp;magic&nbsp;key&nbsp;stat&nbsp;if<br>
+any.&nbsp;|&nbsp;:character_name_str:&nbsp;A&nbsp;string,&nbsp;the&nbsp;name&nbsp;for&nbsp;the&nbsp;character.<br>
+&nbsp;<br>
+:character_class_str:&nbsp;A&nbsp;string&nbsp;one&nbsp;of&nbsp;'Warrior',&nbsp;'Thief',&nbsp;'Priest',&nbsp;or<br>
+'Mage'.<br>
+:base_hit_points:&nbsp;An&nbsp;int,&nbsp;the&nbsp;character's&nbsp;base&nbsp;hit&nbsp;points&nbsp;(optional).<br>
+:base_mana_points:&nbsp;An&nbsp;int,&nbsp;the&nbsp;character's&nbsp;base&nbsp;mana&nbsp;points&nbsp;(optional).<br>
+:magic_key_stat:&nbsp;A&nbsp;string,&nbsp;the&nbsp;character's&nbsp;magic&nbsp;key&nbsp;stat&nbsp;(one&nbsp;of<br>
+'Intelligence',&nbsp;'Wisdom',&nbsp;or&nbsp;'Charisma').<br>
+:strength:&nbsp;An&nbsp;int,&nbsp;the&nbsp;set&nbsp;value&nbsp;for&nbsp;the&nbsp;character's&nbsp;Strength&nbsp;score<br>
+(optional).<br>
+:dexterity:&nbsp;An&nbsp;int,&nbsp;the&nbsp;set&nbsp;value&nbsp;for&nbsp;the&nbsp;character's&nbsp;Dexterity&nbsp;score<br>
+(optional).<br>
+:constitution:&nbsp;An&nbsp;int,&nbsp;the&nbsp;set&nbsp;value&nbsp;for&nbsp;the&nbsp;character's&nbsp;Constitution<br>
+score&nbsp;(optional).<br>
+:intelligence:&nbsp;An&nbsp;int,&nbsp;the&nbsp;set&nbsp;value&nbsp;for&nbsp;the&nbsp;character's&nbsp;Intelligence<br>
+score&nbsp;(optional).<br>
+:wisdom:&nbsp;An&nbsp;int,&nbsp;the&nbsp;set&nbsp;value&nbsp;for&nbsp;the&nbsp;character's&nbsp;Wisdom&nbsp;score<br>
+(optional).<br>
+:charisma:&nbsp;An&nbsp;int,&nbsp;the&nbsp;set&nbsp;value&nbsp;for&nbsp;the&nbsp;character's&nbsp;Charisma&nbsp;score<br>
+(optional).</tt></dd></dl>
+
+<dl><dt><a name="Character-drop_item"><strong>drop_item</strong></a>(self, item, qty=1)</dt><dd><tt>This&nbsp;method&nbsp;removes&nbsp;the&nbsp;specified&nbsp;quantity&nbsp;(default&nbsp;1)&nbsp;of&nbsp;the&nbsp;given&nbsp;Item<br>
+subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;from&nbsp;the&nbsp;character's&nbsp;inventory.<br>
+&nbsp;<br>
+:item:&nbsp;An&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:qty:&nbsp;An&nbsp;int,&nbsp;the&nbsp;quantity&nbsp;to&nbsp;remove&nbsp;from&nbsp;the&nbsp;container,&nbsp;default&nbsp;1.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Character-equip_armor"><strong>equip_armor</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;equip_armor&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;<a href="#Equipment">Equipment</a><br>
+<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;given&nbsp;argument.<br>
+&nbsp;<br>
+:item:&nbsp;An&nbsp;Armor&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Character-equip_shield"><strong>equip_shield</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;equip_shield&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;<a href="#Equipment">Equipment</a><br>
+<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;given&nbsp;argument.<br>
+&nbsp;<br>
+:item:&nbsp;A&nbsp;Shield&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Character-equip_wand"><strong>equip_wand</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;equip_wand&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;<a href="#Equipment">Equipment</a><br>
+<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;given&nbsp;argument.<br>
+&nbsp;<br>
+:item:&nbsp;A&nbsp;Wand&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Character-equip_weapon"><strong>equip_weapon</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;equip_weapon&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;<a href="#Equipment">Equipment</a><br>
+<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;given&nbsp;argument.<br>
+&nbsp;<br>
+:item:&nbsp;A&nbsp;Weapon&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Character-have_item"><strong>have_item</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;checks&nbsp;whether&nbsp;the&nbsp;given&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;is&nbsp;present&nbsp;in<br>
+the&nbsp;character's&nbsp;inventory.&nbsp;It&nbsp;returns&nbsp;True&nbsp;or&nbsp;False.<br>
+&nbsp;<br>
+:item:&nbsp;An&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
+
+<dl><dt><a name="Character-heal_damage"><strong>heal_damage</strong></a>(self, healing_value)</dt><dd><tt>This&nbsp;method&nbsp;applies&nbsp;an&nbsp;amount&nbsp;of&nbsp;healing&nbsp;to&nbsp;the&nbsp;character's&nbsp;hit<br>
+points.&nbsp;If&nbsp;the&nbsp;healing&nbsp;would&nbsp;increase&nbsp;the&nbsp;hit&nbsp;points&nbsp;to&nbsp;more&nbsp;than&nbsp;the<br>
+character's&nbsp;maximum&nbsp;hit&nbsp;points,&nbsp;their&nbsp;hit&nbsp;point&nbsp;value&nbsp;is&nbsp;set&nbsp;to&nbsp;their<br>
+hit&nbsp;point&nbsp;maximum&nbsp;instead.&nbsp;The&nbsp;method&nbsp;returns&nbsp;the&nbsp;amount&nbsp;of&nbsp;healing<br>
+done.<br>
+&nbsp;<br>
+:healing_value:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;hit&nbsp;points&nbsp;to&nbsp;recover.<br>
+:return:&nbsp;An&nbsp;int.</tt></dd></dl>
+
+<dl><dt><a name="Character-item_have_qty"><strong>item_have_qty</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;checks&nbsp;whether&nbsp;the&nbsp;given&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;is&nbsp;present&nbsp;in<br>
+the&nbsp;character's&nbsp;inventory.&nbsp;If&nbsp;so,&nbsp;it&nbsp;returns&nbsp;the&nbsp;quantity&nbsp;possessed.&nbsp;If<br>
+not,&nbsp;it&nbsp;returns&nbsp;0.<br>
+&nbsp;<br>
+:item:&nbsp;An&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;An&nbsp;int.</tt></dd></dl>
+
+<dl><dt><a name="Character-list_items"><strong>list_items</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;a&nbsp;sorted&nbsp;list&nbsp;of&nbsp;2-tuples&nbsp;comprising&nbsp;an&nbsp;integer&nbsp;item<br>
+quantity&nbsp;and&nbsp;an&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.&nbsp;The&nbsp;list&nbsp;is&nbsp;ordered&nbsp;alphabetically<br>
+by&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>'s&nbsp;title&nbsp;attributes.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;list&nbsp;of&nbsp;2-tuples.</tt></dd></dl>
+
+<dl><dt><a name="Character-pick_up_item"><strong>pick_up_item</strong></a>(self, item, qty=1)</dt><dd><tt>This&nbsp;method&nbsp;adds&nbsp;the&nbsp;given&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;the&nbsp;character's<br>
+inventory&nbsp;in&nbsp;the&nbsp;quantity&nbsp;specified,&nbsp;default&nbsp;1.<br>
+&nbsp;<br>
+:item:&nbsp;An&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:qty:&nbsp;An&nbsp;int,&nbsp;the&nbsp;quantity&nbsp;to&nbsp;add&nbsp;to&nbsp;the&nbsp;container,&nbsp;default&nbsp;1.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Character-regain_mana"><strong>regain_mana</strong></a>(self, regaining_value)</dt><dd><tt>This&nbsp;method&nbsp;regains&nbsp;mana&nbsp;points&nbsp;by&nbsp;the&nbsp;given&nbsp;value.&nbsp;If&nbsp;the&nbsp;amount<br>
+regained&nbsp;would&nbsp;increase&nbsp;the&nbsp;character's&nbsp;mana&nbsp;points&nbsp;to&nbsp;greater&nbsp;than<br>
+their&nbsp;maximum&nbsp;mana&nbsp;point&nbsp;total,&nbsp;their&nbsp;current&nbsp;mana&nbsp;point&nbsp;value&nbsp;is&nbsp;set<br>
+equal&nbsp;to&nbsp;their&nbsp;maximum&nbsp;mana&nbsp;point&nbsp;value&nbsp;instead.&nbsp;The&nbsp;method&nbsp;returns&nbsp;the<br>
+amount&nbsp;of&nbsp;mana&nbsp;points&nbsp;regained.<br>
+&nbsp;<br>
+:regaining_value:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;mana&nbsp;points&nbsp;to&nbsp;regain.<br>
+:return:&nbsp;An&nbsp;int.</tt></dd></dl>
+
+<dl><dt><a name="Character-spend_mana"><strong>spend_mana</strong></a>(self, spent_amount)</dt><dd><tt>This&nbsp;method&nbsp;attempts&nbsp;to&nbsp;spend&nbsp;an&nbsp;amount&nbsp;of&nbsp;mana&nbsp;points&nbsp;from&nbsp;the<br>
+character's&nbsp;mana&nbsp;points,&nbsp;returning&nbsp;the&nbsp;amount&nbsp;spent&nbsp;if&nbsp;successful.&nbsp;If<br>
+the&nbsp;amount&nbsp;spent&nbsp;would&nbsp;reduce&nbsp;the&nbsp;character's&nbsp;mana&nbsp;points&nbsp;to&nbsp;less&nbsp;than<br>
+zero,&nbsp;no&nbsp;spending&nbsp;takes&nbsp;place,&nbsp;and&nbsp;0&nbsp;is&nbsp;returned&nbsp;to&nbsp;indicate&nbsp;failure.<br>
+&nbsp;<br>
+:spent_amount:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;mana&nbsp;points&nbsp;to&nbsp;spend.<br>
+:return:&nbsp;An&nbsp;int.</tt></dd></dl>
+
+<dl><dt><a name="Character-take_damage"><strong>take_damage</strong></a>(self, damage_value)</dt><dd><tt>This&nbsp;method&nbsp;applies&nbsp;the&nbsp;given&nbsp;damage&nbsp;to&nbsp;the&nbsp;character's&nbsp;hit&nbsp;points.<br>
+If&nbsp;the&nbsp;hit&nbsp;points&nbsp;would&nbsp;be&nbsp;reduced&nbsp;to&nbsp;less&nbsp;than&nbsp;0,&nbsp;they&nbsp;are&nbsp;set&nbsp;to&nbsp;0<br>
+instead.&nbsp;The&nbsp;method&nbsp;returns&nbsp;the&nbsp;amount&nbsp;of&nbsp;damage&nbsp;assessed.<br>
+&nbsp;<br>
+:damage_value:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;hit&nbsp;points&nbsp;to&nbsp;lose.<br>
+:return:&nbsp;An&nbsp;int.</tt></dd></dl>
+
+<dl><dt><a name="Character-unequip_armor"><strong>unequip_armor</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;unequip_armor&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;<a href="#Equipment">Equipment</a><br>
+<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Character-unequip_shield"><strong>unequip_shield</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;unequip_shield&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;<a href="#Equipment">Equipment</a><br>
+<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Character-unequip_wand"><strong>unequip_wand</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;unequip_wand&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;<a href="#Equipment">Equipment</a><br>
+<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Character-unequip_weapon"><strong>unequip_weapon</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;unequip_weapon&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;<a href="#Equipment">Equipment</a><br>
+<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>armor</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;armor&nbsp;property&nbsp;from&nbsp;the&nbsp;subordinate&nbsp;Equipment<br>
+object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;Armor&nbsp;object,&nbsp;or&nbsp;None.</tt></dd>
+</dl>
+<dl><dt><strong>armor_class</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;character's&nbsp;ability&nbsp;score&nbsp;as&nbsp;computed&nbsp;from<br>
+their&nbsp;equipments'&nbsp;armor&nbsp;bonuses&nbsp;and&nbsp;their&nbsp;Dexterity&nbsp;modifier.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>armor_equipped</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;armor_equipped&nbsp;property&nbsp;from&nbsp;the&nbsp;subordinate<br>
+Equipment&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;Armor&nbsp;object,&nbsp;or&nbsp;None.</tt></dd>
+</dl>
+<dl><dt><strong>attack_bonus</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;character's&nbsp;attack&nbsp;bonus&nbsp;as&nbsp;computed&nbsp;from<br>
+their&nbsp;weapon&nbsp;or&nbsp;wand's&nbsp;attack&nbsp;bonus&nbsp;and&nbsp;their&nbsp;relevant&nbsp;ability&nbsp;score<br>
+modifier&nbsp;(Strength&nbsp;for&nbsp;Warriors,&nbsp;Priests&nbsp;and&nbsp;Mages&nbsp;wielding&nbsp;a&nbsp;weapon;<br>
+Dexterity&nbsp;for&nbsp;Thieves;&nbsp;and&nbsp;Intelligence&nbsp;for&nbsp;Mages&nbsp;wielding&nbsp;a&nbsp;wand).<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>attack_roll</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;a&nbsp;dice&nbsp;expression&nbsp;usable&nbsp;by<br>
+advgame.utilsities.roll_dice()&nbsp;to&nbsp;execute&nbsp;an&nbsp;attack&nbsp;roll&nbsp;during&nbsp;an<br>
+ATTACK&nbsp;command.&nbsp;It&nbsp;calculates&nbsp;the&nbsp;attack&nbsp;bonus&nbsp;from&nbsp;the&nbsp;equipped&nbsp;item<br>
+and&nbsp;the&nbsp;relevant&nbsp;ability&nbsp;score&nbsp;modifier.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;string&nbsp;of&nbsp;the&nbsp;form&nbsp;'\d+d\d+([+-]\d+)?'.</tt></dd>
+</dl>
+<dl><dt><strong>charisma</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;Charisma&nbsp;score&nbsp;stored&nbsp;in&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>charisma_mod</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;Charisma&nbsp;ability&nbsp;score&nbsp;modifier&nbsp;from&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>constitution</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;Constitution&nbsp;score&nbsp;stored&nbsp;in&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>constitution_mod</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;Constitution&nbsp;ability&nbsp;score&nbsp;modifier&nbsp;from&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>damage_roll</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;a&nbsp;dice&nbsp;expression&nbsp;usable&nbsp;by<br>
+advgame.utilsities.roll_dice()&nbsp;to&nbsp;execute&nbsp;a&nbsp;damage&nbsp;roll&nbsp;during&nbsp;an&nbsp;ATTACK<br>
+command.&nbsp;It&nbsp;calculates&nbsp;the&nbsp;damage&nbsp;dice&nbsp;value&nbsp;from&nbsp;the&nbsp;equipped&nbsp;wand&nbsp;or<br>
+weapon,&nbsp;and&nbsp;the&nbsp;relevant&nbsp;ability&nbsp;score&nbsp;modifier.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;string&nbsp;of&nbsp;the&nbsp;form&nbsp;'\d+d\d+([+-]\d+)?'.</tt></dd>
+</dl>
+<dl><dt><strong>dexterity</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;Dexterity&nbsp;score&nbsp;stored&nbsp;in&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>dexterity_mod</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;Dexterity&nbsp;ability&nbsp;score&nbsp;modifier&nbsp;from&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>hit_point_total</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;character's&nbsp;maximum&nbsp;hit&nbsp;points.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>hit_points</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;character's&nbsp;current&nbsp;hit&nbsp;points.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>intelligence</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;Intelligence&nbsp;score&nbsp;stored&nbsp;in&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>intelligence_mod</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;Intelligence&nbsp;ability&nbsp;score&nbsp;modifier&nbsp;from&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>is_alive</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;True&nbsp;if&nbsp;the&nbsp;character's&nbsp;hit&nbsp;point&nbsp;total&nbsp;is&nbsp;greater<br>
+than&nbsp;0.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;boolean.</tt></dd>
+</dl>
+<dl><dt><strong>is_dead</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;True&nbsp;if&nbsp;the&nbsp;character's&nbsp;hit&nbsp;point&nbsp;total&nbsp;equals&nbsp;0.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;boolean.</tt></dd>
+</dl>
+<dl><dt><strong>mana_point_total</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;character's&nbsp;maximum&nbsp;mana&nbsp;points&nbsp;if&nbsp;any.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>mana_points</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;character's&nbsp;current&nbsp;mana&nbsp;points&nbsp;if&nbsp;any.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>shield</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;shield&nbsp;property&nbsp;from&nbsp;the&nbsp;subordinate&nbsp;Equipment<br>
+object.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;Shield&nbsp;object,&nbsp;or&nbsp;None.</tt></dd>
+</dl>
+<dl><dt><strong>shield_equipped</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;shield_equipped&nbsp;property&nbsp;from&nbsp;the&nbsp;subordinate<br>
+Equipment&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;Shield&nbsp;object,&nbsp;or&nbsp;None.</tt></dd>
+</dl>
+<dl><dt><strong>strength</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;Strength&nbsp;score&nbsp;stored&nbsp;in&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>strength_mod</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;Strength&nbsp;ability&nbsp;score&nbsp;modifier&nbsp;from&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>wand</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;wand&nbsp;property&nbsp;from&nbsp;the&nbsp;subordinate&nbsp;Equipment<br>
+object.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;Wand&nbsp;object,&nbsp;or&nbsp;None.</tt></dd>
+</dl>
+<dl><dt><strong>wand_equipped</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;wand_equipped&nbsp;property&nbsp;from&nbsp;the&nbsp;subordinate<br>
+Equipment&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;Wand&nbsp;object,&nbsp;or&nbsp;None.</tt></dd>
+</dl>
+<dl><dt><strong>weapon</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;weapon&nbsp;property&nbsp;from&nbsp;the&nbsp;subordinate&nbsp;Equipment<br>
+object.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;Weapon&nbsp;object,&nbsp;or&nbsp;None.</tt></dd>
+</dl>
+<dl><dt><strong>weapon_equipped</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;weapon_equipped&nbsp;property&nbsp;from&nbsp;the&nbsp;subordinate<br>
+Equipment&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;Weapon&nbsp;object,&nbsp;or&nbsp;None.</tt></dd>
+</dl>
+<dl><dt><strong>wisdom</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;Wisdom&nbsp;score&nbsp;stored&nbsp;in&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>wisdom_mod</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;Wisdom&nbsp;ability&nbsp;score&nbsp;modifier&nbsp;from&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>ability_scores</strong></dt>
+</dl>
+<dl><dt><strong>character_class</strong></dt>
+</dl>
+<dl><dt><strong>character_name</strong></dt>
+</dl>
+<dl><dt><strong>inventory</strong></dt>
+</dl>
+<dl><dt><strong>magic_key_stat</strong></dt>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Equipment">class <strong>Equipment</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Equipment">Equipment</a>(character_class,&nbsp;armor_item=None,&nbsp;shield_item=None,&nbsp;weapon_item=None,&nbsp;wand_item=None)<br>
+&nbsp;<br>
+This&nbsp;<a href="builtins.html#object">object</a>&nbsp;represents&nbsp;the&nbsp;equipment&nbsp;held&nbsp;by&nbsp;a&nbsp;<a href="#Character">Character</a>&nbsp;or&nbsp;Creature.&nbsp;It<br>
+stores&nbsp;what&nbsp;items&nbsp;are&nbsp;equipped&nbsp;as&nbsp;the&nbsp;armor,&nbsp;shield,&nbsp;weapon&nbsp;or&nbsp;wand,&nbsp;and<br>
+computes&nbsp;the&nbsp;derived&nbsp;values&nbsp;armor&nbsp;class,&nbsp;attack&nbsp;bonus&nbsp;and&nbsp;damage.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Equipment-__init__"><strong>__init__</strong></a>(self, character_class, armor_item=None, shield_item=None, weapon_item=None, wand_item=None)</dt><dd><tt>This&nbsp;__init__&nbsp;method&nbsp;instantiates&nbsp;the&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;given&nbsp;character<br>
+class,&nbsp;and&nbsp;(optionally)&nbsp;armor,&nbsp;shield,&nbsp;weapon&nbsp;or&nbsp;wand&nbsp;items&nbsp;to&nbsp;equip.</tt></dd></dl>
+
+<dl><dt><a name="Equipment-equip_armor"><strong>equip_armor</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;equips&nbsp;the&nbsp;given&nbsp;Armor&nbsp;<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
+:item:&nbsp;An&nbsp;Armor&nbsp;<a href="builtins.html#object">object</a>.<br>
+:returns:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Equipment-equip_shield"><strong>equip_shield</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;equips&nbsp;the&nbsp;given&nbsp;Shield&nbsp;<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
+:item:&nbsp;A&nbsp;Shield&nbsp;<a href="builtins.html#object">object</a>.<br>
+:returns:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Equipment-equip_wand"><strong>equip_wand</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;equips&nbsp;the&nbsp;given&nbsp;Wand&nbsp;<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
+:item:&nbsp;A&nbsp;Wand&nbsp;<a href="builtins.html#object">object</a>.<br>
+:returns:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Equipment-equip_weapon"><strong>equip_weapon</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;equips&nbsp;the&nbsp;given&nbsp;Weapon&nbsp;<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
+:item:&nbsp;A&nbsp;Weapon&nbsp;<a href="builtins.html#object">object</a>.<br>
+:returns:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Equipment-unequip_armor"><strong>unequip_armor</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;unequips&nbsp;the&nbsp;armor&nbsp;that&nbsp;is&nbsp;equipped.<br>
+&nbsp;<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Equipment-unequip_shield"><strong>unequip_shield</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;unequips&nbsp;the&nbsp;shield&nbsp;that&nbsp;is&nbsp;equipped.<br>
+&nbsp;<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Equipment-unequip_wand"><strong>unequip_wand</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;unequips&nbsp;the&nbsp;wand&nbsp;that&nbsp;is&nbsp;equipped.<br>
+&nbsp;<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Equipment-unequip_weapon"><strong>unequip_weapon</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;unequips&nbsp;the&nbsp;weapon&nbsp;that&nbsp;is&nbsp;equipped.<br>
+&nbsp;<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>armor_class</strong></dt>
+<dd><tt>This&nbsp;method&nbsp;computes&nbsp;the&nbsp;armor&nbsp;class&nbsp;from&nbsp;the&nbsp;equipped&nbsp;Armor&nbsp;and&nbsp;Shield<br>
+objects'&nbsp;armor&nbsp;bonuses&nbsp;if&nbsp;any.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>armor_equipped</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;armor&nbsp;that&nbsp;is&nbsp;equipped,&nbsp;or&nbsp;None&nbsp;if&nbsp;none&nbsp;is<br>
+equipped.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;Armor&nbsp;object,&nbsp;or&nbsp;None.</tt></dd>
+</dl>
+<dl><dt><strong>attack_bonus</strong></dt>
+<dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;attack&nbsp;bonus&nbsp;associated&nbsp;with&nbsp;any&nbsp;equipped&nbsp;weapon<br>
+or&nbsp;wand.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>damage</strong></dt>
+<dd><tt>This&nbsp;method&nbsp;returns&nbsp;the&nbsp;damage&nbsp;associated&nbsp;with&nbsp;any&nbsp;equipped&nbsp;weapon&nbsp;or<br>
+wand.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;string&nbsp;of&nbsp;the&nbsp;form&nbsp;'\d+d\d+([+-]\d+)?'.</tt></dd>
+</dl>
+<dl><dt><strong>shield_equipped</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;shield&nbsp;that&nbsp;is&nbsp;equipped,&nbsp;or&nbsp;None&nbsp;if&nbsp;none&nbsp;is<br>
+equipped.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;Shield&nbsp;object,&nbsp;or&nbsp;None.</tt></dd>
+</dl>
+<dl><dt><strong>wand_equipped</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;wand&nbsp;that&nbsp;is&nbsp;equipped,&nbsp;or&nbsp;None&nbsp;if&nbsp;none&nbsp;is<br>
+equipped.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;Wand&nbsp;object,&nbsp;or&nbsp;None.</tt></dd>
+</dl>
+<dl><dt><strong>weapon_equipped</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;weapon&nbsp;that&nbsp;is&nbsp;equipped,&nbsp;or&nbsp;None&nbsp;if&nbsp;none&nbsp;is<br>
+equipped.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;Weapon&nbsp;object,&nbsp;or&nbsp;None.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>armor</strong></dt>
+</dl>
+<dl><dt><strong>character_class</strong></dt>
+</dl>
+<dl><dt><strong>shield</strong></dt>
+</dl>
+<dl><dt><strong>wand</strong></dt>
+</dl>
+<dl><dt><strong>weapon</strong></dt>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="GameState">class <strong>GameState</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#GameState">GameState</a>(rooms_state,&nbsp;creatures_state,&nbsp;containers_state,&nbsp;doors_state,&nbsp;items_state)<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;represents&nbsp;the&nbsp;entire&nbsp;<a href="#GameState">GameState</a>&nbsp;needed&nbsp;to&nbsp;run&nbsp;a&nbsp;session<br>
+of&nbsp;AdventureGame.&nbsp;It&nbsp;is&nbsp;the&nbsp;top-level&nbsp;<a href="builtins.html#object">object</a>,&nbsp;and&nbsp;stores&nbsp;an<br>
+items_state&nbsp;<a href="builtins.html#object">object</a>,&nbsp;a&nbsp;doors_state&nbsp;<a href="builtins.html#object">object</a>,&nbsp;a&nbsp;containers_state&nbsp;<a href="builtins.html#object">object</a>,<br>
+a&nbsp;creatures_state&nbsp;<a href="builtins.html#object">object</a>,&nbsp;a&nbsp;rooms_state&nbsp;<a href="builtins.html#object">object</a>,&nbsp;and&nbsp;(once&nbsp;it&nbsp;can&nbsp;be<br>
+instantiated)&nbsp;a&nbsp;character&nbsp;<a href="builtins.html#object">object</a>.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="GameState-__init__"><strong>__init__</strong></a>(self, rooms_state, creatures_state, containers_state, doors_state, items_state)</dt><dd><tt>This&nbsp;__init__&nbsp;method&nbsp;stores&nbsp;an&nbsp;items_state&nbsp;<a href="builtins.html#object">object</a>,&nbsp;a&nbsp;doors_state&nbsp;<a href="builtins.html#object">object</a>,<br>
+a&nbsp;containers_state&nbsp;<a href="builtins.html#object">object</a>,&nbsp;a&nbsp;creatures_state&nbsp;<a href="builtins.html#object">object</a>,&nbsp;and&nbsp;a&nbsp;rooms_state<br>
+<a href="builtins.html#object">object</a>&nbsp;from&nbsp;its&nbsp;arguments.<br>
+&nbsp;<br>
+:rooms_state:&nbsp;A&nbsp;RoomsState&nbsp;<a href="builtins.html#object">object</a>.<br>
+:creatures_state:&nbsp;A&nbsp;CreaturesState&nbsp;<a href="builtins.html#object">object</a>.<br>
+:containers_state:&nbsp;A&nbsp;ContainersState&nbsp;<a href="builtins.html#object">object</a>.<br>
+:doors_state:&nbsp;A&nbsp;DoorsState&nbsp;<a href="builtins.html#object">object</a>.<br>
+:items_state:&nbsp;An&nbsp;<a href="#ItemsState">ItemsState</a>&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>character</strong></dt>
+</dl>
+<dl><dt><strong>character_class</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;character&nbsp;class.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;string,&nbsp;one&nbsp;of&nbsp;'Warrior',&nbsp;'Thief',&nbsp;'Mage',&nbsp;or&nbsp;'Priest'.</tt></dd>
+</dl>
+<dl><dt><strong>character_name</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;character&nbsp;name.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;string.</tt></dd>
+</dl>
+<dl><dt><strong>containers_state</strong></dt>
+</dl>
+<dl><dt><strong>creatures_state</strong></dt>
+</dl>
+<dl><dt><strong>doors_state</strong></dt>
+</dl>
+<dl><dt><strong>game_has_begun</strong></dt>
+</dl>
+<dl><dt><strong>game_has_ended</strong></dt>
+</dl>
+<dl><dt><strong>items_state</strong></dt>
+</dl>
+<dl><dt><strong>rooms_state</strong></dt>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ItemsMultiState">class <strong>ItemsMultiState</strong></a>(<a href="advgame.elements.characters.html#ItemsState">ItemsState</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#ItemsMultiState">ItemsMultiState</a>(**argd)<br>
+&nbsp;<br>
+This&nbsp;subclass&nbsp;of&nbsp;<a href="#ItemsState">ItemsState</a>&nbsp;extends&nbsp;its&nbsp;functionality&nbsp;to&nbsp;track&nbsp;the<br>
+quantity&nbsp;of&nbsp;each&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;it&nbsp;contains.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.elements.characters.html#ItemsMultiState">ItemsMultiState</a></dd>
+<dd><a href="advgame.elements.characters.html#ItemsState">ItemsState</a></dd>
+<dd><a href="advgame.elements.basics.html#State">advgame.elements.basics.State</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="ItemsMultiState-__init__"><strong>__init__</strong></a>(self, **argd)</dt><dd><tt>The&nbsp;__init__&nbsp;method&nbsp;of&nbsp;this&nbsp;class&nbsp;uses&nbsp;super()&nbsp;to&nbsp;call<br>
+<a href="#ItemsState">ItemsState</a>.<a href="#ItemsMultiState-__init__">__init__</a>()&nbsp;with&nbsp;the&nbsp;**dict-of-dicts&nbsp;argd.&nbsp;It&nbsp;then&nbsp;resets<br>
+each&nbsp;key's&nbsp;value&nbsp;to&nbsp;a&nbsp;tuple&nbsp;of&nbsp;the&nbsp;quantity&nbsp;1&nbsp;and&nbsp;the&nbsp;Item&nbsp;subclass<br>
+<a href="builtins.html#object">object</a>.&nbsp;Quantities&nbsp;can&nbsp;be&nbsp;altered&nbsp;with&nbsp;subsequent&nbsp;method&nbsp;use&nbsp;but&nbsp;setting<br>
+quantities&nbsp;above&nbsp;1&nbsp;in&nbsp;<a href="#ItemsMultiState">ItemsMultiState</a>.__init__&nbsp;is&nbsp;not&nbsp;supported.</tt></dd></dl>
+
+<dl><dt><a name="ItemsMultiState-add_one"><strong>add_one</strong></a>(self, item_internal_name, item)</dt><dd><tt>This&nbsp;method&nbsp;increases&nbsp;the&nbsp;quantity&nbsp;stored&nbsp;for&nbsp;the&nbsp;given&nbsp;Item&nbsp;subclass<br>
+<a href="builtins.html#object">object</a>&nbsp;by&nbsp;1,&nbsp;if&nbsp;it's&nbsp;present.&nbsp;Otherwise,&nbsp;the&nbsp;Item&nbsp;is&nbsp;stored&nbsp;under&nbsp;the<br>
+given&nbsp;internal&nbsp;name&nbsp;with&nbsp;a&nbsp;quantity&nbsp;of&nbsp;1.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:item:&nbsp;The&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="ItemsMultiState-contains"><strong>contains</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;tests&nbsp;whether&nbsp;an&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;specified&nbsp;internal<br>
+name&nbsp;is&nbsp;present&nbsp;in&nbsp;the&nbsp;private&nbsp;dictionary.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
+
+<dl><dt><a name="ItemsMultiState-remove_one"><strong>remove_one</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;decreases&nbsp;the&nbsp;quantity&nbsp;stored&nbsp;for&nbsp;the&nbsp;given&nbsp;Item&nbsp;subclass<br>
+<a href="builtins.html#object">object</a>&nbsp;by&nbsp;1,&nbsp;if&nbsp;it's&nbsp;present.&nbsp;If&nbsp;it's&nbsp;not&nbsp;present,&nbsp;a&nbsp;KeyError&nbsp;is&nbsp;raised.<br>
+If&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>'s&nbsp;stored&nbsp;quantity&nbsp;was&nbsp;1,&nbsp;the&nbsp;<a href="builtins.html#object">object</a>&nbsp;is<br>
+deleted&nbsp;from&nbsp;the&nbsp;internal&nbsp;dictionary.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="ItemsMultiState-set"><strong>set</strong></a>(self, item_internal_name, item_qty, item)</dt><dd><tt>If&nbsp;an&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;is&nbsp;present&nbsp;in&nbsp;the&nbsp;internal<br>
+dict,&nbsp;this&nbsp;accessor&nbsp;method&nbsp;returns&nbsp;a&nbsp;2-tuple&nbsp;comprising&nbsp;an&nbsp;int&nbsp;of&nbsp;the<br>
+item's&nbsp;quantity&nbsp;and&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>;&nbsp;otherwise&nbsp;the&nbsp;internal<br>
+dict&nbsp;raises&nbsp;a&nbsp;KeyError.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:item_qty:&nbsp;An&nbsp;int&nbsp;value&nbsp;of&nbsp;the&nbsp;item&nbsp;quantity.<br>
+:item:&nbsp;The&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.characters.html#ItemsState">ItemsState</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.basics.html#State">advgame.elements.basics.State</a>:<br>
+<dl><dt><a name="ItemsMultiState-delete"><strong>delete</strong></a>(self, item_internal_name)</dt><dd><tt>Delete&nbsp;the&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;from&nbsp;the&nbsp;internal&nbsp;dictionary&nbsp;referred&nbsp;to&nbsp;by&nbsp;the<br>
+given&nbsp;internal&nbsp;name.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:returns:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="ItemsMultiState-get"><strong>get</strong></a>(self, item_internal_name)</dt><dd><tt>Returns&nbsp;the&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;if&nbsp;present,<br>
+otherwise&nbsp;raise&nbsp;a&nbsp;KeyError.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;An&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+
+<dl><dt><a name="ItemsMultiState-items"><strong>items</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;items&nbsp;iterator.</tt></dd></dl>
+
+<dl><dt><a name="ItemsMultiState-keys"><strong>keys</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;keys&nbsp;iterator.</tt></dd></dl>
+
+<dl><dt><a name="ItemsMultiState-size"><strong>size</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;length&nbsp;of&nbsp;the&nbsp;internal&nbsp;dictionary.</tt></dd></dl>
+
+<dl><dt><a name="ItemsMultiState-values"><strong>values</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;values&nbsp;iterator.</tt></dd></dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ItemsState">class <strong>ItemsState</strong></a>(<a href="advgame.elements.basics.html#State">advgame.elements.basics.State</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#ItemsState">ItemsState</a>(**dict_of_dicts)<br>
+&nbsp;<br>
+A&nbsp;container&nbsp;<a href="builtins.html#object">object</a>&nbsp;which&nbsp;stores&nbsp;Item&nbsp;objects&nbsp;(an&nbsp;abstract&nbsp;class).<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.elements.characters.html#ItemsState">ItemsState</a></dd>
+<dd><a href="advgame.elements.basics.html#State">advgame.elements.basics.State</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="ItemsState-__init__"><strong>__init__</strong></a>(self, **dict_of_dicts)</dt><dd><tt>This&nbsp;__init__&nbsp;method&nbsp;accepts&nbsp;a&nbsp;**dict-of-dicts&nbsp;--&nbsp;such&nbsp;as&nbsp;offered&nbsp;by&nbsp;an<br>
+IniConfig&nbsp;<a href="builtins.html#object">object</a>'s&nbsp;section&nbsp;attribute--&nbsp;and&nbsp;uses&nbsp;Item.subclassing_factory<br>
+to&nbsp;construct&nbsp;Item&nbsp;subclass&nbsp;objects&nbsp;from&nbsp;the&nbsp;internal&nbsp;dicts.&nbsp;Each&nbsp;one&nbsp;has<br>
+the&nbsp;attribute&nbsp;internal_name&nbsp;set&nbsp;to&nbsp;the&nbsp;corresponding&nbsp;key&nbsp;from&nbsp;the&nbsp;outer<br>
+dict.<br>
+&nbsp;<br>
+:**dict_of_dicts:&nbsp;A&nbsp;structure&nbsp;of&nbsp;internal&nbsp;name&nbsp;keys&nbsp;corresponding&nbsp;to<br>
+dict&nbsp;values&nbsp;which&nbsp;are&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;initialize&nbsp;an&nbsp;individual&nbsp;Item<br>
+subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;with.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Methods inherited from <a href="advgame.elements.basics.html#State">advgame.elements.basics.State</a>:<br>
+<dl><dt><a name="ItemsState-contains"><strong>contains</strong></a>(self, item_internal_name)</dt><dd><tt>Test&nbsp;whether&nbsp;an&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;specified&nbsp;internal&nbsp;name&nbsp;is&nbsp;present<br>
+in&nbsp;the&nbsp;private&nbsp;dictionary.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
+
+<dl><dt><a name="ItemsState-delete"><strong>delete</strong></a>(self, item_internal_name)</dt><dd><tt>Delete&nbsp;the&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;from&nbsp;the&nbsp;internal&nbsp;dictionary&nbsp;referred&nbsp;to&nbsp;by&nbsp;the<br>
+given&nbsp;internal&nbsp;name.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:returns:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="ItemsState-get"><strong>get</strong></a>(self, item_internal_name)</dt><dd><tt>Returns&nbsp;the&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;if&nbsp;present,<br>
+otherwise&nbsp;raise&nbsp;a&nbsp;KeyError.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;An&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+
+<dl><dt><a name="ItemsState-items"><strong>items</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;items&nbsp;iterator.</tt></dd></dl>
+
+<dl><dt><a name="ItemsState-keys"><strong>keys</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;keys&nbsp;iterator.</tt></dd></dl>
+
+<dl><dt><a name="ItemsState-set"><strong>set</strong></a>(self, item_internal_name, item)</dt><dd><tt>Add&nbsp;an&nbsp;item&nbsp;to&nbsp;the&nbsp;internal&nbsp;dictionary&nbsp;using&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;as<br>
+a&nbsp;key.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to<br>
+use&nbsp;as&nbsp;a&nbsp;key.<br>
+:item:&nbsp;The&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;be&nbsp;set.</tt></dd></dl>
+
+<dl><dt><a name="ItemsState-size"><strong>size</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;length&nbsp;of&nbsp;the&nbsp;internal&nbsp;dictionary.</tt></dd></dl>
+
+<dl><dt><a name="ItemsState-values"><strong>values</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;values&nbsp;iterator.</tt></dd></dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ('ItemsState', 'Equipment', 'ItemsMultiState', 'AbilityScores', 'Character', 'GameState')</td></tr></table>
+</body></html>

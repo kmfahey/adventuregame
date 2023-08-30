@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module advgame.statemsgs.gsm</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="advgame.html"><font color="#ffffff">advgame</font></a>.<a href="advgame.statemsgs.html"><font color="#ffffff">statemsgs</font></a>.gsm</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/adventuregame/advgame/statemsgs/gsm.py">/home/kmfahey/Workspace/adventuregame/advgame/statemsgs/gsm.py</a></font></td></tr></table>
+    <p><tt>Contains&nbsp;<a href="#GameStateMessage">GameStateMessage</a>,&nbsp;the&nbsp;abstract&nbsp;base&nbsp;calss&nbsp;for&nbsp;all&nbsp;game&nbsp;state<br>
+message&nbsp;classes&nbsp;in&nbsp;CommandProcessor.process()&nbsp;processes&nbsp;a&nbsp;natural<br>
+language&nbsp;command&nbsp;from&nbsp;the&nbsp;player&nbsp;and&nbsp;tail&nbsp;calls&nbsp;a&nbsp;command&nbsp;method&nbsp;of&nbsp;the<br>
+CommandProcessor&nbsp;object.&nbsp;It&nbsp;always&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;of&nbsp;<a href="#GameStateMessage">GameStateMessage</a><br>
+subclass&nbsp;objects;&nbsp;each&nbsp;one&nbsp;represents&nbsp;a&nbsp;single&nbsp;possible&nbsp;outcome&nbsp;of&nbsp;a<br>
+command.&nbsp;A&nbsp;<a href="#GameStateMessage">GameStateMessage</a>&nbsp;subclass&nbsp;has&nbsp;an&nbsp;__init__&nbsp;method&nbsp;that&nbsp;assigns<br>
+keyword&nbsp;arguments&nbsp;to&nbsp;object&nbsp;attributes&nbsp;and&nbsp;a&nbsp;message&nbsp;property&nbsp;which<br>
+contains&nbsp;the&nbsp;logic&nbsp;for&nbsp;rendering&nbsp;the&nbsp;semantic&nbsp;value&nbsp;of&nbsp;the&nbsp;message<br>
+object&nbsp;in&nbsp;natural&nbsp;language.</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="abc.html#ABC">abc.ABC</a>(<a href="builtins.html#object">builtins.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.statemsgs.gsm.html#GameStateMessage">GameStateMessage</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="GameStateMessage">class <strong>GameStateMessage</strong></a>(<a href="abc.html#ABC">abc.ABC</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#GameStateMessage">GameStateMessage</a>(*argl,&nbsp;**argd)<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;is&nbsp;the&nbsp;abstract&nbsp;base&nbsp;class&nbsp;for&nbsp;all&nbsp;the&nbsp;game&nbsp;state&nbsp;message<br>
+classes&nbsp;in&nbsp;this&nbsp;module.&nbsp;It&nbsp;defines&nbsp;an&nbsp;abstract&nbsp;property&nbsp;message&nbsp;and&nbsp;an<br>
+abstract&nbsp;method&nbsp;__init__.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.statemsgs.gsm.html#GameStateMessage">GameStateMessage</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="GameStateMessage-__init__"><strong>__init__</strong></a>(self, *argl, **argd)</dt><dd><tt>The&nbsp;__init__&nbsp;method&nbsp;of&nbsp;a&nbsp;<a href="#GameStateMessage">GameStateMessage</a>&nbsp;subclass&nbsp;stores&nbsp;its&nbsp;keyword<br>
+arguments&nbsp;to&nbsp;object&nbsp;attributes,&nbsp;and&nbsp;performs&nbsp;no&nbsp;other&nbsp;task.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>message</strong></dt>
+<dd><tt>The&nbsp;message&nbsp;property&nbsp;of&nbsp;a&nbsp;GameStateMessage&nbsp;subclass&nbsp;renders&nbsp;the&nbsp;data<br>
+stored&nbsp;in&nbsp;the&nbsp;object&nbsp;attributes&nbsp;to&nbsp;a&nbsp;natural&nbsp;language&nbsp;string&nbsp;which<br>
+communicates&nbsp;the&nbsp;semantic&nbsp;content&nbsp;of&nbsp;the&nbsp;object&nbsp;to&nbsp;the&nbsp;player.&nbsp;The<br>
+message&nbsp;property&nbsp;is&nbsp;accessed&nbsp;and&nbsp;printed&nbsp;by&nbsp;advgame.py.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset({'__init__', 'message'})</dl>
+
+</td></tr></table></td></tr></table>
+</body></html>

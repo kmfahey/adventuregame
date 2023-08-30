@@ -1,0 +1,529 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module advgame.commands.__init__</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="advgame.html"><font color="#ffffff">advgame</font></a>.<a href="advgame.commands.html"><font color="#ffffff">commands</font></a>.__init__</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/adventuregame/advgame/commands/__init__.py">/home/kmfahey/Workspace/adventuregame/advgame/commands/__init__.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-_be_attacked_by_command"><strong>_be_attacked_by_command</strong></a>(context, creature)</dt></dl>
+ <dl><dt><a name="-attack_command"><strong>attack_command</strong></a>(context, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;ATTACK&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;ATTACK&nbsp;command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
+&nbsp;<br>
+ATTACK&nbsp;&lt;creature&nbsp;name&gt;<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;.character&nbsp;has&nbsp;no&nbsp;weapon&nbsp;(or,&nbsp;for&nbsp;Mages,&nbsp;wand)&nbsp;equipped,&nbsp;returns&nbsp;a<br>
+YouHaveNoWeaponOrWandEquippedGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;there's&nbsp;no&nbsp;creature&nbsp;by&nbsp;the&nbsp;given&nbsp;name&nbsp;in&nbsp;the&nbsp;room,&nbsp;returns&nbsp;a<br>
+OpponentNotFoundGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;attack&nbsp;misses,&nbsp;returns&nbsp;a&nbsp;AttackMissedGSM&nbsp;object&nbsp;followed&nbsp;by&nbsp;the<br>
+object(s)&nbsp;generated&nbsp;by&nbsp;the&nbsp;creature's&nbsp;followup&nbsp;attack.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;attack&nbsp;hits&nbsp;but&nbsp;doesn't&nbsp;kill&nbsp;the&nbsp;foe,&nbsp;returns&nbsp;an&nbsp;AttackHitGSM<br>
+object&nbsp;followed&nbsp;by&nbsp;the&nbsp;object(s)&nbsp;generated&nbsp;by&nbsp;the&nbsp;creature's&nbsp;followup<br>
+attack.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;attack&nbsp;hits&nbsp;and&nbsp;kills&nbsp;the&nbsp;foe,&nbsp;a&nbsp;AttackHitGSM&nbsp;object&nbsp;and&nbsp;a<br>
+FoeDeathGSM&nbsp;object&nbsp;are&nbsp;returned.</tt></dd></dl>
+ <dl><dt><a name="-begin_game_command"><strong>begin_game_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;BEGIN&nbsp;GAME&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple<br>
+even&nbsp;when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;Returns&nbsp;one&nbsp;or&nbsp;more&nbsp;GameStateMessage<br>
+subclass&nbsp;instances.&nbsp;Takes&nbsp;no&nbsp;arguments.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;any&nbsp;arguments&nbsp;are&nbsp;given,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;command&nbsp;is&nbsp;used&nbsp;before&nbsp;the&nbsp;character's&nbsp;name&nbsp;and&nbsp;class&nbsp;have&nbsp;been<br>
+set,&nbsp;returns&nbsp;a&nbsp;NameOrClassNotSetGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;returns&nbsp;a&nbsp;GameBeginsGSM&nbsp;object,&nbsp;one&nbsp;or&nbsp;more&nbsp;ItemEquippedGSM<br>
+objects,&nbsp;and&nbsp;a&nbsp;EnteredRoomGSM&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-cast_spell_command"><strong>cast_spell_command</strong></a>(context, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;CAST&nbsp;SPELL&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple<br>
+even&nbsp;when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;Takes&nbsp;no&nbsp;arguments.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;any&nbsp;arguments&nbsp;are&nbsp;given,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;character&nbsp;is&nbsp;a&nbsp;Warrior&nbsp;or&nbsp;a&nbsp;Thief,&nbsp;returns&nbsp;a&nbsp;ClassRestrictedGSM<br>
+object.<br>
+&nbsp;<br>
+*&nbsp;This&nbsp;command&nbsp;costs&nbsp;mana&nbsp;points.&nbsp;If&nbsp;the&nbsp;character&nbsp;doesn't&nbsp;have&nbsp;enough,<br>
+returns&nbsp;a&nbsp;InsufficientManaGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;character&nbsp;is&nbsp;a&nbsp;Mage&nbsp;and&nbsp;there's&nbsp;no&nbsp;creature&nbsp;in&nbsp;the&nbsp;room,<br>
+returns&nbsp;a&nbsp;NoCreatureToTargetGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;they're&nbsp;a&nbsp;Mage&nbsp;and&nbsp;there&nbsp;is&nbsp;a&nbsp;creature&nbsp;present,&nbsp;a&nbsp;damaging&nbsp;spell<br>
+is&nbsp;cast&nbsp;and&nbsp;the&nbsp;creature&nbsp;is&nbsp;wounded.&nbsp;If&nbsp;they&nbsp;don't&nbsp;die,&nbsp;returns&nbsp;a<br>
+CastDamagingSpellGSM&nbsp;object&nbsp;followed&nbsp;by&nbsp;the&nbsp;object(s)&nbsp;generated&nbsp;by&nbsp;the<br>
+creature's&nbsp;followup&nbsp;attack.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;creature&nbsp;is&nbsp;killed,&nbsp;returns&nbsp;a&nbsp;CastDamagingSpellGSM&nbsp;object&nbsp;and&nbsp;a<br>
+FoeDeathGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;character&nbsp;is&nbsp;a&nbsp;Priest,&nbsp;returns&nbsp;a&nbsp;CastHealingSpellGSM&nbsp;object&nbsp;and<br>
+a&nbsp;UnderwentHealingEffectGSM&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-close_command"><strong>close_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;CLOSE&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;CLOSE&nbsp;command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
+&nbsp;<br>
+CLOSE&nbsp;&lt;door&nbsp;name&gt;&nbsp;chest&nbsp;name&gt;<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;there&nbsp;is&nbsp;no&nbsp;matching&nbsp;chest&nbsp;or&nbsp;door&nbsp;in&nbsp;the&nbsp;room,&nbsp;returns&nbsp;a<br>
+ElementToCloseNotHereGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;there&nbsp;is&nbsp;no&nbsp;matching&nbsp;door,&nbsp;returns&nbsp;a&nbsp;DoorNotPresentGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;more&nbsp;than&nbsp;one&nbsp;door&nbsp;in&nbsp;the&nbsp;room&nbsp;matches,&nbsp;returns&nbsp;a<br>
+AmbiguousDoorSpecifierGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;door&nbsp;or&nbsp;chest&nbsp;specified&nbsp;is&nbsp;already&nbsp;closed,&nbsp;returns&nbsp;a<br>
+ElementIsAlreadyClosedGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;returns&nbsp;a&nbsp;ElementHasBeenClosedGSM&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-drink_command"><strong>drink_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;DRINK&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;DRINK&nbsp;command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
+&nbsp;<br>
+DRINK&nbsp;[THE]&nbsp;&lt;potion&nbsp;name&gt;<br>
+DRINK&nbsp;&lt;number&gt;&nbsp;&lt;potion&nbsp;name&gt;[s]<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;potion&nbsp;specified&nbsp;is&nbsp;not&nbsp;in&nbsp;the&nbsp;character's&nbsp;inventory,&nbsp;returns&nbsp;a<br>
+ItemNotInInventoryGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;name&nbsp;matches&nbsp;an&nbsp;undrinkable&nbsp;item,&nbsp;or&nbsp;a&nbsp;door,&nbsp;chest,&nbsp;creature,<br>
+or&nbsp;corpse,&nbsp;returns&nbsp;a&nbsp;ItemNotDrinkableGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;&lt;number&gt;&nbsp;argument&nbsp;is&nbsp;used,&nbsp;and&nbsp;there's&nbsp;not&nbsp;that&nbsp;many&nbsp;of&nbsp;the<br>
+potion,&nbsp;returns&nbsp;a&nbsp;TriedToDrinkMoreThanPossessedGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;if&nbsp;it's&nbsp;a&nbsp;health&nbsp;potion,&nbsp;then&nbsp;that&nbsp;potion&nbsp;is<br>
+removed&nbsp;from&nbsp;inventory,&nbsp;the&nbsp;character&nbsp;is&nbsp;healed,&nbsp;and&nbsp;returns&nbsp;a<br>
+UnderwentHealingEffectGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;it's&nbsp;a&nbsp;mana&nbsp;potion,&nbsp;and&nbsp;the&nbsp;character&nbsp;is&nbsp;a&nbsp;Warrior&nbsp;or&nbsp;a<br>
+Thief,&nbsp;the&nbsp;potion&nbsp;is&nbsp;removed&nbsp;from&nbsp;inventory,&nbsp;and&nbsp;returns&nbsp;a<br>
+DrankManaPotionWhenNotASpellcasterGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;it's&nbsp;a&nbsp;mana&nbsp;potion,&nbsp;and&nbsp;the&nbsp;character&nbsp;is&nbsp;a&nbsp;Mage&nbsp;or&nbsp;a&nbsp;Priest,&nbsp;then<br>
+the&nbsp;potion&nbsp;is&nbsp;removed&nbsp;from&nbsp;inventory,&nbsp;the&nbsp;character&nbsp;has&nbsp;some&nbsp;mana<br>
+restored,&nbsp;and&nbsp;a&nbsp;DrankManaPotionGSM&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
+ <dl><dt><a name="-drop_command"><strong>drop_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;DROP&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;DROP&nbsp;command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
+&nbsp;<br>
+DROP&nbsp;&lt;item&nbsp;name&gt;<br>
+DROP&nbsp;&lt;number&gt;&nbsp;&lt;item&nbsp;name&gt;<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;item&nbsp;specified&nbsp;isn't&nbsp;in&nbsp;inventory,&nbsp;returns&nbsp;a<br>
+TryingToDropItemYouDontHaveGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;a&nbsp;number&nbsp;is&nbsp;specified,&nbsp;and&nbsp;that's&nbsp;more&nbsp;than&nbsp;how&nbsp;many&nbsp;of&nbsp;the&nbsp;item<br>
+are&nbsp;in&nbsp;inventory,&nbsp;returns&nbsp;a&nbsp;TryingToDropMorethanYouHaveGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;no&nbsp;number&nbsp;is&nbsp;used&nbsp;and&nbsp;the&nbsp;item&nbsp;is&nbsp;equipped,&nbsp;returns&nbsp;a<br>
+ItemUnequippedGSM&nbsp;object&nbsp;and&nbsp;a&nbsp;DroppedItemGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;the&nbsp;item&nbsp;is&nbsp;removed—&nbsp;or&nbsp;the&nbsp;specified&nbsp;number&nbsp;of&nbsp;the&nbsp;item<br>
+are&nbsp;removed—&nbsp;from&nbsp;inventory&nbsp;and&nbsp;a&nbsp;DroppedItemGSM&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
+ <dl><dt><a name="-equip_command"><strong>equip_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;EQUIP&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;EQUIP&nbsp;command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
+&nbsp;<br>
+EQUIP&nbsp;&lt;armor&nbsp;name&gt;<br>
+EQUIP&nbsp;&lt;shield&nbsp;name&gt;<br>
+EQUIP&nbsp;&lt;wand&nbsp;name&gt;<br>
+EQUIP&nbsp;&lt;weapon&nbsp;name&gt;<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;item&nbsp;isn't&nbsp;in&nbsp;inventory,&nbsp;returns&nbsp;a&nbsp;NoSuchItemInInventoryGSM<br>
+object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;item&nbsp;can't&nbsp;be&nbsp;used&nbsp;by&nbsp;the&nbsp;character&nbsp;due&nbsp;to&nbsp;their&nbsp;class,&nbsp;returns<br>
+a&nbsp;ClassCantUseItemGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;an&nbsp;item&nbsp;of&nbsp;the&nbsp;same&nbsp;kind&nbsp;is&nbsp;already&nbsp;equipped&nbsp;(for&nbsp;example&nbsp;trying<br>
+to&nbsp;equip&nbsp;a&nbsp;suit&nbsp;of&nbsp;armor&nbsp;when&nbsp;the&nbsp;character&nbsp;is&nbsp;already&nbsp;wearing&nbsp;armor),<br>
+that&nbsp;item&nbsp;is&nbsp;unequipped,&nbsp;the&nbsp;specified&nbsp;item&nbsp;is&nbsp;equipped,&nbsp;and&nbsp;a<br>
+ItemUnequippedGSM&nbsp;object&nbsp;and&nbsp;a&nbsp;ItemEquippedGSM&nbsp;object&nbsp;are&nbsp;returned.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;the&nbsp;item&nbsp;is&nbsp;equipped,&nbsp;and&nbsp;a&nbsp;ItemEquippedGSM&nbsp;object&nbsp;is<br>
+returned.</tt></dd></dl>
+ <dl><dt><a name="-help_command"><strong>help_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;HELP&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;HELP&nbsp;command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
+&nbsp;<br>
+HELP<br>
+HELP&nbsp;&lt;command&nbsp;name&gt;<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;command&nbsp;is&nbsp;used&nbsp;with&nbsp;no&nbsp;arguments,&nbsp;returns&nbsp;a&nbsp;DisplayCommandsGSM<br>
+object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;argument&nbsp;is&nbsp;not&nbsp;a&nbsp;recognized&nbsp;command,&nbsp;returns&nbsp;a<br>
+NotRecognizedGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;returns&nbsp;a&nbsp;DisplayHelpForCommandGSM&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-inventory_command"><strong>inventory_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;INVENTORY&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple<br>
+even&nbsp;when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;INVENTORY&nbsp;command&nbsp;takes&nbsp;no&nbsp;arguments.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;command&nbsp;is&nbsp;used&nbsp;with&nbsp;any&nbsp;arguments,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM<br>
+object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;returns&nbsp;a&nbsp;DisplayInventoryGSM&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-leave_command"><strong>leave_command</strong></a>(context, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;LEAVE&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;LEAVE&nbsp;command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
+&nbsp;<br>
+LEAVE&nbsp;[USING&nbsp;or&nbsp;VIA]&nbsp;&lt;compass&nbsp;direction&gt;&nbsp;DOOR<br>
+LEAVE&nbsp;[USING&nbsp;or&nbsp;VIA]&nbsp;&lt;compass&nbsp;direction&gt;&nbsp;DOORWAY<br>
+LEAVE&nbsp;[USING&nbsp;or&nbsp;VIA]&nbsp;&lt;door&nbsp;name&gt;<br>
+LEAVE&nbsp;[USING&nbsp;or&nbsp;VIA]&nbsp;&lt;compass&nbsp;direction&gt;&nbsp;&lt;door&nbsp;name&gt;<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;door&nbsp;by&nbsp;that&nbsp;name&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;room,&nbsp;returns&nbsp;a<br>
+DoorNotPresentGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;door&nbsp;specifier&nbsp;is&nbsp;ambiguous&nbsp;and&nbsp;matches&nbsp;more&nbsp;than&nbsp;one&nbsp;door&nbsp;in<br>
+the&nbsp;room,&nbsp;returns&nbsp;a&nbsp;AmbiguousDoorSpecifierGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;door&nbsp;is&nbsp;the&nbsp;exit&nbsp;to&nbsp;the&nbsp;dungeon,&nbsp;returns&nbsp;a&nbsp;LeftRoomGSM&nbsp;object<br>
+and&nbsp;a&nbsp;WonTheGameGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;a&nbsp;LeftRoomGSM&nbsp;object&nbsp;and&nbsp;a&nbsp;EnteredRoomGSM&nbsp;object&nbsp;are<br>
+returned.</tt></dd></dl>
+ <dl><dt><a name="-lock_command"><strong>lock_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;LOCK&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;LOCK&nbsp;command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
+&nbsp;<br>
+LOCK&nbsp;&lt;door&nbsp;name&gt;<br>
+LOCK&nbsp;&lt;chest&nbsp;name&gt;<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;no&nbsp;such&nbsp;door&nbsp;is&nbsp;present&nbsp;in&nbsp;the&nbsp;room,&nbsp;returns&nbsp;a&nbsp;DoorNotPresentGSM<br>
+object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;command&nbsp;is&nbsp;ambiguous&nbsp;and&nbsp;matches&nbsp;more&nbsp;than&nbsp;one&nbsp;door&nbsp;in&nbsp;the<br>
+room,&nbsp;returns&nbsp;a&nbsp;AmbiguousDoorSpecifierGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;object&nbsp;to&nbsp;lock&nbsp;is&nbsp;not&nbsp;present,&nbsp;returns&nbsp;a<br>
+ElementToLockNotHereGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;object&nbsp;to&nbsp;lock&nbsp;is&nbsp;already&nbsp;locked,&nbsp;returns&nbsp;a<br>
+ElementIsAlreadyLockedGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;object&nbsp;to&nbsp;lock&nbsp;is&nbsp;not&nbsp;present,&nbsp;a&nbsp;ElementNotLockableGSM&nbsp;is<br>
+returned.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;character&nbsp;does&nbsp;not&nbsp;possess&nbsp;the&nbsp;requisite&nbsp;door&nbsp;or&nbsp;chest&nbsp;key&nbsp;to<br>
+lock&nbsp;the&nbsp;specified&nbsp;door&nbsp;or&nbsp;chest,&nbsp;returns&nbsp;a&nbsp;DontPossessCorrectKeyGSM<br>
+object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;the&nbsp;object&nbsp;has&nbsp;its&nbsp;is_locked&nbsp;attribute&nbsp;set&nbsp;to&nbsp;True,&nbsp;and&nbsp;a<br>
+ElementHasBeenLockedGSM&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
+ <dl><dt><a name="-look_at_command"><strong>look_at_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;LOOK&nbsp;AT&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;LOOK&nbsp;AT&nbsp;command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
+&nbsp;<br>
+LOOK&nbsp;AT&nbsp;&lt;item&nbsp;name&gt;<br>
+LOOK&nbsp;AT&nbsp;&lt;item&nbsp;name&gt;&nbsp;IN&nbsp;&lt;chest&nbsp;name&gt;<br>
+LOOK&nbsp;AT&nbsp;&lt;item&nbsp;name&gt;&nbsp;IN&nbsp;INVENTORY<br>
+LOOK&nbsp;AT&nbsp;&lt;item&nbsp;name&gt;&nbsp;ON&nbsp;&lt;corpse&nbsp;name&gt;<br>
+LOOK&nbsp;AT&nbsp;&lt;compass&nbsp;direction&gt;&nbsp;DOOR<br>
+LOOK&nbsp;AT&nbsp;&lt;compass&nbsp;direction&gt;&nbsp;DOORWAY<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;looking&nbsp;at&nbsp;a&nbsp;door&nbsp;which&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;room,&nbsp;returns&nbsp;a<br>
+DoorNotPresentGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;looking&nbsp;at&nbsp;a&nbsp;door,&nbsp;but&nbsp;the&nbsp;arguments&nbsp;are&nbsp;ambiguous&nbsp;and&nbsp;match&nbsp;more<br>
+than&nbsp;one&nbsp;door&nbsp;in&nbsp;the&nbsp;room,&nbsp;returns&nbsp;a&nbsp;AmbiguousDoorSpecifierGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;looking&nbsp;at&nbsp;a&nbsp;chest&nbsp;or&nbsp;corpse&nbsp;which&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;room,<br>
+returns&nbsp;a&nbsp;ContainerNotFoundGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;looking&nbsp;at&nbsp;an&nbsp;item&nbsp;which&nbsp;isn't&nbsp;present&nbsp;(per&nbsp;the&nbsp;arguments)<br>
+on&nbsp;the&nbsp;floor,&nbsp;in&nbsp;a&nbsp;chest,&nbsp;on&nbsp;a&nbsp;corpse,&nbsp;or&nbsp;in&nbsp;inventory,&nbsp;returns&nbsp;a<br>
+FoundNothingGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;looking&nbsp;at&nbsp;a&nbsp;chest&nbsp;or&nbsp;corpse&nbsp;which&nbsp;is&nbsp;present,&nbsp;returns&nbsp;a<br>
+FoundCreatureHereGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;looking&nbsp;at&nbsp;a&nbsp;creature&nbsp;which&nbsp;is&nbsp;present,&nbsp;returns&nbsp;a<br>
+FoundCreatureHereGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;looking&nbsp;at&nbsp;a&nbsp;door&nbsp;or&nbsp;doorway&nbsp;which&nbsp;is&nbsp;present,&nbsp;returns&nbsp;a<br>
+FoundDoorOrDoorwayGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;looking&nbsp;at&nbsp;an&nbsp;item&nbsp;which&nbsp;is&nbsp;present,&nbsp;returns&nbsp;a<br>
+FoundItemOrItemsHereGSM&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-open_command"><strong>open_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;OPEN&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;OPEN&nbsp;command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
+&nbsp;<br>
+OPEN&nbsp;&lt;door&nbsp;name&gt;<br>
+OPEN&nbsp;&lt;chest&nbsp;name&gt;<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;trying&nbsp;to&nbsp;open&nbsp;a&nbsp;door&nbsp;which&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;room,&nbsp;returns&nbsp;a<br>
+DoorNotPresentGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;trying&nbsp;to&nbsp;open&nbsp;a&nbsp;door,&nbsp;but&nbsp;the&nbsp;command&nbsp;is&nbsp;ambiguous&nbsp;and&nbsp;matches<br>
+more&nbsp;than&nbsp;one&nbsp;door,&nbsp;returns&nbsp;a&nbsp;AmbiguousDoorSpecifierGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;trying&nbsp;to&nbsp;open&nbsp;an&nbsp;item,&nbsp;creature,&nbsp;corpse&nbsp;or&nbsp;doorway,&nbsp;returns&nbsp;a<br>
+ElementNotOpenableGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;trying&nbsp;to&nbsp;open&nbsp;a&nbsp;chest&nbsp;that&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;room,&nbsp;returns&nbsp;a<br>
+ElementToOpenNotHereGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;trying&nbsp;to&nbsp;open&nbsp;a&nbsp;door&nbsp;or&nbsp;chest&nbsp;that&nbsp;is&nbsp;locked,&nbsp;returns&nbsp;a<br>
+ElementIsLockedGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;trying&nbsp;to&nbsp;open&nbsp;a&nbsp;door&nbsp;or&nbsp;chest&nbsp;that&nbsp;is&nbsp;already&nbsp;open,&nbsp;returns&nbsp;a<br>
+ElementIsAlreadyOpenGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;the&nbsp;chest&nbsp;or&nbsp;door&nbsp;has&nbsp;its&nbsp;is_closed&nbsp;attribute&nbsp;set&nbsp;to&nbsp;False,<br>
+and&nbsp;returns&nbsp;a&nbsp;ElementHasBeenOpenedGSM.</tt></dd></dl>
+ <dl><dt><a name="-pick_lock_command"><strong>pick_lock_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;PICK&nbsp;LOCK&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple<br>
+even&nbsp;when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;PICK&nbsp;LOCK&nbsp;command&nbsp;has&nbsp;the&nbsp;following<br>
+usage:<br>
+&nbsp;<br>
+PICK&nbsp;LOCK&nbsp;ON&nbsp;[THE]&nbsp;&lt;chest&nbsp;name&gt;<br>
+PICK&nbsp;LOCK&nbsp;ON&nbsp;[THE]&nbsp;&lt;door&nbsp;name&gt;<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;player&nbsp;tries&nbsp;to&nbsp;use&nbsp;this&nbsp;command&nbsp;while&nbsp;playing&nbsp;a&nbsp;Warrior,&nbsp;Mage<br>
+or&nbsp;Priest,&nbsp;returns&nbsp;a&nbsp;ClassRestrictedGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;arguments&nbsp;specify&nbsp;a&nbsp;door,&nbsp;and&nbsp;that&nbsp;door&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the<br>
+current&nbsp;room,&nbsp;returns&nbsp;a&nbsp;DoorNotPresentGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;arguments&nbsp;specify&nbsp;a&nbsp;door,&nbsp;and&nbsp;more&nbsp;than&nbsp;one&nbsp;door&nbsp;matches&nbsp;that<br>
+specification,&nbsp;returns&nbsp;a&nbsp;AmbiguousDoorSpecifierGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;arguments&nbsp;specify&nbsp;a&nbsp;doorway,&nbsp;creature,&nbsp;item,&nbsp;or&nbsp;corpse,&nbsp;returns<br>
+a&nbsp;ElementNotLockpickableGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;arguments&nbsp;specify&nbsp;a&nbsp;chest&nbsp;that&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;current<br>
+room,&nbsp;returns&nbsp;a&nbsp;TargetNotFoundGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;arguments&nbsp;specify&nbsp;a&nbsp;door&nbsp;or&nbsp;chest&nbsp;is&nbsp;that&nbsp;is&nbsp;already&nbsp;unlocked,<br>
+returns&nbsp;a&nbsp;TargetNotLockedGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;the&nbsp;specified&nbsp;door&nbsp;or&nbsp;chest&nbsp;has&nbsp;its&nbsp;is_locked&nbsp;attribute&nbsp;set<br>
+to&nbsp;False,&nbsp;and&nbsp;a&nbsp;TargetHasBeenUnlockedGSM&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
+ <dl><dt><a name="-pick_up_command"><strong>pick_up_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;PICK&nbsp;UP&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;PICK&nbsp;UP&nbsp;command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
+&nbsp;<br>
+PICK&nbsp;UP&nbsp;&lt;item&nbsp;name&gt;<br>
+PICK&nbsp;UP&nbsp;&lt;number&gt;&nbsp;&lt;item&nbsp;name&gt;),<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;arguments&nbsp;are&nbsp;ungrammatical&nbsp;and&nbsp;are&nbsp;unclear&nbsp;about&nbsp;the&nbsp;quantity<br>
+to&nbsp;pick&nbsp;up,&nbsp;returns&nbsp;a&nbsp;AmountToPickUpUnclearGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;arguments&nbsp;specify&nbsp;a&nbsp;chest,&nbsp;corpse,&nbsp;creature&nbsp;or&nbsp;door,&nbsp;returns&nbsp;a<br>
+CantPickUpChestCorpseCreatureOrDoorGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;arguments&nbsp;specify&nbsp;an&nbsp;item&nbsp;to&nbsp;pick&nbsp;up&nbsp;that&nbsp;is&nbsp;not&nbsp;on&nbsp;the&nbsp;floor<br>
+in&nbsp;the&nbsp;room,&nbsp;returns&nbsp;a&nbsp;ItemNotFoundGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;arguments&nbsp;specify&nbsp;a&nbsp;quantity&nbsp;of&nbsp;the&nbsp;item&nbsp;to&nbsp;pick&nbsp;up&nbsp;that&nbsp;is<br>
+greater&nbsp;than&nbsp;the&nbsp;quantity&nbsp;present&nbsp;on&nbsp;the&nbsp;floor&nbsp;in&nbsp;the&nbsp;room,&nbsp;returns&nbsp;a<br>
+TryingToPickUpMoreThanIsPresentGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;the&nbsp;item—&nbsp;or&nbsp;the&nbsp;quantity&nbsp;of&nbsp;the&nbsp;item—&nbsp;is&nbsp;removed&nbsp;from<br>
+the&nbsp;floor,&nbsp;and&nbsp;added&nbsp;to&nbsp;the&nbsp;character's&nbsp;inventory,&nbsp;and&nbsp;a&nbsp;ItemPickedUpGSM<br>
+object&nbsp;is&nbsp;returned.</tt></dd></dl>
+ <dl><dt><a name="-put_command"><strong>put_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;PUT&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even&nbsp;when<br>
+it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;PUT&nbsp;command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
+&nbsp;<br>
+PUT&nbsp;&lt;item&nbsp;name&gt;&nbsp;IN&nbsp;&lt;chest&nbsp;name&gt;<br>
+PUT&nbsp;&lt;number&gt;&nbsp;&lt;item&nbsp;name&gt;&nbsp;IN&nbsp;&lt;chest&nbsp;name&gt;<br>
+PUT&nbsp;&lt;item&nbsp;name&gt;&nbsp;ON&nbsp;&lt;corpse&nbsp;name&gt;<br>
+PUT&nbsp;&lt;number&gt;&nbsp;&lt;item&nbsp;name&gt;&nbsp;ON&nbsp;&lt;corpse&nbsp;name&gt;<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;arguments&nbsp;specify&nbsp;a&nbsp;chest&nbsp;or&nbsp;corpse&nbsp;that&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the<br>
+current&nbsp;room,&nbsp;returns&nbsp;a&nbsp;ContainerNotFoundGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;arguments&nbsp;specify&nbsp;a&nbsp;chest&nbsp;that&nbsp;is&nbsp;closed,&nbsp;returns&nbsp;a<br>
+ContainerIsClosedGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;arguments&nbsp;are&nbsp;an&nbsp;ungrammatical&nbsp;sentence&nbsp;and&nbsp;are&nbsp;ambiguous&nbsp;about<br>
+the&nbsp;quantity&nbsp;to&nbsp;put,&nbsp;returns&nbsp;a&nbsp;AmountToPutUnclearGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;arguments&nbsp;specify&nbsp;an&nbsp;item&nbsp;to&nbsp;put&nbsp;that&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the<br>
+character's&nbsp;inventory,&nbsp;returns&nbsp;a&nbsp;ItemNotInInventoryGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;arguments&nbsp;specify&nbsp;a&nbsp;quantity&nbsp;of&nbsp;an&nbsp;item&nbsp;to&nbsp;put&nbsp;that&nbsp;is&nbsp;more<br>
+than&nbsp;the&nbsp;character&nbsp;has,&nbsp;returns&nbsp;a&nbsp;TryingToPutMorethanYouHaveGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;the&nbsp;item—&nbsp;or&nbsp;the&nbsp;quantity&nbsp;of&nbsp;the&nbsp;item—&nbsp;is&nbsp;removed&nbsp;from<br>
+the&nbsp;character's&nbsp;inventory,&nbsp;placed&nbsp;in&nbsp;the&nbsp;chest&nbsp;or&nbsp;on&nbsp;the&nbsp;corpse,&nbsp;and&nbsp;put<br>
+in&nbsp;the&nbsp;chest&nbsp;or&nbsp;on&nbsp;the&nbsp;corpse,&nbsp;and&nbsp;a&nbsp;AmountPutGSM&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
+ <dl><dt><a name="-quit_command"><strong>quit_command</strong></a>(context, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;QUIT&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;QUIT&nbsp;command&nbsp;takes&nbsp;no&nbsp;arguments.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;command&nbsp;is&nbsp;used&nbsp;with&nbsp;any&nbsp;arguments,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM<br>
+object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;the&nbsp;game&nbsp;is&nbsp;ended,&nbsp;and&nbsp;a&nbsp;HaveQuitTheGameGSM&nbsp;object&nbsp;is<br>
+returned.</tt></dd></dl>
+ <dl><dt><a name="-reroll_command"><strong>reroll_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;REROLL&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;REROLL&nbsp;command&nbsp;takes&nbsp;no&nbsp;arguments.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;command&nbsp;is&nbsp;used&nbsp;with&nbsp;any&nbsp;arguments,&nbsp;this&nbsp;method&nbsp;returns&nbsp;a<br>
+BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;character's&nbsp;name&nbsp;or&nbsp;class&nbsp;has&nbsp;not&nbsp;been&nbsp;set&nbsp;yet,&nbsp;returns&nbsp;a<br>
+NameOrClassNotSetGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;ability&nbsp;scores&nbsp;for&nbsp;the&nbsp;character&nbsp;are&nbsp;rolled,&nbsp;and&nbsp;a<br>
+DisplayRolledStatsGSM&nbsp;is&nbsp;returned.</tt></dd></dl>
+ <dl><dt><a name="-set_class_command"><strong>set_class_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;SET&nbsp;CLASS&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple<br>
+even&nbsp;when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;SET&nbsp;CLASS&nbsp;command&nbsp;has&nbsp;the&nbsp;following<br>
+usage:<br>
+&nbsp;<br>
+SET&nbsp;CLASS&nbsp;[TO]&nbsp;&lt;Warrior&nbsp;|&nbsp;Thief&nbsp;|&nbsp;Mage&nbsp;|&nbsp;Priest&gt;<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;a&nbsp;class&nbsp;other&nbsp;than&nbsp;Warrior,&nbsp;Thief,&nbsp;Mage&nbsp;or&nbsp;Priest&nbsp;is&nbsp;specified,<br>
+returns&nbsp;a&nbsp;InvalidClassGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;name&nbsp;has&nbsp;not&nbsp;yet&nbsp;been&nbsp;set,&nbsp;then&nbsp;the&nbsp;class&nbsp;is&nbsp;set,&nbsp;and&nbsp;a<br>
+ClassSetGSM&nbsp;object&nbsp;is&nbsp;returned.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;name&nbsp;has&nbsp;been&nbsp;set,&nbsp;then&nbsp;the&nbsp;class&nbsp;is&nbsp;set,&nbsp;ability&nbsp;scores<br>
+for&nbsp;the&nbsp;character&nbsp;are&nbsp;rolled,&nbsp;and&nbsp;a&nbsp;ClassSetGSM&nbsp;object&nbsp;and&nbsp;a<br>
+DisplayRolledStatsGSM&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
+ <dl><dt><a name="-set_name_command"><strong>set_name_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;SET&nbsp;NAME&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;SET&nbsp;NAME&nbsp;command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
+&nbsp;<br>
+SET&nbsp;NAME&nbsp;[TO]&nbsp;&lt;character&nbsp;name&gt;<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;a&nbsp;name&nbsp;is&nbsp;specified&nbsp;that&nbsp;doesn't&nbsp;match&nbsp;the&nbsp;pattern&nbsp;[A-Z][a-z]+(<br>
+[A-Z][a-z]+)*,&nbsp;returns&nbsp;a&nbsp;InvalidPartGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;class&nbsp;has&nbsp;not&nbsp;yet&nbsp;been&nbsp;set,&nbsp;then&nbsp;the&nbsp;name&nbsp;is&nbsp;set,&nbsp;and&nbsp;a<br>
+NameSetGSM&nbsp;object&nbsp;is&nbsp;returned.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;class&nbsp;has&nbsp;been&nbsp;set,&nbsp;then&nbsp;the&nbsp;name&nbsp;is&nbsp;set,&nbsp;ability&nbsp;scores<br>
+for&nbsp;the&nbsp;character&nbsp;are&nbsp;rolled,&nbsp;and&nbsp;a&nbsp;NameSetGSM&nbsp;object&nbsp;and&nbsp;a<br>
+DisplayRolledStatsGSM&nbsp;object&nbsp;are&nbsp;returned.</tt></dd></dl>
+ <dl><dt><a name="-status_command"><strong>status_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;STATUS&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;STATUS&nbsp;command&nbsp;takes&nbsp;no&nbsp;arguments.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;command&nbsp;is&nbsp;used&nbsp;with&nbsp;any&nbsp;arguments,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM<br>
+object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;returns&nbsp;a&nbsp;StatusOutputGSM&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-take_command"><strong>take_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;TAKE&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;TAKE&nbsp;command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
+&nbsp;<br>
+TAKE&nbsp;&lt;item&nbsp;name&gt;&nbsp;FROM&nbsp;&lt;container&nbsp;name&gt;<br>
+TAKE&nbsp;&lt;number&gt;&nbsp;&lt;item&nbsp;name&gt;&nbsp;FROM&nbsp;&lt;container&nbsp;name&gt;<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;specified&nbsp;container&nbsp;isn't&nbsp;present&nbsp;in&nbsp;the&nbsp;current&nbsp;room,&nbsp;returns<br>
+a&nbsp;ContainerNotFoundGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;specified&nbsp;container&nbsp;is&nbsp;a&nbsp;chest&nbsp;and&nbsp;the&nbsp;chest&nbsp;is&nbsp;closed,&nbsp;returns<br>
+a&nbsp;ContainerIsClosedGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;arguments&nbsp;are&nbsp;an&nbsp;ungrammatical&nbsp;sentence&nbsp;and&nbsp;are&nbsp;ambiguous&nbsp;as&nbsp;to<br>
+what&nbsp;quantity&nbsp;the&nbsp;player&nbsp;means&nbsp;to&nbsp;take,&nbsp;returns&nbsp;a&nbsp;AmountToTakeUnclearGSM<br>
+object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;specified&nbsp;item&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;specified&nbsp;chest&nbsp;or&nbsp;on&nbsp;the<br>
+specified&nbsp;corpse,&nbsp;returns&nbsp;a&nbsp;ItemNotFoundInContainerGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;specified&nbsp;quantity&nbsp;of&nbsp;the&nbsp;item&nbsp;is&nbsp;greater&nbsp;than&nbsp;the<br>
+quantity&nbsp;of&nbsp;that&nbsp;item&nbsp;in&nbsp;the&nbsp;chest&nbsp;or&nbsp;on&nbsp;the&nbsp;corpse,&nbsp;returns&nbsp;a<br>
+TryingToTakeMoreThanIsPresentGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;the&nbsp;item—&nbsp;or&nbsp;the&nbsp;quantity&nbsp;of&nbsp;the&nbsp;item—&nbsp;is&nbsp;removed&nbsp;from<br>
+the&nbsp;chest&nbsp;or&nbsp;the&nbsp;corpse&nbsp;and&nbsp;added&nbsp;to&nbsp;the&nbsp;character's&nbsp;inventory,&nbsp;and&nbsp;a<br>
+ItemOrItemsTakenGSM&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
+ <dl><dt><a name="-unequip_command"><strong>unequip_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;UNEQUIP&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;UNEQUIP&nbsp;command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
+&nbsp;<br>
+UNEQUIP&nbsp;&lt;armor&nbsp;name&gt;<br>
+UNEQUIP&nbsp;&lt;shield&nbsp;name&gt;<br>
+UNEQUIP&nbsp;&lt;wand&nbsp;name&gt;<br>
+UNEQUIP&nbsp;&lt;weapon&nbsp;name&gt;<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;character&nbsp;does&nbsp;not&nbsp;have&nbsp;the&nbsp;item&nbsp;equipped,&nbsp;returns&nbsp;a<br>
+ItemNotEquippedGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;the&nbsp;specified&nbsp;item&nbsp;is&nbsp;unequipped,&nbsp;and&nbsp;a&nbsp;ItemUnequippedGSM<br>
+is&nbsp;returned.</tt></dd></dl>
+ <dl><dt><a name="-unlock_command"><strong>unlock_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;UNLOCK&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;UNLOCK&nbsp;command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
+&nbsp;<br>
+UNLOCK&nbsp;&lt;door name&gt;<br>
+UNLOCK&nbsp;&lt;chest name&gt;<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;arguments&nbsp;specify&nbsp;a&nbsp;door&nbsp;that&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;room,<br>
+returns&nbsp;a&nbsp;DoorNotPresentGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;arguments&nbsp;given&nbsp;match&nbsp;more&nbsp;than&nbsp;one&nbsp;door&nbsp;in&nbsp;the&nbsp;room,&nbsp;returns&nbsp;a<br>
+AmbiguousDoorSpecifierGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;specified&nbsp;door&nbsp;or&nbsp;chest&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;current&nbsp;room,<br>
+returns&nbsp;a&nbsp;ElementToUnlockNotHereGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;specified&nbsp;element&nbsp;is&nbsp;a&nbsp;doorway,&nbsp;item,&nbsp;creature&nbsp;or&nbsp;corpse,<br>
+returns&nbsp;a&nbsp;ElementNotUnlockableGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;character&nbsp;does&nbsp;not&nbsp;possess&nbsp;the&nbsp;requisite&nbsp;door&nbsp;or&nbsp;chest&nbsp;key&nbsp;to<br>
+lock&nbsp;the&nbsp;specified&nbsp;door&nbsp;or&nbsp;chest,&nbsp;returns&nbsp;an&nbsp;DontPossessCorrectKeyGSM<br>
+object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;specified&nbsp;door&nbsp;or&nbsp;chest&nbsp;is&nbsp;already&nbsp;unlocked,&nbsp;returns&nbsp;a<br>
+ElementIsAlreadyUnlockedGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;the&nbsp;specified&nbsp;door&nbsp;or&nbsp;chest&nbsp;is&nbsp;unlocked,&nbsp;and&nbsp;a<br>
+ElementHasBeenUnlockedGSM&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>COMMANDS_HELP</strong> = {'ATTACK': 'The ATTACK command is used to attack creatures. ...K AT command and take loot with the TAKE command.', 'BEGIN GAME': 'The BEGIN GAME command is used to start the game...ar and started in the antechamber of the dungeon.', 'CAST SPELL': 'The CAST SPELL command can only be used by Mages... A Priest can cast a healing spell on themselves.', 'CLOSE': 'The CLOSE command can be used to close doors and chests.', 'DRINK': 'The DRINK command can be used to drink health or mana potions.', 'DROP': 'The DROP command can be used to remove items fro...lly be unequipped unless you have another on you.', 'EQUIP': "The EQUIP command can be used to equip a weapon,... inventory. You can't equip items from the floor.", 'HELP': 'The HELP command can be used to get help about any game commands.', 'INVENTORY': "The INVENTORY command can be used to get a listi...an item, say 'LOOK<font color="#c040c0">\xa0</font>AT<font color="#c040c0">\xa0</font>&lt;item<font color="#c040c0">\xa0</font>title&gt;<font color="#c040c0">\xa0</font>IN<font color="#c040c0">\xa0</font>INVENTORY'.", 'LEAVE': "The LEAVE command is used to exit the room you'r...unable to leave using it until you can unlock it.", ...}<br>
+<strong>COMMANDS_SYNTAX</strong> = {'ATTACK': ('&lt;creature<font color="#c040c0">\xa0</font>name&gt;',), 'BEGIN GAME': ('',), 'CAST SPELL': ('',), 'CLOSE': ('&lt;door<font color="#c040c0">\xa0</font>name&gt;', '&lt;chest<font color="#c040c0">\xa0</font>name&gt;'), 'DRINK': ('[THE]<font color="#c040c0">\xa0</font>&lt;potion<font color="#c040c0">\xa0</font>name&gt;', '&lt;number&gt;<font color="#c040c0">\xa0</font>&lt;potion<font color="#c040c0">\xa0</font>name&gt;(s)'), 'DROP': ('&lt;item<font color="#c040c0">\xa0</font>name&gt;', '&lt;number&gt;<font color="#c040c0">\xa0</font>&lt;item<font color="#c040c0">\xa0</font>name&gt;'), 'EQUIP': ('&lt;armor<font color="#c040c0">\xa0</font>name&gt;', '&lt;shield<font color="#c040c0">\xa0</font>name&gt;', '&lt;wand<font color="#c040c0">\xa0</font>name&gt;', '&lt;weapon<font color="#c040c0">\xa0</font>name&gt;'), 'HELP': ('', '&lt;command<font color="#c040c0">\xa0</font>name&gt;'), 'INVENTORY': ('',), 'LEAVE': ('[USING<font color="#c040c0">\xa0</font>or<font color="#c040c0">\xa0</font>VIA]<font color="#c040c0">\xa0</font>&lt;compass<font color="#c040c0">\xa0</font>direction&gt;<font color="#c040c0">\xa0</font>DOOR', '[USING<font color="#c040c0">\xa0</font>or<font color="#c040c0">\xa0</font>VIA]<font color="#c040c0">\xa0</font>&lt;compass<font color="#c040c0">\xa0</font>direction&gt;<font color="#c040c0">\xa0</font>DOORWAY', '[USING<font color="#c040c0">\xa0</font>or<font color="#c040c0">\xa0</font>VIA]<font color="#c040c0">\xa0</font>&lt;door<font color="#c040c0">\xa0</font>name&gt;', '[USING<font color="#c040c0">\xa0</font>or<font color="#c040c0">\xa0</font>VIA]<font color="#c040c0">\xa0</font>&lt;compass<font color="#c040c0">\xa0</font>direction&gt;<font color="#c040c0">\xa0</font>&lt;door<font color="#c040c0">\xa0</font>name&gt;'), ...}<br>
+<strong>INGAME_COMMANDS</strong> = {'attack', 'cast_spell', 'close', 'drink', 'drop', 'equip', ...}<br>
+<strong>PREGAME_COMMANDS</strong> = {'begin_game', 'help', 'quit', 'reroll', 'set_class', 'set_name'}<br>
+<strong>SPELL_DAMAGE</strong> = '3d8+5'<br>
+<strong>SPELL_MANA_COST</strong> = 5<br>
+<strong>STARTER_GEAR</strong> = {'Mage': {'weapon': 'Staff'}, 'Priest': {'armor': 'Studded_Leather', 'shield': 'Buckler', 'weapon': 'Heavy_Mace'}, 'Thief': {'armor': 'Studded_Leather', 'weapon': 'Rapier'}, 'Warrior': {'armor': 'Studded_Leather', 'shield': 'Buckler', 'weapon': 'Longsword'}}<br>
+<strong>VALID_NAME_RE</strong> = re.compile('^[A-Z][a-z]+$')<br>
+<strong>__all__</strong> = ('COMMANDS_HELP', 'COMMANDS_SYNTAX', 'INGAME_COMMANDS', 'PREGAME_COMMANDS', 'SPELL_DAMAGE', 'SPELL_MANA_COST', 'STARTER_GEAR', 'VALID_NAME_RE', 'attack_command', '_be_attacked_by_command', 'begin_game_command', 'cast_spell_command', 'close_command', 'drink_command', 'drop_command', 'equip_command', 'help_command', 'inventory_command', 'leave_command', 'lock_command', ...)</td></tr></table>
+</body></html>

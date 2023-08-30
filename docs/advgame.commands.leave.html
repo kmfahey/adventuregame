@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module advgame.commands.leave</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="advgame.html"><font color="#ffffff">advgame</font></a>.<a href="advgame.commands.html"><font color="#ffffff">commands</font></a>.leave</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/adventuregame/advgame/commands/leave.py">/home/kmfahey/Workspace/adventuregame/advgame/commands/leave.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-leave_command"><strong>leave_command</strong></a>(context, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;LEAVE&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;LEAVE&nbsp;command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
+&nbsp;<br>
+LEAVE&nbsp;[USING&nbsp;or&nbsp;VIA]&nbsp;&lt;compass&nbsp;direction&gt;&nbsp;DOOR<br>
+LEAVE&nbsp;[USING&nbsp;or&nbsp;VIA]&nbsp;&lt;compass&nbsp;direction&gt;&nbsp;DOORWAY<br>
+LEAVE&nbsp;[USING&nbsp;or&nbsp;VIA]&nbsp;&lt;door&nbsp;name&gt;<br>
+LEAVE&nbsp;[USING&nbsp;or&nbsp;VIA]&nbsp;&lt;compass&nbsp;direction&gt;&nbsp;&lt;door&nbsp;name&gt;<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;door&nbsp;by&nbsp;that&nbsp;name&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;room,&nbsp;returns&nbsp;a<br>
+DoorNotPresentGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;door&nbsp;specifier&nbsp;is&nbsp;ambiguous&nbsp;and&nbsp;matches&nbsp;more&nbsp;than&nbsp;one&nbsp;door&nbsp;in<br>
+the&nbsp;room,&nbsp;returns&nbsp;a&nbsp;AmbiguousDoorSpecifierGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;door&nbsp;is&nbsp;the&nbsp;exit&nbsp;to&nbsp;the&nbsp;dungeon,&nbsp;returns&nbsp;a&nbsp;LeftRoomGSM&nbsp;object<br>
+and&nbsp;a&nbsp;WonTheGameGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;a&nbsp;LeftRoomGSM&nbsp;object&nbsp;and&nbsp;a&nbsp;EnteredRoomGSM&nbsp;object&nbsp;are<br>
+returned.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ('leave_command',)</td></tr></table>
+</body></html>

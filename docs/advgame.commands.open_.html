@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module advgame.commands.open_</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="advgame.html"><font color="#ffffff">advgame</font></a>.<a href="advgame.commands.html"><font color="#ffffff">commands</font></a>.open_</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/adventuregame/advgame/commands/open_.py">/home/kmfahey/Workspace/adventuregame/advgame/commands/open_.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-open_command"><strong>open_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;OPEN&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;OPEN&nbsp;command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
+&nbsp;<br>
+OPEN&nbsp;&lt;door&nbsp;name&gt;<br>
+OPEN&nbsp;&lt;chest&nbsp;name&gt;<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;trying&nbsp;to&nbsp;open&nbsp;a&nbsp;door&nbsp;which&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;room,&nbsp;returns&nbsp;a<br>
+DoorNotPresentGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;trying&nbsp;to&nbsp;open&nbsp;a&nbsp;door,&nbsp;but&nbsp;the&nbsp;command&nbsp;is&nbsp;ambiguous&nbsp;and&nbsp;matches<br>
+more&nbsp;than&nbsp;one&nbsp;door,&nbsp;returns&nbsp;a&nbsp;AmbiguousDoorSpecifierGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;trying&nbsp;to&nbsp;open&nbsp;an&nbsp;item,&nbsp;creature,&nbsp;corpse&nbsp;or&nbsp;doorway,&nbsp;returns&nbsp;a<br>
+ElementNotOpenableGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;trying&nbsp;to&nbsp;open&nbsp;a&nbsp;chest&nbsp;that&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;room,&nbsp;returns&nbsp;a<br>
+ElementToOpenNotHereGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;trying&nbsp;to&nbsp;open&nbsp;a&nbsp;door&nbsp;or&nbsp;chest&nbsp;that&nbsp;is&nbsp;locked,&nbsp;returns&nbsp;a<br>
+ElementIsLockedGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;trying&nbsp;to&nbsp;open&nbsp;a&nbsp;door&nbsp;or&nbsp;chest&nbsp;that&nbsp;is&nbsp;already&nbsp;open,&nbsp;returns&nbsp;a<br>
+ElementIsAlreadyOpenGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;the&nbsp;chest&nbsp;or&nbsp;door&nbsp;has&nbsp;its&nbsp;is_closed&nbsp;attribute&nbsp;set&nbsp;to&nbsp;False,<br>
+and&nbsp;returns&nbsp;a&nbsp;ElementHasBeenOpenedGSM.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ('open_command',)</td></tr></table>
+</body></html>

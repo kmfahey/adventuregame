@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module advgame.process</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="advgame.html"><font color="#ffffff">advgame</font></a>.process</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/adventuregame/advgame/process.py">/home/kmfahey/Workspace/adventuregame/advgame/process.py</a></font></td></tr></table>
+    <p><tt>The&nbsp;<a href="#CommandProcessor">CommandProcessor</a>&nbsp;class&nbsp;which&nbsp;processes&nbsp;a&nbsp;natural-language&nbsp;command<br>
+and&nbsp;executes&nbsp;it&nbsp;in&nbsp;the&nbsp;game&nbsp;<a href="builtins.html#object">object</a>&nbsp;environment,&nbsp;modifying&nbsp;the&nbsp;game&nbsp;state<br>
+and&nbsp;generating&nbsp;a&nbsp;natural-language&nbsp;response.</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.process.html#CommandProcessor">CommandProcessor</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="CommandProcessor">class <strong>CommandProcessor</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#CommandProcessor">CommandProcessor</a>(game_state)<br>
+&nbsp;<br>
+A&nbsp;processor&nbsp;that&nbsp;can&nbsp;parse&nbsp;a&nbsp;natural&nbsp;language&nbsp;command,&nbsp;modify&nbsp;the<br>
+game&nbsp;state&nbsp;appropriately,&nbsp;and&nbsp;return&nbsp;a&nbsp;GameStateMessage&nbsp;<a href="builtins.html#object">object</a>&nbsp;that<br>
+stringifies&nbsp;to&nbsp;a&nbsp;natural&nbsp;language&nbsp;reply.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="CommandProcessor-__init__"><strong>__init__</strong></a>(self, game_state)</dt><dd><tt>Initialize&nbsp;the&nbsp;<a href="#CommandProcessor">CommandProcessor</a>&nbsp;before&nbsp;the&nbsp;beginning&nbsp;of&nbsp;the&nbsp;game.<br>
+&nbsp;<br>
+:gamestate:&nbsp;A&nbsp;GameState&nbsp;<a href="builtins.html#object">object</a>,&nbsp;which&nbsp;is&nbsp;composited&nbsp;of&nbsp;the&nbsp;game's<br>
+RoomsState,&nbsp;CreaturesState,&nbsp;ContainersState,&nbsp;DoorsState,&nbsp;and&nbsp;ItemsState<br>
+objects.&nbsp;Once&nbsp;the&nbsp;character_name&nbsp;and&nbsp;character_class&nbsp;attributes&nbsp;are&nbsp;set<br>
+on&nbsp;this&nbsp;<a href="builtins.html#object">object</a>,&nbsp;a&nbsp;Character&nbsp;<a href="builtins.html#object">object</a>&nbsp;will&nbsp;be&nbsp;added&nbsp;and&nbsp;the&nbsp;game&nbsp;can&nbsp;begin.</tt></dd></dl>
+
+<dl><dt><a name="CommandProcessor-dispatch"><strong>dispatch</strong></a>(self, command, tokens)</dt></dl>
+
+<dl><dt><a name="CommandProcessor-process"><strong>process</strong></a>(self, natural_language_str)</dt><dd><tt>Process&nbsp;and&nbsp;dispatch&nbsp;a&nbsp;natural&nbsp;language&nbsp;command&nbsp;string.&nbsp;The&nbsp;return<br>
+value&nbsp;is&nbsp;always&nbsp;a&nbsp;tuple&nbsp;even&nbsp;when&nbsp;it's&nbsp;length&nbsp;1.&nbsp;If&nbsp;the&nbsp;command&nbsp;is&nbsp;not<br>
+recognized,&nbsp;returns&nbsp;a&nbsp;NotRecognizedGSM&nbsp;<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
+If&nbsp;a&nbsp;ingame&nbsp;command&nbsp;is&nbsp;used&nbsp;during&nbsp;the&nbsp;pregame&nbsp;(before&nbsp;name&nbsp;and&nbsp;class<br>
+have&nbsp;been&nbsp;set&nbsp;and&nbsp;ability&nbsp;scores&nbsp;have&nbsp;been&nbsp;rolled&nbsp;and&nbsp;accepted)<br>
+or&nbsp;a&nbsp;pregame&nbsp;command&nbsp;is&nbsp;used&nbsp;during&nbsp;the&nbsp;game&nbsp;proper,&nbsp;returns&nbsp;a<br>
+NotAllowedNowGSM&nbsp;<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
+If&nbsp;this&nbsp;method&nbsp;is&nbsp;called&nbsp;after&nbsp;the&nbsp;game&nbsp;has&nbsp;ended,&nbsp;the&nbsp;same&nbsp;<a href="builtins.html#object">object</a>&nbsp;that<br>
+was&nbsp;returned&nbsp;when&nbsp;the&nbsp;game&nbsp;ended&nbsp;is&nbsp;returned&nbsp;again.&nbsp;Otherwise,&nbsp;the<br>
+command&nbsp;is&nbsp;processed&nbsp;and&nbsp;a&nbsp;state&nbsp;message&nbsp;<a href="builtins.html#object">object</a>&nbsp;is&nbsp;returned.<br>
+&nbsp;<br>
+:natural_language_str:&nbsp;The&nbsp;player's&nbsp;command&nbsp;input&nbsp;as&nbsp;a&nbsp;natural&nbsp;language<br>
+string.</tt></dd></dl>
+
+<hr>
+Static methods defined here:<br>
+<dl><dt><a name="CommandProcessor-pre_process"><strong>pre_process</strong></a>(natural_language_str)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>commands_set</strong></dt>
+</dl>
+<dl><dt><strong>context</strong></dt>
+</dl>
+<dl><dt><strong>game_ending_state_msg</strong></dt>
+</dl>
+<dl><dt><strong>game_state</strong></dt>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ('CommandProcessor',)</td></tr></table>
+</body></html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module advgame.commands.castspl</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="advgame.html"><font color="#ffffff">advgame</font></a>.<a href="advgame.commands.html"><font color="#ffffff">commands</font></a>.castspl</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/adventuregame/advgame/commands/castspl.py">/home/kmfahey/Workspace/adventuregame/advgame/commands/castspl.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-cast_spell_command"><strong>cast_spell_command</strong></a>(context, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;CAST&nbsp;SPELL&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple<br>
+even&nbsp;when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;Takes&nbsp;no&nbsp;arguments.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;any&nbsp;arguments&nbsp;are&nbsp;given,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;character&nbsp;is&nbsp;a&nbsp;Warrior&nbsp;or&nbsp;a&nbsp;Thief,&nbsp;returns&nbsp;a&nbsp;ClassRestrictedGSM<br>
+object.<br>
+&nbsp;<br>
+*&nbsp;This&nbsp;command&nbsp;costs&nbsp;mana&nbsp;points.&nbsp;If&nbsp;the&nbsp;character&nbsp;doesn't&nbsp;have&nbsp;enough,<br>
+returns&nbsp;a&nbsp;InsufficientManaGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;character&nbsp;is&nbsp;a&nbsp;Mage&nbsp;and&nbsp;there's&nbsp;no&nbsp;creature&nbsp;in&nbsp;the&nbsp;room,<br>
+returns&nbsp;a&nbsp;NoCreatureToTargetGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;they're&nbsp;a&nbsp;Mage&nbsp;and&nbsp;there&nbsp;is&nbsp;a&nbsp;creature&nbsp;present,&nbsp;a&nbsp;damaging&nbsp;spell<br>
+is&nbsp;cast&nbsp;and&nbsp;the&nbsp;creature&nbsp;is&nbsp;wounded.&nbsp;If&nbsp;they&nbsp;don't&nbsp;die,&nbsp;returns&nbsp;a<br>
+CastDamagingSpellGSM&nbsp;object&nbsp;followed&nbsp;by&nbsp;the&nbsp;object(s)&nbsp;generated&nbsp;by&nbsp;the<br>
+creature's&nbsp;followup&nbsp;attack.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;creature&nbsp;is&nbsp;killed,&nbsp;returns&nbsp;a&nbsp;CastDamagingSpellGSM&nbsp;object&nbsp;and&nbsp;a<br>
+FoeDeathGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;character&nbsp;is&nbsp;a&nbsp;Priest,&nbsp;returns&nbsp;a&nbsp;CastHealingSpellGSM&nbsp;object&nbsp;and<br>
+a&nbsp;UnderwentHealingEffectGSM&nbsp;object.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ('cast_spell_command',)</td></tr></table>
+</body></html>

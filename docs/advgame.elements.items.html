@@ -1,0 +1,911 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module advgame.elements.items</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="advgame.html"><font color="#ffffff">advgame</font></a>.<a href="advgame.elements.html"><font color="#ffffff">elements</font></a>.items</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/adventuregame/advgame/elements/items.py">/home/kmfahey/Workspace/adventuregame/advgame/elements/items.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>(<a href="builtins.html#object">builtins.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.elements.items.html#Item">Item</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.elements.items.html#Coin">Coin</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.elements.items.html#EquippableItem">EquippableItem</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.elements.items.html#Armor">Armor</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.elements.items.html#Shield">Shield</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.elements.items.html#Wand">Wand</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.elements.items.html#Weapon">Weapon</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="advgame.elements.items.html#Key">Key</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.elements.items.html#Oddment">Oddment</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.elements.items.html#Potion">Potion</a>
+</font></dt></dl>
+</dd>
+</dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Armor">class <strong>Armor</strong></a>(<a href="advgame.elements.items.html#EquippableItem">EquippableItem</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Armor">Armor</a>(**argd)<br>
+&nbsp;<br>
+A&nbsp;suit&nbsp;of&nbsp;armor,&nbsp;which&nbsp;can&nbsp;be&nbsp;equipped,&nbsp;to&nbsp;raise&nbsp;armor&nbsp;class.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.elements.items.html#Armor">Armor</a></dd>
+<dd><a href="advgame.elements.items.html#EquippableItem">EquippableItem</a></dd>
+<dd><a href="advgame.elements.items.html#Item">Item</a></dd>
+<dd><a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.items.html#EquippableItem">EquippableItem</a>:<br>
+<dl><dt><a name="Armor-usable_by"><strong>usable_by</strong></a>(self, character_class)</dt><dd><tt>An&nbsp;item&nbsp;equippable&nbsp;by&nbsp;some&nbsp;classes&nbsp;and&nbsp;not&nbsp;by&nbsp;others,&nbsp;based&nbsp;on&nbsp;the<br>
+'warrior_can_use',&nbsp;'thief_can_use',&nbsp;'mage_can_use',&nbsp;or&nbsp;'priest_can_use'<br>
+attributes.<br>
+&nbsp;<br>
+:character_class:&nbsp;Either&nbsp;'Warrior',&nbsp;'Thief',&nbsp;'Mage',&nbsp;or&nbsp;'Priest'.<br>
+:return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><a name="Armor-__init__"><strong>__init__</strong></a>(self, **argd)</dt><dd><tt>Instance&nbsp;the&nbsp;item&nbsp;for&nbsp;arbitrary&nbsp;key-value&nbsp;pairs.</tt></dd></dl>
+
+<hr>
+Class methods inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><a name="Armor-subclassing_factory"><strong>subclassing_factory</strong></a>(**item_dict)<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>Instance&nbsp;an&nbsp;arbitrary&nbsp;subclass&nbsp;from&nbsp;arguments&nbsp;based&nbsp;on&nbsp;the&nbsp;value&nbsp;of&nbsp;the<br>
+item_type&nbsp;key.<br>
+&nbsp;<br>
+:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a><br>
+subclass&nbsp;object&nbsp;with.<br>
+:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;object.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><strong>armor_bonus</strong></dt>
+</dl>
+<dl><dt><strong>attack_bonus</strong></dt>
+</dl>
+<dl><dt><strong>damage</strong></dt>
+</dl>
+<dl><dt><strong>description</strong></dt>
+</dl>
+<dl><dt><strong>hit_points_recovered</strong></dt>
+</dl>
+<dl><dt><strong>internal_name</strong></dt>
+</dl>
+<dl><dt><strong>item_type</strong></dt>
+</dl>
+<dl><dt><strong>mage_can_use</strong></dt>
+</dl>
+<dl><dt><strong>mana_points_recovered</strong></dt>
+</dl>
+<dl><dt><strong>priest_can_use</strong></dt>
+</dl>
+<dl><dt><strong>thief_can_use</strong></dt>
+</dl>
+<dl><dt><strong>title</strong></dt>
+</dl>
+<dl><dt><strong>value</strong></dt>
+</dl>
+<dl><dt><strong>warrior_can_use</strong></dt>
+</dl>
+<dl><dt><strong>weight</strong></dt>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><a name="Armor-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>Test&nbsp;two&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;objects&nbsp;or&nbsp;objects&nbsp;that&nbsp;subclass&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;for<br>
+equality.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<dl><dt><strong>inventory_list_value_re</strong> = re.compile('^\\[(\n                             ...                        x\n         , re.VERBOSE)</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Coin">class <strong>Coin</strong></a>(<a href="advgame.elements.items.html#Item">Item</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Coin">Coin</a>(**argd)<br>
+&nbsp;<br>
+A&nbsp;coin,&nbsp;i.e.&nbsp;a&nbsp;unit&nbsp;of&nbsp;value.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.elements.items.html#Coin">Coin</a></dd>
+<dd><a href="advgame.elements.items.html#Item">Item</a></dd>
+<dd><a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><a name="Coin-__init__"><strong>__init__</strong></a>(self, **argd)</dt><dd><tt>Instance&nbsp;the&nbsp;item&nbsp;for&nbsp;arbitrary&nbsp;key-value&nbsp;pairs.</tt></dd></dl>
+
+<hr>
+Class methods inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><a name="Coin-subclassing_factory"><strong>subclassing_factory</strong></a>(**item_dict)<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>Instance&nbsp;an&nbsp;arbitrary&nbsp;subclass&nbsp;from&nbsp;arguments&nbsp;based&nbsp;on&nbsp;the&nbsp;value&nbsp;of&nbsp;the<br>
+item_type&nbsp;key.<br>
+&nbsp;<br>
+:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a><br>
+subclass&nbsp;object&nbsp;with.<br>
+:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;object.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><strong>armor_bonus</strong></dt>
+</dl>
+<dl><dt><strong>attack_bonus</strong></dt>
+</dl>
+<dl><dt><strong>damage</strong></dt>
+</dl>
+<dl><dt><strong>description</strong></dt>
+</dl>
+<dl><dt><strong>hit_points_recovered</strong></dt>
+</dl>
+<dl><dt><strong>internal_name</strong></dt>
+</dl>
+<dl><dt><strong>item_type</strong></dt>
+</dl>
+<dl><dt><strong>mage_can_use</strong></dt>
+</dl>
+<dl><dt><strong>mana_points_recovered</strong></dt>
+</dl>
+<dl><dt><strong>priest_can_use</strong></dt>
+</dl>
+<dl><dt><strong>thief_can_use</strong></dt>
+</dl>
+<dl><dt><strong>title</strong></dt>
+</dl>
+<dl><dt><strong>value</strong></dt>
+</dl>
+<dl><dt><strong>warrior_can_use</strong></dt>
+</dl>
+<dl><dt><strong>weight</strong></dt>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><a name="Coin-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>Test&nbsp;two&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;objects&nbsp;or&nbsp;objects&nbsp;that&nbsp;subclass&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;for<br>
+equality.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<dl><dt><strong>inventory_list_value_re</strong> = re.compile('^\\[(\n                             ...                        x\n         , re.VERBOSE)</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="EquippableItem">class <strong>EquippableItem</strong></a>(<a href="advgame.elements.items.html#Item">Item</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#EquippableItem">EquippableItem</a>(**argd)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.elements.items.html#EquippableItem">EquippableItem</a></dd>
+<dd><a href="advgame.elements.items.html#Item">Item</a></dd>
+<dd><a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="EquippableItem-usable_by"><strong>usable_by</strong></a>(self, character_class)</dt><dd><tt>An&nbsp;item&nbsp;equippable&nbsp;by&nbsp;some&nbsp;classes&nbsp;and&nbsp;not&nbsp;by&nbsp;others,&nbsp;based&nbsp;on&nbsp;the<br>
+'warrior_can_use',&nbsp;'thief_can_use',&nbsp;'mage_can_use',&nbsp;or&nbsp;'priest_can_use'<br>
+attributes.<br>
+&nbsp;<br>
+:character_class:&nbsp;Either&nbsp;'Warrior',&nbsp;'Thief',&nbsp;'Mage',&nbsp;or&nbsp;'Priest'.<br>
+:return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><a name="EquippableItem-__init__"><strong>__init__</strong></a>(self, **argd)</dt><dd><tt>Instance&nbsp;the&nbsp;item&nbsp;for&nbsp;arbitrary&nbsp;key-value&nbsp;pairs.</tt></dd></dl>
+
+<hr>
+Class methods inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><a name="EquippableItem-subclassing_factory"><strong>subclassing_factory</strong></a>(**item_dict)<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>Instance&nbsp;an&nbsp;arbitrary&nbsp;subclass&nbsp;from&nbsp;arguments&nbsp;based&nbsp;on&nbsp;the&nbsp;value&nbsp;of&nbsp;the<br>
+item_type&nbsp;key.<br>
+&nbsp;<br>
+:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a><br>
+subclass&nbsp;object&nbsp;with.<br>
+:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;object.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><strong>armor_bonus</strong></dt>
+</dl>
+<dl><dt><strong>attack_bonus</strong></dt>
+</dl>
+<dl><dt><strong>damage</strong></dt>
+</dl>
+<dl><dt><strong>description</strong></dt>
+</dl>
+<dl><dt><strong>hit_points_recovered</strong></dt>
+</dl>
+<dl><dt><strong>internal_name</strong></dt>
+</dl>
+<dl><dt><strong>item_type</strong></dt>
+</dl>
+<dl><dt><strong>mage_can_use</strong></dt>
+</dl>
+<dl><dt><strong>mana_points_recovered</strong></dt>
+</dl>
+<dl><dt><strong>priest_can_use</strong></dt>
+</dl>
+<dl><dt><strong>thief_can_use</strong></dt>
+</dl>
+<dl><dt><strong>title</strong></dt>
+</dl>
+<dl><dt><strong>value</strong></dt>
+</dl>
+<dl><dt><strong>warrior_can_use</strong></dt>
+</dl>
+<dl><dt><strong>weight</strong></dt>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><a name="EquippableItem-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>Test&nbsp;two&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;objects&nbsp;or&nbsp;objects&nbsp;that&nbsp;subclass&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;for<br>
+equality.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<dl><dt><strong>inventory_list_value_re</strong> = re.compile('^\\[(\n                             ...                        x\n         , re.VERBOSE)</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Item">class <strong>Item</strong></a>(<a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Item">Item</a>(**argd)<br>
+&nbsp;<br>
+A&nbsp;single&nbsp;item,&nbsp;taken&nbsp;from&nbsp;.ini&nbsp;format.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.elements.items.html#Item">Item</a></dd>
+<dd><a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Item-__init__"><strong>__init__</strong></a>(self, **argd)</dt><dd><tt>Instance&nbsp;the&nbsp;item&nbsp;for&nbsp;arbitrary&nbsp;key-value&nbsp;pairs.</tt></dd></dl>
+
+<hr>
+Class methods defined here:<br>
+<dl><dt><a name="Item-subclassing_factory"><strong>subclassing_factory</strong></a>(**item_dict)<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>Instance&nbsp;an&nbsp;arbitrary&nbsp;subclass&nbsp;from&nbsp;arguments&nbsp;based&nbsp;on&nbsp;the&nbsp;value&nbsp;of&nbsp;the<br>
+item_type&nbsp;key.<br>
+&nbsp;<br>
+:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a><br>
+subclass&nbsp;object&nbsp;with.<br>
+:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;object.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>armor_bonus</strong></dt>
+</dl>
+<dl><dt><strong>attack_bonus</strong></dt>
+</dl>
+<dl><dt><strong>damage</strong></dt>
+</dl>
+<dl><dt><strong>description</strong></dt>
+</dl>
+<dl><dt><strong>hit_points_recovered</strong></dt>
+</dl>
+<dl><dt><strong>internal_name</strong></dt>
+</dl>
+<dl><dt><strong>item_type</strong></dt>
+</dl>
+<dl><dt><strong>mage_can_use</strong></dt>
+</dl>
+<dl><dt><strong>mana_points_recovered</strong></dt>
+</dl>
+<dl><dt><strong>priest_can_use</strong></dt>
+</dl>
+<dl><dt><strong>thief_can_use</strong></dt>
+</dl>
+<dl><dt><strong>title</strong></dt>
+</dl>
+<dl><dt><strong>value</strong></dt>
+</dl>
+<dl><dt><strong>warrior_can_use</strong></dt>
+</dl>
+<dl><dt><strong>weight</strong></dt>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><a name="Item-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>Test&nbsp;two&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;objects&nbsp;or&nbsp;objects&nbsp;that&nbsp;subclass&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;for<br>
+equality.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<dl><dt><strong>inventory_list_value_re</strong> = re.compile('^\\[(\n                             ...                        x\n         , re.VERBOSE)</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Key">class <strong>Key</strong></a>(<a href="advgame.elements.items.html#Item">Item</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Key">Key</a>(**argd)<br>
+&nbsp;<br>
+A&nbsp;key,&nbsp;which&nbsp;can&nbsp;be&nbsp;used&nbsp;to&nbsp;unlock&nbsp;doors.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.elements.items.html#Key">Key</a></dd>
+<dd><a href="advgame.elements.items.html#Item">Item</a></dd>
+<dd><a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><a name="Key-__init__"><strong>__init__</strong></a>(self, **argd)</dt><dd><tt>Instance&nbsp;the&nbsp;item&nbsp;for&nbsp;arbitrary&nbsp;key-value&nbsp;pairs.</tt></dd></dl>
+
+<hr>
+Class methods inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><a name="Key-subclassing_factory"><strong>subclassing_factory</strong></a>(**item_dict)<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>Instance&nbsp;an&nbsp;arbitrary&nbsp;subclass&nbsp;from&nbsp;arguments&nbsp;based&nbsp;on&nbsp;the&nbsp;value&nbsp;of&nbsp;the<br>
+item_type&nbsp;key.<br>
+&nbsp;<br>
+:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a><br>
+subclass&nbsp;object&nbsp;with.<br>
+:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;object.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><strong>armor_bonus</strong></dt>
+</dl>
+<dl><dt><strong>attack_bonus</strong></dt>
+</dl>
+<dl><dt><strong>damage</strong></dt>
+</dl>
+<dl><dt><strong>description</strong></dt>
+</dl>
+<dl><dt><strong>hit_points_recovered</strong></dt>
+</dl>
+<dl><dt><strong>internal_name</strong></dt>
+</dl>
+<dl><dt><strong>item_type</strong></dt>
+</dl>
+<dl><dt><strong>mage_can_use</strong></dt>
+</dl>
+<dl><dt><strong>mana_points_recovered</strong></dt>
+</dl>
+<dl><dt><strong>priest_can_use</strong></dt>
+</dl>
+<dl><dt><strong>thief_can_use</strong></dt>
+</dl>
+<dl><dt><strong>title</strong></dt>
+</dl>
+<dl><dt><strong>value</strong></dt>
+</dl>
+<dl><dt><strong>warrior_can_use</strong></dt>
+</dl>
+<dl><dt><strong>weight</strong></dt>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><a name="Key-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>Test&nbsp;two&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;objects&nbsp;or&nbsp;objects&nbsp;that&nbsp;subclass&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;for<br>
+equality.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<dl><dt><strong>inventory_list_value_re</strong> = re.compile('^\\[(\n                             ...                        x\n         , re.VERBOSE)</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Oddment">class <strong>Oddment</strong></a>(<a href="advgame.elements.items.html#Item">Item</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Oddment">Oddment</a>(**argd)<br>
+&nbsp;<br>
+A&nbsp;miscellaneous&nbsp;good&nbsp;with&nbsp;no&nbsp;in-game&nbsp;purpose.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.elements.items.html#Oddment">Oddment</a></dd>
+<dd><a href="advgame.elements.items.html#Item">Item</a></dd>
+<dd><a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><a name="Oddment-__init__"><strong>__init__</strong></a>(self, **argd)</dt><dd><tt>Instance&nbsp;the&nbsp;item&nbsp;for&nbsp;arbitrary&nbsp;key-value&nbsp;pairs.</tt></dd></dl>
+
+<hr>
+Class methods inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><a name="Oddment-subclassing_factory"><strong>subclassing_factory</strong></a>(**item_dict)<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>Instance&nbsp;an&nbsp;arbitrary&nbsp;subclass&nbsp;from&nbsp;arguments&nbsp;based&nbsp;on&nbsp;the&nbsp;value&nbsp;of&nbsp;the<br>
+item_type&nbsp;key.<br>
+&nbsp;<br>
+:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a><br>
+subclass&nbsp;object&nbsp;with.<br>
+:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;object.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><strong>armor_bonus</strong></dt>
+</dl>
+<dl><dt><strong>attack_bonus</strong></dt>
+</dl>
+<dl><dt><strong>damage</strong></dt>
+</dl>
+<dl><dt><strong>description</strong></dt>
+</dl>
+<dl><dt><strong>hit_points_recovered</strong></dt>
+</dl>
+<dl><dt><strong>internal_name</strong></dt>
+</dl>
+<dl><dt><strong>item_type</strong></dt>
+</dl>
+<dl><dt><strong>mage_can_use</strong></dt>
+</dl>
+<dl><dt><strong>mana_points_recovered</strong></dt>
+</dl>
+<dl><dt><strong>priest_can_use</strong></dt>
+</dl>
+<dl><dt><strong>thief_can_use</strong></dt>
+</dl>
+<dl><dt><strong>title</strong></dt>
+</dl>
+<dl><dt><strong>value</strong></dt>
+</dl>
+<dl><dt><strong>warrior_can_use</strong></dt>
+</dl>
+<dl><dt><strong>weight</strong></dt>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><a name="Oddment-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>Test&nbsp;two&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;objects&nbsp;or&nbsp;objects&nbsp;that&nbsp;subclass&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;for<br>
+equality.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<dl><dt><strong>inventory_list_value_re</strong> = re.compile('^\\[(\n                             ...                        x\n         , re.VERBOSE)</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Potion">class <strong>Potion</strong></a>(<a href="advgame.elements.items.html#Item">Item</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Potion">Potion</a>(**argd)<br>
+&nbsp;<br>
+A&nbsp;potion,&nbsp;which&nbsp;is&nbsp;drinkable.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.elements.items.html#Potion">Potion</a></dd>
+<dd><a href="advgame.elements.items.html#Item">Item</a></dd>
+<dd><a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><a name="Potion-__init__"><strong>__init__</strong></a>(self, **argd)</dt><dd><tt>Instance&nbsp;the&nbsp;item&nbsp;for&nbsp;arbitrary&nbsp;key-value&nbsp;pairs.</tt></dd></dl>
+
+<hr>
+Class methods inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><a name="Potion-subclassing_factory"><strong>subclassing_factory</strong></a>(**item_dict)<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>Instance&nbsp;an&nbsp;arbitrary&nbsp;subclass&nbsp;from&nbsp;arguments&nbsp;based&nbsp;on&nbsp;the&nbsp;value&nbsp;of&nbsp;the<br>
+item_type&nbsp;key.<br>
+&nbsp;<br>
+:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a><br>
+subclass&nbsp;object&nbsp;with.<br>
+:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;object.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><strong>armor_bonus</strong></dt>
+</dl>
+<dl><dt><strong>attack_bonus</strong></dt>
+</dl>
+<dl><dt><strong>damage</strong></dt>
+</dl>
+<dl><dt><strong>description</strong></dt>
+</dl>
+<dl><dt><strong>hit_points_recovered</strong></dt>
+</dl>
+<dl><dt><strong>internal_name</strong></dt>
+</dl>
+<dl><dt><strong>item_type</strong></dt>
+</dl>
+<dl><dt><strong>mage_can_use</strong></dt>
+</dl>
+<dl><dt><strong>mana_points_recovered</strong></dt>
+</dl>
+<dl><dt><strong>priest_can_use</strong></dt>
+</dl>
+<dl><dt><strong>thief_can_use</strong></dt>
+</dl>
+<dl><dt><strong>title</strong></dt>
+</dl>
+<dl><dt><strong>value</strong></dt>
+</dl>
+<dl><dt><strong>warrior_can_use</strong></dt>
+</dl>
+<dl><dt><strong>weight</strong></dt>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><a name="Potion-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>Test&nbsp;two&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;objects&nbsp;or&nbsp;objects&nbsp;that&nbsp;subclass&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;for<br>
+equality.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<dl><dt><strong>inventory_list_value_re</strong> = re.compile('^\\[(\n                             ...                        x\n         , re.VERBOSE)</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Shield">class <strong>Shield</strong></a>(<a href="advgame.elements.items.html#EquippableItem">EquippableItem</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Shield">Shield</a>(**argd)<br>
+&nbsp;<br>
+A&nbsp;shield,&nbsp;which&nbsp;can&nbsp;be&nbsp;equipped,&nbsp;to&nbsp;raise&nbsp;armor&nbsp;class.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.elements.items.html#Shield">Shield</a></dd>
+<dd><a href="advgame.elements.items.html#EquippableItem">EquippableItem</a></dd>
+<dd><a href="advgame.elements.items.html#Item">Item</a></dd>
+<dd><a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.items.html#EquippableItem">EquippableItem</a>:<br>
+<dl><dt><a name="Shield-usable_by"><strong>usable_by</strong></a>(self, character_class)</dt><dd><tt>An&nbsp;item&nbsp;equippable&nbsp;by&nbsp;some&nbsp;classes&nbsp;and&nbsp;not&nbsp;by&nbsp;others,&nbsp;based&nbsp;on&nbsp;the<br>
+'warrior_can_use',&nbsp;'thief_can_use',&nbsp;'mage_can_use',&nbsp;or&nbsp;'priest_can_use'<br>
+attributes.<br>
+&nbsp;<br>
+:character_class:&nbsp;Either&nbsp;'Warrior',&nbsp;'Thief',&nbsp;'Mage',&nbsp;or&nbsp;'Priest'.<br>
+:return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><a name="Shield-__init__"><strong>__init__</strong></a>(self, **argd)</dt><dd><tt>Instance&nbsp;the&nbsp;item&nbsp;for&nbsp;arbitrary&nbsp;key-value&nbsp;pairs.</tt></dd></dl>
+
+<hr>
+Class methods inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><a name="Shield-subclassing_factory"><strong>subclassing_factory</strong></a>(**item_dict)<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>Instance&nbsp;an&nbsp;arbitrary&nbsp;subclass&nbsp;from&nbsp;arguments&nbsp;based&nbsp;on&nbsp;the&nbsp;value&nbsp;of&nbsp;the<br>
+item_type&nbsp;key.<br>
+&nbsp;<br>
+:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a><br>
+subclass&nbsp;object&nbsp;with.<br>
+:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;object.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><strong>armor_bonus</strong></dt>
+</dl>
+<dl><dt><strong>attack_bonus</strong></dt>
+</dl>
+<dl><dt><strong>damage</strong></dt>
+</dl>
+<dl><dt><strong>description</strong></dt>
+</dl>
+<dl><dt><strong>hit_points_recovered</strong></dt>
+</dl>
+<dl><dt><strong>internal_name</strong></dt>
+</dl>
+<dl><dt><strong>item_type</strong></dt>
+</dl>
+<dl><dt><strong>mage_can_use</strong></dt>
+</dl>
+<dl><dt><strong>mana_points_recovered</strong></dt>
+</dl>
+<dl><dt><strong>priest_can_use</strong></dt>
+</dl>
+<dl><dt><strong>thief_can_use</strong></dt>
+</dl>
+<dl><dt><strong>title</strong></dt>
+</dl>
+<dl><dt><strong>value</strong></dt>
+</dl>
+<dl><dt><strong>warrior_can_use</strong></dt>
+</dl>
+<dl><dt><strong>weight</strong></dt>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><a name="Shield-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>Test&nbsp;two&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;objects&nbsp;or&nbsp;objects&nbsp;that&nbsp;subclass&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;for<br>
+equality.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<dl><dt><strong>inventory_list_value_re</strong> = re.compile('^\\[(\n                             ...                        x\n         , re.VERBOSE)</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Wand">class <strong>Wand</strong></a>(<a href="advgame.elements.items.html#EquippableItem">EquippableItem</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Wand">Wand</a>(**argd)<br>
+&nbsp;<br>
+A&nbsp;wand,&nbsp;which&nbsp;can&nbsp;be&nbsp;equipped&nbsp;and&nbsp;used&nbsp;by&nbsp;mages&nbsp;to&nbsp;do&nbsp;damage<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.elements.items.html#Wand">Wand</a></dd>
+<dd><a href="advgame.elements.items.html#EquippableItem">EquippableItem</a></dd>
+<dd><a href="advgame.elements.items.html#Item">Item</a></dd>
+<dd><a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.items.html#EquippableItem">EquippableItem</a>:<br>
+<dl><dt><a name="Wand-usable_by"><strong>usable_by</strong></a>(self, character_class)</dt><dd><tt>An&nbsp;item&nbsp;equippable&nbsp;by&nbsp;some&nbsp;classes&nbsp;and&nbsp;not&nbsp;by&nbsp;others,&nbsp;based&nbsp;on&nbsp;the<br>
+'warrior_can_use',&nbsp;'thief_can_use',&nbsp;'mage_can_use',&nbsp;or&nbsp;'priest_can_use'<br>
+attributes.<br>
+&nbsp;<br>
+:character_class:&nbsp;Either&nbsp;'Warrior',&nbsp;'Thief',&nbsp;'Mage',&nbsp;or&nbsp;'Priest'.<br>
+:return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><a name="Wand-__init__"><strong>__init__</strong></a>(self, **argd)</dt><dd><tt>Instance&nbsp;the&nbsp;item&nbsp;for&nbsp;arbitrary&nbsp;key-value&nbsp;pairs.</tt></dd></dl>
+
+<hr>
+Class methods inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><a name="Wand-subclassing_factory"><strong>subclassing_factory</strong></a>(**item_dict)<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>Instance&nbsp;an&nbsp;arbitrary&nbsp;subclass&nbsp;from&nbsp;arguments&nbsp;based&nbsp;on&nbsp;the&nbsp;value&nbsp;of&nbsp;the<br>
+item_type&nbsp;key.<br>
+&nbsp;<br>
+:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a><br>
+subclass&nbsp;object&nbsp;with.<br>
+:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;object.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><strong>armor_bonus</strong></dt>
+</dl>
+<dl><dt><strong>attack_bonus</strong></dt>
+</dl>
+<dl><dt><strong>damage</strong></dt>
+</dl>
+<dl><dt><strong>description</strong></dt>
+</dl>
+<dl><dt><strong>hit_points_recovered</strong></dt>
+</dl>
+<dl><dt><strong>internal_name</strong></dt>
+</dl>
+<dl><dt><strong>item_type</strong></dt>
+</dl>
+<dl><dt><strong>mage_can_use</strong></dt>
+</dl>
+<dl><dt><strong>mana_points_recovered</strong></dt>
+</dl>
+<dl><dt><strong>priest_can_use</strong></dt>
+</dl>
+<dl><dt><strong>thief_can_use</strong></dt>
+</dl>
+<dl><dt><strong>title</strong></dt>
+</dl>
+<dl><dt><strong>value</strong></dt>
+</dl>
+<dl><dt><strong>warrior_can_use</strong></dt>
+</dl>
+<dl><dt><strong>weight</strong></dt>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><a name="Wand-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>Test&nbsp;two&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;objects&nbsp;or&nbsp;objects&nbsp;that&nbsp;subclass&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;for<br>
+equality.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<dl><dt><strong>inventory_list_value_re</strong> = re.compile('^\\[(\n                             ...                        x\n         , re.VERBOSE)</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Weapon">class <strong>Weapon</strong></a>(<a href="advgame.elements.items.html#EquippableItem">EquippableItem</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Weapon">Weapon</a>(**argd)<br>
+&nbsp;<br>
+A&nbsp;weapon,&nbsp;which&nbsp;can&nbsp;be&nbsp;equipped,&nbsp;and&nbsp;wielded&nbsp;to&nbsp;do&nbsp;damage.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.elements.items.html#Weapon">Weapon</a></dd>
+<dd><a href="advgame.elements.items.html#EquippableItem">EquippableItem</a></dd>
+<dd><a href="advgame.elements.items.html#Item">Item</a></dd>
+<dd><a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.items.html#EquippableItem">EquippableItem</a>:<br>
+<dl><dt><a name="Weapon-usable_by"><strong>usable_by</strong></a>(self, character_class)</dt><dd><tt>An&nbsp;item&nbsp;equippable&nbsp;by&nbsp;some&nbsp;classes&nbsp;and&nbsp;not&nbsp;by&nbsp;others,&nbsp;based&nbsp;on&nbsp;the<br>
+'warrior_can_use',&nbsp;'thief_can_use',&nbsp;'mage_can_use',&nbsp;or&nbsp;'priest_can_use'<br>
+attributes.<br>
+&nbsp;<br>
+:character_class:&nbsp;Either&nbsp;'Warrior',&nbsp;'Thief',&nbsp;'Mage',&nbsp;or&nbsp;'Priest'.<br>
+:return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><a name="Weapon-__init__"><strong>__init__</strong></a>(self, **argd)</dt><dd><tt>Instance&nbsp;the&nbsp;item&nbsp;for&nbsp;arbitrary&nbsp;key-value&nbsp;pairs.</tt></dd></dl>
+
+<hr>
+Class methods inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><a name="Weapon-subclassing_factory"><strong>subclassing_factory</strong></a>(**item_dict)<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>Instance&nbsp;an&nbsp;arbitrary&nbsp;subclass&nbsp;from&nbsp;arguments&nbsp;based&nbsp;on&nbsp;the&nbsp;value&nbsp;of&nbsp;the<br>
+item_type&nbsp;key.<br>
+&nbsp;<br>
+:**item_dict:&nbsp;A&nbsp;dictionary&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Item">Item</a><br>
+subclass&nbsp;object&nbsp;with.<br>
+:return:&nbsp;An&nbsp;<a href="#Item">Item</a>&nbsp;subclass&nbsp;object.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.items.html#Item">Item</a>:<br>
+<dl><dt><strong>armor_bonus</strong></dt>
+</dl>
+<dl><dt><strong>attack_bonus</strong></dt>
+</dl>
+<dl><dt><strong>damage</strong></dt>
+</dl>
+<dl><dt><strong>description</strong></dt>
+</dl>
+<dl><dt><strong>hit_points_recovered</strong></dt>
+</dl>
+<dl><dt><strong>internal_name</strong></dt>
+</dl>
+<dl><dt><strong>item_type</strong></dt>
+</dl>
+<dl><dt><strong>mage_can_use</strong></dt>
+</dl>
+<dl><dt><strong>mana_points_recovered</strong></dt>
+</dl>
+<dl><dt><strong>priest_can_use</strong></dt>
+</dl>
+<dl><dt><strong>thief_can_use</strong></dt>
+</dl>
+<dl><dt><strong>title</strong></dt>
+</dl>
+<dl><dt><strong>value</strong></dt>
+</dl>
+<dl><dt><strong>warrior_can_use</strong></dt>
+</dl>
+<dl><dt><strong>weight</strong></dt>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><a name="Weapon-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>Test&nbsp;two&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;objects&nbsp;or&nbsp;objects&nbsp;that&nbsp;subclass&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;for<br>
+equality.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<dl><dt><strong>inventory_list_value_re</strong> = re.compile('^\\[(\n                             ...                        x\n         , re.VERBOSE)</dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ('Item', 'EquippableItem', 'Oddment', 'Key', 'Potion', 'Coin', 'Wand', 'Weapon', 'Shield', 'Armor')</td></tr></table>
+</body></html>

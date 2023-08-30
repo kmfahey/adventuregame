@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module advgame.commands.begin</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="advgame.html"><font color="#ffffff">advgame</font></a>.<a href="advgame.commands.html"><font color="#ffffff">commands</font></a>.begin</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/adventuregame/advgame/commands/begin.py">/home/kmfahey/Workspace/adventuregame/advgame/commands/begin.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-begin_game_command"><strong>begin_game_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;BEGIN&nbsp;GAME&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple<br>
+even&nbsp;when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;Returns&nbsp;one&nbsp;or&nbsp;more&nbsp;GameStateMessage<br>
+subclass&nbsp;instances.&nbsp;Takes&nbsp;no&nbsp;arguments.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;any&nbsp;arguments&nbsp;are&nbsp;given,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;command&nbsp;is&nbsp;used&nbsp;before&nbsp;the&nbsp;character's&nbsp;name&nbsp;and&nbsp;class&nbsp;have&nbsp;been<br>
+set,&nbsp;returns&nbsp;a&nbsp;NameOrClassNotSetGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;returns&nbsp;a&nbsp;GameBeginsGSM&nbsp;object,&nbsp;one&nbsp;or&nbsp;more&nbsp;ItemEquippedGSM<br>
+objects,&nbsp;and&nbsp;a&nbsp;EnteredRoomGSM&nbsp;object.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ('begin_game_command',)</td></tr></table>
+</body></html>

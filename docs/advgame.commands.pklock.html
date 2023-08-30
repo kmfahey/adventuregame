@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module advgame.commands.pklock</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="advgame.html"><font color="#ffffff">advgame</font></a>.<a href="advgame.commands.html"><font color="#ffffff">commands</font></a>.pklock</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/adventuregame/advgame/commands/pklock.py">/home/kmfahey/Workspace/adventuregame/advgame/commands/pklock.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-pick_lock_command"><strong>pick_lock_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;PICK&nbsp;LOCK&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple<br>
+even&nbsp;when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;PICK&nbsp;LOCK&nbsp;command&nbsp;has&nbsp;the&nbsp;following<br>
+usage:<br>
+&nbsp;<br>
+PICK&nbsp;LOCK&nbsp;ON&nbsp;[THE]&nbsp;&lt;chest&nbsp;name&gt;<br>
+PICK&nbsp;LOCK&nbsp;ON&nbsp;[THE]&nbsp;&lt;door&nbsp;name&gt;<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;player&nbsp;tries&nbsp;to&nbsp;use&nbsp;this&nbsp;command&nbsp;while&nbsp;playing&nbsp;a&nbsp;Warrior,&nbsp;Mage<br>
+or&nbsp;Priest,&nbsp;returns&nbsp;a&nbsp;ClassRestrictedGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;arguments&nbsp;specify&nbsp;a&nbsp;door,&nbsp;and&nbsp;that&nbsp;door&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the<br>
+current&nbsp;room,&nbsp;returns&nbsp;a&nbsp;DoorNotPresentGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;arguments&nbsp;specify&nbsp;a&nbsp;door,&nbsp;and&nbsp;more&nbsp;than&nbsp;one&nbsp;door&nbsp;matches&nbsp;that<br>
+specification,&nbsp;returns&nbsp;a&nbsp;AmbiguousDoorSpecifierGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;arguments&nbsp;specify&nbsp;a&nbsp;doorway,&nbsp;creature,&nbsp;item,&nbsp;or&nbsp;corpse,&nbsp;returns<br>
+a&nbsp;ElementNotLockpickableGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;arguments&nbsp;specify&nbsp;a&nbsp;chest&nbsp;that&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;current<br>
+room,&nbsp;returns&nbsp;a&nbsp;TargetNotFoundGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;arguments&nbsp;specify&nbsp;a&nbsp;door&nbsp;or&nbsp;chest&nbsp;is&nbsp;that&nbsp;is&nbsp;already&nbsp;unlocked,<br>
+returns&nbsp;a&nbsp;TargetNotLockedGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;the&nbsp;specified&nbsp;door&nbsp;or&nbsp;chest&nbsp;has&nbsp;its&nbsp;is_locked&nbsp;attribute&nbsp;set<br>
+to&nbsp;False,&nbsp;and&nbsp;a&nbsp;TargetHasBeenUnlockedGSM&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ('pick_lock_command',)</td></tr></table>
+</body></html>

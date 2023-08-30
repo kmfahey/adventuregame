@@ -2,8 +2,8 @@
 
 from collections import defaultdict
 
-from .basics import IniEntry
-from ..errors import InternalError
+from advgame.elements.basics import IniEntry
+from advgame.errors import InternalError
 
 
 __all__ = (

@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module advgame.commands.equip</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="advgame.html"><font color="#ffffff">advgame</font></a>.<a href="advgame.commands.html"><font color="#ffffff">commands</font></a>.equip</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/adventuregame/advgame/commands/equip.py">/home/kmfahey/Workspace/adventuregame/advgame/commands/equip.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-equip_command"><strong>equip_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;EQUIP&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;EQUIP&nbsp;command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
+&nbsp;<br>
+EQUIP&nbsp;&lt;armor&nbsp;name&gt;<br>
+EQUIP&nbsp;&lt;shield&nbsp;name&gt;<br>
+EQUIP&nbsp;&lt;wand&nbsp;name&gt;<br>
+EQUIP&nbsp;&lt;weapon&nbsp;name&gt;<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;item&nbsp;isn't&nbsp;in&nbsp;inventory,&nbsp;returns&nbsp;a&nbsp;NoSuchItemInInventoryGSM<br>
+object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;item&nbsp;can't&nbsp;be&nbsp;used&nbsp;by&nbsp;the&nbsp;character&nbsp;due&nbsp;to&nbsp;their&nbsp;class,&nbsp;returns<br>
+a&nbsp;ClassCantUseItemGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;an&nbsp;item&nbsp;of&nbsp;the&nbsp;same&nbsp;kind&nbsp;is&nbsp;already&nbsp;equipped&nbsp;(for&nbsp;example&nbsp;trying<br>
+to&nbsp;equip&nbsp;a&nbsp;suit&nbsp;of&nbsp;armor&nbsp;when&nbsp;the&nbsp;character&nbsp;is&nbsp;already&nbsp;wearing&nbsp;armor),<br>
+that&nbsp;item&nbsp;is&nbsp;unequipped,&nbsp;the&nbsp;specified&nbsp;item&nbsp;is&nbsp;equipped,&nbsp;and&nbsp;a<br>
+ItemUnequippedGSM&nbsp;object&nbsp;and&nbsp;a&nbsp;ItemEquippedGSM&nbsp;object&nbsp;are&nbsp;returned.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;the&nbsp;item&nbsp;is&nbsp;equipped,&nbsp;and&nbsp;a&nbsp;ItemEquippedGSM&nbsp;object&nbsp;is<br>
+returned.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ('equip_command',)</td></tr></table>
+</body></html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module advgame.commands.drink</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="advgame.html"><font color="#ffffff">advgame</font></a>.<a href="advgame.commands.html"><font color="#ffffff">commands</font></a>.drink</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/adventuregame/advgame/commands/drink.py">/home/kmfahey/Workspace/adventuregame/advgame/commands/drink.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-drink_command"><strong>drink_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;DRINK&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;DRINK&nbsp;command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
+&nbsp;<br>
+DRINK&nbsp;[THE]&nbsp;&lt;potion&nbsp;name&gt;<br>
+DRINK&nbsp;&lt;number&gt;&nbsp;&lt;potion&nbsp;name&gt;[s]<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;potion&nbsp;specified&nbsp;is&nbsp;not&nbsp;in&nbsp;the&nbsp;character's&nbsp;inventory,&nbsp;returns&nbsp;a<br>
+ItemNotInInventoryGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;name&nbsp;matches&nbsp;an&nbsp;undrinkable&nbsp;item,&nbsp;or&nbsp;a&nbsp;door,&nbsp;chest,&nbsp;creature,<br>
+or&nbsp;corpse,&nbsp;returns&nbsp;a&nbsp;ItemNotDrinkableGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;the&nbsp;&lt;number&gt;&nbsp;argument&nbsp;is&nbsp;used,&nbsp;and&nbsp;there's&nbsp;not&nbsp;that&nbsp;many&nbsp;of&nbsp;the<br>
+potion,&nbsp;returns&nbsp;a&nbsp;TriedToDrinkMoreThanPossessedGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;Otherwise,&nbsp;if&nbsp;it's&nbsp;a&nbsp;health&nbsp;potion,&nbsp;then&nbsp;that&nbsp;potion&nbsp;is<br>
+removed&nbsp;from&nbsp;inventory,&nbsp;the&nbsp;character&nbsp;is&nbsp;healed,&nbsp;and&nbsp;returns&nbsp;a<br>
+UnderwentHealingEffectGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;it's&nbsp;a&nbsp;mana&nbsp;potion,&nbsp;and&nbsp;the&nbsp;character&nbsp;is&nbsp;a&nbsp;Warrior&nbsp;or&nbsp;a<br>
+Thief,&nbsp;the&nbsp;potion&nbsp;is&nbsp;removed&nbsp;from&nbsp;inventory,&nbsp;and&nbsp;returns&nbsp;a<br>
+DrankManaPotionWhenNotASpellcasterGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;it's&nbsp;a&nbsp;mana&nbsp;potion,&nbsp;and&nbsp;the&nbsp;character&nbsp;is&nbsp;a&nbsp;Mage&nbsp;or&nbsp;a&nbsp;Priest,&nbsp;then<br>
+the&nbsp;potion&nbsp;is&nbsp;removed&nbsp;from&nbsp;inventory,&nbsp;the&nbsp;character&nbsp;has&nbsp;some&nbsp;mana<br>
+restored,&nbsp;and&nbsp;a&nbsp;DrankManaPotionGSM&nbsp;object&nbsp;is&nbsp;returned.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ('drink_command',)</td></tr></table>
+</body></html>

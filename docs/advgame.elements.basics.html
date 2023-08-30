@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module advgame.elements.basics</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="advgame.html"><font color="#ffffff">advgame</font></a>.<a href="advgame.elements.html"><font color="#ffffff">elements</font></a>.basics</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/adventuregame/advgame/elements/basics.py">/home/kmfahey/Workspace/adventuregame/advgame/elements/basics.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="re.html">re</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="abc.html#ABC">abc.ABC</a>(<a href="builtins.html#object">builtins.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.elements.basics.html#State">State</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.elements.basics.html#IniEntry">IniEntry</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="IniEntry">class <strong>IniEntry</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#IniEntry">IniEntry</a>(**argd)<br>
+&nbsp;<br>
+Parent&nbsp;class&nbsp;for&nbsp;classes&nbsp;like&nbsp;Room,&nbsp;Item,&nbsp;and&nbsp;Door&nbsp;that&nbsp;are&nbsp;instantiated<br>
+from&nbsp;.ini&nbsp;file&nbsp;entries.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="IniEntry-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>Test&nbsp;two&nbsp;<a href="#IniEntry">IniEntry</a>&nbsp;objects&nbsp;or&nbsp;objects&nbsp;that&nbsp;subclass&nbsp;<a href="#IniEntry">IniEntry</a>&nbsp;for<br>
+equality.</tt></dd></dl>
+
+<dl><dt><a name="IniEntry-__init__"><strong>__init__</strong></a>(self, **argd)</dt><dd><tt>Accept&nbsp;arbitrary&nbsp;keyword&nbsp;arguments&nbsp;and&nbsp;parses&nbsp;them&nbsp;from&nbsp;.ini&nbsp;format.<br>
+Casts&nbsp;'true'&nbsp;and&nbsp;'false'&nbsp;to&nbsp;boolean,&nbsp;integer&nbsp;strings&nbsp;to&nbsp;int&nbsp;and&nbsp;float<br>
+strings&nbsp;to&nbsp;float.&nbsp;Assigns&nbsp;all&nbsp;entries&nbsp;in&nbsp;**argd&nbsp;to&nbsp;<a href="builtins.html#object">object</a>&nbsp;attributes.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<dl><dt><strong>inventory_list_value_re</strong> = re.compile('^\\[(\n                             ...                        x\n         , re.VERBOSE)</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="State">class <strong>State</strong></a>(<a href="abc.html#ABC">abc.ABC</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>A&nbsp;generic&nbsp;key-value&nbsp;container&nbsp;<a href="builtins.html#object">object</a>&nbsp;that&nbsp;maintains&nbsp;an&nbsp;internal<br>
+dictionary&nbsp;and&nbsp;provides&nbsp;access&nbsp;to&nbsp;it&nbsp;by&nbsp;method.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.elements.basics.html#State">State</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="State-contains"><strong>contains</strong></a>(self, item_internal_name)</dt><dd><tt>Test&nbsp;whether&nbsp;an&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;specified&nbsp;internal&nbsp;name&nbsp;is&nbsp;present<br>
+in&nbsp;the&nbsp;private&nbsp;dictionary.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
+
+<dl><dt><a name="State-delete"><strong>delete</strong></a>(self, item_internal_name)</dt><dd><tt>Delete&nbsp;the&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;from&nbsp;the&nbsp;internal&nbsp;dictionary&nbsp;referred&nbsp;to&nbsp;by&nbsp;the<br>
+given&nbsp;internal&nbsp;name.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:returns:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="State-get"><strong>get</strong></a>(self, item_internal_name)</dt><dd><tt>Returns&nbsp;the&nbsp;item&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;if&nbsp;present,<br>
+otherwise&nbsp;raise&nbsp;a&nbsp;KeyError.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;An&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+
+<dl><dt><a name="State-items"><strong>items</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;items&nbsp;iterator.</tt></dd></dl>
+
+<dl><dt><a name="State-keys"><strong>keys</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;keys&nbsp;iterator.</tt></dd></dl>
+
+<dl><dt><a name="State-set"><strong>set</strong></a>(self, item_internal_name, item)</dt><dd><tt>Add&nbsp;an&nbsp;item&nbsp;to&nbsp;the&nbsp;internal&nbsp;dictionary&nbsp;using&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;as<br>
+a&nbsp;key.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to<br>
+use&nbsp;as&nbsp;a&nbsp;key.<br>
+:item:&nbsp;The&nbsp;Item&nbsp;subclass&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;be&nbsp;set.</tt></dd></dl>
+
+<dl><dt><a name="State-size"><strong>size</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;length&nbsp;of&nbsp;the&nbsp;internal&nbsp;dictionary.</tt></dd></dl>
+
+<dl><dt><a name="State-values"><strong>values</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;values&nbsp;iterator.</tt></dd></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ('IniEntry', 'State')</td></tr></table>
+</body></html>

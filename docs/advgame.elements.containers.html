@@ -1,0 +1,1025 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module advgame.elements.containers</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="advgame.html"><font color="#ffffff">advgame</font></a>.<a href="advgame.elements.html"><font color="#ffffff">elements</font></a>.containers</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/adventuregame/advgame/elements/containers.py">/home/kmfahey/Workspace/adventuregame/advgame/elements/containers.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>(<a href="builtins.html#object">builtins.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.elements.containers.html#Container">Container</a>(<a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>, <a href="advgame.elements.characters.html#ItemsMultiState">advgame.elements.characters.ItemsMultiState</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.elements.containers.html#Chest">Chest</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.elements.containers.html#Corpse">Corpse</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="advgame.elements.containers.html#Creature">Creature</a>(<a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>, <a href="advgame.elements.characters.html#Character">advgame.elements.characters.Character</a>)
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="advgame.elements.basics.html#State">advgame.elements.basics.State</a>(<a href="abc.html#ABC">abc.ABC</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.elements.containers.html#CreaturesState">CreaturesState</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="advgame.elements.characters.html#Character">advgame.elements.characters.Character</a>(<a href="builtins.html#object">builtins.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.elements.containers.html#Creature">Creature</a>(<a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>, <a href="advgame.elements.characters.html#Character">advgame.elements.characters.Character</a>)
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="advgame.elements.characters.html#ItemsMultiState">advgame.elements.characters.ItemsMultiState</a>(<a href="advgame.elements.characters.html#ItemsState">advgame.elements.characters.ItemsState</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.elements.containers.html#Container">Container</a>(<a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>, <a href="advgame.elements.characters.html#ItemsMultiState">advgame.elements.characters.ItemsMultiState</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.elements.containers.html#Chest">Chest</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.elements.containers.html#Corpse">Corpse</a>
+</font></dt></dl>
+</dd>
+</dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="advgame.elements.characters.html#ItemsState">advgame.elements.characters.ItemsState</a>(<a href="advgame.elements.basics.html#State">advgame.elements.basics.State</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.elements.containers.html#ContainersState">ContainersState</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Chest">class <strong>Chest</strong></a>(<a href="advgame.elements.containers.html#Container">Container</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Chest">Chest</a>(items_state,&nbsp;internal_name,&nbsp;**ini_constr_argd)<br>
+&nbsp;<br>
+This&nbsp;<a href="#Container">Container</a>&nbsp;subclass&nbsp;is&nbsp;used&nbsp;to&nbsp;represent&nbsp;containers&nbsp;which&nbsp;are<br>
+chests.&nbsp;It&nbsp;offers&nbsp;no&nbsp;functionality,&nbsp;but&nbsp;is&nbsp;useful&nbsp;for&nbsp;detecting&nbsp;chest<br>
+objects&nbsp;by&nbsp;type&nbsp;testing.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.elements.containers.html#Chest">Chest</a></dd>
+<dd><a href="advgame.elements.containers.html#Container">Container</a></dd>
+<dd><a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a></dd>
+<dd><a href="advgame.elements.characters.html#ItemsMultiState">advgame.elements.characters.ItemsMultiState</a></dd>
+<dd><a href="advgame.elements.characters.html#ItemsState">advgame.elements.characters.ItemsState</a></dd>
+<dd><a href="advgame.elements.basics.html#State">advgame.elements.basics.State</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Methods inherited from <a href="advgame.elements.containers.html#Container">Container</a>:<br>
+<dl><dt><a name="Chest-__init__"><strong>__init__</strong></a>(self, items_state, internal_name, **ini_constr_argd)</dt><dd><tt>This&nbsp;__init__&nbsp;method&nbsp;calls&nbsp;both&nbsp;parent&nbsp;class's&nbsp;__init__&nbsp;methods&nbsp;in<br>
+sequence.&nbsp;It&nbsp;draws&nbsp;on&nbsp;the&nbsp;contents&nbsp;attribute&nbsp;of&nbsp;the&nbsp;source&nbsp;ini&nbsp;data,<br>
+which&nbsp;is&nbsp;in&nbsp;the&nbsp;\[\d+x[A-Z][A-Za-z_]+(,\d+x[A-Z][A-Za-z_]+)*\]&nbsp;format,<br>
+and&nbsp;unpacks&nbsp;it.&nbsp;An&nbsp;items_state&nbsp;object&nbsp;is&nbsp;a&nbsp;required&nbsp;argument&nbsp;so&nbsp;that<br>
+it&nbsp;can&nbsp;be&nbsp;used&nbsp;to&nbsp;look&nbsp;up&nbsp;Item&nbsp;subclass&nbsp;objects'&nbsp;internal&nbsp;names&nbsp;and<br>
+populate&nbsp;the&nbsp;container.<br>
+&nbsp;<br>
+:items_state:&nbsp;An&nbsp;Item_State&nbsp;object.<br>
+:internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;container.<br>
+:*item_objs:&nbsp;A&nbsp;tuple&nbsp;of&nbsp;the&nbsp;Item&nbsp;objects&nbsp;contained&nbsp;by&nbsp;the&nbsp;container.<br>
+:**ini_constr_argd:&nbsp;The&nbsp;key-value&nbsp;pairs&nbsp;from&nbsp;containers.ini&nbsp;to<br>
+instantiate&nbsp;the&nbsp;<a href="#Container">Container</a>&nbsp;object&nbsp;with.</tt></dd></dl>
+
+<hr>
+Class methods inherited from <a href="advgame.elements.containers.html#Container">Container</a>:<br>
+<dl><dt><a name="Chest-subclassing_factory"><strong>subclassing_factory</strong></a>(items_state, **container_dict)<font color="#909090"><font face="helvetica, arial"> from <a href="abc.html#ABCMeta">abc.ABCMeta</a></font></font></dt><dd><tt>This&nbsp;factory&nbsp;accepts&nbsp;an&nbsp;items_state&nbsp;object&nbsp;and&nbsp;a&nbsp;**dict-of-dicts&nbsp;as<br>
+featured&nbsp;in&nbsp;an&nbsp;IniConfig&nbsp;object's&nbsp;section&nbsp;attribute,&nbsp;and&nbsp;determines<br>
+which&nbsp;<a href="#Container">Container</a>&nbsp;subclass&nbsp;is&nbsp;appropriate&nbsp;to&nbsp;instantiate&nbsp;from&nbsp;the&nbsp;data.<br>
+&nbsp;<br>
+:items_state:&nbsp;An&nbsp;<a href="advgame.elements.characters.html#ItemsState">ItemsState</a>&nbsp;object.<br>
+:**container_dict:&nbsp;A&nbsp;dict&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the<br>
+<a href="#Container">Container</a>&nbsp;subclass&nbsp;with.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.containers.html#Container">Container</a>:<br>
+<dl><dt><strong>container_type</strong></dt>
+</dl>
+<dl><dt><strong>description</strong></dt>
+</dl>
+<dl><dt><strong>internal_name</strong></dt>
+</dl>
+<dl><dt><strong>is_closed</strong></dt>
+</dl>
+<dl><dt><strong>is_locked</strong></dt>
+</dl>
+<dl><dt><strong>title</strong></dt>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><a name="Chest-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>Test&nbsp;two&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;objects&nbsp;or&nbsp;objects&nbsp;that&nbsp;subclass&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;for<br>
+equality.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<dl><dt><strong>inventory_list_value_re</strong> = re.compile('^\\[(\n                             ...                        x\n         , re.VERBOSE)</dl>
+
+<hr>
+Methods inherited from <a href="advgame.elements.characters.html#ItemsMultiState">advgame.elements.characters.ItemsMultiState</a>:<br>
+<dl><dt><a name="Chest-add_one"><strong>add_one</strong></a>(self, item_internal_name, item)</dt><dd><tt>This&nbsp;method&nbsp;increases&nbsp;the&nbsp;quantity&nbsp;stored&nbsp;for&nbsp;the&nbsp;given&nbsp;Item&nbsp;subclass<br>
+object&nbsp;by&nbsp;1,&nbsp;if&nbsp;it's&nbsp;present.&nbsp;Otherwise,&nbsp;the&nbsp;Item&nbsp;is&nbsp;stored&nbsp;under&nbsp;the<br>
+given&nbsp;internal&nbsp;name&nbsp;with&nbsp;a&nbsp;quantity&nbsp;of&nbsp;1.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:item:&nbsp;The&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Chest-contains"><strong>contains</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;tests&nbsp;whether&nbsp;an&nbsp;item&nbsp;object&nbsp;with&nbsp;the&nbsp;specified&nbsp;internal<br>
+name&nbsp;is&nbsp;present&nbsp;in&nbsp;the&nbsp;private&nbsp;dictionary.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
+
+<dl><dt><a name="Chest-remove_one"><strong>remove_one</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;decreases&nbsp;the&nbsp;quantity&nbsp;stored&nbsp;for&nbsp;the&nbsp;given&nbsp;Item&nbsp;subclass<br>
+object&nbsp;by&nbsp;1,&nbsp;if&nbsp;it's&nbsp;present.&nbsp;If&nbsp;it's&nbsp;not&nbsp;present,&nbsp;a&nbsp;KeyError&nbsp;is&nbsp;raised.<br>
+If&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object's&nbsp;stored&nbsp;quantity&nbsp;was&nbsp;1,&nbsp;the&nbsp;object&nbsp;is<br>
+deleted&nbsp;from&nbsp;the&nbsp;internal&nbsp;dictionary.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Chest-set"><strong>set</strong></a>(self, item_internal_name, item_qty, item)</dt><dd><tt>If&nbsp;an&nbsp;object&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;is&nbsp;present&nbsp;in&nbsp;the&nbsp;internal<br>
+dict,&nbsp;this&nbsp;accessor&nbsp;method&nbsp;returns&nbsp;a&nbsp;2-tuple&nbsp;comprising&nbsp;an&nbsp;int&nbsp;of&nbsp;the<br>
+item's&nbsp;quantity&nbsp;and&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object;&nbsp;otherwise&nbsp;the&nbsp;internal<br>
+dict&nbsp;raises&nbsp;a&nbsp;KeyError.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:item_qty:&nbsp;An&nbsp;int&nbsp;value&nbsp;of&nbsp;the&nbsp;item&nbsp;quantity.<br>
+:item:&nbsp;The&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="advgame.elements.basics.html#State">advgame.elements.basics.State</a>:<br>
+<dl><dt><a name="Chest-delete"><strong>delete</strong></a>(self, item_internal_name)</dt><dd><tt>Delete&nbsp;the&nbsp;item&nbsp;object&nbsp;from&nbsp;the&nbsp;internal&nbsp;dictionary&nbsp;referred&nbsp;to&nbsp;by&nbsp;the<br>
+given&nbsp;internal&nbsp;name.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:returns:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Chest-get"><strong>get</strong></a>(self, item_internal_name)</dt><dd><tt>Returns&nbsp;the&nbsp;item&nbsp;object&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;if&nbsp;present,<br>
+otherwise&nbsp;raise&nbsp;a&nbsp;KeyError.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:return:&nbsp;An&nbsp;Item&nbsp;subclass&nbsp;object.</tt></dd></dl>
+
+<dl><dt><a name="Chest-items"><strong>items</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;items&nbsp;iterator.</tt></dd></dl>
+
+<dl><dt><a name="Chest-keys"><strong>keys</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;keys&nbsp;iterator.</tt></dd></dl>
+
+<dl><dt><a name="Chest-size"><strong>size</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;length&nbsp;of&nbsp;the&nbsp;internal&nbsp;dictionary.</tt></dd></dl>
+
+<dl><dt><a name="Chest-values"><strong>values</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;values&nbsp;iterator.</tt></dd></dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Container">class <strong>Container</strong></a>(<a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>, <a href="advgame.elements.characters.html#ItemsMultiState">advgame.elements.characters.ItemsMultiState</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Container">Container</a>(items_state,&nbsp;internal_name,&nbsp;**ini_constr_argd)<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;uses&nbsp;multiple&nbsp;inheritance&nbsp;to&nbsp;inherit&nbsp;from&nbsp;both&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;and<br>
+<a href="advgame.elements.characters.html#ItemsMultiState">ItemsMultiState</a>:&nbsp;it&nbsp;is&nbsp;an&nbsp;object&nbsp;that's&nbsp;instantiated&nbsp;from&nbsp;an&nbsp;entry&nbsp;in<br>
+items.ini,&nbsp;but&nbsp;also&nbsp;can&nbsp;contain&nbsp;Item&nbsp;subclass&nbsp;objects.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.elements.containers.html#Container">Container</a></dd>
+<dd><a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a></dd>
+<dd><a href="advgame.elements.characters.html#ItemsMultiState">advgame.elements.characters.ItemsMultiState</a></dd>
+<dd><a href="advgame.elements.characters.html#ItemsState">advgame.elements.characters.ItemsState</a></dd>
+<dd><a href="advgame.elements.basics.html#State">advgame.elements.basics.State</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Container-__init__"><strong>__init__</strong></a>(self, items_state, internal_name, **ini_constr_argd)</dt><dd><tt>This&nbsp;__init__&nbsp;method&nbsp;calls&nbsp;both&nbsp;parent&nbsp;class's&nbsp;__init__&nbsp;methods&nbsp;in<br>
+sequence.&nbsp;It&nbsp;draws&nbsp;on&nbsp;the&nbsp;contents&nbsp;attribute&nbsp;of&nbsp;the&nbsp;source&nbsp;ini&nbsp;data,<br>
+which&nbsp;is&nbsp;in&nbsp;the&nbsp;\[\d+x[A-Z][A-Za-z_]+(,\d+x[A-Z][A-Za-z_]+)*\]&nbsp;format,<br>
+and&nbsp;unpacks&nbsp;it.&nbsp;An&nbsp;items_state&nbsp;object&nbsp;is&nbsp;a&nbsp;required&nbsp;argument&nbsp;so&nbsp;that<br>
+it&nbsp;can&nbsp;be&nbsp;used&nbsp;to&nbsp;look&nbsp;up&nbsp;Item&nbsp;subclass&nbsp;objects'&nbsp;internal&nbsp;names&nbsp;and<br>
+populate&nbsp;the&nbsp;container.<br>
+&nbsp;<br>
+:items_state:&nbsp;An&nbsp;Item_State&nbsp;object.<br>
+:internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;container.<br>
+:*item_objs:&nbsp;A&nbsp;tuple&nbsp;of&nbsp;the&nbsp;Item&nbsp;objects&nbsp;contained&nbsp;by&nbsp;the&nbsp;container.<br>
+:**ini_constr_argd:&nbsp;The&nbsp;key-value&nbsp;pairs&nbsp;from&nbsp;containers.ini&nbsp;to<br>
+instantiate&nbsp;the&nbsp;<a href="#Container">Container</a>&nbsp;object&nbsp;with.</tt></dd></dl>
+
+<hr>
+Class methods defined here:<br>
+<dl><dt><a name="Container-subclassing_factory"><strong>subclassing_factory</strong></a>(items_state, **container_dict)<font color="#909090"><font face="helvetica, arial"> from <a href="abc.html#ABCMeta">abc.ABCMeta</a></font></font></dt><dd><tt>This&nbsp;factory&nbsp;accepts&nbsp;an&nbsp;items_state&nbsp;object&nbsp;and&nbsp;a&nbsp;**dict-of-dicts&nbsp;as<br>
+featured&nbsp;in&nbsp;an&nbsp;IniConfig&nbsp;object's&nbsp;section&nbsp;attribute,&nbsp;and&nbsp;determines<br>
+which&nbsp;<a href="#Container">Container</a>&nbsp;subclass&nbsp;is&nbsp;appropriate&nbsp;to&nbsp;instantiate&nbsp;from&nbsp;the&nbsp;data.<br>
+&nbsp;<br>
+:items_state:&nbsp;An&nbsp;<a href="advgame.elements.characters.html#ItemsState">ItemsState</a>&nbsp;object.<br>
+:**container_dict:&nbsp;A&nbsp;dict&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the<br>
+<a href="#Container">Container</a>&nbsp;subclass&nbsp;with.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>container_type</strong></dt>
+</dl>
+<dl><dt><strong>description</strong></dt>
+</dl>
+<dl><dt><strong>internal_name</strong></dt>
+</dl>
+<dl><dt><strong>is_closed</strong></dt>
+</dl>
+<dl><dt><strong>is_locked</strong></dt>
+</dl>
+<dl><dt><strong>title</strong></dt>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Methods inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><a name="Container-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>Test&nbsp;two&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;objects&nbsp;or&nbsp;objects&nbsp;that&nbsp;subclass&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;for<br>
+equality.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<dl><dt><strong>inventory_list_value_re</strong> = re.compile('^\\[(\n                             ...                        x\n         , re.VERBOSE)</dl>
+
+<hr>
+Methods inherited from <a href="advgame.elements.characters.html#ItemsMultiState">advgame.elements.characters.ItemsMultiState</a>:<br>
+<dl><dt><a name="Container-add_one"><strong>add_one</strong></a>(self, item_internal_name, item)</dt><dd><tt>This&nbsp;method&nbsp;increases&nbsp;the&nbsp;quantity&nbsp;stored&nbsp;for&nbsp;the&nbsp;given&nbsp;Item&nbsp;subclass<br>
+object&nbsp;by&nbsp;1,&nbsp;if&nbsp;it's&nbsp;present.&nbsp;Otherwise,&nbsp;the&nbsp;Item&nbsp;is&nbsp;stored&nbsp;under&nbsp;the<br>
+given&nbsp;internal&nbsp;name&nbsp;with&nbsp;a&nbsp;quantity&nbsp;of&nbsp;1.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:item:&nbsp;The&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Container-contains"><strong>contains</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;tests&nbsp;whether&nbsp;an&nbsp;item&nbsp;object&nbsp;with&nbsp;the&nbsp;specified&nbsp;internal<br>
+name&nbsp;is&nbsp;present&nbsp;in&nbsp;the&nbsp;private&nbsp;dictionary.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
+
+<dl><dt><a name="Container-remove_one"><strong>remove_one</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;decreases&nbsp;the&nbsp;quantity&nbsp;stored&nbsp;for&nbsp;the&nbsp;given&nbsp;Item&nbsp;subclass<br>
+object&nbsp;by&nbsp;1,&nbsp;if&nbsp;it's&nbsp;present.&nbsp;If&nbsp;it's&nbsp;not&nbsp;present,&nbsp;a&nbsp;KeyError&nbsp;is&nbsp;raised.<br>
+If&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object's&nbsp;stored&nbsp;quantity&nbsp;was&nbsp;1,&nbsp;the&nbsp;object&nbsp;is<br>
+deleted&nbsp;from&nbsp;the&nbsp;internal&nbsp;dictionary.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Container-set"><strong>set</strong></a>(self, item_internal_name, item_qty, item)</dt><dd><tt>If&nbsp;an&nbsp;object&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;is&nbsp;present&nbsp;in&nbsp;the&nbsp;internal<br>
+dict,&nbsp;this&nbsp;accessor&nbsp;method&nbsp;returns&nbsp;a&nbsp;2-tuple&nbsp;comprising&nbsp;an&nbsp;int&nbsp;of&nbsp;the<br>
+item's&nbsp;quantity&nbsp;and&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object;&nbsp;otherwise&nbsp;the&nbsp;internal<br>
+dict&nbsp;raises&nbsp;a&nbsp;KeyError.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:item_qty:&nbsp;An&nbsp;int&nbsp;value&nbsp;of&nbsp;the&nbsp;item&nbsp;quantity.<br>
+:item:&nbsp;The&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="advgame.elements.basics.html#State">advgame.elements.basics.State</a>:<br>
+<dl><dt><a name="Container-delete"><strong>delete</strong></a>(self, item_internal_name)</dt><dd><tt>Delete&nbsp;the&nbsp;item&nbsp;object&nbsp;from&nbsp;the&nbsp;internal&nbsp;dictionary&nbsp;referred&nbsp;to&nbsp;by&nbsp;the<br>
+given&nbsp;internal&nbsp;name.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:returns:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Container-get"><strong>get</strong></a>(self, item_internal_name)</dt><dd><tt>Returns&nbsp;the&nbsp;item&nbsp;object&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;if&nbsp;present,<br>
+otherwise&nbsp;raise&nbsp;a&nbsp;KeyError.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:return:&nbsp;An&nbsp;Item&nbsp;subclass&nbsp;object.</tt></dd></dl>
+
+<dl><dt><a name="Container-items"><strong>items</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;items&nbsp;iterator.</tt></dd></dl>
+
+<dl><dt><a name="Container-keys"><strong>keys</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;keys&nbsp;iterator.</tt></dd></dl>
+
+<dl><dt><a name="Container-size"><strong>size</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;length&nbsp;of&nbsp;the&nbsp;internal&nbsp;dictionary.</tt></dd></dl>
+
+<dl><dt><a name="Container-values"><strong>values</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;values&nbsp;iterator.</tt></dd></dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ContainersState">class <strong>ContainersState</strong></a>(<a href="advgame.elements.characters.html#ItemsState">advgame.elements.characters.ItemsState</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#ContainersState">ContainersState</a>(items_state,&nbsp;**dict_of_dicts)<br>
+&nbsp;<br>
+This&nbsp;<a href="advgame.elements.characters.html#ItemsState">ItemsState</a>&nbsp;subclass&nbsp;is&nbsp;instantiated&nbsp;from&nbsp;the&nbsp;sections&nbsp;attribute&nbsp;of<br>
+an&nbsp;IniConfig&nbsp;object&nbsp;instantiated&nbsp;from&nbsp;containers.ini.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.elements.containers.html#ContainersState">ContainersState</a></dd>
+<dd><a href="advgame.elements.characters.html#ItemsState">advgame.elements.characters.ItemsState</a></dd>
+<dd><a href="advgame.elements.basics.html#State">advgame.elements.basics.State</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="ContainersState-__init__"><strong>__init__</strong></a>(self, items_state, **dict_of_dicts)</dt><dd><tt>This&nbsp;__init__&nbsp;method&nbsp;accepts&nbsp;an&nbsp;items_state&nbsp;object&nbsp;and&nbsp;a<br>
+**dict-of-dicts,&nbsp;which&nbsp;it&nbsp;iterates&nbsp;down&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Container">Container</a><br>
+subclass&nbsp;objects&nbsp;that&nbsp;the&nbsp;container&nbsp;is&nbsp;populated&nbsp;with.<br>
+&nbsp;<br>
+:items_state:&nbsp;An&nbsp;<a href="advgame.elements.characters.html#ItemsState">ItemsState</a>&nbsp;object.<br>
+:**dict_of_dicts:&nbsp;A&nbsp;structure&nbsp;of&nbsp;internal&nbsp;name&nbsp;keys&nbsp;corresponding&nbsp;to<br>
+dict&nbsp;values&nbsp;which&nbsp;are&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;initialize&nbsp;an&nbsp;individual<br>
+<a href="#Container">Container</a>&nbsp;subclass&nbsp;object&nbsp;with.</tt></dd></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.characters.html#ItemsState">advgame.elements.characters.ItemsState</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.basics.html#State">advgame.elements.basics.State</a>:<br>
+<dl><dt><a name="ContainersState-contains"><strong>contains</strong></a>(self, item_internal_name)</dt><dd><tt>Test&nbsp;whether&nbsp;an&nbsp;item&nbsp;object&nbsp;with&nbsp;the&nbsp;specified&nbsp;internal&nbsp;name&nbsp;is&nbsp;present<br>
+in&nbsp;the&nbsp;private&nbsp;dictionary.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
+
+<dl><dt><a name="ContainersState-delete"><strong>delete</strong></a>(self, item_internal_name)</dt><dd><tt>Delete&nbsp;the&nbsp;item&nbsp;object&nbsp;from&nbsp;the&nbsp;internal&nbsp;dictionary&nbsp;referred&nbsp;to&nbsp;by&nbsp;the<br>
+given&nbsp;internal&nbsp;name.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:returns:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="ContainersState-get"><strong>get</strong></a>(self, item_internal_name)</dt><dd><tt>Returns&nbsp;the&nbsp;item&nbsp;object&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;if&nbsp;present,<br>
+otherwise&nbsp;raise&nbsp;a&nbsp;KeyError.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:return:&nbsp;An&nbsp;Item&nbsp;subclass&nbsp;object.</tt></dd></dl>
+
+<dl><dt><a name="ContainersState-items"><strong>items</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;items&nbsp;iterator.</tt></dd></dl>
+
+<dl><dt><a name="ContainersState-keys"><strong>keys</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;keys&nbsp;iterator.</tt></dd></dl>
+
+<dl><dt><a name="ContainersState-set"><strong>set</strong></a>(self, item_internal_name, item)</dt><dd><tt>Add&nbsp;an&nbsp;item&nbsp;to&nbsp;the&nbsp;internal&nbsp;dictionary&nbsp;using&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;as<br>
+a&nbsp;key.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object&nbsp;to<br>
+use&nbsp;as&nbsp;a&nbsp;key.<br>
+:item:&nbsp;The&nbsp;Item&nbsp;subclass&nbsp;object&nbsp;to&nbsp;be&nbsp;set.</tt></dd></dl>
+
+<dl><dt><a name="ContainersState-size"><strong>size</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;length&nbsp;of&nbsp;the&nbsp;internal&nbsp;dictionary.</tt></dd></dl>
+
+<dl><dt><a name="ContainersState-values"><strong>values</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;values&nbsp;iterator.</tt></dd></dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Corpse">class <strong>Corpse</strong></a>(<a href="advgame.elements.containers.html#Container">Container</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Corpse">Corpse</a>(items_state,&nbsp;internal_name,&nbsp;**ini_constr_argd)<br>
+&nbsp;<br>
+This&nbsp;<a href="#Container">Container</a>&nbsp;subclass&nbsp;is&nbsp;used&nbsp;to&nbsp;represent&nbsp;containers&nbsp;which&nbsp;are<br>
+corpses.&nbsp;It&nbsp;offers&nbsp;no&nbsp;functionality,&nbsp;but&nbsp;is&nbsp;useful&nbsp;for&nbsp;detecting&nbsp;corpse<br>
+objects&nbsp;by&nbsp;type&nbsp;testing.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.elements.containers.html#Corpse">Corpse</a></dd>
+<dd><a href="advgame.elements.containers.html#Container">Container</a></dd>
+<dd><a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a></dd>
+<dd><a href="advgame.elements.characters.html#ItemsMultiState">advgame.elements.characters.ItemsMultiState</a></dd>
+<dd><a href="advgame.elements.characters.html#ItemsState">advgame.elements.characters.ItemsState</a></dd>
+<dd><a href="advgame.elements.basics.html#State">advgame.elements.basics.State</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Methods inherited from <a href="advgame.elements.containers.html#Container">Container</a>:<br>
+<dl><dt><a name="Corpse-__init__"><strong>__init__</strong></a>(self, items_state, internal_name, **ini_constr_argd)</dt><dd><tt>This&nbsp;__init__&nbsp;method&nbsp;calls&nbsp;both&nbsp;parent&nbsp;class's&nbsp;__init__&nbsp;methods&nbsp;in<br>
+sequence.&nbsp;It&nbsp;draws&nbsp;on&nbsp;the&nbsp;contents&nbsp;attribute&nbsp;of&nbsp;the&nbsp;source&nbsp;ini&nbsp;data,<br>
+which&nbsp;is&nbsp;in&nbsp;the&nbsp;\[\d+x[A-Z][A-Za-z_]+(,\d+x[A-Z][A-Za-z_]+)*\]&nbsp;format,<br>
+and&nbsp;unpacks&nbsp;it.&nbsp;An&nbsp;items_state&nbsp;object&nbsp;is&nbsp;a&nbsp;required&nbsp;argument&nbsp;so&nbsp;that<br>
+it&nbsp;can&nbsp;be&nbsp;used&nbsp;to&nbsp;look&nbsp;up&nbsp;Item&nbsp;subclass&nbsp;objects'&nbsp;internal&nbsp;names&nbsp;and<br>
+populate&nbsp;the&nbsp;container.<br>
+&nbsp;<br>
+:items_state:&nbsp;An&nbsp;Item_State&nbsp;object.<br>
+:internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;container.<br>
+:*item_objs:&nbsp;A&nbsp;tuple&nbsp;of&nbsp;the&nbsp;Item&nbsp;objects&nbsp;contained&nbsp;by&nbsp;the&nbsp;container.<br>
+:**ini_constr_argd:&nbsp;The&nbsp;key-value&nbsp;pairs&nbsp;from&nbsp;containers.ini&nbsp;to<br>
+instantiate&nbsp;the&nbsp;<a href="#Container">Container</a>&nbsp;object&nbsp;with.</tt></dd></dl>
+
+<hr>
+Class methods inherited from <a href="advgame.elements.containers.html#Container">Container</a>:<br>
+<dl><dt><a name="Corpse-subclassing_factory"><strong>subclassing_factory</strong></a>(items_state, **container_dict)<font color="#909090"><font face="helvetica, arial"> from <a href="abc.html#ABCMeta">abc.ABCMeta</a></font></font></dt><dd><tt>This&nbsp;factory&nbsp;accepts&nbsp;an&nbsp;items_state&nbsp;object&nbsp;and&nbsp;a&nbsp;**dict-of-dicts&nbsp;as<br>
+featured&nbsp;in&nbsp;an&nbsp;IniConfig&nbsp;object's&nbsp;section&nbsp;attribute,&nbsp;and&nbsp;determines<br>
+which&nbsp;<a href="#Container">Container</a>&nbsp;subclass&nbsp;is&nbsp;appropriate&nbsp;to&nbsp;instantiate&nbsp;from&nbsp;the&nbsp;data.<br>
+&nbsp;<br>
+:items_state:&nbsp;An&nbsp;<a href="advgame.elements.characters.html#ItemsState">ItemsState</a>&nbsp;object.<br>
+:**container_dict:&nbsp;A&nbsp;dict&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the<br>
+<a href="#Container">Container</a>&nbsp;subclass&nbsp;with.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.containers.html#Container">Container</a>:<br>
+<dl><dt><strong>container_type</strong></dt>
+</dl>
+<dl><dt><strong>description</strong></dt>
+</dl>
+<dl><dt><strong>internal_name</strong></dt>
+</dl>
+<dl><dt><strong>is_closed</strong></dt>
+</dl>
+<dl><dt><strong>is_locked</strong></dt>
+</dl>
+<dl><dt><strong>title</strong></dt>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><a name="Corpse-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>Test&nbsp;two&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;objects&nbsp;or&nbsp;objects&nbsp;that&nbsp;subclass&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;for<br>
+equality.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<dl><dt><strong>inventory_list_value_re</strong> = re.compile('^\\[(\n                             ...                        x\n         , re.VERBOSE)</dl>
+
+<hr>
+Methods inherited from <a href="advgame.elements.characters.html#ItemsMultiState">advgame.elements.characters.ItemsMultiState</a>:<br>
+<dl><dt><a name="Corpse-add_one"><strong>add_one</strong></a>(self, item_internal_name, item)</dt><dd><tt>This&nbsp;method&nbsp;increases&nbsp;the&nbsp;quantity&nbsp;stored&nbsp;for&nbsp;the&nbsp;given&nbsp;Item&nbsp;subclass<br>
+object&nbsp;by&nbsp;1,&nbsp;if&nbsp;it's&nbsp;present.&nbsp;Otherwise,&nbsp;the&nbsp;Item&nbsp;is&nbsp;stored&nbsp;under&nbsp;the<br>
+given&nbsp;internal&nbsp;name&nbsp;with&nbsp;a&nbsp;quantity&nbsp;of&nbsp;1.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:item:&nbsp;The&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Corpse-contains"><strong>contains</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;tests&nbsp;whether&nbsp;an&nbsp;item&nbsp;object&nbsp;with&nbsp;the&nbsp;specified&nbsp;internal<br>
+name&nbsp;is&nbsp;present&nbsp;in&nbsp;the&nbsp;private&nbsp;dictionary.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
+
+<dl><dt><a name="Corpse-remove_one"><strong>remove_one</strong></a>(self, item_internal_name)</dt><dd><tt>This&nbsp;method&nbsp;decreases&nbsp;the&nbsp;quantity&nbsp;stored&nbsp;for&nbsp;the&nbsp;given&nbsp;Item&nbsp;subclass<br>
+object&nbsp;by&nbsp;1,&nbsp;if&nbsp;it's&nbsp;present.&nbsp;If&nbsp;it's&nbsp;not&nbsp;present,&nbsp;a&nbsp;KeyError&nbsp;is&nbsp;raised.<br>
+If&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object's&nbsp;stored&nbsp;quantity&nbsp;was&nbsp;1,&nbsp;the&nbsp;object&nbsp;is<br>
+deleted&nbsp;from&nbsp;the&nbsp;internal&nbsp;dictionary.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Corpse-set"><strong>set</strong></a>(self, item_internal_name, item_qty, item)</dt><dd><tt>If&nbsp;an&nbsp;object&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;is&nbsp;present&nbsp;in&nbsp;the&nbsp;internal<br>
+dict,&nbsp;this&nbsp;accessor&nbsp;method&nbsp;returns&nbsp;a&nbsp;2-tuple&nbsp;comprising&nbsp;an&nbsp;int&nbsp;of&nbsp;the<br>
+item's&nbsp;quantity&nbsp;and&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object;&nbsp;otherwise&nbsp;the&nbsp;internal<br>
+dict&nbsp;raises&nbsp;a&nbsp;KeyError.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:item_qty:&nbsp;An&nbsp;int&nbsp;value&nbsp;of&nbsp;the&nbsp;item&nbsp;quantity.<br>
+:item:&nbsp;The&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="advgame.elements.basics.html#State">advgame.elements.basics.State</a>:<br>
+<dl><dt><a name="Corpse-delete"><strong>delete</strong></a>(self, item_internal_name)</dt><dd><tt>Delete&nbsp;the&nbsp;item&nbsp;object&nbsp;from&nbsp;the&nbsp;internal&nbsp;dictionary&nbsp;referred&nbsp;to&nbsp;by&nbsp;the<br>
+given&nbsp;internal&nbsp;name.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:returns:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Corpse-get"><strong>get</strong></a>(self, item_internal_name)</dt><dd><tt>Returns&nbsp;the&nbsp;item&nbsp;object&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;if&nbsp;present,<br>
+otherwise&nbsp;raise&nbsp;a&nbsp;KeyError.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:return:&nbsp;An&nbsp;Item&nbsp;subclass&nbsp;object.</tt></dd></dl>
+
+<dl><dt><a name="Corpse-items"><strong>items</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;items&nbsp;iterator.</tt></dd></dl>
+
+<dl><dt><a name="Corpse-keys"><strong>keys</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;keys&nbsp;iterator.</tt></dd></dl>
+
+<dl><dt><a name="Corpse-size"><strong>size</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;length&nbsp;of&nbsp;the&nbsp;internal&nbsp;dictionary.</tt></dd></dl>
+
+<dl><dt><a name="Corpse-values"><strong>values</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;values&nbsp;iterator.</tt></dd></dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Creature">class <strong>Creature</strong></a>(<a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>, <a href="advgame.elements.characters.html#Character">advgame.elements.characters.Character</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Creature">Creature</a>(items_state,&nbsp;internal_name,&nbsp;**argd)<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;uses&nbsp;multiple&nbsp;inheritance&nbsp;to&nbsp;subclass&nbsp;both&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;and<br>
+<a href="advgame.elements.characters.html#Character">Character</a>.&nbsp;It&nbsp;is&nbsp;instantiated&nbsp;from&nbsp;an&nbsp;.ini&nbsp;file&nbsp;entry,&nbsp;but&nbsp;draws&nbsp;on&nbsp;all<br>
+the&nbsp;game&nbsp;rules&nbsp;entity&nbsp;logic&nbsp;in&nbsp;<a href="advgame.elements.characters.html#Character">Character</a>&nbsp;to&nbsp;have&nbsp;access&nbsp;to&nbsp;the&nbsp;same<br>
+mechanics&nbsp;as&nbsp;a&nbsp;character.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.elements.containers.html#Creature">Creature</a></dd>
+<dd><a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a></dd>
+<dd><a href="advgame.elements.characters.html#Character">advgame.elements.characters.Character</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Creature-__init__"><strong>__init__</strong></a>(self, items_state, internal_name, **argd)</dt><dd><tt>This&nbsp;__init__&nbsp;method&nbsp;initializes&nbsp;the&nbsp;object&nbsp;using&nbsp;super()&nbsp;to&nbsp;call<br>
+__init__&nbsp;methods&nbsp;from&nbsp;both&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;and&nbsp;<a href="advgame.elements.characters.html#Character">Character</a>.&nbsp;It&nbsp;sets&nbsp;the&nbsp;ability<br>
+scores,&nbsp;populates&nbsp;its&nbsp;inventory,&nbsp;and&nbsp;sets&nbsp;up&nbsp;its&nbsp;equipment&nbsp;from&nbsp;its&nbsp;ini<br>
+file&nbsp;data.<br>
+&nbsp;<br>
+:items_state:&nbsp;An&nbsp;<a href="advgame.elements.characters.html#ItemsState">ItemsState</a>&nbsp;object.<br>
+:internal_name:&nbsp;A&nbsp;string,&nbsp;the&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;creature.<br>
+:**argd:&nbsp;A&nbsp;dict,&nbsp;the&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Creature">Creature</a>&nbsp;object<br>
+from.</tt></dd></dl>
+
+<dl><dt><a name="Creature-convert_to_corpse"><strong>convert_to_corpse</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;is&nbsp;used&nbsp;when&nbsp;a&nbsp;creature&nbsp;has&nbsp;been&nbsp;defeated&nbsp;in&nbsp;combat&nbsp;and&nbsp;its<br>
+presence&nbsp;in&nbsp;a&nbsp;Room&nbsp;object&nbsp;needs&nbsp;to&nbsp;be&nbsp;converted&nbsp;from&nbsp;a&nbsp;creature&nbsp;to&nbsp;a<br>
+container&nbsp;(subclass&nbsp;corpse).<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;<a href="#Corpse">Corpse</a>&nbsp;object.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>character_class</strong></dt>
+</dl>
+<dl><dt><strong>character_name</strong></dt>
+</dl>
+<dl><dt><strong>description</strong></dt>
+</dl>
+<dl><dt><strong>description_dead</strong></dt>
+</dl>
+<dl><dt><strong>internal_name</strong></dt>
+</dl>
+<dl><dt><strong>species</strong></dt>
+</dl>
+<dl><dt><strong>title</strong></dt>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><a name="Creature-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>Test&nbsp;two&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;objects&nbsp;or&nbsp;objects&nbsp;that&nbsp;subclass&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;for<br>
+equality.</tt></dd></dl>
+
+<hr>
+Data and other attributes inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<dl><dt><strong>inventory_list_value_re</strong> = re.compile('^\\[(\n                             ...                        x\n         , re.VERBOSE)</dl>
+
+<hr>
+Methods inherited from <a href="advgame.elements.characters.html#Character">advgame.elements.characters.Character</a>:<br>
+<dl><dt><a name="Creature-drop_item"><strong>drop_item</strong></a>(self, item, qty=1)</dt><dd><tt>This&nbsp;method&nbsp;removes&nbsp;the&nbsp;specified&nbsp;quantity&nbsp;(default&nbsp;1)&nbsp;of&nbsp;the&nbsp;given&nbsp;Item<br>
+subclass&nbsp;object&nbsp;from&nbsp;the&nbsp;character's&nbsp;inventory.<br>
+&nbsp;<br>
+:item:&nbsp;An&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:qty:&nbsp;An&nbsp;int,&nbsp;the&nbsp;quantity&nbsp;to&nbsp;remove&nbsp;from&nbsp;the&nbsp;container,&nbsp;default&nbsp;1.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Creature-equip_armor"><strong>equip_armor</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;equip_armor&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;Equipment<br>
+object&nbsp;with&nbsp;the&nbsp;given&nbsp;argument.<br>
+&nbsp;<br>
+:item:&nbsp;An&nbsp;Armor&nbsp;object.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Creature-equip_shield"><strong>equip_shield</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;equip_shield&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;Equipment<br>
+object&nbsp;with&nbsp;the&nbsp;given&nbsp;argument.<br>
+&nbsp;<br>
+:item:&nbsp;A&nbsp;Shield&nbsp;object.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Creature-equip_wand"><strong>equip_wand</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;equip_wand&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;Equipment<br>
+object&nbsp;with&nbsp;the&nbsp;given&nbsp;argument.<br>
+&nbsp;<br>
+:item:&nbsp;A&nbsp;Wand&nbsp;object.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Creature-equip_weapon"><strong>equip_weapon</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;equip_weapon&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;Equipment<br>
+object&nbsp;with&nbsp;the&nbsp;given&nbsp;argument.<br>
+&nbsp;<br>
+:item:&nbsp;A&nbsp;Weapon&nbsp;object.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Creature-have_item"><strong>have_item</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;checks&nbsp;whether&nbsp;the&nbsp;given&nbsp;Item&nbsp;subclass&nbsp;object&nbsp;is&nbsp;present&nbsp;in<br>
+the&nbsp;character's&nbsp;inventory.&nbsp;It&nbsp;returns&nbsp;True&nbsp;or&nbsp;False.<br>
+&nbsp;<br>
+:item:&nbsp;An&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:return:&nbsp;A&nbsp;boolean.</tt></dd></dl>
+
+<dl><dt><a name="Creature-heal_damage"><strong>heal_damage</strong></a>(self, healing_value)</dt><dd><tt>This&nbsp;method&nbsp;applies&nbsp;an&nbsp;amount&nbsp;of&nbsp;healing&nbsp;to&nbsp;the&nbsp;character's&nbsp;hit<br>
+points.&nbsp;If&nbsp;the&nbsp;healing&nbsp;would&nbsp;increase&nbsp;the&nbsp;hit&nbsp;points&nbsp;to&nbsp;more&nbsp;than&nbsp;the<br>
+character's&nbsp;maximum&nbsp;hit&nbsp;points,&nbsp;their&nbsp;hit&nbsp;point&nbsp;value&nbsp;is&nbsp;set&nbsp;to&nbsp;their<br>
+hit&nbsp;point&nbsp;maximum&nbsp;instead.&nbsp;The&nbsp;method&nbsp;returns&nbsp;the&nbsp;amount&nbsp;of&nbsp;healing<br>
+done.<br>
+&nbsp;<br>
+:healing_value:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;hit&nbsp;points&nbsp;to&nbsp;recover.<br>
+:return:&nbsp;An&nbsp;int.</tt></dd></dl>
+
+<dl><dt><a name="Creature-item_have_qty"><strong>item_have_qty</strong></a>(self, item)</dt><dd><tt>This&nbsp;method&nbsp;checks&nbsp;whether&nbsp;the&nbsp;given&nbsp;Item&nbsp;subclass&nbsp;object&nbsp;is&nbsp;present&nbsp;in<br>
+the&nbsp;character's&nbsp;inventory.&nbsp;If&nbsp;so,&nbsp;it&nbsp;returns&nbsp;the&nbsp;quantity&nbsp;possessed.&nbsp;If<br>
+not,&nbsp;it&nbsp;returns&nbsp;0.<br>
+&nbsp;<br>
+:item:&nbsp;An&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:return:&nbsp;An&nbsp;int.</tt></dd></dl>
+
+<dl><dt><a name="Creature-list_items"><strong>list_items</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;returns&nbsp;a&nbsp;sorted&nbsp;list&nbsp;of&nbsp;2-tuples&nbsp;comprising&nbsp;an&nbsp;integer&nbsp;item<br>
+quantity&nbsp;and&nbsp;an&nbsp;Item&nbsp;subclass&nbsp;object.&nbsp;The&nbsp;list&nbsp;is&nbsp;ordered&nbsp;alphabetically<br>
+by&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object's&nbsp;title&nbsp;attributes.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;list&nbsp;of&nbsp;2-tuples.</tt></dd></dl>
+
+<dl><dt><a name="Creature-pick_up_item"><strong>pick_up_item</strong></a>(self, item, qty=1)</dt><dd><tt>This&nbsp;method&nbsp;adds&nbsp;the&nbsp;given&nbsp;Item&nbsp;subclass&nbsp;object&nbsp;to&nbsp;the&nbsp;character's<br>
+inventory&nbsp;in&nbsp;the&nbsp;quantity&nbsp;specified,&nbsp;default&nbsp;1.<br>
+&nbsp;<br>
+:item:&nbsp;An&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:qty:&nbsp;An&nbsp;int,&nbsp;the&nbsp;quantity&nbsp;to&nbsp;add&nbsp;to&nbsp;the&nbsp;container,&nbsp;default&nbsp;1.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Creature-regain_mana"><strong>regain_mana</strong></a>(self, regaining_value)</dt><dd><tt>This&nbsp;method&nbsp;regains&nbsp;mana&nbsp;points&nbsp;by&nbsp;the&nbsp;given&nbsp;value.&nbsp;If&nbsp;the&nbsp;amount<br>
+regained&nbsp;would&nbsp;increase&nbsp;the&nbsp;character's&nbsp;mana&nbsp;points&nbsp;to&nbsp;greater&nbsp;than<br>
+their&nbsp;maximum&nbsp;mana&nbsp;point&nbsp;total,&nbsp;their&nbsp;current&nbsp;mana&nbsp;point&nbsp;value&nbsp;is&nbsp;set<br>
+equal&nbsp;to&nbsp;their&nbsp;maximum&nbsp;mana&nbsp;point&nbsp;value&nbsp;instead.&nbsp;The&nbsp;method&nbsp;returns&nbsp;the<br>
+amount&nbsp;of&nbsp;mana&nbsp;points&nbsp;regained.<br>
+&nbsp;<br>
+:regaining_value:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;mana&nbsp;points&nbsp;to&nbsp;regain.<br>
+:return:&nbsp;An&nbsp;int.</tt></dd></dl>
+
+<dl><dt><a name="Creature-spend_mana"><strong>spend_mana</strong></a>(self, spent_amount)</dt><dd><tt>This&nbsp;method&nbsp;attempts&nbsp;to&nbsp;spend&nbsp;an&nbsp;amount&nbsp;of&nbsp;mana&nbsp;points&nbsp;from&nbsp;the<br>
+character's&nbsp;mana&nbsp;points,&nbsp;returning&nbsp;the&nbsp;amount&nbsp;spent&nbsp;if&nbsp;successful.&nbsp;If<br>
+the&nbsp;amount&nbsp;spent&nbsp;would&nbsp;reduce&nbsp;the&nbsp;character's&nbsp;mana&nbsp;points&nbsp;to&nbsp;less&nbsp;than<br>
+zero,&nbsp;no&nbsp;spending&nbsp;takes&nbsp;place,&nbsp;and&nbsp;0&nbsp;is&nbsp;returned&nbsp;to&nbsp;indicate&nbsp;failure.<br>
+&nbsp;<br>
+:spent_amount:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;mana&nbsp;points&nbsp;to&nbsp;spend.<br>
+:return:&nbsp;An&nbsp;int.</tt></dd></dl>
+
+<dl><dt><a name="Creature-take_damage"><strong>take_damage</strong></a>(self, damage_value)</dt><dd><tt>This&nbsp;method&nbsp;applies&nbsp;the&nbsp;given&nbsp;damage&nbsp;to&nbsp;the&nbsp;character's&nbsp;hit&nbsp;points.<br>
+If&nbsp;the&nbsp;hit&nbsp;points&nbsp;would&nbsp;be&nbsp;reduced&nbsp;to&nbsp;less&nbsp;than&nbsp;0,&nbsp;they&nbsp;are&nbsp;set&nbsp;to&nbsp;0<br>
+instead.&nbsp;The&nbsp;method&nbsp;returns&nbsp;the&nbsp;amount&nbsp;of&nbsp;damage&nbsp;assessed.<br>
+&nbsp;<br>
+:damage_value:&nbsp;An&nbsp;int,&nbsp;the&nbsp;number&nbsp;of&nbsp;hit&nbsp;points&nbsp;to&nbsp;lose.<br>
+:return:&nbsp;An&nbsp;int.</tt></dd></dl>
+
+<dl><dt><a name="Creature-unequip_armor"><strong>unequip_armor</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;unequip_armor&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;Equipment<br>
+object.<br>
+&nbsp;<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Creature-unequip_shield"><strong>unequip_shield</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;unequip_shield&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;Equipment<br>
+object.<br>
+&nbsp;<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Creature-unequip_wand"><strong>unequip_wand</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;unequip_wand&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;Equipment<br>
+object.<br>
+&nbsp;<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="Creature-unequip_weapon"><strong>unequip_weapon</strong></a>(self)</dt><dd><tt>This&nbsp;method&nbsp;calls&nbsp;the&nbsp;unequip_weapon&nbsp;method&nbsp;on&nbsp;the&nbsp;subordinate&nbsp;Equipment<br>
+object.<br>
+&nbsp;<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<hr>
+Readonly properties inherited from <a href="advgame.elements.characters.html#Character">advgame.elements.characters.Character</a>:<br>
+<dl><dt><strong>armor</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;armor&nbsp;property&nbsp;from&nbsp;the&nbsp;subordinate&nbsp;Equipment<br>
+object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;Armor&nbsp;object,&nbsp;or&nbsp;None.</tt></dd>
+</dl>
+<dl><dt><strong>armor_class</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;character's&nbsp;ability&nbsp;score&nbsp;as&nbsp;computed&nbsp;from<br>
+their&nbsp;equipments'&nbsp;armor&nbsp;bonuses&nbsp;and&nbsp;their&nbsp;Dexterity&nbsp;modifier.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>armor_equipped</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;armor_equipped&nbsp;property&nbsp;from&nbsp;the&nbsp;subordinate<br>
+Equipment&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;Armor&nbsp;object,&nbsp;or&nbsp;None.</tt></dd>
+</dl>
+<dl><dt><strong>attack_bonus</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;character's&nbsp;attack&nbsp;bonus&nbsp;as&nbsp;computed&nbsp;from<br>
+their&nbsp;weapon&nbsp;or&nbsp;wand's&nbsp;attack&nbsp;bonus&nbsp;and&nbsp;their&nbsp;relevant&nbsp;ability&nbsp;score<br>
+modifier&nbsp;(Strength&nbsp;for&nbsp;Warriors,&nbsp;Priests&nbsp;and&nbsp;Mages&nbsp;wielding&nbsp;a&nbsp;weapon;<br>
+Dexterity&nbsp;for&nbsp;Thieves;&nbsp;and&nbsp;Intelligence&nbsp;for&nbsp;Mages&nbsp;wielding&nbsp;a&nbsp;wand).<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>attack_roll</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;a&nbsp;dice&nbsp;expression&nbsp;usable&nbsp;by<br>
+advgame.utilsities.roll_dice()&nbsp;to&nbsp;execute&nbsp;an&nbsp;attack&nbsp;roll&nbsp;during&nbsp;an<br>
+ATTACK&nbsp;command.&nbsp;It&nbsp;calculates&nbsp;the&nbsp;attack&nbsp;bonus&nbsp;from&nbsp;the&nbsp;equipped&nbsp;item<br>
+and&nbsp;the&nbsp;relevant&nbsp;ability&nbsp;score&nbsp;modifier.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;string&nbsp;of&nbsp;the&nbsp;form&nbsp;'\d+d\d+([+-]\d+)?'.</tt></dd>
+</dl>
+<dl><dt><strong>charisma</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;Charisma&nbsp;score&nbsp;stored&nbsp;in&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>charisma_mod</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;Charisma&nbsp;ability&nbsp;score&nbsp;modifier&nbsp;from&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>constitution</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;Constitution&nbsp;score&nbsp;stored&nbsp;in&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>constitution_mod</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;Constitution&nbsp;ability&nbsp;score&nbsp;modifier&nbsp;from&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>damage_roll</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;a&nbsp;dice&nbsp;expression&nbsp;usable&nbsp;by<br>
+advgame.utilsities.roll_dice()&nbsp;to&nbsp;execute&nbsp;a&nbsp;damage&nbsp;roll&nbsp;during&nbsp;an&nbsp;ATTACK<br>
+command.&nbsp;It&nbsp;calculates&nbsp;the&nbsp;damage&nbsp;dice&nbsp;value&nbsp;from&nbsp;the&nbsp;equipped&nbsp;wand&nbsp;or<br>
+weapon,&nbsp;and&nbsp;the&nbsp;relevant&nbsp;ability&nbsp;score&nbsp;modifier.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;string&nbsp;of&nbsp;the&nbsp;form&nbsp;'\d+d\d+([+-]\d+)?'.</tt></dd>
+</dl>
+<dl><dt><strong>dexterity</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;Dexterity&nbsp;score&nbsp;stored&nbsp;in&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>dexterity_mod</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;Dexterity&nbsp;ability&nbsp;score&nbsp;modifier&nbsp;from&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>hit_point_total</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;character's&nbsp;maximum&nbsp;hit&nbsp;points.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>hit_points</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;character's&nbsp;current&nbsp;hit&nbsp;points.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>intelligence</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;Intelligence&nbsp;score&nbsp;stored&nbsp;in&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>intelligence_mod</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;Intelligence&nbsp;ability&nbsp;score&nbsp;modifier&nbsp;from&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>is_alive</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;True&nbsp;if&nbsp;the&nbsp;character's&nbsp;hit&nbsp;point&nbsp;total&nbsp;is&nbsp;greater<br>
+than&nbsp;0.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;boolean.</tt></dd>
+</dl>
+<dl><dt><strong>is_dead</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;True&nbsp;if&nbsp;the&nbsp;character's&nbsp;hit&nbsp;point&nbsp;total&nbsp;equals&nbsp;0.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;boolean.</tt></dd>
+</dl>
+<dl><dt><strong>mana_point_total</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;character's&nbsp;maximum&nbsp;mana&nbsp;points&nbsp;if&nbsp;any.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>mana_points</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;character's&nbsp;current&nbsp;mana&nbsp;points&nbsp;if&nbsp;any.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>shield</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;shield&nbsp;property&nbsp;from&nbsp;the&nbsp;subordinate&nbsp;Equipment<br>
+object.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;Shield&nbsp;object,&nbsp;or&nbsp;None.</tt></dd>
+</dl>
+<dl><dt><strong>shield_equipped</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;shield_equipped&nbsp;property&nbsp;from&nbsp;the&nbsp;subordinate<br>
+Equipment&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;Shield&nbsp;object,&nbsp;or&nbsp;None.</tt></dd>
+</dl>
+<dl><dt><strong>strength</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;Strength&nbsp;score&nbsp;stored&nbsp;in&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>strength_mod</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;Strength&nbsp;ability&nbsp;score&nbsp;modifier&nbsp;from&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>wand</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;wand&nbsp;property&nbsp;from&nbsp;the&nbsp;subordinate&nbsp;Equipment<br>
+object.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;Wand&nbsp;object,&nbsp;or&nbsp;None.</tt></dd>
+</dl>
+<dl><dt><strong>wand_equipped</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;wand_equipped&nbsp;property&nbsp;from&nbsp;the&nbsp;subordinate<br>
+Equipment&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;Wand&nbsp;object,&nbsp;or&nbsp;None.</tt></dd>
+</dl>
+<dl><dt><strong>weapon</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;weapon&nbsp;property&nbsp;from&nbsp;the&nbsp;subordinate&nbsp;Equipment<br>
+object.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;Weapon&nbsp;object,&nbsp;or&nbsp;None.</tt></dd>
+</dl>
+<dl><dt><strong>weapon_equipped</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;weapon_equipped&nbsp;property&nbsp;from&nbsp;the&nbsp;subordinate<br>
+Equipment&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;Weapon&nbsp;object,&nbsp;or&nbsp;None.</tt></dd>
+</dl>
+<dl><dt><strong>wisdom</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;value&nbsp;for&nbsp;the&nbsp;Wisdom&nbsp;score&nbsp;stored&nbsp;in&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<dl><dt><strong>wisdom_mod</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;Wisdom&nbsp;ability&nbsp;score&nbsp;modifier&nbsp;from&nbsp;the<br>
+subordinate&nbsp;AbilityScores&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;An&nbsp;int.</tt></dd>
+</dl>
+<hr>
+Data descriptors inherited from <a href="advgame.elements.characters.html#Character">advgame.elements.characters.Character</a>:<br>
+<dl><dt><strong>ability_scores</strong></dt>
+</dl>
+<dl><dt><strong>inventory</strong></dt>
+</dl>
+<dl><dt><strong>magic_key_stat</strong></dt>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="CreaturesState">class <strong>CreaturesState</strong></a>(<a href="advgame.elements.basics.html#State">advgame.elements.basics.State</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#CreaturesState">CreaturesState</a>(items_state,&nbsp;**dict_of_dicts)<br>
+&nbsp;<br>
+This&nbsp;<a href="advgame.elements.basics.html#State">State</a>&nbsp;subclass&nbsp;is&nbsp;instantiated&nbsp;from&nbsp;the&nbsp;sections&nbsp;attribute&nbsp;of&nbsp;an<br>
+IniConfig&nbsp;object&nbsp;instantiated&nbsp;from&nbsp;creatures.ini.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.elements.containers.html#CreaturesState">CreaturesState</a></dd>
+<dd><a href="advgame.elements.basics.html#State">advgame.elements.basics.State</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="CreaturesState-__init__"><strong>__init__</strong></a>(self, items_state, **dict_of_dicts)</dt><dd><tt>This&nbsp;__init__&nbsp;method&nbsp;accepts&nbsp;an&nbsp;items_state&nbsp;object&nbsp;and&nbsp;a&nbsp;**dict-of-dicts<br>
+as&nbsp;offered&nbsp;by&nbsp;an&nbsp;IniConfig&nbsp;object's&nbsp;sections&nbsp;attribute.&nbsp;It&nbsp;instantiates<br>
+and&nbsp;stores&nbsp;a&nbsp;<a href="#Creature">Creature</a>&nbsp;object&nbsp;for&nbsp;each&nbsp;section&nbsp;of&nbsp;the&nbsp;**dict-of-dicts.<br>
+Unlike&nbsp;other&nbsp;*_State&nbsp;classes&nbsp;it&nbsp;doesn't&nbsp;use&nbsp;a&nbsp;subclassing_factory<br>
+because&nbsp;the&nbsp;<a href="#Creature">Creature</a>&nbsp;class&nbsp;is&nbsp;not&nbsp;subclassed&nbsp;to&nbsp;delineate&nbsp;different<br>
+types&nbsp;of&nbsp;creature.<br>
+&nbsp;<br>
+:items_state:&nbsp;An&nbsp;<a href="advgame.elements.characters.html#ItemsState">ItemsState</a>&nbsp;object.<br>
+:**dict_of_dicts:&nbsp;A&nbsp;structure&nbsp;of&nbsp;internal&nbsp;name&nbsp;keys&nbsp;corresponding&nbsp;to<br>
+dict&nbsp;values&nbsp;which&nbsp;are&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;initialize&nbsp;an&nbsp;individual<br>
+<a href="#Creature">Creature</a>&nbsp;object&nbsp;with.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Methods inherited from <a href="advgame.elements.basics.html#State">advgame.elements.basics.State</a>:<br>
+<dl><dt><a name="CreaturesState-contains"><strong>contains</strong></a>(self, item_internal_name)</dt><dd><tt>Test&nbsp;whether&nbsp;an&nbsp;item&nbsp;object&nbsp;with&nbsp;the&nbsp;specified&nbsp;internal&nbsp;name&nbsp;is&nbsp;present<br>
+in&nbsp;the&nbsp;private&nbsp;dictionary.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:return:&nbsp;True&nbsp;or&nbsp;False.</tt></dd></dl>
+
+<dl><dt><a name="CreaturesState-delete"><strong>delete</strong></a>(self, item_internal_name)</dt><dd><tt>Delete&nbsp;the&nbsp;item&nbsp;object&nbsp;from&nbsp;the&nbsp;internal&nbsp;dictionary&nbsp;referred&nbsp;to&nbsp;by&nbsp;the<br>
+given&nbsp;internal&nbsp;name.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:returns:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="CreaturesState-get"><strong>get</strong></a>(self, item_internal_name)</dt><dd><tt>Returns&nbsp;the&nbsp;item&nbsp;object&nbsp;with&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;if&nbsp;present,<br>
+otherwise&nbsp;raise&nbsp;a&nbsp;KeyError.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object.<br>
+:return:&nbsp;An&nbsp;Item&nbsp;subclass&nbsp;object.</tt></dd></dl>
+
+<dl><dt><a name="CreaturesState-items"><strong>items</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;items&nbsp;iterator.</tt></dd></dl>
+
+<dl><dt><a name="CreaturesState-keys"><strong>keys</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;keys&nbsp;iterator.</tt></dd></dl>
+
+<dl><dt><a name="CreaturesState-set"><strong>set</strong></a>(self, item_internal_name, item)</dt><dd><tt>Add&nbsp;an&nbsp;item&nbsp;to&nbsp;the&nbsp;internal&nbsp;dictionary&nbsp;using&nbsp;the&nbsp;given&nbsp;internal&nbsp;name&nbsp;as<br>
+a&nbsp;key.<br>
+&nbsp;<br>
+:item_internal_name:&nbsp;The&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;Item&nbsp;subclass&nbsp;object&nbsp;to<br>
+use&nbsp;as&nbsp;a&nbsp;key.<br>
+:item:&nbsp;The&nbsp;Item&nbsp;subclass&nbsp;object&nbsp;to&nbsp;be&nbsp;set.</tt></dd></dl>
+
+<dl><dt><a name="CreaturesState-size"><strong>size</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;length&nbsp;of&nbsp;the&nbsp;internal&nbsp;dictionary.</tt></dd></dl>
+
+<dl><dt><a name="CreaturesState-values"><strong>values</strong></a>(self)</dt><dd><tt>Return&nbsp;the&nbsp;internal&nbsp;dictionary's&nbsp;values&nbsp;iterator.</tt></dd></dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ('Container', 'ContainersState', 'Chest', 'Corpse', 'Creature', 'CreaturesState')</td></tr></table>
+</body></html>

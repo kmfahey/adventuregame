@@ -1,0 +1,216 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module advgame.elements.rooms</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="advgame.html"><font color="#ffffff">advgame</font></a>.<a href="advgame.elements.html"><font color="#ffffff">elements</font></a>.rooms</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/adventuregame/advgame/elements/rooms.py">/home/kmfahey/Workspace/adventuregame/advgame/elements/rooms.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>(<a href="builtins.html#object">builtins.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.elements.rooms.html#Room">Room</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.elements.rooms.html#RoomsState">RoomsState</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Room">class <strong>Room</strong></a>(<a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Room">Room</a>(creatures_state,&nbsp;containers_state,&nbsp;doors_state,&nbsp;items_state,&nbsp;**argd)<br>
+&nbsp;<br>
+This&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;subclass&nbsp;represents&nbsp;a&nbsp;single&nbsp;room.&nbsp;It&nbsp;is&nbsp;instantiated<br>
+from&nbsp;a&nbsp;single&nbsp;section&nbsp;of&nbsp;a&nbsp;doors.ini&nbsp;file&nbsp;as&nbsp;returned&nbsp;by&nbsp;an&nbsp;IniConfig's<br>
+dict-of-dicts&nbsp;sections&nbsp;attribute.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.elements.rooms.html#Room">Room</a></dd>
+<dd><a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Room-__init__"><strong>__init__</strong></a>(self, creatures_state, containers_state, doors_state, items_state, **argd)</dt><dd><tt>This&nbsp;__init__&nbsp;method&nbsp;defines&nbsp;a&nbsp;room&nbsp;<a href="builtins.html#object">object</a>&nbsp;as&nbsp;given&nbsp;in&nbsp;a&nbsp;single&nbsp;section<br>
+of&nbsp;rooms.ini.&nbsp;It&nbsp;needs&nbsp;a&nbsp;creatures_state&nbsp;<a href="builtins.html#object">object</a>,&nbsp;a&nbsp;containers_state<br>
+<a href="builtins.html#object">object</a>,&nbsp;a&nbsp;doors_state&nbsp;<a href="builtins.html#object">object</a>&nbsp;and&nbsp;an&nbsp;items_state&nbsp;<a href="builtins.html#object">object</a>.&nbsp;It&nbsp;initializes<br>
+the&nbsp;<a href="builtins.html#object">object</a>&nbsp;from&nbsp;its&nbsp;argd,&nbsp;drawing&nbsp;on&nbsp;the&nbsp;state&nbsp;objects&nbsp;to&nbsp;set&nbsp;the<br>
+creature_here,&nbsp;container_here,&nbsp;items_here&nbsp;and&nbsp;the&nbsp;{compass_dir}_door<br>
+attributes.<br>
+&nbsp;<br>
+:creatures_state:&nbsp;A&nbsp;CreaturesState&nbsp;<a href="builtins.html#object">object</a>.<br>
+:containers_state:&nbsp;A&nbsp;ContainersState&nbsp;<a href="builtins.html#object">object</a>.<br>
+:doors_state:&nbsp;A&nbsp;DoorsState&nbsp;<a href="builtins.html#object">object</a>.<br>
+:items_state:&nbsp;An&nbsp;ItemsState&nbsp;<a href="builtins.html#object">object</a>.<br>
+:**argd:&nbsp;A&nbsp;dict&nbsp;of&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;instantiate&nbsp;the&nbsp;<a href="#Room">Room</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;with.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>doors</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;a&nbsp;tuple&nbsp;comprising&nbsp;the&nbsp;Door&nbsp;subclass&nbsp;objects<br>
+attached&nbsp;to&nbsp;this&nbsp;Room&nbsp;object.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;tuple&nbsp;of&nbsp;Door&nbsp;objects.</tt></dd>
+</dl>
+<dl><dt><strong>has_east_door</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;True&nbsp;if&nbsp;the&nbsp;object&nbsp;has&nbsp;a&nbsp;nonempty&nbsp;east_door&nbsp;value,<br>
+False&nbsp;otherwise.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;boolean.</tt></dd>
+</dl>
+<dl><dt><strong>has_north_door</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;True&nbsp;if&nbsp;the&nbsp;object&nbsp;has&nbsp;a&nbsp;nonempty&nbsp;north_door<br>
+value,&nbsp;False&nbsp;otherwise.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;boolean.</tt></dd>
+</dl>
+<dl><dt><strong>has_south_door</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;True&nbsp;if&nbsp;the&nbsp;object&nbsp;has&nbsp;a&nbsp;nonempty&nbsp;south_door<br>
+value,&nbsp;False&nbsp;otherwise.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;boolean.</tt></dd>
+</dl>
+<dl><dt><strong>has_west_door</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;True&nbsp;if&nbsp;the&nbsp;object&nbsp;has&nbsp;a&nbsp;nonempty&nbsp;west_door&nbsp;value,<br>
+False&nbsp;otherwise.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;boolean.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>container_here</strong></dt>
+</dl>
+<dl><dt><strong>creature_here</strong></dt>
+</dl>
+<dl><dt><strong>description</strong></dt>
+</dl>
+<dl><dt><strong>east_door</strong></dt>
+</dl>
+<dl><dt><strong>internal_name</strong></dt>
+</dl>
+<dl><dt><strong>is_entrance</strong></dt>
+</dl>
+<dl><dt><strong>is_exit</strong></dt>
+</dl>
+<dl><dt><strong>item</strong></dt>
+</dl>
+<dl><dt><strong>items_here</strong></dt>
+</dl>
+<dl><dt><strong>north_door</strong></dt>
+</dl>
+<dl><dt><strong>occupant</strong></dt>
+</dl>
+<dl><dt><strong>south_door</strong></dt>
+</dl>
+<dl><dt><strong>title</strong></dt>
+</dl>
+<dl><dt><strong>west_door</strong></dt>
+</dl>
+<hr>
+Methods inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><a name="Room-__eq__"><strong>__eq__</strong></a>(self, other)</dt><dd><tt>Test&nbsp;two&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;objects&nbsp;or&nbsp;objects&nbsp;that&nbsp;subclass&nbsp;<a href="advgame.elements.basics.html#IniEntry">IniEntry</a>&nbsp;for<br>
+equality.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="advgame.elements.basics.html#IniEntry">advgame.elements.basics.IniEntry</a>:<br>
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<dl><dt><strong>inventory_list_value_re</strong> = re.compile('^\\[(\n                             ...                        x\n         , re.VERBOSE)</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="RoomsState">class <strong>RoomsState</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#RoomsState">RoomsState</a>(creatures_state,&nbsp;containers_state,&nbsp;doors_state,&nbsp;items_state,&nbsp;**dict_of_dicts)<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;implements&nbsp;a&nbsp;state&nbsp;<a href="builtins.html#object">object</a>&nbsp;that&nbsp;tracks&nbsp;the&nbsp;entire&nbsp;dungeon's<br>
+layout.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="RoomsState-__init__"><strong>__init__</strong></a>(self, creatures_state, containers_state, doors_state, items_state, **dict_of_dicts)</dt><dd><tt>This&nbsp;__init__method&nbsp;instantiates&nbsp;every&nbsp;room&nbsp;<a href="builtins.html#object">object</a>,&nbsp;given&nbsp;a<br>
+creatures_state&nbsp;<a href="builtins.html#object">object</a>,&nbsp;a&nbsp;containers_state&nbsp;<a href="builtins.html#object">object</a>,&nbsp;a&nbsp;doors_state&nbsp;<a href="builtins.html#object">object</a><br>
+and&nbsp;an&nbsp;items_state&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;initialize&nbsp;them&nbsp;with,&nbsp;and&nbsp;a&nbsp;**dict-of-dicts<br>
+from&nbsp;rooms.ini&nbsp;as&nbsp;furnished&nbsp;by&nbsp;an&nbsp;IniConfig's&nbsp;sections&nbsp;attribute.<br>
+&nbsp;<br>
+:creatures_state:&nbsp;A&nbsp;CreaturesState&nbsp;<a href="builtins.html#object">object</a>.<br>
+:containers_state:&nbsp;A&nbsp;ContainersState&nbsp;<a href="builtins.html#object">object</a>.<br>
+:doors_state:&nbsp;A&nbsp;DoorsState&nbsp;<a href="builtins.html#object">object</a>.<br>
+:items_state:&nbsp;A&nbsp;ItemsState&nbsp;<a href="builtins.html#object">object</a>.<br>
+:**dict_of_dicts:&nbsp;A&nbsp;structure&nbsp;of&nbsp;internal&nbsp;name&nbsp;keys&nbsp;corresponding&nbsp;to<br>
+dict&nbsp;values&nbsp;which&nbsp;are&nbsp;key-value&nbsp;pairs&nbsp;to&nbsp;initialize&nbsp;an&nbsp;individual<br>
+Creature&nbsp;<a href="builtins.html#object">object</a>&nbsp;with.</tt></dd></dl>
+
+<dl><dt><a name="RoomsState-get"><strong>get</strong></a>(self, internal_name)</dt><dd><tt>This&nbsp;method&nbsp;is&nbsp;used&nbsp;to&nbsp;retrieve&nbsp;a&nbsp;<a href="#Room">Room</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;from&nbsp;internal&nbsp;storage&nbsp;with<br>
+the&nbsp;given&nbsp;internal&nbsp;name.<br>
+&nbsp;<br>
+:room_internal_name:&nbsp;A&nbsp;string,&nbsp;the&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Room">Room</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;A&nbsp;<a href="#Room">Room</a>&nbsp;<a href="builtins.html#object">object</a>.</tt></dd></dl>
+
+<dl><dt><a name="RoomsState-move"><strong>move</strong></a>(self, north=False, west=False, south=False, east=False)</dt><dd><tt>This&nbsp;method&nbsp;directs&nbsp;the&nbsp;<a href="#RoomsState">RoomsState</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;move&nbsp;the&nbsp;cursor&nbsp;from&nbsp;the<br>
+current&nbsp;room&nbsp;to&nbsp;an&nbsp;adjacent&nbsp;room&nbsp;by&nbsp;the&nbsp;given&nbsp;compass&nbsp;direction.<br>
+&nbsp;<br>
+:north:&nbsp;A&nbsp;boolean,&nbsp;True&nbsp;if&nbsp;movement&nbsp;to&nbsp;the&nbsp;north&nbsp;is&nbsp;intended,&nbsp;False<br>
+otherwise.<br>
+:east:&nbsp;A&nbsp;boolean,&nbsp;True&nbsp;if&nbsp;movement&nbsp;to&nbsp;the&nbsp;east&nbsp;is&nbsp;intended,&nbsp;False<br>
+otherwise.<br>
+:south:&nbsp;A&nbsp;boolean,&nbsp;True&nbsp;if&nbsp;movement&nbsp;to&nbsp;the&nbsp;south&nbsp;is&nbsp;intended,&nbsp;False<br>
+otherwise.<br>
+:west:&nbsp;A&nbsp;boolean,&nbsp;True&nbsp;if&nbsp;movement&nbsp;to&nbsp;the&nbsp;west&nbsp;is&nbsp;intended,&nbsp;False<br>
+otherwise.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="RoomsState-set"><strong>set</strong></a>(self, internal_name, room)</dt><dd><tt>This&nbsp;method&nbsp;is&nbsp;used&nbsp;to&nbsp;store&nbsp;a&nbsp;<a href="#Room">Room</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;internal&nbsp;storage&nbsp;by&nbsp;the<br>
+given&nbsp;internal&nbsp;name.<br>
+&nbsp;<br>
+:room_internal_name:&nbsp;A&nbsp;string,&nbsp;the&nbsp;internal&nbsp;name&nbsp;of&nbsp;the&nbsp;<a href="#Room">Room</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:room:&nbsp;A&nbsp;<a href="#Room">Room</a>&nbsp;<a href="builtins.html#object">object</a>.<br>
+:return:&nbsp;None.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>cursor</strong></dt>
+<dd><tt>This&nbsp;property&nbsp;returns&nbsp;the&nbsp;Room&nbsp;object&nbsp;that&nbsp;the&nbsp;RoomsState&nbsp;object<br>
+considers&nbsp;the&nbsp;player&nbsp;to&nbsp;currently&nbsp;be&nbsp;occupying.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;Room&nbsp;object.</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ('Room', 'RoomsState')</td></tr></table>
+</body></html>

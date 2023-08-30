@@ -3,9 +3,9 @@
 from math import floor
 from random import randint
 
-from .basics import State
-from .items import Armor, Shield, Weapon, Wand, Item
-from ..errors import InternalError
+from advgame.elements.basics import State
+from advgame.elements.items import Armor, Shield, Weapon, Wand, Item
+from advgame.errors import InternalError
 
 
 __all__ = (

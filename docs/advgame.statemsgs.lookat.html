@@ -1,0 +1,294 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module advgame.statemsgs.lookat</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="advgame.html"><font color="#ffffff">advgame</font></a>.<a href="advgame.statemsgs.html"><font color="#ffffff">statemsgs</font></a>.lookat</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/adventuregame/advgame/statemsgs/lookat.py">/home/kmfahey/Workspace/adventuregame/advgame/statemsgs/lookat.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>(<a href="abc.html#ABC">abc.ABC</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="advgame.statemsgs.lookat.html#FoundContainerHereGSM">FoundContainerHereGSM</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.statemsgs.lookat.html#FoundCreatureHereGSM">FoundCreatureHereGSM</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.statemsgs.lookat.html#FoundDoorOrDoorwayGSM">FoundDoorOrDoorwayGSM</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.statemsgs.lookat.html#FoundItemOrItemsHereGSM">FoundItemOrItemsHereGSM</a>
+</font></dt><dt><font face="helvetica, arial"><a href="advgame.statemsgs.lookat.html#FoundNothingGSM">FoundNothingGSM</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="FoundContainerHereGSM">class <strong>FoundContainerHereGSM</strong></a>(<a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#FoundContainerHereGSM">FoundContainerHereGSM</a>(container)<br>
+&nbsp;<br>
+Returned&nbsp;by&nbsp;look_at_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;targets&nbsp;a&nbsp;chest&nbsp;or&nbsp;a<br>
+corpse.&nbsp;If&nbsp;it's&nbsp;a&nbsp;chest&nbsp;and&nbsp;it's&nbsp;unlocked,&nbsp;the&nbsp;contents&nbsp;of&nbsp;the&nbsp;chest&nbsp;are<br>
+conveyed.&nbsp;If&nbsp;it's&nbsp;a&nbsp;corpse,&nbsp;the&nbsp;corpse's&nbsp;possessions&nbsp;are&nbsp;conveyed.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.statemsgs.lookat.html#FoundContainerHereGSM">FoundContainerHereGSM</a></dd>
+<dd><a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="FoundContainerHereGSM-__init__"><strong>__init__</strong></a>(self, container)</dt><dd><tt>The&nbsp;__init__&nbsp;method&nbsp;of&nbsp;a&nbsp;<a href="advgame.statemsgs.gsm.html#GameStateMessage">GameStateMessage</a>&nbsp;subclass&nbsp;stores&nbsp;its&nbsp;keyword<br>
+arguments&nbsp;to&nbsp;object&nbsp;attributes,&nbsp;and&nbsp;performs&nbsp;no&nbsp;other&nbsp;task.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>message</strong></dt>
+<dd><tt>The&nbsp;message&nbsp;property&nbsp;of&nbsp;a&nbsp;GameStateMessage&nbsp;subclass&nbsp;renders&nbsp;the&nbsp;data<br>
+stored&nbsp;in&nbsp;the&nbsp;object&nbsp;attributes&nbsp;to&nbsp;a&nbsp;natural&nbsp;language&nbsp;string&nbsp;which<br>
+communicates&nbsp;the&nbsp;semantic&nbsp;content&nbsp;of&nbsp;the&nbsp;object&nbsp;to&nbsp;the&nbsp;player.&nbsp;The<br>
+message&nbsp;property&nbsp;is&nbsp;accessed&nbsp;and&nbsp;printed&nbsp;by&nbsp;advgame.py.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>container</strong></dt>
+</dl>
+<dl><dt><strong>container_description</strong></dt>
+</dl>
+<dl><dt><strong>container_type</strong></dt>
+</dl>
+<dl><dt><strong>is_closed</strong></dt>
+</dl>
+<dl><dt><strong>is_locked</strong></dt>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="FoundCreatureHereGSM">class <strong>FoundCreatureHereGSM</strong></a>(<a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#FoundCreatureHereGSM">FoundCreatureHereGSM</a>(creature_description)<br>
+&nbsp;<br>
+Returned&nbsp;by&nbsp;look_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;targets&nbsp;a&nbsp;creature&nbsp;in&nbsp;the<br>
+dungeon's&nbsp;current&nbsp;room.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.statemsgs.lookat.html#FoundCreatureHereGSM">FoundCreatureHereGSM</a></dd>
+<dd><a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="FoundCreatureHereGSM-__init__"><strong>__init__</strong></a>(self, creature_description)</dt><dd><tt>The&nbsp;__init__&nbsp;method&nbsp;of&nbsp;a&nbsp;<a href="advgame.statemsgs.gsm.html#GameStateMessage">GameStateMessage</a>&nbsp;subclass&nbsp;stores&nbsp;its&nbsp;keyword<br>
+arguments&nbsp;to&nbsp;object&nbsp;attributes,&nbsp;and&nbsp;performs&nbsp;no&nbsp;other&nbsp;task.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>message</strong></dt>
+<dd><tt>The&nbsp;message&nbsp;property&nbsp;of&nbsp;a&nbsp;GameStateMessage&nbsp;subclass&nbsp;renders&nbsp;the&nbsp;data<br>
+stored&nbsp;in&nbsp;the&nbsp;object&nbsp;attributes&nbsp;to&nbsp;a&nbsp;natural&nbsp;language&nbsp;string&nbsp;which<br>
+communicates&nbsp;the&nbsp;semantic&nbsp;content&nbsp;of&nbsp;the&nbsp;object&nbsp;to&nbsp;the&nbsp;player.&nbsp;The<br>
+message&nbsp;property&nbsp;is&nbsp;accessed&nbsp;and&nbsp;printed&nbsp;by&nbsp;advgame.py.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>creature_description</strong></dt>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="FoundDoorOrDoorwayGSM">class <strong>FoundDoorOrDoorwayGSM</strong></a>(<a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#FoundDoorOrDoorwayGSM">FoundDoorOrDoorwayGSM</a>(compass_dir,&nbsp;door)<br>
+&nbsp;<br>
+Returned&nbsp;by&nbsp;look_at_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;targets&nbsp;a&nbsp;door&nbsp;or&nbsp;doorway<br>
+in&nbsp;the&nbsp;current&nbsp;dungeon&nbsp;room.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.statemsgs.lookat.html#FoundDoorOrDoorwayGSM">FoundDoorOrDoorwayGSM</a></dd>
+<dd><a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="FoundDoorOrDoorwayGSM-__init__"><strong>__init__</strong></a>(self, compass_dir, door)</dt><dd><tt>The&nbsp;__init__&nbsp;method&nbsp;of&nbsp;a&nbsp;<a href="advgame.statemsgs.gsm.html#GameStateMessage">GameStateMessage</a>&nbsp;subclass&nbsp;stores&nbsp;its&nbsp;keyword<br>
+arguments&nbsp;to&nbsp;object&nbsp;attributes,&nbsp;and&nbsp;performs&nbsp;no&nbsp;other&nbsp;task.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>message</strong></dt>
+<dd><tt>The&nbsp;message&nbsp;property&nbsp;of&nbsp;a&nbsp;GameStateMessage&nbsp;subclass&nbsp;renders&nbsp;the&nbsp;data<br>
+stored&nbsp;in&nbsp;the&nbsp;object&nbsp;attributes&nbsp;to&nbsp;a&nbsp;natural&nbsp;language&nbsp;string&nbsp;which<br>
+communicates&nbsp;the&nbsp;semantic&nbsp;content&nbsp;of&nbsp;the&nbsp;object&nbsp;to&nbsp;the&nbsp;player.&nbsp;The<br>
+message&nbsp;property&nbsp;is&nbsp;accessed&nbsp;and&nbsp;printed&nbsp;by&nbsp;advgame.py.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>compass_dir</strong></dt>
+</dl>
+<dl><dt><strong>door</strong></dt>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="FoundItemOrItemsHereGSM">class <strong>FoundItemOrItemsHereGSM</strong></a>(<a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#FoundItemOrItemsHereGSM">FoundItemOrItemsHereGSM</a>(item_description,&nbsp;item_qty,&nbsp;container_title,&nbsp;container_type=None)<br>
+&nbsp;<br>
+Returned&nbsp;by&nbsp;look_at_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;targets&nbsp;an&nbsp;item&nbsp;that&nbsp;is<br>
+present&nbsp;on&nbsp;the&nbsp;floor&nbsp;of&nbsp;current&nbsp;room&nbsp;or&nbsp;in&nbsp;their&nbsp;inventory&nbsp;or&nbsp;in&nbsp;a&nbsp;chest<br>
+or&nbsp;on&nbsp;a&nbsp;corpse's&nbsp;person&nbsp;as&nbsp;specified&nbsp;by&nbsp;the&nbsp;player.&nbsp;It&nbsp;conveys&nbsp;the<br>
+item's&nbsp;description&nbsp;attribute&nbsp;and&nbsp;specifies&nbsp;how&nbsp;many&nbsp;are&nbsp;present.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.statemsgs.lookat.html#FoundItemOrItemsHereGSM">FoundItemOrItemsHereGSM</a></dd>
+<dd><a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="FoundItemOrItemsHereGSM-__init__"><strong>__init__</strong></a>(self, item_description, item_qty, container_title, container_type=None)</dt><dd><tt>The&nbsp;__init__&nbsp;method&nbsp;of&nbsp;a&nbsp;<a href="advgame.statemsgs.gsm.html#GameStateMessage">GameStateMessage</a>&nbsp;subclass&nbsp;stores&nbsp;its&nbsp;keyword<br>
+arguments&nbsp;to&nbsp;object&nbsp;attributes,&nbsp;and&nbsp;performs&nbsp;no&nbsp;other&nbsp;task.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>message</strong></dt>
+<dd><tt>The&nbsp;message&nbsp;property&nbsp;of&nbsp;a&nbsp;GameStateMessage&nbsp;subclass&nbsp;renders&nbsp;the&nbsp;data<br>
+stored&nbsp;in&nbsp;the&nbsp;object&nbsp;attributes&nbsp;to&nbsp;a&nbsp;natural&nbsp;language&nbsp;string&nbsp;which<br>
+communicates&nbsp;the&nbsp;semantic&nbsp;content&nbsp;of&nbsp;the&nbsp;object&nbsp;to&nbsp;the&nbsp;player.&nbsp;The<br>
+message&nbsp;property&nbsp;is&nbsp;accessed&nbsp;and&nbsp;printed&nbsp;by&nbsp;advgame.py.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>item_description</strong></dt>
+</dl>
+<dl><dt><strong>item_qty</strong></dt>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="FoundNothingGSM">class <strong>FoundNothingGSM</strong></a>(<a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#FoundNothingGSM">FoundNothingGSM</a>(item_title,&nbsp;item_location=None,&nbsp;location_type=None)<br>
+&nbsp;<br>
+Returned&nbsp;by&nbsp;look_at_command()&nbsp;when&nbsp;the&nbsp;player&nbsp;targets&nbsp;an&nbsp;item&nbsp;that&nbsp;can't<br>
+be&nbsp;found&nbsp;where&nbsp;they&nbsp;said&nbsp;it&nbsp;was.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="advgame.statemsgs.lookat.html#FoundNothingGSM">FoundNothingGSM</a></dd>
+<dd><a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a></dd>
+<dd><a href="abc.html#ABC">abc.ABC</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="FoundNothingGSM-__init__"><strong>__init__</strong></a>(self, item_title, item_location=None, location_type=None)</dt><dd><tt>The&nbsp;__init__&nbsp;method&nbsp;of&nbsp;a&nbsp;<a href="advgame.statemsgs.gsm.html#GameStateMessage">GameStateMessage</a>&nbsp;subclass&nbsp;stores&nbsp;its&nbsp;keyword<br>
+arguments&nbsp;to&nbsp;object&nbsp;attributes,&nbsp;and&nbsp;performs&nbsp;no&nbsp;other&nbsp;task.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>message</strong></dt>
+<dd><tt>The&nbsp;message&nbsp;property&nbsp;of&nbsp;a&nbsp;GameStateMessage&nbsp;subclass&nbsp;renders&nbsp;the&nbsp;data<br>
+stored&nbsp;in&nbsp;the&nbsp;object&nbsp;attributes&nbsp;to&nbsp;a&nbsp;natural&nbsp;language&nbsp;string&nbsp;which<br>
+communicates&nbsp;the&nbsp;semantic&nbsp;content&nbsp;of&nbsp;the&nbsp;object&nbsp;to&nbsp;the&nbsp;player.&nbsp;The<br>
+message&nbsp;property&nbsp;is&nbsp;accessed&nbsp;and&nbsp;printed&nbsp;by&nbsp;advgame.py.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>item_location</strong></dt>
+</dl>
+<dl><dt><strong>item_title</strong></dt>
+</dl>
+<dl><dt><strong>location_type</strong></dt>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
+
+<hr>
+Data descriptors inherited from <a href="advgame.statemsgs.gsm.html#GameStateMessage">advgame.statemsgs.gsm.GameStateMessage</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ('FoundContainerHereGSM', 'FoundCreatureHereGSM', 'FoundDoorOrDoorwayGSM', 'FoundItemOrItemsHereGSM', 'FoundNothingGSM')</td></tr></table>
+</body></html>

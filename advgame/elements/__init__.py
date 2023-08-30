@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-from .basics import IniEntry, State
-from .characters import (
+from advgame.elements.basics import IniEntry, State
+from advgame.elements.characters import (
     ItemsState,
     Equipment,
     ItemsMultiState,
@@ -9,7 +9,7 @@ from .characters import (
     Character,
     GameState,
 )
-from .containers import (
+from advgame.elements.containers import (
     Container,
     ContainersState,
     Chest,
@@ -17,8 +17,8 @@ from .containers import (
     Creature,
     CreaturesState,
 )
-from .doors import Door, IronDoor, WoodenDoor, DoorsState, Doorway
-from .items import (
+from advgame.elements.doors import Door, IronDoor, WoodenDoor, DoorsState, Doorway
+from advgame.elements.items import (
     Item,
     EquippableItem,
     Oddment,
@@ -30,7 +30,7 @@ from .items import (
     Shield,
     Armor,
 )
-from .rooms import Room, RoomsState
+from advgame.elements.rooms import Room, RoomsState
 
 
 __all__ = (

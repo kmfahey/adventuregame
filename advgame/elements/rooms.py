@@ -1,9 +1,8 @@
 #!/usr/bin/python3
 
-from .basics import IniEntry
-from .characters import ItemsMultiState
-
-from ..errors import InternalError, BadCommandError
+from advgame.elements.basics import IniEntry
+from advgame.elements.characters import ItemsMultiState
+from advgame.errors import InternalError, BadCommandError
 
 
 __all__ = "Room", "RoomsState"

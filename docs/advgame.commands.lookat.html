@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module advgame.commands.lookat</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="advgame.html"><font color="#ffffff">advgame</font></a>.<a href="advgame.commands.html"><font color="#ffffff">commands</font></a>.lookat</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/adventuregame/advgame/commands/lookat.py">/home/kmfahey/Workspace/adventuregame/advgame/commands/lookat.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="re.html">re</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-look_at_command"><strong>look_at_command</strong></a>(game_state, tokens)</dt><dd><tt>Execute&nbsp;the&nbsp;LOOK&nbsp;AT&nbsp;command.&nbsp;The&nbsp;return&nbsp;value&nbsp;is&nbsp;always&nbsp;in&nbsp;a&nbsp;tuple&nbsp;even<br>
+when&nbsp;it's&nbsp;of&nbsp;length&nbsp;1.&nbsp;The&nbsp;LOOK&nbsp;AT&nbsp;command&nbsp;has&nbsp;the&nbsp;following&nbsp;usage:<br>
+&nbsp;<br>
+LOOK&nbsp;AT&nbsp;&lt;item&nbsp;name&gt;<br>
+LOOK&nbsp;AT&nbsp;&lt;item&nbsp;name&gt;&nbsp;IN&nbsp;&lt;chest&nbsp;name&gt;<br>
+LOOK&nbsp;AT&nbsp;&lt;item&nbsp;name&gt;&nbsp;IN&nbsp;INVENTORY<br>
+LOOK&nbsp;AT&nbsp;&lt;item&nbsp;name&gt;&nbsp;ON&nbsp;&lt;corpse&nbsp;name&gt;<br>
+LOOK&nbsp;AT&nbsp;&lt;compass&nbsp;direction&gt;&nbsp;DOOR<br>
+LOOK&nbsp;AT&nbsp;&lt;compass&nbsp;direction&gt;&nbsp;DOORWAY<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;that&nbsp;syntax&nbsp;is&nbsp;not&nbsp;followed,&nbsp;returns&nbsp;a&nbsp;BadSyntaxGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;looking&nbsp;at&nbsp;a&nbsp;door&nbsp;which&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;room,&nbsp;returns&nbsp;a<br>
+DoorNotPresentGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;looking&nbsp;at&nbsp;a&nbsp;door,&nbsp;but&nbsp;the&nbsp;arguments&nbsp;are&nbsp;ambiguous&nbsp;and&nbsp;match&nbsp;more<br>
+than&nbsp;one&nbsp;door&nbsp;in&nbsp;the&nbsp;room,&nbsp;returns&nbsp;a&nbsp;AmbiguousDoorSpecifierGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;looking&nbsp;at&nbsp;a&nbsp;chest&nbsp;or&nbsp;corpse&nbsp;which&nbsp;is&nbsp;not&nbsp;present&nbsp;in&nbsp;the&nbsp;room,<br>
+returns&nbsp;a&nbsp;ContainerNotFoundGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;looking&nbsp;at&nbsp;an&nbsp;item&nbsp;which&nbsp;isn't&nbsp;present&nbsp;(per&nbsp;the&nbsp;arguments)<br>
+on&nbsp;the&nbsp;floor,&nbsp;in&nbsp;a&nbsp;chest,&nbsp;on&nbsp;a&nbsp;corpse,&nbsp;or&nbsp;in&nbsp;inventory,&nbsp;returns&nbsp;a<br>
+FoundNothingGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;looking&nbsp;at&nbsp;a&nbsp;chest&nbsp;or&nbsp;corpse&nbsp;which&nbsp;is&nbsp;present,&nbsp;returns&nbsp;a<br>
+FoundCreatureHereGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;looking&nbsp;at&nbsp;a&nbsp;creature&nbsp;which&nbsp;is&nbsp;present,&nbsp;returns&nbsp;a<br>
+FoundCreatureHereGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;looking&nbsp;at&nbsp;a&nbsp;door&nbsp;or&nbsp;doorway&nbsp;which&nbsp;is&nbsp;present,&nbsp;returns&nbsp;a<br>
+FoundDoorOrDoorwayGSM&nbsp;object.<br>
+&nbsp;<br>
+*&nbsp;If&nbsp;looking&nbsp;at&nbsp;an&nbsp;item&nbsp;which&nbsp;is&nbsp;present,&nbsp;returns&nbsp;a<br>
+FoundItemOrItemsHereGSM&nbsp;object.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ('look_at_command',)</td></tr></table>
+</body></html>
